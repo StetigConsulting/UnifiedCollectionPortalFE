@@ -44,7 +44,7 @@ const UserClient: React.FC<UserClientProps> = ({ session }) => {
 
     return (
         <Link href="/auth/signin">
-            <Button variant="outline" className="flex items-center space-x-2">
+            <Button variant="outline" className="flex items-center space-x-2 w-full">
                 <User2 className="w-4 h-4" />
                 <span>Sign in</span>
             </Button>
