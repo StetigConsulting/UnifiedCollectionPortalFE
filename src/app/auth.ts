@@ -68,8 +68,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             session.user.accessToken = token.accessToken as string;
             return session;
         }
-    },
-    pages: {
-        signIn: "/"
     }
 });
