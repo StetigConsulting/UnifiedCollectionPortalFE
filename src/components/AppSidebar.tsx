@@ -168,7 +168,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     return (
         <Sidebar {...props}>
             <SidebarHeader className="py-4">
-                <Image alt="" width={150} height={1000} src="/images/logo.png" className='mx-auto object-contain'/>
+                <Image alt="" width={150} height={1000} src="/images/logo.jpg" className='mx-auto object-contain'/>
             </SidebarHeader>
             <SidebarContent className="gap-0">
                 {/* We create a collapsible SidebarGroup for each parent. */}
