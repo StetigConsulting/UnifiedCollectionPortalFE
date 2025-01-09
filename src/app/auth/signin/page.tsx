@@ -1,13 +1,14 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
+import { Loader2, RefreshCcw } from 'lucide-react';
 import { signinSchema } from '@/lib/zod';
 import OTPPopup from '@/components/OTPPopup';
 import Image from 'next/image';
+import { generateCaptcha } from '@/lib/utils';
 
 type SigninSchema = z.infer<typeof signinSchema>;
 
@@ -15,6 +16,40 @@ const SignUpForm = () => {
 	const [isOTPPopup, setIsOTPPopup] = useState(false);
 	const [isValidating, setIsValidating] = useState(false);
 	const [mobileNumber, setMobileNumber] = useState('');
+	const [captcha, setCaptcha] = useState('');
+	const [enteredCaptcha, setEnteredCaptcha] = useState('');
+	const [status, setStatus] = useState('')
+	const [disabled, setDisabled] = useState(true)
+
+	useEffect(() => {
+		generateNewCaptcha()
+	}, [])
+
+	const generateNewCaptcha = () => {
+		let generatedCaptcha = generateCaptcha()
+
+		setCaptcha(generatedCaptcha);
+		setEnteredCaptcha('');
+	}
+
+	const handleCaptchaChange = (e: any) => {
+
+		setEnteredCaptcha(e.target.value)
+		setDisabled(true)
+		if (e.target.value.length == 6) {
+			checkCaptcha()
+		}
+	}
+
+	const checkCaptcha = () => {
+		if (enteredCaptcha === captcha) {
+			setStatus('success');
+			setDisabled(false)
+		} else {
+			setStatus('failure');
+			setDisabled(true)
+		}
+	};
 
 	const { register, handleSubmit, formState: { errors }, getValues } = useForm<SigninSchema>({
 		resolver: zodResolver(signinSchema),
@@ -46,9 +81,34 @@ const SignUpForm = () => {
 							/>
 							{errors.mobileNumber && <p className="text-red-500 text-sm">{errors.mobileNumber?.message?.toString()}</p>}
 						</div>
+						{/* Captcha Field */}
+						<div className="mb-4">
+							<label htmlFor="captcha" className="block text-sm font-medium text-gray-700">Captcha</label>
+							<div className="flex items-center space-x-2">
+								<div className="flex space-x-2 w-1/2 flex-1">
+									<p className="text-lg font-semibold text-gray-700">{captcha}</p>
+									<RefreshCcw className='cursor-pointer' onClick={generateNewCaptcha} />
+								</div>
+								<input
+									id="captcha"
+									type="text"
+									className="mt-1 block w-full border border-gray-300 p-2 rounded-md w-1/2"
+									value={enteredCaptcha}
+									onChange={(e) => handleCaptchaChange(e)}
+									placeholder="Enter the Captcha"
+								/>
+							</div>
+							{/* Captcha validation feedback */}
+							{status === 'failure' && (
+								<p className="text-red-500 text-sm">Incorrect Captcha</p>
+							)}
+							{status === 'success' && (
+								<p className="text-green-500 text-sm">Captcha Verified </p>
+							)}
+						</div>
 
 						{/* Submit Button */}
-						<Button disabled={isValidating} type="submit" className="w-full">
+						<Button disabled={isValidating || disabled} type="submit" className="w-full">
 							{isValidating ? (
 								<>
 									<Loader2 className="mr-2 h-4 w-4 animate-spin" />
