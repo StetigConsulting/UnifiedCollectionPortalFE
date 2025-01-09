@@ -33,21 +33,17 @@ const SignUpForm = () => {
 	}
 
 	const handleCaptchaChange = (e: any) => {
-
 		setEnteredCaptcha(e.target.value)
-		setDisabled(true)
 		if (e.target.value.length == 6) {
-			checkCaptcha()
+			checkCaptcha(e.target.value)
 		}
 	}
 
-	const checkCaptcha = () => {
-		if (enteredCaptcha === captcha) {
+	const checkCaptcha = (data: string) => {
+		if (data === captcha) {
 			setStatus('success');
-			setDisabled(false)
 		} else {
 			setStatus('failure');
-			setDisabled(true)
 		}
 	};
 
