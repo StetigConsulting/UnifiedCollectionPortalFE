@@ -34,18 +34,15 @@ const SignUpForm = () => {
 
 	const handleCaptchaChange = (e: any) => {
 		setEnteredCaptcha(e.target.value)
-		if (e.target.value.length == 6) {
-			checkCaptcha(e.target.value)
-		}
-	}
-
-	const checkCaptcha = (data: string) => {
-		if (data === captcha) {
+		setStatus('')
+		setDisabled(true)
+		if (e.target.value.length == 6 && e.target.value == captcha) {
 			setStatus('success');
+			setDisabled(false)
 		} else {
 			setStatus('failure');
 		}
-	};
+	}
 
 	const { register, handleSubmit, formState: { errors }, getValues } = useForm<SigninSchema>({
 		resolver: zodResolver(signinSchema),
