@@ -29,7 +29,7 @@ const SignUpForm = () => {
 		<>
 			<div className="grid grid-cols-2 gap-4 min-h-[100vh]">
 				<div>
-					<Image alt="" width={1000} height={1000} src="/images/power.jpg" className='w-full h-full object-cover'/>
+					<Image alt="" width={1000} height={1000} src="/images/power.jpg" className='w-full h-full object-cover' />
 				</div>
 				<div className="ps-16 p-4 flex flex-col justify-center min-h-[80vh]">
 					<h3 className="title mb-8">Login</h3>
@@ -61,6 +61,7 @@ const SignUpForm = () => {
 							setIsOpen={setIsOTPPopup}
 							formData={getValues('mobileNumber') || ''}
 						/>}
+
 					</form>
 				</div>
 			</div>
