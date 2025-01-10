@@ -109,7 +109,7 @@ const OTPPopup: React.FC<OTPPopupProps> = ({ isOpen, setIsOpen, formData }) => {
             <div className="mb-3 text-center">
                 <h3 className='fw-bold'>OTP Verification</h3>
                 <span className='block text-gray-400 font-thin text-sm'>
-                    Please check your email for OTP
+                    Please check your mobile for OTP
                 </span>
             </div>
             <div className="mb-3">
