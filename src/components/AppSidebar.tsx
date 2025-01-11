@@ -31,10 +31,10 @@ const data = {
     {
       title: "Agency",
       items: [
-        { title: "Add Agency", url: "#" },
-        { title: "Recharge", url: "#" },
-        { title: "Change Collector Type", url: "#" },
-        { title: "Edit Agency", url: "#" },
+        { title: "Add Agency", url: "/department/add-agency" },
+        { title: "Recharge", url: '/department/recharge' },
+        { title: "Change Collector Type", url: '/department/collector-type' },
+        { title: "Edit Agency", url: '/department/edit-agency' },
         { title: "Extend Validity", url: "#" },
         { title: "View Agency", url: "#" },
         { title: "View Balance", url: "#" },

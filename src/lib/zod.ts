@@ -63,3 +63,28 @@ export const rechargeSchema = z.object({
 	remark: z.string().optional(),
 });
 
+export const editAgencySchema = z.object({
+	circle: z.string().nonempty("Circle type is required"),
+	division: z.string().nonempty("Division is required"),
+	agencyName: z.string().nonempty("Agency name is required"),
+	agencyId: z.string().nonempty("Agency ID is required"),
+	newAgencyName: z.string().nonempty("New agency name is required"),
+	maximumAmount: z
+		.string()
+		.nonempty("Maximum amount is required")
+		.refine((value) => !isNaN(parseFloat(value)) && parseFloat(value) > 0, {
+			message: "Maximum amount must be a positive number",
+		}),
+	maximumAgent: z
+		.string()
+		.nonempty("Maximum agent is required")
+		.refine((value) => !isNaN(parseFloat(value)) && parseFloat(value) > 0, {
+			message: "Maximum agent must be a positive number",
+		}),
+	address: z.string().nonempty("Address is required"),
+	woNumber: z.string().optional(),
+	contactPerson: z.string().nonempty("Contact person is required"),
+	phoneNumber: z
+		.string()
+		.regex(/^\d{10}$/, "Phone number must be exactly 10 digits"),
+});
