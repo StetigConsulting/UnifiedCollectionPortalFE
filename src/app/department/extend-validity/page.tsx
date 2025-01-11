@@ -18,7 +18,7 @@ const ExtendValidity = () => {
     });
 
     const onSubmit = (data: FormData) => {
-        console.log(data); // Handle the extend validity logic here
+        console.log(data);
     };
 
     return (
