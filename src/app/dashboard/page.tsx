@@ -1,41 +1,51 @@
-import { AppSidebar } from "@/components/AppSidebar";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Separator } from "@/components/ui/separator";
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
+'use client'
 
-export default function Page() {
+import AuthUserReusableCode from "@/components/AuthUserReusableCode";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { dashboardSchema } from "@/lib/zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from 'react-hook-form';
+import { z } from "zod";
+
+type FormData = z.infer<typeof dashboardSchema>;
+
+const dashboard = () => {
+
+  const { register, handleSubmit, formState: { errors }, getValues } = useForm<FormData>({
+    resolver: zodResolver(dashboardSchema),
+  });
+
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 border-b px-4">
-          <SidebarTrigger className="-ml-1" />
-          <Separator orientation="vertical" className="mr-2 h-4" />
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="#">Home</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="hidden md:block" />
-              <BreadcrumbItem>
-                <BreadcrumbPage>App Dashboard</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-        </header>
-        <div className="flex flex-1 flex-col gap-4 p-4"></div>
-      </SidebarInset>
-    </SidebarProvider>
+    // <AuthUserReusableCode pageTitle='Dashboard'>
+    <form className="flex items-center space-x-4">
+      <div className="w-1/4">
+        <label htmlFor="start-date" className="block text-sm font-medium text-gray-700">
+          From Date
+        </label>
+        <Input
+          {...register('start')}
+          type="date"
+          id="start-date"
+          className="mt-1 block w-full"
+        />
+      </div>
+      <div className="w-1/4">
+        <label htmlFor="end-date" className="block text-sm font-medium text-gray-700">
+          To Date
+        </label>
+        <Input
+          type="date"
+          id="end-date"
+          className="mt-1 block w-full"
+        />
+      </div>
+      <Button variant="default" className="px-4 py-2 self-end">
+        Search
+      </Button>
+    </form>
+    // </AuthUserReusableCode >
   );
 }
+
+export default dashboard;
