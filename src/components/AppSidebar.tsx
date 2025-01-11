@@ -65,7 +65,7 @@ const data = {
         },
         { title: "Edit Agency", icon: Edit, url: "/department/edit-agency" },
         { title: "Extend Validity", icon: Calendar, url: "/department/extend-validity" },
-        { title: "View Agency", icon: Eye, url: "#" },
+        { title: "View Agency", icon: Eye, url: "/department/view-agency" },
         { title: "View Balance", icon: Wallet, url: "#" },
         { title: "Reset Device (Collector)", icon: MonitorCog, url: "#" },
         { title: "Change Collector Role", icon: FolderSync, url: "#" },
@@ -92,6 +92,23 @@ const data = {
     },
   ],
 };
+
+export function getTitleByUrl(url: string): string | null {
+  for (const item of data.navMain) {
+    if (item.url === url) {
+      return item.title;
+    }
+
+    if (item.items) {
+      const subItem = item.items.find((sub) => sub.url === url);
+      if (subItem) {
+        return subItem.title;
+      }
+    }
+  }
+
+  return null;
+}
 
 export function AppSidebar() {
   return (
