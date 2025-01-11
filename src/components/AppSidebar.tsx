@@ -1,67 +1,102 @@
-import * as React from "react";
-import { ChevronRight } from "lucide-react";
+"use client";
 
+import * as React from "react";
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+  Calendar,
+  CreditCard,
+  Edit,
+  Eye,
+  Folder,
+  FolderSync,
+  Gauge,
+  LogOut,
+  MonitorCog,
+  NotepadText,
+  UserCogIcon,
+  UserPlus2,
+  Volume2Icon,
+  Wallet,
+} from "lucide-react";
+
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import User from "./User";
 import Image from "next/image";
+import { NavMain } from "./nav-main";
 
 const data = {
+  user: {
+    name: "shadcn",
+    email: "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
+  },
+
   navMain: [
     {
       title: "Dashboard",
-      items: [],
+      url: "/dashboard",
+      icon: Gauge,
+      path: '/dashboard'
     },
     {
       title: "Agency",
+      icon: Folder,
+      url: "#",
+      path: '/department',
       items: [
-        { title: "Add Agency", url: "#" },
-        { title: "Recharge", url: "#" },
-        { title: "Change Collector Type", url: "#" },
-        { title: "Edit Agency", url: "#" },
-        { title: "Extend Validity", url: "#" },
-        { title: "View Agency", url: "#" },
-        { title: "View Balance", url: "#" },
-        { title: "Reset Device (Collector)", url: "#" },
-        { title: "Change Collector Role", url: "#" },
-        { title: "Change Section", url: "#" },
+        {
+          title: "Add Agency",
+          icon: UserPlus2,
+          url: "/department/add-agency",
+        },
+        {
+          title: "Recharge",
+          icon: CreditCard,
+          url: "/department/recharge",
+        },
+        {
+          title: "Change Collector Type",
+          icon: UserCogIcon,
+          url: "/department/collector-type",
+        },
+        { title: "Edit Agency", icon: Edit, url: "/department/edit-agency" },
+        { title: "Extend Validity", icon: Calendar, url: "/department/extend-validity" },
+        { title: "View Agency", icon: Eye, url: "#" },
+        { title: "View Balance", icon: Wallet, url: "#" },
+        { title: "Reset Device (Collector)", icon: MonitorCog, url: "#" },
+        { title: "Change Collector Role", icon: FolderSync, url: "#" },
+        { title: "Change Section", icon: FolderSync, url: "#" },
       ],
     },
     {
       title: "Report",
-      items: [],
+      icon: NotepadText,
+      url: "#",
+      path: "#",
     },
     {
       title: "News/Notice",
-      items: [],
+      icon: Volume2Icon,
+      url: "#",
+      path: "#",
     },
     {
       title: "Logout",
-      items: [],
+      icon: LogOut,
+      url: "#",
+      path: '#',
     },
   ],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar() {
   return (
-    <Sidebar {...props}>
-      <SidebarHeader className="py-4">
+    <Sidebar>
+      <SidebarHeader>
         <Image
           alt=""
           width={150}
@@ -70,43 +105,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           className="mx-auto object-contain"
         />
       </SidebarHeader>
-      <SidebarContent className="gap-0">
-        {data.navMain.map((item) => (
-          <Collapsible
-            key={item.title}
-            title={item.title}
-            defaultOpen
-            className="group/collapsible"
-          >
-            <SidebarGroup>
-              <SidebarGroupLabel
-                asChild
-                className="group/label text-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-              >
-                <CollapsibleTrigger>
-                  {item.title}{" "}
-                  <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
-                </CollapsibleTrigger>
-              </SidebarGroupLabel>
-              <CollapsibleContent>
-                <SidebarGroupContent>
-                  <SidebarMenu>
-                    {item.items.map((subItem) => (
-                      <SidebarMenuItem key={subItem.title}>
-                        <SidebarMenuButton asChild>
-                          <a href={subItem.url}>{subItem.title}</a>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    ))}
-                  </SidebarMenu>
-                </SidebarGroupContent>
-              </CollapsibleContent>
-            </SidebarGroup>
-          </Collapsible>
-        ))}
+      <SidebarContent className="overflow-x-hidden">
+        <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
-        {/* <User /> */}
+        {/* <NavUser user={data.user} /> */}
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

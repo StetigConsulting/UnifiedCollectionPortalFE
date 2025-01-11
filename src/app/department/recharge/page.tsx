@@ -32,7 +32,7 @@ const Recharge = () => {
                         containerClass=""
                         placeholder="Agency Name"
                         {...register("agencyName")}
-                        readOnly
+                        disabled
                     />
                     <CustomizedInputWithLabel
                         label="Agency ID"
@@ -40,7 +40,7 @@ const Recharge = () => {
                         containerClass=""
                         placeholder="Agency ID"
                         {...register("agencyId")}
-                        readOnly
+                        disabled
                     />
                     <CustomizedInputWithLabel
                         label="Phone Number"
@@ -48,15 +48,16 @@ const Recharge = () => {
                         containerClass=""
                         placeholder="Phone Number"
                         {...register("phoneNumber")}
-                        readOnly
+                        disabled
                     />
-                    <CustomizedInputWithLabel
+                    <CustomizedSelectInputWithLabel
                         label="Transaction Type"
                         errors={errors.transactionType}
-                        containerClass=""
+                        containerClass="col-span-2"
                         placeholder="Recharge"
+                        list={[]}
                         {...register("transactionType")}
-                        readOnly
+                        disabled
                     />
                     <CustomizedInputWithLabel
                         label="Amount"
@@ -71,7 +72,7 @@ const Recharge = () => {
                         containerClass=""
                         placeholder="Current Balance"
                         {...register("currentBalance")}
-                        readOnly
+                        disabled
                     />
                     <CustomizedInputWithLabel
                         label="Remark"
