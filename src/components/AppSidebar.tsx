@@ -35,7 +35,7 @@ const data = {
         { title: "Recharge", url: '/department/recharge' },
         { title: "Change Collector Type", url: '/department/collector-type' },
         { title: "Edit Agency", url: '/department/edit-agency' },
-        { title: "Extend Validity", url: "#" },
+        { title: "Extend Validity", url: '/department/extend-validity' },
         { title: "View Agency", url: "#" },
         { title: "View Balance", url: "#" },
         { title: "Reset Device (Collector)", url: "#" },
