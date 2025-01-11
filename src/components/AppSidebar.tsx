@@ -67,7 +67,7 @@ const data = {
         { title: "Extend Validity", icon: Calendar, url: "/department/extend-validity" },
         { title: "View Agency", icon: Eye, url: '/department/view-agency' },
         { title: "View Balance", icon: Wallet, url: '/department/view-balance' },
-        { title: "Reset Device (Collector)", icon: MonitorCog, url: "#" },
+        { title: "Reset Device (Collector)", icon: MonitorCog, url: '/department/reset-device' },
         { title: "Change Collector Role", icon: FolderSync, url: "#" },
         { title: "Change Section", icon: FolderSync, url: "#" },
       ],

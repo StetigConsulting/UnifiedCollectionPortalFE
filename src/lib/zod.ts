@@ -102,3 +102,15 @@ export const extendValiditySchema = z.object({
 			message: "Validity date must be a valid date",
 		}),
 });
+
+export const resetDeviceSchema = z.object({
+	mobileNumber: z
+		.string()
+		.nonempty("Mobile Number is required")
+		.regex(/^\d{10}$/, "Mobile Number must be 10 digits"),
+	collectorName: z.string().optional(),
+	currentDevice: z.string().optional(),
+	agencyName: z.string().optional(),
+	collectorType: z.string().nonempty("Collector Type is required"),
+	reason: z.string().nonempty("Reason is required").max(200, "Reason must be less than 200 characters"),
+});
