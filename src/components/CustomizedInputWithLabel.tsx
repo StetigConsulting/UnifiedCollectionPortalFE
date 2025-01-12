@@ -1,6 +1,6 @@
 import React from 'react'
 
-const CustomizedInputWithLabel = ({ label, errors, containerClass, ...props }) => {
+const CustomizedInputWithLabel = ({ label, errors = null, containerClass = '', ...props }) => {
     return (
         <div className={containerClass}>
             <label htmlFor="start-date" className="block text-sm font-medium text-gray-700 mb-1">
