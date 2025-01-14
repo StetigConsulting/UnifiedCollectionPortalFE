@@ -70,6 +70,11 @@ const data = {
         { title: "Reset Device (Collector)", icon: MonitorCog, url: "#" },
         { title: "Change Collector Role", icon: FolderSync, url: "#" },
         { title: "Change Section", icon: FolderSync, url: "#" },
+        { title: "View Agency", icon: Eye, url: '/department/view-agency' },
+        { title: "View Balance", icon: Wallet, url: '/department/view-balance' },
+        { title: "Reset Device (Collector)", icon: MonitorCog, url: '/department/reset-device' },
+        { title: "Change Collector Role", icon: FolderSync, url: '/department/change-collector-role' },
+        { title: "Change Section", icon: FolderSync, url: '/department/change-section' },
       ],
     },
     {
@@ -81,8 +86,8 @@ const data = {
     {
       title: "News/Notice",
       icon: Volume2Icon,
-      url: "#",
-      path: "#",
+      url: "/department/add-news",
+      path: "/department/add-news",
     },
     {
       title: "Logout",

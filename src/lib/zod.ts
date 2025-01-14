@@ -102,3 +102,45 @@ export const extendValiditySchema = z.object({
 			message: "Validity date must be a valid date",
 		}),
 });
+
+export const resetDeviceSchema = z.object({
+	mobileNumber: z
+		.string()
+		.nonempty("Mobile Number is required")
+		.regex(/^\d{10}$/, "Mobile Number must be 10 digits"),
+	collectorName: z.string().optional(),
+	currentDevice: z.string().optional(),
+	agencyName: z.string().optional(),
+	collectorType: z.string().nonempty("Collector Type is required"),
+	reason: z.string().nonempty("Reason is required").max(200, "Reason must be less than 200 characters"),
+});
+
+export const changeCollectorRoleSchema = z.object({
+	collectorMobileNumber: z.string().min(10, "Mobile number must be at least 10 digits"),
+	collectorName: z.string().nonempty("Collector name is required"),
+	currentType: z.string().nonempty("Current type is required"),
+	division: z.string().nonempty("Division is required"),
+	collectionType: z.string().nonempty("Collection type is required"),
+	nonEnergy: z.string().optional(),
+	allowRecovery: z.enum(["Yes", "No"]),
+	energy: z.boolean().optional(),
+	nonEnergyCheckbox: z.boolean().optional()
+});
+
+export const changeSectionSchema = z.object({
+	collectorMobileNumber: z
+		.string()
+		.min(10, { message: 'Mobile number must be at least 10 digits' })
+		.max(10, { message: 'Mobile number cannot exceed 10 digits' }),
+	collectorName: z.string().min(1, { message: 'Collector name is required' }),
+	currentType: z.string().min(1, { message: 'Current type is required' }),
+	division: z.string().min(1, { message: 'Division is required' }),
+	subDivision: z.string().min(1, { message: 'Sub Division is required' }),
+	section: z.string().min(1, { message: 'Section is required' }),
+});
+
+export const newsNoticeSchema = z.object({
+	category: z.string().min(1, { message: 'Category is required' }),
+	title: z.string().min(1, { message: 'Title is required' }),
+	description: z.string().min(1, { message: 'Description is required' }),
+});
