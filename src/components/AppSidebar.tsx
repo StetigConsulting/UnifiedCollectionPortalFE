@@ -46,7 +46,7 @@ const data = {
       title: "Agency",
       icon: Folder,
       url: "#",
-      path: '/department',
+      path: '/department/',
       items: [
         {
           title: "Add Agency",
@@ -71,6 +71,18 @@ const data = {
         { title: "Change Collector Role", icon: FolderSync, url: '/department/change-collector-role' },
         { title: "Change Section", icon: FolderSync, url: '/department/change-section' },
       ],
+    },
+    {
+      title: 'Department User',
+      url: '/admin/department-user',
+      icon: Gauge,
+      path: '/admin/department-user'
+    },
+    {
+      title: 'Office Structure',
+      url: '/admin/office-structure',
+      icon: Gauge,
+      path: '/admin/office-stucture'
     },
     {
       title: "Report",

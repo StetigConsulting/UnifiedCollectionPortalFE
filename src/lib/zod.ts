@@ -144,3 +144,11 @@ export const newsNoticeSchema = z.object({
 	title: z.string().min(1, { message: 'Title is required' }),
 	description: z.string().min(1, { message: 'Description is required' }),
 });
+
+export const departmentUserSchema = z.object({
+	name: z.string().nonempty({ message: 'Name is required' }),
+	phoneNumber: z
+		.string()
+		.regex(/^[0-9]{10}$/, { message: 'Phone number must be 10 digits' }),
+	email: z.string().email({ message: 'Invalid email address' }),
+});
