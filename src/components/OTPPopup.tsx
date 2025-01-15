@@ -12,12 +12,13 @@ import { getSession } from 'next-auth/react';
 interface OTPPopupProps {
     isOpen: boolean;
     setIsOpen: (isOpen: boolean) => void;
+    setIsValidatingNumberScreen: (isValidating: boolean) => void;
     formData: string;
 }
 
-const OTPPopup: React.FC<OTPPopupProps> = ({ isOpen, setIsOpen, formData }) => {
-    const [resendTimer, setResendTimer] = useState(0); 
-    const [resendAttempts, setResendAttempts] = useState(0); 
+const OTPPopup: React.FC<OTPPopupProps> = ({ isOpen, setIsOpen, setIsValidatingNumberScreen, formData }) => {
+    const [resendTimer, setResendTimer] = useState(0);
+    const [resendAttempts, setResendAttempts] = useState(0);
     const [otp, setOtp] = useState('');
     const [isValidating, setIsValidating] = useState(false);
 
@@ -48,7 +49,7 @@ const OTPPopup: React.FC<OTPPopupProps> = ({ isOpen, setIsOpen, formData }) => {
             toast.error('Email ID is missing.');
             return;
         }
-        
+
         try {
             const response = await fetch('/api/otp/generate', {
                 method: 'POST',
@@ -64,6 +65,7 @@ const OTPPopup: React.FC<OTPPopupProps> = ({ isOpen, setIsOpen, formData }) => {
                 setResendTimer(30);
             } else {
                 toast.error(result.message || 'Failed to send OTP.');
+                setIsValidatingNumberScreen(false);
                 setIsOpen(false);
             }
         } catch (error) {
@@ -76,7 +78,7 @@ const OTPPopup: React.FC<OTPPopupProps> = ({ isOpen, setIsOpen, formData }) => {
     const handleResendOTP = async () => {
         if (resendAttempts < 3) {
             setResendAttempts(resendAttempts + 1);
-            setResendTimer(30); 
+            setResendTimer(30);
             await sendOTP();
         } else {
             toast.error('Maximum resend attempts reached.');
@@ -95,11 +97,11 @@ const OTPPopup: React.FC<OTPPopupProps> = ({ isOpen, setIsOpen, formData }) => {
             }
         } catch (error) {
             console.log("An unexpected error occurred. Please try again.");
-        } finally { 
+        } finally {
             setIsValidating(false);
         }
     };
-    
+
     const handleChange = (value: string) => {
         setOtp(value);
     };
@@ -131,9 +133,8 @@ const OTPPopup: React.FC<OTPPopupProps> = ({ isOpen, setIsOpen, formData }) => {
             <Button
                 onClick={handleResendOTP}
                 disabled={resendTimer > 0 || resendAttempts >= 3 || isValidating}
-                className={`p-2 px-4 border border-transparent rounded-md shadow-sm text-white ${
-                    resendTimer > 0 || isValidating ? 'bg-gray-400 cursor-not-allowed' : 'bg-orange-400 hover:bg-orange-500'
-                }`}
+                className={`p-2 px-4 border border-transparent rounded-md shadow-sm text-white ${resendTimer > 0 || isValidating ? 'bg-gray-400 cursor-not-allowed' : 'bg-orange-400 hover:bg-orange-500'
+                    }`}
             >
                 {resendTimer > 0 ? `Request OTP in ${resendTimer}s` : 'Request OTP'}
             </Button>

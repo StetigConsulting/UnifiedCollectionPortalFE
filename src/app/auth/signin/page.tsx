@@ -111,6 +111,7 @@ const SignUpForm = () => {
 						</Button>
 						{isOTPPopup && <OTPPopup
 							isOpen={isOTPPopup}
+							setIsValidatingNumberScreen={setIsValidating}
 							setIsOpen={setIsOTPPopup}
 							formData={getValues('mobileNumber') || ''}
 						/>}
