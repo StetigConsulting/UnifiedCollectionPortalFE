@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
     const { mobileNumber } = await req.json();
-    
+
     try {
         const apiResponse = await fetch(
             `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/send-otp`,
@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ mobileNumber: mobileNumber,"sourceType": "PORTAL" }),
+                body: JSON.stringify({ mobileNumber: mobileNumber, "sourceType": "PORTAL" }),
             }
         );
 
@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ message: 'OTP sent successfully', data: result });
         } else {
             return NextResponse.json(
-                { message: result.message || 'OTP Send failed' },
+                { message: result.error.message || 'OTP Send failed' },
                 { status: apiResponse.status }
             );
         }
