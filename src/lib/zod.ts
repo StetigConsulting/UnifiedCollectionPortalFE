@@ -152,3 +152,15 @@ export const departmentUserSchema = z.object({
 		.regex(/^[0-9]{10}$/, { message: 'Phone number must be 10 digits' }),
 	email: z.string().email({ message: 'Invalid email address' }),
 });
+
+export const createNewLevelSchema = z.object({
+	levelName: z.string().nonempty({ message: 'Level name is required' }),
+	levelType: z.string().nonempty({ message: 'Level type is required' }),
+});
+
+export const fileUploadSchema = z.object({
+	file: z
+		.instanceof(File)
+		.refine((file) => file.type === 'text/csv', { message: 'Only CSV files are allowed' })
+		.refine((file) => file.size <= 5 * 1024 * 1024, { message: 'File size must be under 5MB' }),
+});
