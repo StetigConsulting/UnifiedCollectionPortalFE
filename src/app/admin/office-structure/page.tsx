@@ -5,6 +5,7 @@ import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import CreateNewLevelPopup from '@/components/OfficeStructure/CreateNewLevelPopup';
 
 const mockOfficeStructureData = [
     {
@@ -36,9 +37,8 @@ const OfficeStructurePage = () => {
         <AuthUserReusableCode pageTitle="Office Structure">
             <div className="p-4 space-y-6">
                 <div className="flex justify-between items-center">
-                    <Button variant="default" className="text-white">
-                        Create New Level
-                    </Button>
+                    <CreateNewLevelPopup />
+
                     <Input
                         type="text"
                         placeholder="Search"
