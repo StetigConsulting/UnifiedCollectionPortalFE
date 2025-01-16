@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import CreateNewLevelPopup from '@/components/OfficeStructure/CreateNewLevelPopup';
 import CreateNewLevelUploadPopup from '@/components/OfficeStructure/CreateNewLevelUploadPopup';
+import { formatDate } from '@/lib/utils';
 
 const OfficeStructurePage = () => {
     const [officeStructureData, setOfficeStructureData] = useState([]);
@@ -22,9 +23,11 @@ const OfficeStructurePage = () => {
                 throw new Error('Failed to fetch office structure data');
             }
             const data = await response.json();
-            setOfficeStructureData(data);
+
+            setOfficeStructureData(Array.isArray(data.data) ? data.data : []);
         } catch (err) {
             setError(err.message);
+            setOfficeStructureData([]);
         } finally {
             setLoading(false);
         }
@@ -36,16 +39,19 @@ const OfficeStructurePage = () => {
 
     const filteredOfficeStructureData = officeStructureData.filter(
         (item) =>
-            item.level.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.name.toLowerCase().includes(searchQuery.toLowerCase())
+            item.levelType.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            item.levelName.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     return (
         <AuthUserReusableCode pageTitle="Office Structure">
             <div className="p-4 space-y-6">
                 <div className="flex justify-between items-center">
-                    <CreateNewLevelPopup />
-                    <CreateNewLevelUploadPopup />
+                    <div className='flex space-x-4'>
+                        <CreateNewLevelPopup fetchData={fetchOfficeStructureData} />
+                        <CreateNewLevelUploadPopup fetchData={fetchOfficeStructureData} />
+                    </div>
+
                     <Input
                         type="text"
                         placeholder="Search"
@@ -57,7 +63,9 @@ const OfficeStructurePage = () => {
                 <div>
                     {loading ? (
                         <p>Loading...</p>
-                    ) : (
+                    ) : error ? (
+                        <p className="text-red-500">{error}</p>
+                    ) : filteredOfficeStructureData.length > 0 ? (
                         <Table>
                             <TableHeader>
                                 <TableRow>
@@ -68,14 +76,16 @@ const OfficeStructurePage = () => {
                             </TableHeader>
                             <TableBody>
                                 {filteredOfficeStructureData.map((item, index) => (
-                                    <TableRow key={index} className="hover:bg-gray-50">
-                                        <TableCell>{item.level}</TableCell>
-                                        <TableCell>{item.name}</TableCell>
-                                        <TableCell>{item.createdAt}</TableCell>
+                                    <TableRow key={item.id} className="hover:bg-gray-50">
+                                        <TableCell>{item.levelType}</TableCell>
+                                        <TableCell>{item.levelName}</TableCell>
+                                        <TableCell>{formatDate(item.createdOn)}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
                         </Table>
+                    ) : (
+                        <p>No data found</p>
                     )}
                 </div>
             </div>

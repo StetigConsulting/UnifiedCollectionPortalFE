@@ -4,17 +4,24 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
-import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createNewLevelSchema } from '@/lib/zod';
 import { toast } from 'sonner';
+import { Loader2 } from 'lucide-react';
+
+interface CreateNewLevelPopupProps {
+    fetchData: () => void;
+}
 
 type FormData = z.infer<typeof createNewLevelSchema>;
 
-const CreateNewLevelPopup = () => {
-    const [levelCount, setLevelCount] = useState(1);
+const CreateNewLevelPopup: React.FC<CreateNewLevelPopupProps> = ({ fetchData }) => {
+    const [levelCount, setLevelCount] = useState<number>(1);
+    const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+    const [isSaving, setIsSaving] = useState<boolean>(false);
 
     const {
         register,
@@ -39,6 +46,7 @@ const CreateNewLevelPopup = () => {
             level_type: formData.levelType,
         };
 
+        setIsSaving(true);
         try {
             const response = await fetch(apiUrl, {
                 method: 'POST',
@@ -52,71 +60,82 @@ const CreateNewLevelPopup = () => {
                 throw new Error(`Error: ${response.statusText}`);
             }
 
-            const responseData = await response.json();
-            console.log('Level created successfully:', responseData);
-
+            await response.json();
+            toast.success('Level created successfully');
             setValue('levelName', '');
             setValue('levelType', '');
-            toast.success('Level created successfully');
+            setIsDialogOpen(false);
+            fetchData();
         } catch (error) {
-            // console.error('Failed to create level:', error);
+            console.error('Failed to create level:', error);
             toast.error('Failed to create level. Please try again.');
+        } finally {
+            setIsSaving(false);
         }
     };
 
     return (
-        <Dialog>
-            <DialogTrigger>
+        <>
+            <Button variant="default" onClick={() => setIsDialogOpen(true)}>
                 Create New Level
-            </DialogTrigger>
-            <DialogContent>
-                <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
-                    <DialogHeader>
-                        <DialogTitle>
-                            <div className="flex items-center justify-between">
-                                <span className="text-sm font-medium">Level {levelCount}</span>
-                                <div className="flex space-x-2">
-                                    <Button type="button" variant="outline" onClick={decrementLevel}>
-                                        -
-                                    </Button>
-                                    <Button type="button" variant="outline" onClick={incrementLevel}>
-                                        +
-                                    </Button>
+            </Button>
+            <Dialog open={isDialogOpen} onOpenChange={(isOpen) => !isSaving && setIsDialogOpen(isOpen)}>
+                <DialogContent>
+                    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
+                        <DialogHeader>
+                            <DialogTitle>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-sm font-medium">Level {levelCount}</span>
+                                    <div className="flex space-x-2">
+                                        <Button type="button" variant="outline" onClick={decrementLevel}>
+                                            -
+                                        </Button>
+                                        <Button type="button" variant="outline" onClick={incrementLevel}>
+                                            +
+                                        </Button>
+                                    </div>
                                 </div>
-                            </div>
-                        </DialogTitle>
-                    </DialogHeader>
-                    <CustomizedInputWithLabel
-                        label={`Enter Level ${levelCount} Name`}
-                        placeholder={`Enter Level ${levelCount} Name`}
-                        errors={errors.levelName}
-                        {...register('levelName')}
-                    />
-                    <CustomizedSelectInputWithLabel
-                        label="Level Type"
-                        placeholder="Select Level Type"
-                        errors={errors.levelType}
-                        list={[
-                            { value: 'MAIN', label: 'MAIN' },
-                            { value: 'PSEUDO', label: 'PSEUDO' },
-                        ]}
-                        {...register('levelType')}
-                    />
-                    <DialogFooter>
-                        <div className="flex justify-end space-x-4">
-                            <DialogClose asChild>
-                                <Button variant="outline" type="button">
-                                    Cancel
+                            </DialogTitle>
+                        </DialogHeader>
+                        <CustomizedInputWithLabel
+                            label={`Enter Level ${levelCount} Name`}
+                            placeholder={`Enter Level ${levelCount} Name`}
+                            errors={errors.levelName}
+                            {...register('levelName')}
+                        />
+                        <CustomizedSelectInputWithLabel
+                            label="Level Type"
+                            placeholder="Select Level Type"
+                            errors={errors.levelType}
+                            list={[
+                                { value: 'MAIN', label: 'MAIN' },
+                                { value: 'PSEUDO', label: 'PSEUDO' },
+                            ]}
+                            {...register('levelType')}
+                        />
+                        <DialogFooter>
+                            <div className="flex justify-end space-x-4">
+                                <DialogClose asChild>
+                                    <Button variant="outline" type="button" disabled={isSaving}>
+                                        Cancel
+                                    </Button>
+                                </DialogClose>
+                                <Button type="submit" variant="default" disabled={isSaving}>
+                                    {isSaving ? (
+                                        <>
+                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                            Saving...
+                                        </>
+                                    ) : (
+                                        'Save'
+                                    )}
                                 </Button>
-                            </DialogClose>
-                            <Button type="submit" variant="default">
-                                Save
-                            </Button>
-                        </div>
-                    </DialogFooter>
-                </form>
-            </DialogContent>
-        </Dialog>
+                            </div>
+                        </DialogFooter>
+                    </form>
+                </DialogContent>
+            </Dialog>
+        </>
     );
 };
 
