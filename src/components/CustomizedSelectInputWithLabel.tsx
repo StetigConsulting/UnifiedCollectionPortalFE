@@ -9,7 +9,7 @@ const CustomizedSelectInputWithLabel = ({ label, errors, containerClass = '', li
             <select {...props} id="designation" className="border rounded w-full" style={{ padding: '10px' }}>
                 <option value="">{props.placeholder}</option>
                 {list.map(data => (
-                    <option key={data.id} value={data.designation}>{data.designation}</option>
+                    <option key={data.id ? data.id : data.value} value={data.value}>{data.label}</option>
                 ))}
             </select>
 

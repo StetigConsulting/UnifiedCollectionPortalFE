@@ -2,54 +2,75 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
+import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Upload } from 'lucide-react';
-
-const createNewLevelSchema = z.object({
-    levelName: z.string().nonempty({ message: 'Level name is required' }),
-    file: z
-        .instanceof(File)
-        .refine((file) => file.type === 'text/csv', { message: 'Only CSV files are allowed' })
-        .refine((file) => file.size <= 5 * 1024 * 1024, { message: 'File size must be under 5MB' }),
-});
+import { createNewLevelSchema } from '@/lib/zod';
+import { toast } from 'sonner';
 
 type FormData = z.infer<typeof createNewLevelSchema>;
 
 const CreateNewLevelPopup = () => {
     const [levelCount, setLevelCount] = useState(1);
-    const [fileName, setFileName] = useState(null);
-    const { register, handleSubmit, formState: { errors }, setValue } = useForm<FormData>({
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        setValue,
+    } = useForm<FormData>({
         resolver: zodResolver(createNewLevelSchema),
     });
-
-    const onSubmit = (data: FormData) => {
-        console.log(data);
-    };
-
-    const handleFileChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            setValue('file', file);
-            setFileName(file.name);
-        }
-    };
 
     const incrementLevel = () => setLevelCount((prev) => prev + 1);
     const decrementLevel = () => setLevelCount((prev) => Math.max(prev - 1, 1));
 
+    const handleFormSubmit = async (formData: FormData) => {
+        const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/office-structure-levels/`;
+
+        const payload = {
+            user_id: 6,
+            discom_id: 5667,
+            level: levelCount,
+            level_name: formData.levelName,
+            level_type: formData.levelType,
+        };
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error: ${response.statusText}`);
+            }
+
+            const responseData = await response.json();
+            console.log('Level created successfully:', responseData);
+
+            setValue('levelName', '');
+            setValue('levelType', '');
+            toast.success('Level created successfully');
+        } catch (error) {
+            // console.error('Failed to create level:', error);
+            toast.error('Failed to create level. Please try again.');
+        }
+    };
+
     return (
         <Dialog>
             <DialogTrigger>
-                {/* <Button variant="default" className="text-white"> */}
                 Create New Level
-                {/* </Button> */}
             </DialogTrigger>
             <DialogContent>
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
                     <DialogHeader>
                         <DialogTitle>
                             <div className="flex items-center justify-between">
@@ -65,36 +86,22 @@ const CreateNewLevelPopup = () => {
                             </div>
                         </DialogTitle>
                     </DialogHeader>
-                    <Input
-                        type="text"
-                        placeholder={`Enter Level ${levelCount} name`}
+                    <CustomizedInputWithLabel
+                        label={`Enter Level ${levelCount} Name`}
+                        placeholder={`Enter Level ${levelCount} Name`}
+                        errors={errors.levelName}
                         {...register('levelName')}
-                        className="w-full"
                     />
-                    {errors.levelName && <p className="text-red-500 text-sm">{errors.levelName.message}</p>}
-                    <div className="border border-dashed border-gray-300 rounded-md p-4 text-center">
-                        <input
-                            type="file"
-                            accept=".csv"
-                            id="file-upload"
-                            onChange={handleFileChange}
-                            className="hidden"
-                        />
-                        <label
-                            htmlFor="file-upload"
-                            className="flex flex-col items-center cursor-pointer"
-                        >
-                            <Upload size={24} />
-                            <p className="text-sm text-gray-600">
-                                Drag & drop files or <span className="text-blue-500">Browse</span>
-                            </p>
-                            <p className="text-xs text-gray-400">Only CSV format is supported, size limit 5MB</p>
-                        </label>
-                        {fileName && <p className="text-sm text-green-500 mt-2">{fileName}</p>}
-                    </div>
-                    {errors.file && <p className="text-red-500 text-sm">{errors.file.message}</p>}
-
-
+                    <CustomizedSelectInputWithLabel
+                        label="Level Type"
+                        placeholder="Select Level Type"
+                        errors={errors.levelType}
+                        list={[
+                            { value: 'MAIN', label: 'MAIN' },
+                            { value: 'PSEUDO', label: 'PSEUDO' },
+                        ]}
+                        {...register('levelType')}
+                    />
                     <DialogFooter>
                         <div className="flex justify-end space-x-4">
                             <DialogClose asChild>
