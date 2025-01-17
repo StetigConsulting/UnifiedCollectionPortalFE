@@ -40,7 +40,7 @@ const CreateNewLevelPopup: React.FC<CreateNewLevelPopupProps> = ({ fetchData }) 
 
         const payload = {
             user_id: 6,
-            discom_id: 5667,
+            discom_id: 1766,
             level: levelCount,
             level_name: formData.levelName,
             level_type: formData.levelType,
