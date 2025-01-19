@@ -1,10 +1,10 @@
 import React from 'react'
 
-const CustomizedInputWithLabel = ({ label, errors = null, containerClass = '', ...props }) => {
+const CustomizedInputWithLabel = ({ label, errors = null, required = false, containerClass = '', ...props }) => {
     return (
         <div className={containerClass}>
             <label htmlFor="start-date" className="block text-sm font-medium text-gray-700 mb-1">
-                {label}
+                {label}{required ? <span className="text-red-500">*</span> : ''}
             </label>
             <input
                 type="text"

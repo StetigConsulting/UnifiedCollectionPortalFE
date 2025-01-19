@@ -1,3 +1,5 @@
+import { AgencyDataInterface } from "@/lib/interface";
+
 const getAllPaymentModes = async () => {
   try {
     let response = await fetch(
@@ -33,4 +35,22 @@ const getLevelsDiscomId = async (id: string) => {
   }
 };
 
-export { getAllPaymentModes, getAllNonEnergyTypes, getLevelsDiscomId };
+const createAgency = async (agencyData: AgencyDataInterface) => {
+  try {
+    let response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/agencies/createAgency`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(agencyData),
+      }
+    );
+    return response.json();
+  } catch (e) {
+    throw e;
+  }
+};
+
+export { getAllPaymentModes, getAllNonEnergyTypes, getLevelsDiscomId, createAgency };

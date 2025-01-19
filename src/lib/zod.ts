@@ -24,43 +24,61 @@ export const dashboardSchema = object({
 
 export const addAgencySchema = z.object({
   agencyName: z.string().nonempty("Agency Name is required"),
-  vendorId: z.string().nonempty("Vendor ID is required"),
+  vendorId: z.string().optional(),
   registeredAddress: z.string().nonempty("Registered Address is required"),
   woNumber: z.string().optional(),
-  email: z.string().email("Invalid email address").optional(),
+  email: z
+    .string()
+    .email("Invalid email address")
+    .optional()
+    .or(z.literal("").optional()),
   contactPerson: z.string().nonempty("Contact Person is required"),
   phoneNumber: z
     .string()
-    .regex(/^[0-9]+$/, "Phone Number must contain only digits")
-    .min(10, "Phone Number must be at least 10 digits")
-    .optional(),
+    .regex(/^\d+$/, "Phone Number must contain only digits")
+    .length(10, "Phone Number must be exactly 10 digits")
+    .nonempty("Phone Number is required"),
   maximumLimit: z
-    .number()
-    .positive("Maximum Limit must be a positive number")
+    .string()
+    .nonempty("Maximum Limit is required")
+    .transform((val) => parseFloat(val))
+    .refine((val) => !isNaN(val) && val >= 0, "Maximum Limit must be a positive number or zero")
     .optional(),
   maximumAgent: z
-    .number()
-    .positive("Maximum Agent must be a positive number")
+    .string()
+    .nonempty("Maximum Agent is required")
+    .transform((val) => parseFloat(val))
+    .refine((val) => !isNaN(val) && val >= 0, "Maximum Agent must be a positive number or zero")
     .optional(),
   validityFromDate: z.string().nonempty("Validity From Date is required"),
   validityToDate: z.string().nonempty("Validity To Date is required"),
-  paymentDate: z.string().nonempty("Payment Date is required"),
-  transactionId: z.string().nonempty("Transaction ID is required"),
+  paymentDate: z.string().optional(),
+  transactionId: z.string().optional(),
   initialBalance: z
-    .number()
-    .positive("Initial Balance must be a positive number")
+    .string()
+    .nonempty("Initial Balance is required")
+    .transform((val) => parseFloat(val))
+    .refine((val) => !isNaN(val) && val >= 0, "Initial Balance must be a positive number or zero")
     .optional(),
-  paymentMode: z.string().nonempty("Payment Mode is required"),
+  paymentMode: z.string().optional(),
   paymentRemark: z.string().optional(),
   circle: z.string().nonempty("Circle is required"),
   division: z.string().nonempty("Division is required"),
-  subDivision: z.string().optional(),
+  workingLevel: z.string().nonempty("Working Level is required"),
+  subDivision: z.string().nonempty("Sub Division is required"),
   permission: z
     .array(z.string())
     .nonempty("At least one Permission is required"),
-  collectionType: z.string().nonempty("Collection Type is required"),
-  nonEnergy: z.string().optional(),
+  collectionType: z
+    .array(z.string())
+    .nonempty("At least one Collection Type is required"),
+  nonEnergy: z
+    .array(z.string())
+    .nonempty("At least one Non-energy type is required"),
 });
+
+
+
 
 export const rechargeSchema = z.object({
   agency: z.string().nonempty("Agency is required"),
