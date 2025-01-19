@@ -18,7 +18,7 @@ const OfficeStructurePage = () => {
     const fetchOfficeStructureData = async () => {
         try {
             setLoading(true);
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/office-structure-levels/1766`);
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/office-structure-levels/1000`);
             if (!response.ok) {
                 throw new Error('Failed to fetch office structure data');
             }
