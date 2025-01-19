@@ -1,10 +1,10 @@
 import React from 'react'
 
-const CustomizedSelectInputWithLabel = ({ label, errors, containerClass = '', list, ...props }) => {
+const CustomizedSelectInputWithLabel = ({ label, errors, required = false, containerClass = '', list, ...props }) => {
     return (
         <div className={containerClass}>
             <label htmlFor="start-date" className="block text-sm font-medium text-gray-700 mb-1">
-                {label}
+                {label}{required ? <span className="text-red-500">*</span> : ''}
             </label>
             <select {...props} id="designation" className="border rounded w-full" style={{ padding: '10px' }}>
                 <option value="">{props.placeholder}</option>
