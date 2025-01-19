@@ -68,14 +68,22 @@ export const addAgencySchema = z.object({
   subDivision: z.string().nonempty("Sub Division is required"),
   permission: z
     .array(z.string())
-    .nonempty("At least one Permission is required"),
+    .nonempty("At least one Permission is required")
+    .default(['']),
   collectionType: z
     .array(z.string())
-    .nonempty("At least one Collection Type is required"),
+    .nonempty("At least one Collection Type is required").default(['']),
   nonEnergy: z
-    .array(z.string())
-    .nonempty("At least one Non-energy type is required"),
-});
+    .array(z.string()).optional().default([])
+}).superRefine((data, ctx) => {
+  if (data.collectionType && data.collectionType.includes('Non-Energy') && data.nonEnergy && data.nonEnergy.length === 0) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'At least one Non-energy type is required',
+      path: ['nonEnergy'],
+    })
+  }
+})
 
 
 

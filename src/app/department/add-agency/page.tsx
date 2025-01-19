@@ -284,37 +284,37 @@ const AddAgency = () => {
               type="date"
               {...register("paymentDate")}
             />
-            <CustomizedInputWithLabel
-              label="Transaction ID"
-              errors={errors.transactionId}
-              containerClass=""
-              placeholder="Enter Transaction ID"
-              {...register("transactionId")}
-            />
-            <CustomizedInputWithLabel
-              label="Initial Balance"
-              required={true}
-              errors={errors.initialBalance}
-              containerClass=""
-              placeholder="Enter Initial Balance"
-              {...register("initialBalance")}
-            />
-            <CustomizedSelectInputWithLabel
-              label="Payment Mode"
-              errors={errors.paymentMode}
-              containerClass=""
-              list={paymentModes}
-              placeholder="Select Payment Mode"
-              {...register("paymentMode")}
-            />
-            <CustomizedInputWithLabel
-              label="Payment Remark"
-              errors={errors.paymentRemark}
-              containerClass=""
-              placeholder="Enter Payment Remark"
-              {...register("paymentRemark")}
-            />
           </div>
+          <CustomizedInputWithLabel
+            label="Transaction ID"
+            errors={errors.transactionId}
+            containerClass=""
+            placeholder="Enter Transaction ID"
+            {...register("transactionId")}
+          />
+          <CustomizedInputWithLabel
+            label="Initial Balance"
+            required={true}
+            errors={errors.initialBalance}
+            containerClass=""
+            placeholder="Enter Initial Balance"
+            {...register("initialBalance")}
+          />
+          <CustomizedSelectInputWithLabel
+            label="Payment Mode"
+            errors={errors.paymentMode}
+            containerClass=""
+            list={paymentModes}
+            placeholder="Select Payment Mode"
+            {...register("paymentMode")}
+          />
+          <CustomizedInputWithLabel
+            label="Payment Remark"
+            errors={errors.paymentRemark}
+            containerClass=""
+            placeholder="Enter Payment Remark"
+            {...register("paymentRemark")}
+          />
           <CustomizedSelectInputWithLabel
             label="Circle"
             errors={errors.circle}
@@ -377,15 +377,18 @@ const AddAgency = () => {
             register={register('collectionType')}
           />
 
-          <CustomizedCheckboxGroupWithLabel
-            label="Non Energy"
-            options={nonEnergyTypes}
-            required={true}
-            errors={errors.nonEnergy}
-            register={register('nonEnergy')}
-          />
-
-
+          {(formData?.collectionType &&
+            formData?.collectionType?.includes("Non-Energy")) ?
+            (
+              <CustomizedCheckboxGroupWithLabel
+                label="Non Energy"
+                containerClass="col-span-2"
+                options={nonEnergyTypes}
+                required={true}
+                errors={errors.nonEnergy}
+                register={register("nonEnergy")}
+              />
+            ) : <></>}
         </div>
         <div className="flex justify-end mt-4">
           <Button type="submit" variant="default" disabled={isSubmitting}>
