@@ -35,6 +35,17 @@ const getLevelsDiscomId = async (id: string) => {
   }
 };
 
+const getLevels = async (id: string) => {
+  try {
+    let response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/office-structure-levels/${id}`
+    );
+    return response.json();
+  } catch (e) {
+    throw e;
+  }
+};
+
 const createAgency = async (agencyData: AgencyDataInterface) => {
   try {
     let response = await fetch(
@@ -53,4 +64,10 @@ const createAgency = async (agencyData: AgencyDataInterface) => {
   }
 };
 
-export { getAllPaymentModes, getAllNonEnergyTypes, getLevelsDiscomId, createAgency };
+export {
+  getAllPaymentModes,
+  getAllNonEnergyTypes,
+  getLevelsDiscomId,
+  createAgency,
+  getLevels,
+};

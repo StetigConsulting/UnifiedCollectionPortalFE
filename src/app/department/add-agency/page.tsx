@@ -4,6 +4,7 @@ import {
   createAgency,
   getAllNonEnergyTypes,
   getAllPaymentModes,
+  getLevels,
   getLevelsDiscomId,
 } from "@/app/api-calls/department/api";
 import AuthUserReusableCode from "@/components/AuthUserReusableCode";
@@ -70,12 +71,12 @@ const AddAgency = () => {
     } finally {
       setIsSubmitting(false);
     }
-
   };
 
   const [paymentModes, setPaymentMethods] = useState([]);
   const [nonEnergyTypes, setNonEnergyTypes] = useState([]);
   const [circles, setCircles] = useState([]);
+  const [workingLevel, setWorkingLevel] = useState([]);
   const [permissions, setPermissions] = useState([]);
   const [divisions, setDivisions] = useState([]);
   const [subDivisions, setSubDivisions] = useState([]);
@@ -140,7 +141,7 @@ const AddAgency = () => {
             })
         );
       })
-      .catch((err) => { });
+      .catch((err) => {});
     getAllNonEnergyTypes().then((data) => {
       setNonEnergyTypes(
         data?.data?.map((ite) => {
@@ -159,6 +160,19 @@ const AddAgency = () => {
             label: ite.office_description,
           };
         })
+      );
+    });
+
+    getLevels("1001").then((data) => {
+      setWorkingLevel(
+        data?.data
+          ?.filter((ite) => ite.levelType == "MAIN")
+          ?.map((ite) => {
+            return {
+              value: ite.id,
+              label: ite.levelName,
+            };
+          })
       );
     });
   }, []);
@@ -252,7 +266,7 @@ const AddAgency = () => {
             label="Maximum Agent"
             errors={errors.maximumAgent}
             containerClass=""
-            type='number'
+            type="number"
             required={true}
             placeholder="Enter Maximum Agent"
             {...register("maximumAgent")}
@@ -339,7 +353,7 @@ const AddAgency = () => {
             containerClass=""
             required={true}
             placeholder="Select Working level"
-            list={divisions}
+            list={workingLevel}
             {...register("workingLevel")}
           />
           <CustomizedInputWithLabel
@@ -363,32 +377,33 @@ const AddAgency = () => {
             options={permissions}
             required={true}
             errors={errors.permission}
-            register={register('permission')}
+            register={register("permission")}
           />
 
           <CustomizedCheckboxGroupWithLabel
             label="Collection Type"
             options={[
-              { label: 'Energy', value: 'Energy' },
-              { label: 'Non-Energy', value: 'Non-Energy' },
+              { label: "Energy", value: "Energy" },
+              { label: "Non-Energy", value: "Non-Energy" },
             ]}
             required={true}
             errors={errors.collectionType}
-            register={register('collectionType')}
+            register={register("collectionType")}
           />
 
-          {(formData?.collectionType &&
-            formData?.collectionType?.includes("Non-Energy")) ?
-            (
-              <CustomizedCheckboxGroupWithLabel
-                label="Non Energy"
-                containerClass="col-span-2"
-                options={nonEnergyTypes}
-                required={true}
-                errors={errors.nonEnergy}
-                register={register("nonEnergy")}
-              />
-            ) : <></>}
+          {formData?.collectionType &&
+          formData?.collectionType?.includes("Non-Energy") ? (
+            <CustomizedCheckboxGroupWithLabel
+              label="Non Energy"
+              containerClass="col-span-2"
+              options={nonEnergyTypes}
+              required={true}
+              errors={errors.nonEnergy}
+              register={register("nonEnergy")}
+            />
+          ) : (
+            <></>
+          )}
         </div>
         <div className="flex justify-end mt-4">
           <Button type="submit" variant="default" disabled={isSubmitting}>
