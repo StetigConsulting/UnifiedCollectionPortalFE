@@ -31,6 +31,7 @@ const CreateNewLevelUploadPopup: React.FC<CreateNewLevelUploadPopupProps> = ({ f
     });
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        console.log(event.target)
         const file = event.target.files?.[0];
         if (file) {
             setValue('file', file);
@@ -39,6 +40,7 @@ const CreateNewLevelUploadPopup: React.FC<CreateNewLevelUploadPopupProps> = ({ f
     };
 
     const handleFormSubmit = async (data: FormData) => {
+
         const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/office-structures/import`;
 
         const formData = new FormData();
@@ -82,9 +84,8 @@ const CreateNewLevelUploadPopup: React.FC<CreateNewLevelUploadPopupProps> = ({ f
                                 type="file"
                                 accept=".csv"
                                 id="file-upload"
-                                onChange={handleFileChange}
                                 className="hidden"
-                                {...register('file')}
+                                onChange={handleFileChange}
                             />
                             <label htmlFor="file-upload" className="flex flex-col items-center cursor-pointer">
                                 <Upload size={24} />
