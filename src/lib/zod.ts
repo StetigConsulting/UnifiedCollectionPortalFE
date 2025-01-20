@@ -63,9 +63,9 @@ export const addAgencySchema = z.object({
   paymentMode: z.string().optional(),
   paymentRemark: z.string().optional(),
   workingLevel: z.string().nonempty("Working Level is required"),
-  circle: z.array(z.string()).nonempty("Circle is required"),
-  division: z.array(z.string()).optional(),
-  subDivision: z.array(z.string()).optional(),
+  circle: z.array(z.number()).nonempty("Circle is required"),
+  division: z.array(z.number()).optional(),
+  subDivision: z.array(z.number()).optional(),
   section: z.array(z.string()).optional(),
   permission: z
     .array(z.string())
@@ -75,7 +75,7 @@ export const addAgencySchema = z.object({
     .array(z.string())
     .nonempty("At least one Collection Type is required").default(['']),
   nonEnergy: z
-    .array(z.string()).optional().default([])
+    .array(z.string()).optional().default([''])
 }).superRefine((data, ctx) => {
   if (data.collectionType && data.collectionType.includes('Non-Energy') && data.nonEnergy && data.nonEnergy.length === 0) {
     ctx.addIssue({

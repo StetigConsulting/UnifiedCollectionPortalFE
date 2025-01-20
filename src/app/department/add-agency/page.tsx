@@ -34,9 +34,12 @@ const AddAgency = () => {
     resolver: zodResolver(addAgencySchema),
   });
 
+  console.log("Errors:", errors);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const onSubmit = async (data: FormData) => {
+    console.log("Form Data:", data);
     const agencyData: AgencyDataInterface = {
       user_id: 6,
       discom_id: 1766,
