@@ -4,11 +4,13 @@ import {
   createAgency,
   getAllNonEnergyTypes,
   getAllPaymentModes,
+  getLevels,
   getLevelsDiscomId,
 } from "@/app/api-calls/department/api";
 import AuthUserReusableCode from "@/components/AuthUserReusableCode";
 import CustomizedCheckboxGroupWithLabel from "@/components/CustomizedCheckboxGroupWithLabel";
 import CustomizedInputWithLabel from "@/components/CustomizedInputWithLabel";
+import CustomizedMultipleSelectInputWithLabel from "@/components/CustomizedMultipleSelectInputWithLabel";
 import CustomizedSelectInputWithLabel from "@/components/CustomizedSelectInputWithLabel";
 import { Button } from "@/components/ui/button";
 import { AgencyDataInterface } from "@/lib/interface";
@@ -26,6 +28,7 @@ const AddAgency = () => {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
     watch,
   } = useForm<FormData>({
     resolver: zodResolver(addAgencySchema),
@@ -35,29 +38,39 @@ const AddAgency = () => {
 
   const onSubmit = async (data: FormData) => {
     const agencyData: AgencyDataInterface = {
-      discomId: 12345,
-      agencyName: data.agencyName,
-      agencyAddress: data.registeredAddress,
-      workOrderNumber: data.woNumber || "",
-      emailId: data.email || "",
-      contactPerson: data.contactPerson,
-      maximumAmount: data.maximumLimit || 0,
+      user_id: 6,
+      discom_id: 1766,
+      agency_name: data.agencyName,
+      agency_address: data.registeredAddress,
+      wo_number: data.woNumber || "",
+      email_id: data.email || "",
+      contact_person: data.contactPerson,
       phone: data.phoneNumber || "",
-      maxAgent: data.maximumAgent || 0,
-      startDate: data.validityFromDate,
-      endDate: data.validityToDate,
-      recordStatus: "ACTIVE",
-      currentBalance: data.initialBalance || 0,
-      validity: data.validityToDate,
-      circleCode: data.circle,
-      divCode: data.division,
-      permissionPaymentMethodId: data.permission.join(","), // Assuming permissions are an array
-      sStatus: "ACTIVE",
-      energy: data.collectionType.includes("Energy") ? "Energy info" : null,
-      nonEnergyId: "",
-      agencyType: "Type1",
-      vendorId: data.vendorId || "",
-      workLevel: data.workingLevel || "",
+      maximum_limit: data.maximumLimit || 0,
+      max_agent: data.maximumAgent || 0,
+      validity_from_date: data.validityFromDate,
+      validity_to_date: data.validityToDate,
+      payment_date: data.paymentDate || "",
+      transaction_id: data.transactionId || "",
+      security_deposit_payment_mode: Number(data.paymentMode) || undefined,
+      payment_remarks: data.paymentRemark || "",
+      collection_payment_modes: data.permission.map(Number),
+      working_level: Number(data.workingLevel),
+      vendor_id: data.vendorId || "",
+      collection_type_energy: data.collectionType.includes("Energy"),
+      collection_type_non_energy: data.collectionType.includes("Non-Energy"),
+      is_active: true,
+      non_energy_types: data.collectionType.includes("Non-Energy")
+        ? data.nonEnergy.map(Number)
+        : undefined,
+      working_level_offices: [parseInt(data.workingLevel)],
+      collector_types: data.workingLevel === "25"
+        ? data.circle.map(Number)
+        : data.workingLevel === "24"
+          ? data.division.map(Number)
+          : data.workingLevel === "23"
+            ? data.subDivision.map(Number)
+            : data.section.map(Number),
     };
 
     try {
@@ -66,16 +79,18 @@ const AddAgency = () => {
       toast.success("Agency created successfully");
       console.log("API Response:", response);
     } catch (error) {
+      console.error("Failed to create agency:", error);
       toast.error("Failed to create agency. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
-
   };
+
 
   const [paymentModes, setPaymentMethods] = useState([]);
   const [nonEnergyTypes, setNonEnergyTypes] = useState([]);
   const [circles, setCircles] = useState([]);
+  const [workingLevel, setWorkingLevel] = useState([]);
   const [permissions, setPermissions] = useState([]);
   const [divisions, setDivisions] = useState([]);
   const [subDivisions, setSubDivisions] = useState([]);
@@ -100,15 +115,15 @@ const AddAgency = () => {
         console.log("Changes detected:", changes);
         if (Object.keys(changes).includes("circle")) {
           let newValue = changes["circle"];
-          if (newValue?.new) {
+          if (newValue?.new && formData.workingLevel !== '25') {
             getDivisions(newValue?.new);
           }
         }
 
         if (Object.keys(changes).includes("division")) {
           let newValue = changes["division"];
-          if (newValue?.new) {
-            getSubDivisions(newValue?.new);
+          if (newValue?.new && formData.workingLevel === '23') {
+            getSubDivisions(newValue?.new[0]);
           }
         }
       }
@@ -159,6 +174,19 @@ const AddAgency = () => {
             label: ite.office_description,
           };
         })
+      );
+    });
+
+    getLevels("1001").then((data) => {
+      setWorkingLevel(
+        data?.data
+          ?.filter((ite) => ite.levelType == "MAIN")
+          ?.map((ite) => {
+            return {
+              value: ite.id,
+              label: ite.levelName,
+            };
+          })
       );
     });
   }, []);
@@ -252,7 +280,7 @@ const AddAgency = () => {
             label="Maximum Agent"
             errors={errors.maximumAgent}
             containerClass=""
-            type='number'
+            type="number"
             required={true}
             placeholder="Enter Maximum Agent"
             {...register("maximumAgent")}
@@ -316,32 +344,66 @@ const AddAgency = () => {
             {...register("paymentRemark")}
           />
           <CustomizedSelectInputWithLabel
-            label="Circle"
-            errors={errors.circle}
-            required={true}
-            containerClass=""
-            placeholder="Select Circle Type"
-            list={circles}
-            {...register("circle")}
-          />
-          <CustomizedSelectInputWithLabel
-            label="Division"
-            errors={errors.division}
-            containerClass=""
-            required={true}
-            placeholder="Select Division"
-            list={divisions}
-            {...register("division")}
-          />
-          <CustomizedSelectInputWithLabel
             label="Working Level"
             errors={errors.workingLevel}
             containerClass=""
             required={true}
             placeholder="Select Working level"
-            list={divisions}
+            list={workingLevel}
             {...register("workingLevel")}
           />
+          {formData.workingLevel &&
+            <CustomizedMultipleSelectInputWithLabel
+              label="Circle"
+              errors={errors.circle}
+              required={true}
+              list={circles}
+              placeholder="Select Circle Type"
+              value={watch('circle') || []}
+              onChange={(selectedValues) => setValue('circle', selectedValues)}
+              multi={formData.workingLevel == '25'}
+            />
+          }
+          {formData.workingLevel && formData.workingLevel != '25' && (
+            <CustomizedMultipleSelectInputWithLabel
+              label="Division"
+              required={true}
+              list={divisions}
+              value={watch('division') || []}
+              onChange={(selectedValues) => setValue('division', selectedValues)}
+              multi={formData.workingLevel == '24'}
+              errors={errors.division}
+            />
+          )}
+          {
+            formData.workingLevel && (formData.workingLevel == '23'
+              || formData.workingLevel == '22') && (
+              <CustomizedMultipleSelectInputWithLabel
+                label="Sub Division"
+                errors={errors.subDivision}
+                placeholder="Select Sub Division"
+                list={subDivisions}
+                required={true}
+                value={watch('subDivision') || []}
+                multi={formData.workingLevel == '23'}
+                onChange={(selectedValues) => setValue('subDivision', selectedValues)}
+              />
+            )
+          }
+          {
+            formData.workingLevel && formData.workingLevel == '22' && (
+              <CustomizedMultipleSelectInputWithLabel
+                label="Section"
+                errors={errors.section}
+                placeholder="Select Section"
+                list={subDivisions}
+                required={true}
+                value={watch('section') || []}
+                multi={formData.workingLevel == '22'}
+                onChange={(selectedValues) => setValue('section', selectedValues)}
+              />
+            )
+          }
           <CustomizedInputWithLabel
             label="VendorID"
             errors={errors.vendorId}
@@ -349,46 +411,38 @@ const AddAgency = () => {
             placeholder="Enter vendor ID"
             {...register("vendorId")}
           />
-          <CustomizedSelectInputWithLabel
-            label="Sub Division"
-            errors={errors.subDivision}
-            containerClass="col-span-2"
-            placeholder="Select Sub Division"
-            list={subDivisions}
-            required={true}
-            {...register("subDivision")}
-          />
           <CustomizedCheckboxGroupWithLabel
             label="Permissions"
             options={permissions}
             required={true}
             errors={errors.permission}
-            register={register('permission')}
+            register={register("permission")}
           />
 
           <CustomizedCheckboxGroupWithLabel
             label="Collection Type"
             options={[
-              { label: 'Energy', value: 'Energy' },
-              { label: 'Non-Energy', value: 'Non-Energy' },
+              { label: "Energy", value: "Energy" },
+              { label: "Non-Energy", value: "Non-Energy" },
             ]}
             required={true}
             errors={errors.collectionType}
-            register={register('collectionType')}
+            register={register("collectionType")}
           />
 
-          {(formData?.collectionType &&
-            formData?.collectionType?.includes("Non-Energy")) ?
-            (
-              <CustomizedCheckboxGroupWithLabel
-                label="Non Energy"
-                containerClass="col-span-2"
-                options={nonEnergyTypes}
-                required={true}
-                errors={errors.nonEnergy}
-                register={register("nonEnergy")}
-              />
-            ) : <></>}
+          {formData?.collectionType &&
+            formData?.collectionType?.includes("Non-Energy") ? (
+            <CustomizedCheckboxGroupWithLabel
+              label="Non Energy"
+              containerClass="col-span-2"
+              options={nonEnergyTypes}
+              required={true}
+              errors={errors.nonEnergy}
+              register={register("nonEnergy")}
+            />
+          ) : (
+            <></>
+          )}
         </div>
         <div className="flex justify-end mt-4">
           <Button type="submit" variant="default" disabled={isSubmitting}>
