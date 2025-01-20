@@ -49,7 +49,7 @@ const getLevels = async (id: string) => {
 const createAgency = async (agencyData: AgencyDataInterface) => {
   try {
     let response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/agencies/createAgency`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/agencies/`,
       {
         method: "POST",
         headers: {

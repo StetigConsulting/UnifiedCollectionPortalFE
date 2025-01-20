@@ -33,7 +33,9 @@ const CustomBreadcrumb: React.FC<CustomBreadcrumbProps> = ({ pageTitle, children
                     <header className="mb-6">
                         <h1 className="text-2xl font-bold">{pageTitle}</h1>
                     </header>
-                    {children}
+                    <div style={{ backgroundColor: '#80808021', padding: '15px' }}>
+                        {children}
+                    </div>
                 </main>
             </div>
         </>
