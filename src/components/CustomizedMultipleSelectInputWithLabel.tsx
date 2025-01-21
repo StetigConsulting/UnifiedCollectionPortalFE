@@ -1,20 +1,20 @@
 import React, { useState, useEffect, useRef } from "react";
 
 interface Option {
-    value: any;
+    value: number;
     label: string;
 }
 
 interface SelectProps {
     label: string;
     list: Option[];
-    value?: any[];
+    value?: number[];
     placeholder?: string;
     required?: boolean;
     multi?: boolean;
     containerClass?: string;
     errors?: { message?: string };
-    onChange: (selectedValue: any[]) => void;
+    onChange: (selectedValue: number[]) => void;
 }
 
 const CustomizedMultipleSelectInputWithLabel: React.FC<SelectProps> = ({
@@ -29,13 +29,13 @@ const CustomizedMultipleSelectInputWithLabel: React.FC<SelectProps> = ({
     onChange,
 }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const [selectedValues, setSelectedValues] = useState<any[]>(value);
+    const [selectedValues, setSelectedValues] = useState<number[]>(value);
 
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     const toggleDropdown = () => setIsOpen((prev) => !prev);
 
-    const handleOptionClick = (optionValue: any) => {
+    const handleOptionClick = (optionValue: number) => {
         if (multi) {
             const newSelectedValues = selectedValues.includes(optionValue)
                 ? selectedValues.filter((v) => v !== optionValue)

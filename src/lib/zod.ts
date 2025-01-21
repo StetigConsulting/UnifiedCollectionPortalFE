@@ -63,7 +63,7 @@ export const addAgencySchema = z.object({
   paymentMode: z.string().optional(),
   paymentRemark: z.string().optional(),
   workingLevel: z.string().nonempty("Working Level is required"),
-  circle: z.array(z.number()).nonempty("Circle is required"),
+  circle: z.array(z.number()).optional(),
   division: z.array(z.number()).optional(),
   subDivision: z.array(z.number()).optional(),
   section: z.array(z.number()).optional(),
