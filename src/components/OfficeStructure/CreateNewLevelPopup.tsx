@@ -11,6 +11,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { createNewLevelSchema } from '@/lib/zod';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
+import { testDiscom } from '@/lib/utils';
 
 interface CreateNewLevelPopupProps {
     fetchData: () => void;
@@ -40,7 +41,7 @@ const CreateNewLevelPopup: React.FC<CreateNewLevelPopupProps> = ({ fetchData }) 
 
         const payload = {
             user_id: 6,
-            discom_id: 1000,
+            discom_id: testDiscom,
             level: levelCount,
             level_name: formData.levelName,
             level_type: formData.levelType,

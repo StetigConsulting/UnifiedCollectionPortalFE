@@ -1,9 +1,8 @@
-import { AgencyDataInterface } from "@/lib/interface";
+import { AgencyDataInterface, editAgencyInterface, rechargeAgencyInterface } from "@/lib/interface";
 import axios from 'axios';
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL_V2,
-  timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -65,10 +64,43 @@ const createAgency = async (agencyData: AgencyDataInterface) => {
   }
 };
 
+const getAgenciesWithDiscom = async (Id: string) => {
+  try {
+    const response = await api.get(`/agencies/discom/${Id}`);
+    return response.data;
+  } catch (error: any) {
+    console.log(error);
+    throw error?.response?.data
+  }
+};
+
+const rechargeAgency = async (agencyData: rechargeAgencyInterface) => {
+  try {
+    const response = await api.put('/agencies/recharge-wallet', agencyData);
+    return response.data;
+  } catch (error: any) {
+    console.log(error);
+    throw error?.response?.data
+  }
+};
+
+const editAgency = async (agencyData: editAgencyInterface) => {
+  try {
+    const response = await api.put('/agencies/', agencyData);
+    return response.data;
+  } catch (error: any) {
+    console.log(error);
+    throw error?.response?.data
+  }
+};
+
 export {
   getAllPaymentModes,
   getAllNonEnergyTypes,
   getLevelsDiscomId,
   createAgency,
   getLevels,
+  getAgenciesWithDiscom,
+  rechargeAgency,
+  editAgency
 };

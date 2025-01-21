@@ -15,7 +15,7 @@ import CustomizedMultipleSelectInputWithLabelString from "@/components/Customize
 import CustomizedSelectInputWithLabel from "@/components/CustomizedSelectInputWithLabel";
 import { Button } from "@/components/ui/button";
 import { AgencyDataInterface } from "@/lib/interface";
-import { levelWIthId } from "@/lib/utils";
+import { levelWIthId, testDiscom } from "@/lib/utils";
 import { addAgencySchema } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect, useRef, useState } from "react";
@@ -44,7 +44,7 @@ const AddAgency = () => {
     console.log("Form Data:", data);
     const agencyData: AgencyDataInterface = {
       user_id: 6,
-      discom_id: 1766,
+      discom_id: Number(testDiscom),
       agency_name: data.agencyName,
       agency_address: data.registeredAddress,
       wo_number: data.woNumber || "",
@@ -69,13 +69,13 @@ const AddAgency = () => {
         ? data.nonEnergy.map(Number)
         : undefined,
       working_level_offices: [parseInt(data.workingLevel)],
-      collector_types: data.workingLevel === "25"
+      collector_types: data.workingLevel === levelWIthId.CIRCLE
         ? data.circle.map(Number)
-        : data.workingLevel === "24"
+        : data.workingLevel === levelWIthId.DIVISION
           ? data.division.map(Number)
-          : data.workingLevel === "23"
+          : data.workingLevel === levelWIthId.SUB_DIVISION
             ? data.subDivision.map(Number)
-            : data.section.map(Number),
+            : data.workingLevel === levelWIthId.SECTION ? data.section.map(Number) : [],
     };
 
     try {
@@ -83,6 +83,7 @@ const AddAgency = () => {
       const response = await createAgency(agencyData);
       toast.success("Agency created successfully");
       console.log("API Response:", response);
+      location.reload();
     } catch (error) {
       console.error("Failed to create agency:", error.data[Object.keys(error.data)[0]]);
       let errorMessage = error.data[Object.keys(error.data)[0]]
