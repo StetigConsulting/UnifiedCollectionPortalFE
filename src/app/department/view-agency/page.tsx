@@ -1,10 +1,12 @@
 'use client';
 
+import { getAgenciesWithDiscom } from '@/app/api-calls/department/api';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import React, { useState } from 'react';
+import { testDiscom } from '@/lib/utils';
+import React, { useEffect, useState } from 'react';
 
 const mockData = [
     {
@@ -28,6 +30,35 @@ const ViewAgency = () => {
     const filteredData = mockData.filter((item) =>
         item.agencyName.toLowerCase().includes(search.toLowerCase())
     );
+
+    const [agencyList, setAgencyList] = useState([])
+
+    const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        getAgencyList()
+    }, [])
+
+    const getAgencyList = async () => {
+        setIsLoading(true);
+        try {
+            const response = await getAgenciesWithDiscom(testDiscom);
+            console.log("API Response:", response);
+            setAgencyList(
+                response?.data?.map((item) => ({
+                    ...item,
+                    label: item.agency_name,
+                    value: item.id,
+                }))
+            );
+
+        } catch (error) {
+            console.error("Failed to create agency:", error.data[Object.keys(error.data)[0]]);
+        } finally {
+            setIsLoading(false);
+        }
+
+    }
 
     return (
         <AuthUserReusableCode pageTitle="View Agency">

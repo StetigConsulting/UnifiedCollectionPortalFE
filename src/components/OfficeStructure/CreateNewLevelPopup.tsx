@@ -11,6 +11,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { createNewLevelSchema } from '@/lib/zod';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
+import { testDiscom } from '@/lib/utils';
 
 interface CreateNewLevelPopupProps {
     fetchData: () => void;
@@ -40,7 +41,7 @@ const CreateNewLevelPopup: React.FC<CreateNewLevelPopupProps> = ({ fetchData }) 
 
         const payload = {
             user_id: 6,
-            discom_id: 1000,
+            discom_id: testDiscom,
             level: levelCount,
             level_name: formData.levelName,
             level_type: formData.levelType,
@@ -57,7 +58,11 @@ const CreateNewLevelPopup: React.FC<CreateNewLevelPopupProps> = ({ fetchData }) 
             });
 
             if (!response.ok) {
-                throw new Error(`Error: ${response.statusText}`);
+                const errorData = await response.json();
+                console.log(errorData);
+                const errorMessage =
+                    errorData?.error || errorData?.message || 'Failed to create level.';
+                throw new Error(errorMessage);
             }
 
             await response.json();
@@ -68,7 +73,7 @@ const CreateNewLevelPopup: React.FC<CreateNewLevelPopupProps> = ({ fetchData }) 
             fetchData();
         } catch (error) {
             console.error('Failed to create level:', error);
-            toast.error('Failed to create level. Please try again.');
+            toast.error('Failed to create level.' + error);
         } finally {
             setIsSaving(false);
         }

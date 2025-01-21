@@ -68,14 +68,19 @@ export const addAgencySchema = z.object({
   subDivision: z.array(z.number()).optional(),
   section: z.array(z.number()).optional(),
   permission: z
-    .array(z.string())
-    .nonempty("At least one Permission is required")
-    .default(['']),
+    .array(z.number())
+    .refine(
+      (permissions) => permissions.length > 0,
+      "At least one Permission is required"
+    ),
   collectionType: z
     .array(z.string())
-    .nonempty("At least one Collection Type is required").default(['']),
+    .refine(
+      (collectionType) => collectionType.length > 0,
+      "At least one Collection Type is required"
+    ),
   nonEnergy: z
-    .array(z.string()).optional().default([''])
+    .array(z.number()).optional().default([])
 }).superRefine((data, ctx) => {
   if (data.collectionType && data.collectionType.includes('Non-Energy') && data.nonEnergy && data.nonEnergy.length === 0) {
     ctx.addIssue({
@@ -87,39 +92,43 @@ export const addAgencySchema = z.object({
 })
 
 
-
-
 export const rechargeSchema = z.object({
   agency: z.string().nonempty("Agency is required"),
+  agencyName: z.string().optional(),
+  agencyId: z.number().optional(),
+  phoneNumber: z
+    .string()
+    .optional(),
   transactionType: z.string().optional(),
   amount: z
-    .string()
-    .nonempty("Amount is required")
-    .refine((value) => !isNaN(parseFloat(value)) && parseFloat(value) > 0, {
-      message: "Amount must be a positive number",
-    }),
-  currentBalance: z.string().optional(),
-  remark: z.string().optional(),
+    .number({
+      required_error: "Amount is required",
+      invalid_type_error: "Amount must be a number",
+    })
+    .positive("Amount must be greater than 0"),
+  currentBalance: z.number().optional(),
+  remark: z.string().max(255, "Remark must be less than 255 characters").optional(),
 });
 
 export const editAgencySchema = z.object({
-  circle: z.string().nonempty("Circle type is required"),
-  division: z.string().nonempty("Division is required"),
+  agency: z.string().nonempty("Agency is required"),
   agencyName: z.string().nonempty("Agency name is required"),
-  agencyId: z.string().nonempty("Agency ID is required"),
-  newAgencyName: z.string().nonempty("New agency name is required"),
+  agencyId: z.number({
+    required_error: "Agency ID is required",
+    invalid_type_error: "Agency ID must be a number",
+  }),
   maximumAmount: z
-    .string()
-    .nonempty("Maximum amount is required")
-    .refine((value) => !isNaN(parseFloat(value)) && parseFloat(value) > 0, {
-      message: "Maximum amount must be a positive number",
-    }),
+    .number({
+      required_error: "Maximum amount is required",
+      invalid_type_error: "Maximum amount must be a number",
+    })
+    .positive("Maximum amount must be a positive number"),
   maximumAgent: z
-    .string()
-    .nonempty("Maximum agent is required")
-    .refine((value) => !isNaN(parseFloat(value)) && parseFloat(value) > 0, {
-      message: "Maximum agent must be a positive number",
-    }),
+    .number({
+      required_error: "Maximum agent is required",
+      invalid_type_error: "Maximum agent must be a number",
+    })
+    .positive("Maximum agent must be a positive number"),
   address: z.string().nonempty("Address is required"),
   woNumber: z.string().optional(),
   contactPerson: z.string().nonempty("Contact person is required"),

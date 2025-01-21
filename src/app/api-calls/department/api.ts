@@ -1,4 +1,12 @@
-import { AgencyDataInterface } from "@/lib/interface";
+import { AgencyDataInterface, editAgencyInterface, rechargeAgencyInterface } from "@/lib/interface";
+import axios from 'axios';
+
+const api = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL_V2,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
 const getAllPaymentModes = async () => {
   try {
@@ -48,19 +56,41 @@ const getLevels = async (id: string) => {
 
 const createAgency = async (agencyData: AgencyDataInterface) => {
   try {
-    let response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/agencies/`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(agencyData),
-      }
-    );
-    return response.json();
-  } catch (e) {
-    throw e;
+    const response = await api.post('/agencies/', agencyData);
+    return response.data;
+  } catch (error: any) {
+    console.log(error);
+    throw error?.response?.data
+  }
+};
+
+const getAgenciesWithDiscom = async (Id: string) => {
+  try {
+    const response = await api.get(`/agencies/discom/${Id}`);
+    return response.data;
+  } catch (error: any) {
+    console.log(error);
+    throw error?.response?.data
+  }
+};
+
+const rechargeAgency = async (agencyData: rechargeAgencyInterface) => {
+  try {
+    const response = await api.put('/agencies/recharge-wallet', agencyData);
+    return response.data;
+  } catch (error: any) {
+    console.log(error);
+    throw error?.response?.data
+  }
+};
+
+const editAgency = async (agencyData: editAgencyInterface) => {
+  try {
+    const response = await api.put('/agencies/', agencyData);
+    return response.data;
+  } catch (error: any) {
+    console.log(error);
+    throw error?.response?.data
   }
 };
 
@@ -70,4 +100,7 @@ export {
   getLevelsDiscomId,
   createAgency,
   getLevels,
+  getAgenciesWithDiscom,
+  rechargeAgency,
+  editAgency
 };

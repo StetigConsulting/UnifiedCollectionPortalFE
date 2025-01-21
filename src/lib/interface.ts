@@ -25,3 +25,20 @@ export interface AgencyDataInterface {
     working_level_offices: number[];
     collector_types?: number[];
 }
+
+export interface rechargeAgencyInterface {
+    id: number,
+    recharge_amount: number,
+    remarks: string
+}
+
+export interface editAgencyInterface {
+    id: number;
+    user_id: number;
+    agency_name: string;
+    agency_address: string;
+    wo_number: string;
+    phone: string;
+    maximum_limit: number;
+    max_agent: number;
+}

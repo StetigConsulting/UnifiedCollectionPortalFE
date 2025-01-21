@@ -28,3 +28,58 @@ export const formatDate = (dateString: string): string => {
   };
   return new Date(dateString).toLocaleString('en-US', options);
 };
+
+export const levelWIthId = {
+  "CIRCLE": '25',
+  "DIVISION": '24',
+  "SUB_DIVISION": '23',
+  "SECTION": '22',
+  "BINDER": '21',
+  "MRU": '20',
+  "Pratik Test": '50'
+}
+
+export const testDiscom = '1001';
+
+export function numberToWords(num: number): string {
+  if (num === 0) return "zero";
+
+  const belowTwenty = [
+    "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",
+    "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen",
+  ];
+  const tens = [
+    "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety",
+  ];
+  const thousands = ["", "thousand", "million", "billion"];
+
+  const convertToWords = (n: number): string => {
+    if (n === 0) return "";
+    if (n < 20) return belowTwenty[n - 1];
+    if (n < 100) {
+      return tens[Math.floor(n / 10) - 2] + (n % 10 === 0 ? "" : " " + belowTwenty[n % 10 - 1]);
+    }
+    if (n < 1000) {
+      return (
+        belowTwenty[Math.floor(n / 100) - 1] +
+        " hundred" +
+        (n % 100 === 0 ? "" : " and " + convertToWords(n % 100))
+      );
+    }
+    return "";
+  };
+
+  let result = "";
+  let i = 0;
+
+  while (num > 0) {
+    const chunk = num % 1000;
+    if (chunk > 0) {
+      result = convertToWords(chunk) + (thousands[i] ? " " + thousands[i] : "") + (result ? " " + result : "");
+    }
+    num = Math.floor(num / 1000);
+    i++;
+  }
+
+  return result.trim();
+}
