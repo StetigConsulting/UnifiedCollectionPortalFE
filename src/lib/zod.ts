@@ -66,7 +66,7 @@ export const addAgencySchema = z.object({
   circle: z.array(z.number()).nonempty("Circle is required"),
   division: z.array(z.number()).optional(),
   subDivision: z.array(z.number()).optional(),
-  section: z.array(z.string()).optional(),
+  section: z.array(z.number()).optional(),
   permission: z
     .array(z.string())
     .nonempty("At least one Permission is required")
