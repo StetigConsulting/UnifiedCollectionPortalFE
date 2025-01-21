@@ -14,10 +14,13 @@ interface OTPPopupProps {
     setIsOpen: (isOpen: boolean) => void;
     setIsValidatingNumberScreen: (isValidating: boolean) => void;
     formData: string;
+    resendTimer: number;
+    setResendTimer: (resendTimer: number) => void;
+    sendOTP: () => Promise<void>;
 }
 
-const OTPPopup: React.FC<OTPPopupProps> = ({ isOpen, setIsOpen, setIsValidatingNumberScreen, formData }) => {
-    const [resendTimer, setResendTimer] = useState(0);
+const OTPPopup: React.FC<OTPPopupProps> = ({ sendOTP, setResendTimer, isOpen, setIsOpen, setIsValidatingNumberScreen, formData, resendTimer }) => {
+
     const [resendAttempts, setResendAttempts] = useState(0);
     const [otp, setOtp] = useState('');
     const [isValidating, setIsValidating] = useState(false);
@@ -32,10 +35,7 @@ const OTPPopup: React.FC<OTPPopupProps> = ({ isOpen, setIsOpen, setIsValidatingN
     }, [resendTimer]);
 
     useEffect(() => {
-        if (isOpen && formData && !initialOTPSent.current) {
-            sendOTP();
-            initialOTPSent.current = true;
-        }
+        initialOTPSent.current = true;
     }, [isOpen, formData]);
 
     useEffect(() => {
@@ -43,37 +43,6 @@ const OTPPopup: React.FC<OTPPopupProps> = ({ isOpen, setIsOpen, setIsValidatingN
             handleOTPSubmit();
         }
     }, [otp]);
-
-    const sendOTP = async () => {
-        if (!formData) {
-            toast.error('Email ID is missing.');
-            return;
-        }
-
-        try {
-            const response = await fetch('/api/otp/generate', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ mobileNumber: formData }),
-            });
-
-            const result = await response.json();
-            if (response.ok) {
-                toast.success(result.message || 'OTP sent successfully!');
-                setResendTimer(30);
-            } else {
-                toast.error(result.message || 'Failed to send OTP.');
-                setIsValidatingNumberScreen(false);
-                setIsOpen(false);
-            }
-        } catch (error) {
-            console.error('Error sending OTP:', error);
-            toast.error('Error sending OTP.');
-            setIsOpen(false);
-        }
-    };
 
     const handleResendOTP = async () => {
         if (resendAttempts < 3) {
