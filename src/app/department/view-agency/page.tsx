@@ -1,82 +1,119 @@
 'use client';
 
-import { getAgenciesWithDiscom } from '@/app/api-calls/department/api';
+import React, { useEffect, useMemo, useState } from 'react';
+import { toast } from 'sonner';
+import { activateAgencyAccount, deactivateAgencyAccountAPI, getAgenciesWithDiscom } from '@/app/api-calls/department/api';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { UserCheck, UserX } from 'lucide-react';
 import { testDiscom } from '@/lib/utils';
-import React, { useEffect, useState } from 'react';
-
-const mockData = [
-    {
-        agencyId: "21100100229012",
-        agencyName: "MBC Pace Computer BED-1",
-        address: "Kolkata 401018 Vendor Code GSTIN: 23456781",
-        name: "Rashmita Nayak",
-        phone: "9999999999",
-        maxLimit: "1500000",
-        woNumber: "211001002290",
-        validity: "06-12-2024",
-        divCode: "Berhampur-1",
-        permissions: "Cash, Cheque, DD",
-        collectionModes: "Energy, Non Energy, NSC, CSC, DND, FRM",
-    },
-];
+import ReactTable from '@/components/ReactTable';
 
 const ViewAgency = () => {
-    const [search, setSearch] = useState("");
-
-    const filteredData = mockData.filter((item) =>
-        item.agencyName.toLowerCase().includes(search.toLowerCase())
-    );
-
-    const [agencyList, setAgencyList] = useState([])
-
+    const [search, setSearch] = useState('');
+    const [agencyList, setAgencyList] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        getAgencyList()
-    }, [])
+        getAgencyList();
+    }, []);
 
     const getAgencyList = async () => {
         setIsLoading(true);
         try {
             const response = await getAgenciesWithDiscom(testDiscom);
-            console.log("API Response:", response);
             setAgencyList(
                 response?.data?.map((item) => ({
-                    ...item,
-                    label: item.agency_name,
-                    value: item.id,
+                    id: item.id,
+                    agencyName: item.agency_name,
+                    agencyAddress: item.agency_address,
+                    contactPerson: item.contact_person,
+                    phone: item.phone,
+                    maxLimit: item.maximum_limit,
+                    woNumber: item.wo_number,
+                    validity: item.validity_end_date,
+                    divCode: item.divCode || 'N/A',
+                    permissions: item.permissions || 'N/A',
+                    collectionModes: item.collectionModes || 'N/A',
+                    isActive: item.is_active,
                 }))
             );
-
         } catch (error) {
-            console.error("Failed to create agency:", error.data[Object.keys(error.data)[0]]);
+            console.error('Failed to get agency:', error);
         } finally {
             setIsLoading(false);
         }
+    };
 
-    }
+    const activateAgencyUser = async (id: number) => {
+        setIsLoading(true);
+        try {
+            await activateAgencyAccount(id);
+            toast.success('Agency activated successfully');
+            getAgencyList();
+        } catch (error) {
+            console.error('Failed to activate agency:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const deactivateAgencyUser = async (id: number) => {
+        setIsLoading(true);
+        try {
+            await deactivateAgencyAccountAPI(id);
+            toast.success('Agency deactivated successfully');
+            getAgencyList();
+        } catch (error) {
+            console.error('Failed to deactivate agency:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const columns = useMemo(
+        () => [
+            { label: 'Action', key: 'action', sortable: false },
+            { label: 'Agency ID', key: 'id', sortable: true },
+            { label: 'Agency Name', key: 'agencyName', sortable: true },
+            { label: 'Address', key: 'agencyAddress', sortable: true },
+            { label: 'Contact Person', key: 'contactPerson', sortable: true },
+            { label: 'Phone', key: 'phone', sortable: true },
+            { label: 'Max Limit', key: 'maxLimit', sortable: true },
+            { label: 'WO Number', key: 'woNumber', sortable: true },
+            { label: 'Validity', key: 'validity', sortable: true },
+            { label: 'Div Code', key: 'divCode', sortable: true },
+            { label: 'Permissions', key: 'permissions', sortable: true },
+            { label: 'Collection Modes', key: 'collectionModes', sortable: true },
+        ],
+        []
+    );
+
+    const tableData = agencyList.map((item, index) => ({
+        ...item,
+        action: item.isActive ? (
+            <UserX
+                onClick={() => deactivateAgencyUser(item.id)}
+                className="cursor-pointer text-red-500"
+            />
+        ) : (
+            <UserCheck
+                onClick={() => activateAgencyUser(item.id)}
+                className="cursor-pointer text-green-500"
+            />
+        ),
+    }));
 
     return (
-        <AuthUserReusableCode pageTitle="View Agency">
+        <AuthUserReusableCode pageTitle="View Agency" isLoading={isLoading}>
             <div className="p-4 space-y-4">
                 <header className="flex justify-between items-center">
                     <div className="flex space-x-2">
-                        <Button type="button" variant="default">
-                            View
-                        </Button>
-                        <Button type="button" variant="default">
-                            Excel
-                        </Button>
-                        <Button type="button" variant="default">
-                            CSV
-                        </Button>
-                        <Button type="button" variant="default">
-                            PDF
-                        </Button>
+                        <Button variant="default">View</Button>
+                        <Button variant="default">Excel</Button>
+                        <Button variant="default">CSV</Button>
+                        <Button variant="default">PDF</Button>
                     </div>
                     <Input
                         type="text"
@@ -87,43 +124,13 @@ const ViewAgency = () => {
                     />
                 </header>
 
-                <div className="overflow-x-auto">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Agency ID</TableHead>
-                                <TableHead>Agency Name</TableHead>
-                                <TableHead>Address</TableHead>
-                                <TableHead>Name</TableHead>
-                                <TableHead>Phone</TableHead>
-                                <TableHead>Max Limit</TableHead>
-                                <TableHead>WO Number</TableHead>
-                                <TableHead>Validity</TableHead>
-                                <TableHead>Div Code</TableHead>
-                                <TableHead>Permissions</TableHead>
-                                <TableHead>Collection Modes</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {filteredData.map((item, index) => (
-                                <TableRow key={index} className="hover:bg-gray-50">
-                                    <TableCell>{item.agencyId}</TableCell>
-                                    <TableCell>{item.agencyName}</TableCell>
-                                    <TableCell>{item.address}</TableCell>
-                                    <TableCell>{item.name}</TableCell>
-                                    <TableCell>{item.phone}</TableCell>
-                                    <TableCell>{item.maxLimit}</TableCell>
-                                    <TableCell>{item.woNumber}</TableCell>
-                                    <TableCell>{item.validity}</TableCell>
-                                    <TableCell>{item.divCode}</TableCell>
-                                    <TableCell>{item.permissions}</TableCell>
-                                    <TableCell>{item.collectionModes}</TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </div>
-
+                <ReactTable
+                    data={tableData.filter((item) =>
+                        item.agencyName.toLowerCase().includes(search.toLowerCase())
+                    )}
+                    columns={columns}
+                    itemsPerPage={5}
+                />
             </div>
         </AuthUserReusableCode>
     );

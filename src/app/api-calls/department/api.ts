@@ -94,6 +94,26 @@ const editAgency = async (agencyData: editAgencyInterface) => {
   }
 };
 
+const activateAgencyAccount = async (agencyData: number) => {
+  try {
+    const response = await api.put('/agencies/activate', { id: agencyData });
+    return response.data;
+  } catch (error: any) {
+    console.log(error);
+    throw error?.response?.data
+  }
+};
+
+const deactivateAgencyAccountAPI = async (agencyData: number) => {
+  try {
+    const response = await api.put('/agencies/deactivate', { id: agencyData });
+    return response.data;
+  } catch (error: any) {
+    console.log(error);
+    throw error?.response?.data
+  }
+};
+
 export {
   getAllPaymentModes,
   getAllNonEnergyTypes,
@@ -102,5 +122,5 @@ export {
   getLevels,
   getAgenciesWithDiscom,
   rechargeAgency,
-  editAgency
+  editAgency, activateAgencyAccount, deactivateAgencyAccountAPI
 };

@@ -39,7 +39,7 @@ const EditAgency = () => {
         try {
             setIsSubmitting(true);
             const response = await editAgency(payload);
-            toast.success("Agency created successfully");
+            toast.success("Agency edited successfully");
             console.log("API Response:", response);
             reset({
                 agency: "",
@@ -54,7 +54,7 @@ const EditAgency = () => {
             });
             getAgencyList();
         } catch (error) {
-            console.error("Failed to create agency:", error.data[Object.keys(error.data)[0]]);
+            console.error("Failed to edit agency:", error.data[Object.keys(error.data)[0]]);
             let errorMessage = error.data[Object.keys(error.data)[0]]
             toast.error(errorMessage)
         } finally {

@@ -33,7 +33,7 @@ const Recharge = () => {
         try {
             setIsSubmitting(true);
             const response = await rechargeAgency(payload);
-            toast.success("Agency created successfully");
+            toast.success("Agency recharged successfully");
             console.log("API Response:", response);
             reset({
                 agency: "",
@@ -47,7 +47,7 @@ const Recharge = () => {
             });
             getAgencyList()
         } catch (error) {
-            console.error("Failed to create agency:", error.data[Object.keys(error.data)[0]]);
+            console.error("Failed to recharge agency:", error.data[Object.keys(error.data)[0]]);
             let errorMessage = error.data[Object.keys(error.data)[0]]
             toast.error(errorMessage)
         } finally {
@@ -77,7 +77,7 @@ const Recharge = () => {
             );
 
         } catch (error) {
-            console.error("Failed to create agency:", error.data[Object.keys(error.data)[0]]);
+            console.error("Failed to get agency:", error.data[Object.keys(error.data)[0]]);
         } finally {
             setIsLoading(false);
         }
