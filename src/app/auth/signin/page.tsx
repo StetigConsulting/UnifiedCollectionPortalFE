@@ -9,6 +9,7 @@ import { signinSchema } from '@/lib/zod';
 import OTPPopup from '@/components/OTPPopup';
 import Image from 'next/image';
 import { generateCaptcha } from '@/lib/utils';
+import { toast } from 'sonner';
 
 type SigninSchema = z.infer<typeof signinSchema>;
 
@@ -30,6 +31,7 @@ const SignUpForm = () => {
 
 		setCaptcha(generatedCaptcha);
 		setEnteredCaptcha('');
+		setStatus('');
 	}
 
 	const handleCaptchaChange = (e: any) => {
@@ -44,14 +46,45 @@ const SignUpForm = () => {
 		}
 	}
 
-	const { register, handleSubmit, formState: { errors }, getValues } = useForm<SigninSchema>({
+	const [resendTimer, setResendTimer] = useState(0);
+
+	const { register, handleSubmit, watch, formState: { errors }, getValues } = useForm<SigninSchema>({
 		resolver: zodResolver(signinSchema),
 	});
+	const formData = watch()
 
 	const onSubmit = async (data: SigninSchema) => {
 		setIsValidating(true);
-		setIsOTPPopup(true);
+		await sendOTP()
 	};
+
+	const sendOTP = async () => {
+		try {
+			const response = await fetch('/api/otp/generate', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ mobileNumber: formData.mobileNumber }),
+			});
+
+			const result = await response.json();
+			if (response.ok) {
+				toast.success(result.message || 'OTP sent successfully!');
+				setResendTimer(30);
+				setIsOTPPopup(true);
+			} else {
+				toast.error(result.message || 'Failed to send OTP.');
+				setIsValidating(false);
+				setIsOTPPopup(false);
+				generateNewCaptcha()
+			}
+		} catch (error) {
+			console.error('Error sending OTP:', error);
+			toast.error('Error sending OTP.');
+			setIsOTPPopup(false);
+		}
+	}
 
 	return (
 		<>
@@ -110,6 +143,9 @@ const SignUpForm = () => {
 							) : 'Login'}
 						</Button>
 						{isOTPPopup && <OTPPopup
+							sendOTP={sendOTP}
+							resendTimer={resendTimer}
+							setResendTimer={setResendTimer}
 							isOpen={isOTPPopup}
 							setIsValidatingNumberScreen={setIsValidating}
 							setIsOpen={setIsOTPPopup}

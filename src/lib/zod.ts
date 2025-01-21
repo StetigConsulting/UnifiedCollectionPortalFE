@@ -1,4 +1,5 @@
 import { z, object } from "zod";
+import { levelWIthId } from "./utils";
 
 export const signinSchema = object({
   mobileNumber: z
@@ -88,6 +89,84 @@ export const addAgencySchema = z.object({
       message: 'At least one Non-energy type is required',
       path: ['nonEnergy'],
     })
+  }
+  if (data.workingLevel && data.workingLevel === levelWIthId.SECTION) {
+    if (data.section.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'At least one Section type is required',
+        path: ['section'],
+      })
+    }
+    if (data.subDivision.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Sub division is required',
+        path: ['subDivision'],
+      })
+    }
+    if (data.division.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Division is required',
+        path: ['division'],
+      })
+    }
+    if (data.circle.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Circle is required',
+        path: ['circle'],
+      })
+    }
+  }
+  if (data.workingLevel && data.workingLevel === levelWIthId.SUB_DIVISION) {
+    if (data.subDivision.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Atleast one sub division is required',
+        path: ['subDivision'],
+      })
+    }
+    if (data.division.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Division is required',
+        path: ['division'],
+      })
+    }
+    if (data.circle.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Circle is required',
+        path: ['circle'],
+      })
+    }
+  }
+  if (data.workingLevel && data.workingLevel === levelWIthId.DIVISION) {
+    if (data.division.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Atleast one division is required',
+        path: ['division'],
+      })
+    }
+    if (data.circle.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Circle is required',
+        path: ['circle'],
+      })
+    }
+  }
+  if (data.workingLevel && data.workingLevel === levelWIthId.CIRCLE) {
+    if (data.circle.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Atleast one circle is required',
+        path: ['circle'],
+      })
+    }
   }
 })
 
