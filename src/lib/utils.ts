@@ -28,3 +28,13 @@ export const formatDate = (dateString: string): string => {
   };
   return new Date(dateString).toLocaleString('en-US', options);
 };
+
+export const levelWIthId = {
+  "CIRCLE": '25',
+  "DIVISION": '24',
+  "SUB_DIVISION": '23',
+  "SECTION": '22',
+  "BINDER": '21',
+  "MRU": '20',
+  "Pratik Test": '50'
+}

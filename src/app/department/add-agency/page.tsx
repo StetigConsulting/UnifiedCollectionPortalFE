@@ -10,10 +10,12 @@ import {
 import AuthUserReusableCode from "@/components/AuthUserReusableCode";
 import CustomizedCheckboxGroupWithLabel from "@/components/CustomizedCheckboxGroupWithLabel";
 import CustomizedInputWithLabel from "@/components/CustomizedInputWithLabel";
-import CustomizedMultipleSelectInputWithLabel from "@/components/CustomizedMultipleSelectInputWithLabel";
+import CustomizedMultipleSelectInputWithLabel from "@/components/CustomizedMultipleSelectInputWithLabelNumber";
+import CustomizedMultipleSelectInputWithLabelString from "@/components/CustomizedMultipleSelectInputWithLabelString";
 import CustomizedSelectInputWithLabel from "@/components/CustomizedSelectInputWithLabel";
 import { Button } from "@/components/ui/button";
 import { AgencyDataInterface } from "@/lib/interface";
+import { levelWIthId } from "@/lib/utils";
 import { addAgencySchema } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect, useRef, useState } from "react";
@@ -82,8 +84,9 @@ const AddAgency = () => {
       toast.success("Agency created successfully");
       console.log("API Response:", response);
     } catch (error) {
-      console.error("Failed to create agency:", error);
-      toast.error("Failed to create agency. Please try again.");
+      console.error("Failed to create agency:", error.data[Object.keys(error.data)[0]]);
+      let errorMessage = error.data[Object.keys(error.data)[0]]
+      toast.error(errorMessage)
     } finally {
       setIsSubmitting(false);
     }
@@ -97,6 +100,7 @@ const AddAgency = () => {
   const [permissions, setPermissions] = useState([]);
   const [divisions, setDivisions] = useState([]);
   const [subDivisions, setSubDivisions] = useState([]);
+  const [sections, setSections] = useState([]);
 
   const previousValuesRef = useRef<FormData | null>(null);
 
@@ -116,17 +120,49 @@ const AddAgency = () => {
 
       if (Object.keys(changes).length > 0) {
         console.log("Changes detected:", changes);
+        if (Object.keys(changes).includes("workingLevel")) {
+          console.log('i  min')
+          let newValue = changes["workingLevel"];
+          if (newValue?.new) {
+            setValue("circle", []);
+            setValue("division", []);
+            setValue("subDivision", []);
+            setValue("section", []);
+            setDivisions([]);
+            setSubDivisions([]);
+            setSections([]);
+          }
+        }
         if (Object.keys(changes).includes("circle")) {
           let newValue = changes["circle"];
-          if (newValue?.new && formData.workingLevel !== '25') {
+          setValue("division", []);
+          setValue("subDivision", []);
+          setValue("section", []);
+          setDivisions([]);
+          setSubDivisions([]);
+          setSections([]);
+          if (newValue?.new?.length > 0 && formData.workingLevel !== levelWIthId.CIRCLE) {
             getDivisions(newValue?.new);
           }
         }
 
         if (Object.keys(changes).includes("division")) {
           let newValue = changes["division"];
-          if (newValue?.new && formData.workingLevel === '23') {
+          setValue("subDivision", []);
+          setValue("section", []);
+          setSubDivisions([]);
+          setSections([]);
+          if (newValue?.new.length > 0 && formData.workingLevel === levelWIthId.SUB_DIVISION || formData.workingLevel === levelWIthId.SECTION) {
             getSubDivisions(newValue?.new[0]);
+          }
+        }
+
+        if (Object.keys(changes).includes("subDivision")) {
+          let newValue = changes["subDivision"];
+          setValue("section", []);
+          setSections([]);
+          if (newValue?.new.length > 0 && formData.workingLevel === levelWIthId.SECTION) {
+            getSections(newValue?.new[0]);
           }
         }
       }
@@ -210,6 +246,19 @@ const AddAgency = () => {
   const getSubDivisions = (id) => {
     getLevelsDiscomId(id).then((data) => {
       setSubDivisions(
+        data?.data?.officeStructure?.map((ite) => {
+          return {
+            value: ite.id,
+            label: ite.office_description,
+          };
+        })
+      );
+    });
+  };
+
+  const getSections = (id) => {
+    getLevelsDiscomId(id).then((data) => {
+      setSections(
         data?.data?.officeStructure?.map((ite) => {
           return {
             value: ite.id,
@@ -364,23 +413,23 @@ const AddAgency = () => {
               placeholder="Select Circle Type"
               value={watch('circle') || []}
               onChange={(selectedValues) => setValue('circle', selectedValues)}
-              multi={formData.workingLevel == '25'}
+              multi={formData.workingLevel == levelWIthId.CIRCLE}
             />
           }
-          {formData.workingLevel && formData.workingLevel != '25' && (
+          {formData.workingLevel && formData.workingLevel != levelWIthId.CIRCLE && (
             <CustomizedMultipleSelectInputWithLabel
               label="Division"
               required={true}
               list={divisions}
               value={watch('division') || []}
               onChange={(selectedValues) => setValue('division', selectedValues)}
-              multi={formData.workingLevel == '24'}
+              multi={formData.workingLevel == levelWIthId.DIVISION}
               errors={errors.division}
             />
           )}
           {
-            formData.workingLevel && (formData.workingLevel == '23'
-              || formData.workingLevel == '22') && (
+            formData.workingLevel && (formData.workingLevel == levelWIthId.SECTION
+              || formData.workingLevel == levelWIthId.SUB_DIVISION) && (
               <CustomizedMultipleSelectInputWithLabel
                 label="Sub Division"
                 errors={errors.subDivision}
@@ -388,21 +437,21 @@ const AddAgency = () => {
                 list={subDivisions}
                 required={true}
                 value={watch('subDivision') || []}
-                multi={formData.workingLevel == '23'}
+                multi={formData.workingLevel == levelWIthId.SUB_DIVISION}
                 onChange={(selectedValues) => setValue('subDivision', selectedValues)}
               />
             )
           }
           {
-            formData.workingLevel && formData.workingLevel == '22' && (
+            formData.workingLevel && formData.workingLevel == levelWIthId.SECTION && (
               <CustomizedMultipleSelectInputWithLabel
                 label="Section"
                 errors={errors.section}
                 placeholder="Select Section"
-                list={subDivisions}
+                list={sections}
                 required={true}
                 value={watch('section') || []}
-                multi={formData.workingLevel == '22'}
+                multi={formData.workingLevel == levelWIthId.SECTION}
                 onChange={(selectedValues) => setValue('section', selectedValues)}
               />
             )
@@ -414,34 +463,40 @@ const AddAgency = () => {
             placeholder="Enter vendor ID"
             {...register("vendorId")}
           />
-          <CustomizedCheckboxGroupWithLabel
+          <CustomizedMultipleSelectInputWithLabel
             label="Permissions"
-            options={permissions}
-            required={true}
             errors={errors.permission}
-            register={register("permission")}
+            placeholder="Select permission"
+            list={permissions}
+            required={true}
+            value={watch('permission') || []}
+            multi={true}
+            onChange={(selectedValues) => setValue('permission', selectedValues)}
           />
-
-          <CustomizedCheckboxGroupWithLabel
+          <CustomizedMultipleSelectInputWithLabelString
             label="Collection Type"
-            options={[
+            errors={errors.collectionType}
+            placeholder="Select Collection"
+            list={[
               { label: "Energy", value: "Energy" },
               { label: "Non-Energy", value: "Non-Energy" },
             ]}
             required={true}
-            errors={errors.collectionType}
-            register={register("collectionType")}
+            value={watch('collectionType') || []}
+            multi={true}
+            onChange={(selectedValues) => setValue('collectionType', selectedValues)}
           />
 
           {formData?.collectionType &&
             formData?.collectionType?.includes("Non-Energy") ? (
-            <CustomizedCheckboxGroupWithLabel
+            <CustomizedMultipleSelectInputWithLabel
               label="Non Energy"
-              containerClass="col-span-2"
-              options={nonEnergyTypes}
+              list={nonEnergyTypes}
               required={true}
               errors={errors.nonEnergy}
-              register={register("nonEnergy")}
+              value={watch('nonEnergy') || []}
+              multi={true}
+              onChange={(selectedValues) => setValue('nonEnergy', selectedValues)}
             />
           ) : (
             <></>

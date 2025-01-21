@@ -57,7 +57,11 @@ const CreateNewLevelPopup: React.FC<CreateNewLevelPopupProps> = ({ fetchData }) 
             });
 
             if (!response.ok) {
-                throw new Error(`Error: ${response.statusText}`);
+                const errorData = await response.json();
+                console.log(errorData);
+                const errorMessage =
+                    errorData?.error || errorData?.message || 'Failed to create level.';
+                throw new Error(errorMessage);
             }
 
             await response.json();
@@ -68,7 +72,7 @@ const CreateNewLevelPopup: React.FC<CreateNewLevelPopupProps> = ({ fetchData }) 
             fetchData();
         } catch (error) {
             console.error('Failed to create level:', error);
-            toast.error('Failed to create level. Please try again.');
+            toast.error('Failed to create level.' + error);
         } finally {
             setIsSaving(false);
         }

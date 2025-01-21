@@ -1,23 +1,23 @@
 import React, { useState, useEffect, useRef } from "react";
 
 interface Option {
-    value: number;
+    value: string;
     label: string;
 }
 
 interface SelectProps {
     label: string;
     list: Option[];
-    value?: number[];
+    value?: string[];
     placeholder?: string;
     required?: boolean;
     multi?: boolean;
     containerClass?: string;
     errors?: { message?: string };
-    onChange: (selectedValue: number[]) => void;
+    onChange: (selectedValue: string[]) => void;
 }
 
-const CustomizedMultipleSelectInputWithLabel: React.FC<SelectProps> = ({
+const CustomizedMultipleSelectInputWithLabelString: React.FC<SelectProps> = ({
     label,
     list,
     value = [],
@@ -29,13 +29,13 @@ const CustomizedMultipleSelectInputWithLabel: React.FC<SelectProps> = ({
     onChange,
 }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const [selectedValues, setSelectedValues] = useState<number[]>(value);
+    const [selectedValues, setSelectedValues] = useState<string[]>(value);
 
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     const toggleDropdown = () => setIsOpen((prev) => !prev);
 
-    const handleOptionClick = (optionValue: number) => {
+    const handleOptionClick = (optionValue: string) => {
         if (multi) {
             const newSelectedValues = selectedValues.includes(optionValue)
                 ? selectedValues.filter((v) => v !== optionValue)
@@ -62,11 +62,11 @@ const CustomizedMultipleSelectInputWithLabel: React.FC<SelectProps> = ({
         return () => document.removeEventListener("mousedown", handleOutsideClick);
     }, []);
 
-    // useEffect(() => {
-    //     if (Array.isArray(value)) {
-    //         setSelectedValues(value);
-    //     }
-    // }, [value]);
+    useEffect(() => {
+        if (Array.isArray(value)) {
+            setSelectedValues(value);
+        }
+    }, [value]);
 
     return (
         <div className={`relative ${containerClass}`} ref={dropdownRef}>
@@ -80,7 +80,7 @@ const CustomizedMultipleSelectInputWithLabel: React.FC<SelectProps> = ({
                 {selectedValues.length > 0 ? (
                     <div className="flex flex-wrap gap-2">
                         {selectedValues.map((selectedValue) => {
-                            const selectedOption = list.find((o) => o.value === selectedValue);
+                            const selectedOption = list?.find((o) => o.value === selectedValue);
                             return (
                                 <span
                                     key={selectedValue}
@@ -119,4 +119,4 @@ const CustomizedMultipleSelectInputWithLabel: React.FC<SelectProps> = ({
     );
 };
 
-export default CustomizedMultipleSelectInputWithLabel;
+export default CustomizedMultipleSelectInputWithLabelString;
