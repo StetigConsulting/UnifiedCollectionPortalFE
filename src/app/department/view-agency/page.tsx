@@ -1,12 +1,14 @@
 'use client';
 
-import { getAgenciesWithDiscom } from '@/app/api-calls/department/api';
+import { activateAgencyAccount, deactivateAgencyAccountAPI, getAgenciesWithDiscom } from '@/app/api-calls/department/api';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { testDiscom } from '@/lib/utils';
+import { UserCheck, UserX } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 const mockData = [
     {
@@ -26,12 +28,11 @@ const mockData = [
 
 const ViewAgency = () => {
     const [search, setSearch] = useState("");
-
-    const filteredData = mockData.filter((item) =>
-        item.agencyName.toLowerCase().includes(search.toLowerCase())
-    );
-
     const [agencyList, setAgencyList] = useState([])
+
+    const filteredData = agencyList?.filter((item) =>
+        item.agencyName?.toLowerCase()?.includes(search.toLowerCase())
+    );
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -53,15 +54,42 @@ const ViewAgency = () => {
             );
 
         } catch (error) {
-            console.error("Failed to create agency:", error.data[Object.keys(error.data)[0]]);
+            console.error("Failed to get agency:", error.data[Object.keys(error.data)[0]]);
         } finally {
             setIsLoading(false);
         }
+    }
 
+    const activateAgencyUser = async (id: number) => {
+        setIsLoading(true);
+        try {
+            const response = await activateAgencyAccount(id);
+            console.log("API Response:", response);
+            toast.success("Agency activated successfully");
+            getAgencyList();
+        } catch (error) {
+            console.error("Failed to create agency:", error.data[Object.keys(error.data)[0]] || error.error);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    const deactivateAgencyUser = async (id: number) => {
+        setIsLoading(true);
+        try {
+            const response = await deactivateAgencyAccountAPI(id);
+            console.log("API Response:", response);
+            toast.success("Agency deactivated successfully");
+            getAgencyList();
+        } catch (error) {
+            console.error("Failed to create agency");
+        } finally {
+            setIsLoading(false);
+        }
     }
 
     return (
-        <AuthUserReusableCode pageTitle="View Agency">
+        <AuthUserReusableCode pageTitle="View Agency" isLoading={isLoading}>
             <div className="p-4 space-y-4">
                 <header className="flex justify-between items-center">
                     <div className="flex space-x-2">
@@ -91,6 +119,8 @@ const ViewAgency = () => {
                     <Table>
                         <TableHeader>
                             <TableRow>
+                                <TableHead>S.No.</TableHead>
+                                <TableHead>Action</TableHead>
                                 <TableHead>Agency ID</TableHead>
                                 <TableHead>Agency Name</TableHead>
                                 <TableHead>Address</TableHead>
@@ -105,16 +135,22 @@ const ViewAgency = () => {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {filteredData.map((item, index) => (
+                            {agencyList.map((item, index) => (
                                 <TableRow key={index} className="hover:bg-gray-50">
-                                    <TableCell>{item.agencyId}</TableCell>
-                                    <TableCell>{item.agencyName}</TableCell>
-                                    <TableCell>{item.address}</TableCell>
-                                    <TableCell>{item.name}</TableCell>
+                                    <TableCell>{index + 1}</TableCell>
+                                    <TableCell>
+                                        {!item.is_active ?
+                                            <UserCheck onClick={() => { activateAgencyUser(item.id) }} className='cursor-pointer' />
+                                            : <UserX onClick={() => { deactivateAgencyUser(item.id) }} className='cursor-pointer' />}
+                                    </TableCell>
+                                    <TableCell>{item.id}</TableCell>
+                                    <TableCell>{item.agency_name}</TableCell>
+                                    <TableCell>{item.agency_address}</TableCell>
+                                    <TableCell>{item.contact_person}</TableCell>
                                     <TableCell>{item.phone}</TableCell>
-                                    <TableCell>{item.maxLimit}</TableCell>
-                                    <TableCell>{item.woNumber}</TableCell>
-                                    <TableCell>{item.validity}</TableCell>
+                                    <TableCell>{item.maximum_limit}</TableCell>
+                                    <TableCell>{item.wo_number}</TableCell>
+                                    <TableCell>{item.validity_end_date}</TableCell>
                                     <TableCell>{item.divCode}</TableCell>
                                     <TableCell>{item.permissions}</TableCell>
                                     <TableCell>{item.collectionModes}</TableCell>
