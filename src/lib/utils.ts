@@ -30,10 +30,10 @@ export const formatDate = (dateString: string): string => {
 };
 
 export const levelWIthId = {
-  "CIRCLE": '25',
-  "DIVISION": '24',
-  "SUB_DIVISION": '23',
-  "SECTION": '22',
+  "CIRCLE": '65',
+  "DIVISION": '66',
+  "SUB_DIVISION": '67',
+  "SECTION": '68',
   "BINDER": '21',
   "MRU": '20',
   "Pratik Test": '50'
