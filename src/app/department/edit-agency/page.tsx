@@ -110,7 +110,7 @@ const EditAgency = () => {
     }, [selectedAgency, agencyList, setValue]);
 
     return (
-        <AuthUserReusableCode pageTitle="Edit Agency">
+        <AuthUserReusableCode pageTitle="Edit Agency" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                     <CustomizedSelectInputWithLabel
