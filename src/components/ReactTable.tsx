@@ -95,7 +95,7 @@ const ReactTable = <T extends Record<string, any>>({
                             >
                                 {columns.map(column => (
                                     <td key={column.key as string}
-                                        className='p-2 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]'
+                                        className='p-2 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] whitespace-nowrap'
                                     >{item[column.key]}</td>
                                 ))}
                             </tr>
