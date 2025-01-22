@@ -230,7 +230,18 @@ export const editAgencySchema = z.object({
 export const extendValiditySchema = z.object({
   // circle: z.string().nonempty("Circle type is required"),
   // division: z.string().nonempty("Division is required"),
-  agencyName: z.string().nonempty("Agency ID is required"),
+  agencyName: z
+    .union([z.string(), z.number()])
+    .transform((val) => {
+      const num = Number(val);
+      if (isNaN(num)) {
+        throw new Error("Agency must be a valid number");
+      }
+      return num;
+    })
+    .refine((val) => val > 0, {
+      message: "Agency is required and must be greater than 0",
+    }),
   agencyId: z.number({
     required_error: "Agency Id is required",
     invalid_type_error: "Agency Id must be a number",

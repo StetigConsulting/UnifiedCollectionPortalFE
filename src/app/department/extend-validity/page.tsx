@@ -9,9 +9,10 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { extendValiditySchema } from '@/lib/zod';
 import { z } from 'zod';
-import { extendValidity, getAgenciesWithDiscom } from '@/app/api-calls/department/api';
+import { extendValidity, getAgenciesWithDiscom, getAgencyById } from '@/app/api-calls/department/api';
 import { testDiscom } from '@/lib/utils';
 import { toast } from 'sonner';
+import { useSearchParams } from 'next/navigation';
 
 type FormData = z.infer<typeof extendValiditySchema>;
 
@@ -36,13 +37,18 @@ const ExtendValidity = () => {
             toast.success("Validity extended successfully");
             console.log("API Response:", response);
             reset({
-                agencyName: '',
+                agencyName: null,
                 agencyId: null,
                 currentFromValidity: '',
                 currentToValidity: '',
                 newFromValidity: '',
                 newToValidity: '',
             });
+            if (agencyIdFromUrl) {
+                const url = new URL(window.location.href);
+                url.search = '';
+                window.history.pushState({}, '', url.href);
+            }
             getAgencyList()
         } catch (error) {
             console.error("Failed to extend validity:", error);
@@ -57,9 +63,42 @@ const ExtendValidity = () => {
 
     const [isLoading, setIsLoading] = useState(false);
 
+    const searchParams = useSearchParams();
+    const agencyIdFromUrl = searchParams.get('id');
+
     useEffect(() => {
-        getAgencyList()
-    }, [])
+        if (agencyIdFromUrl) {
+            fetchAgencyById(agencyIdFromUrl);
+        } else {
+            getAgencyList();
+        }
+    }, [agencyIdFromUrl]);
+
+    const fetchAgencyById = async (id: string) => {
+        setIsLoading(true);
+        try {
+            const response = await getAgencyById(id);
+            const agency = response.data;
+            console.log("Agency Data:", agency);
+            setValue('agencyId', agency.id || '');
+            setValue('agencyName', agency.id || '');
+            setValue('currentFromValidity', agency.validity_start_date || '');
+            setValue('currentToValidity', agency.validity_end_date || '');
+            setValue('newFromValidity', '');
+            setValue('newToValidity', '');
+            setAgencyList([{
+                ...response.data,
+                label: response.data.agency_name,
+                value: response.data.id,
+            }]);
+            setValue('agencyName', response.data.id)
+        } catch (error) {
+            console.error("Failed to fetch agency by ID:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
 
     const getAgencyList = async () => {
         setIsLoading(true);
@@ -89,6 +128,7 @@ const ExtendValidity = () => {
             const agency = agencyList.find((item) => item.id === Number(selectedAgency));
             if (agency) {
                 setValue('agencyId', agency.id || '');
+                setValue('agencyName', agency.id || '');
                 setValue('currentFromValidity', agency.validity_start_date || '');
                 setValue('currentToValidity', agency.validity_end_date || '');
                 setValue('newFromValidity', '');

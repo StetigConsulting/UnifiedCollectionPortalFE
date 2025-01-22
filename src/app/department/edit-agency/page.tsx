@@ -82,7 +82,7 @@ const EditAgency = () => {
             const agency = response.data;
             console.log("Agency Data:", agency);
             setValue('agencyId', agency.id || '');
-            setValue('agencyName', agency.agency_name || '');
+            setValue('agencyName', agency.id || '');
             setValue('phoneNumber', agency.phone || '');
             setValue('address', agency.agency_address || '');
             setValue('maximumAmount', agency.maximum_limit || null);
@@ -138,7 +138,7 @@ const EditAgency = () => {
             const agency = agencyList.find((item) => item.id === Number(selectedAgency));
             if (agency) {
                 setValue('agencyId', agency.id || '');
-                setValue('agencyName', agency.agency_name || '');
+                setValue('agencyName', agency.id || '');
                 setValue('phoneNumber', agency.phone || '');
                 setValue('address', agency.agency_address || '');
                 setValue('maximumAmount', agency.maximum_limit || null);
