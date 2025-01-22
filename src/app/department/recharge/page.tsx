@@ -136,12 +136,11 @@ const Recharge = () => {
                         {...register("phoneNumber")}
                         disabled
                     />
-                    <CustomizedSelectInputWithLabel
+                    <CustomizedInputWithLabel
                         label="Transaction Type"
                         errors={errors.transactionType}
                         containerClass="col-span-2"
                         placeholder="Recharge"
-                        list={[]}
                         {...register("transactionType")}
                         disabled
                     />

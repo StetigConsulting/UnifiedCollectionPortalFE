@@ -81,7 +81,7 @@ const CustomizedMultipleSelectInputWithLabelNumber: React.FC<SelectProps> = ({
             >
                 {selectedValues.length > 0 ? (
                     <div className="flex flex-wrap gap-2">
-                        {selectedValues.map((selectedValue) => {
+                        {selectedValues?.map((selectedValue) => {
                             const selectedOption = list?.find((o) => o.value === selectedValue);
                             return (
                                 <span
