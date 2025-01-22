@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { UserCheck, UserX } from 'lucide-react';
 import { testDiscom } from '@/lib/utils';
 import ReactTable from '@/components/ReactTable';
+import AlertPopup from '@/components/Agency/ViewAgency/AlertPopup';
 
 const ViewAgency = () => {
     const [search, setSearch] = useState('');
@@ -93,9 +94,10 @@ const ViewAgency = () => {
     const tableData = agencyList.map((item, index) => ({
         ...item,
         action: item.isActive ? (
-            <UserX
-                onClick={() => deactivateAgencyUser(item.id)}
+            <AlertPopup triggerCode={<UserX
                 className="cursor-pointer text-red-500"
+            />} handleContinue={() => deactivateAgencyUser(item.id)}
+                title='hel' description='fff' continueButtonText='hhfh' handleCancle={() => { }}
             />
         ) : (
             <UserCheck
