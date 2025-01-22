@@ -45,8 +45,8 @@ const ExtendValidity = () => {
             });
             getAgencyList()
         } catch (error) {
-            console.error("Failed to extend validity:", error.data[Object.keys(error.data)[0]]);
-            let errorMessage = error.data[Object.keys(error.data)[0]]
+            console.error("Failed to extend validity:", error);
+            let errorMessage = error?.data ? error?.data[Object.keys(error?.data)[0]] : error.error;
             toast.error(errorMessage)
         } finally {
             setIsSubmitting(false);
