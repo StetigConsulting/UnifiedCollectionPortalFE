@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { toast } from 'sonner';
+import * as XLSX from 'xlsx';
 
 interface ColumnConfig<T> {
     label: string;
@@ -91,15 +92,32 @@ const ReactTable = <T extends Record<string, any>>({
         navigator.clipboard.writeText(result).then(() => toast.success('Data copied to clipboard!'));
     };
 
+    const exportToExcel = () => {
+        const worksheet = XLSX.utils.json_to_sheet(data);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');
+        XLSX.writeFile(workbook, 'Data.xlsx');
+    };
 
+    const exportToCSV = () => {
+        const csvData = data.map((row) =>
+            visibleColumns.map((col) => row[col.key]).join(',')
+        );
+        const csvString = [visibleColumns.map((col) => col.label).join(','), ...csvData].join('\n');
+        const blob = new Blob([csvString], { type: 'text/csv' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'Data.csv';
+        link.click();
+    };
 
     return (
         <div className={`space-y-4 ${className}`}>
             <header className="flex justify-between items-center">
                 <div className="flex space-x-2">
                     <Button variant="default" onClick={handleCopy}>Copy</Button>
-                    <Button variant="default">Excel</Button>
-                    <Button variant="default">CSV</Button>
+                    <Button variant="default" onClick={exportToExcel}>Excel</Button>
+                    <Button variant="default" onClick={exportToCSV}>CSV</Button>
                     <Button variant="default">PDF</Button>
                 </div>
                 <Input

@@ -88,20 +88,19 @@ const CreateNewLevelPopup: React.FC<CreateNewLevelPopupProps> = ({ fetchData }) 
                 <DialogContent>
                     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
                         <DialogHeader>
-                            <DialogTitle>
-                                <div className="flex items-center justify-between">
-                                    <span className="text-sm font-medium">Level {levelCount}</span>
-                                    <div className="flex space-x-2">
-                                        <Button type="button" variant="outline" onClick={decrementLevel}>
-                                            -
-                                        </Button>
-                                        <Button type="button" variant="outline" onClick={incrementLevel}>
-                                            +
-                                        </Button>
-                                    </div>
-                                </div>
-                            </DialogTitle>
+                            <DialogTitle>Create Level</DialogTitle>
                         </DialogHeader>
+                        <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium">Level {levelCount}</span>
+                            <div className="flex space-x-2">
+                                <Button type="button" variant="outline" onClick={decrementLevel}>
+                                    -
+                                </Button>
+                                <Button type="button" variant="outline" onClick={incrementLevel}>
+                                    +
+                                </Button>
+                            </div>
+                        </div>
                         <CustomizedInputWithLabel
                             label={`Enter Level ${levelCount} Name`}
                             placeholder={`Enter Level ${levelCount} Name`}

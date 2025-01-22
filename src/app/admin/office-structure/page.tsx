@@ -7,7 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import CreateNewLevelPopup from '@/components/OfficeStructure/CreateNewLevelPopup';
 import CreateNewLevelUploadPopup from '@/components/OfficeStructure/CreateNewLevelUploadPopup';
-import { formatDate } from '@/lib/utils';
+import { formatDate, testDiscom } from '@/lib/utils';
+import { toast } from 'sonner';
 
 const OfficeStructurePage = () => {
     const [officeStructureData, setOfficeStructureData] = useState([]);
@@ -18,7 +19,7 @@ const OfficeStructurePage = () => {
     const fetchOfficeStructureData = async () => {
         try {
             setLoading(true);
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/office-structure-levels/1000`);
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/office-structure-levels/${testDiscom}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch office structure data');
             }
@@ -26,7 +27,8 @@ const OfficeStructurePage = () => {
 
             setOfficeStructureData(Array.isArray(data.data) ? data.data : []);
         } catch (err) {
-            setError(err.message);
+            console.error(err.message);
+            toast.error(err.message);
             setOfficeStructureData([]);
         } finally {
             setLoading(false);
@@ -45,7 +47,7 @@ const OfficeStructurePage = () => {
 
     return (
         <AuthUserReusableCode pageTitle="Office Structure">
-            <div className="p-4 space-y-6">
+            <div className="space-y-6">
                 <div className="flex justify-between items-center">
                     <div className='flex space-x-4'>
                         <CreateNewLevelPopup fetchData={fetchOfficeStructureData} />
@@ -63,8 +65,6 @@ const OfficeStructurePage = () => {
                 <div>
                     {loading ? (
                         <p>Loading...</p>
-                    ) : error ? (
-                        <p className="text-red-500">{error}</p>
                     ) : filteredOfficeStructureData.length > 0 ? (
                         <Table>
                             <TableHeader>
