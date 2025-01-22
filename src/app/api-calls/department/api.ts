@@ -74,6 +74,16 @@ const getAgenciesWithDiscom = async (Id: string) => {
   }
 };
 
+const getAgencyById = async (Id: string) => {
+  try {
+    const response = await api.get(`/agencies/${Id}`);
+    return response.data;
+  } catch (error: any) {
+    console.log(error);
+    throw error?.response?.data
+  }
+};
+
 const rechargeAgency = async (agencyData: rechargeAgencyInterface) => {
   try {
     const response = await api.put('/agencies/recharge-wallet', agencyData);
@@ -122,5 +132,5 @@ export {
   getLevels,
   getAgenciesWithDiscom,
   rechargeAgency,
-  editAgency, activateAgencyAccount, deactivateAgencyAccountAPI
+  editAgency, activateAgencyAccount, deactivateAgencyAccountAPI, getAgencyById
 };

@@ -4,12 +4,11 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { activateAgencyAccount, deactivateAgencyAccountAPI, getAgenciesWithDiscom } from '@/app/api-calls/department/api';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { UserCheck, UserX } from 'lucide-react';
+import { Pencil, UserCheck, UserX } from 'lucide-react';
 import { testDiscom } from '@/lib/utils';
 import ReactTable from '@/components/ReactTable';
 import AlertPopup from '@/components/Agency/ViewAgency/AlertPopup';
+import { useRouter } from 'next/navigation';
 
 const ViewAgency = () => {
     const [search, setSearch] = useState('');
@@ -91,20 +90,32 @@ const ViewAgency = () => {
         []
     );
 
+    const router = useRouter();
+
+    const handleEditAgency = (id: number) => {
+        router.push(`/department/edit-agency?id=${id}`);
+    }
+
     const tableData = agencyList.map((item, index) => ({
         ...item,
         action: item.isActive ? (
-            <AlertPopup triggerCode={<UserX
-                className="cursor-pointer text-red-500"
-            />} handleContinue={() => deactivateAgencyUser(item.id)}
-                title='Confirm Deactivating' description='Are you sure you want to save the deactivate agent? Please review the details carefully before confirming.' continueButtonText='Confirm'
-            />
+            <div className='flex gap-2'>
+                <AlertPopup triggerCode={<UserX
+                    className="cursor-pointer text-red-500"
+                />} handleContinue={() => deactivateAgencyUser(item.id)}
+                    title='Confirm Deactivating' description='Are you sure you want to save the deactivate agent? Please review the details carefully before confirming.' continueButtonText='Confirm'
+                />
+                <Pencil className='cursor-pointer' onClick={() => handleEditAgency(item.id)} />
+            </div>
         ) : (
-            <AlertPopup triggerCode={<UserCheck
-                className="cursor-pointer text-green-500"
-            />} handleContinue={() => activateAgencyUser(item.id)}
-                title='Confirm Deactivating' description='Are you sure you want to save the deactivate agent? Please review the details carefully before confirming.' continueButtonText='Confirm'
-            />
+            <div className='flex gap-2'>
+                <AlertPopup triggerCode={<UserCheck
+                    className="cursor-pointer text-green-500"
+                />} handleContinue={() => activateAgencyUser(item.id)}
+                    title='Confirm Deactivating' description='Are you sure you want to save the deactivate agent? Please review the details carefully before confirming.' continueButtonText='Confirm'
+                />
+                <Pencil className='cursor-pointer' onClick={() => handleEditAgency(item.id)} />
+            </div>
         ),
     }));
 

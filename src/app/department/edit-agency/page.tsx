@@ -9,9 +9,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { editAgencySchema } from '@/lib/zod';
 import { z } from 'zod';
 import { useEffect, useState } from 'react';
-import { editAgency, getAgenciesWithDiscom } from '@/app/api-calls/department/api';
+import { editAgency, getAgenciesWithDiscom, getAgencyById } from '@/app/api-calls/department/api';
 import { testDiscom } from '@/lib/utils';
 import { toast } from 'sonner';
+import { useSearchParams } from 'next/navigation';
 
 type FormData = z.infer<typeof editAgencySchema>;
 
@@ -42,7 +43,7 @@ const EditAgency = () => {
             toast.success("Agency edited successfully");
             console.log("API Response:", response);
             reset({
-                agency: "",
+                agency: null,
                 agencyId: null,
                 agencyName: "",
                 maximumAmount: 0,
@@ -52,6 +53,11 @@ const EditAgency = () => {
                 contactPerson: "",
                 phoneNumber: "",
             });
+            if (agencyIdFromUrl) {
+                const url = new URL(window.location.href);
+                url.search = '';
+                window.history.pushState({}, '', url.href);
+            }
             getAgencyList();
         } catch (error) {
             console.error("Failed to edit agency:", error.data[Object.keys(error.data)[0]]);
@@ -66,9 +72,43 @@ const EditAgency = () => {
 
     const [isLoading, setIsLoading] = useState(false);
 
+    const searchParams = useSearchParams();
+    const agencyIdFromUrl = searchParams.get('id');
+
+    const fetchAgencyById = async (id: string) => {
+        setIsLoading(true);
+        try {
+            const response = await getAgencyById(id);
+            const agency = response.data;
+            console.log("Agency Data:", agency);
+            setValue('agencyId', agency.id || '');
+            setValue('agencyName', agency.agency_name || '');
+            setValue('phoneNumber', agency.phone || '');
+            setValue('address', agency.agency_address || '');
+            setValue('maximumAmount', agency.maximum_limit || null);
+            setValue('maximumAgent', agency.max_agent || null);
+            setValue('woNumber', agency.wo_number || '');
+            setValue('contactPerson', agency.contact_person || '');
+            setAgencyList([{
+                ...response.data,
+                label: response.data.agency_name,
+                value: response.data.id,
+            }]);
+            setValue('agency', response.data.id)
+        } catch (error) {
+            console.error("Failed to fetch agency by ID:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     useEffect(() => {
-        getAgencyList()
-    }, [])
+        if (agencyIdFromUrl) {
+            fetchAgencyById(agencyIdFromUrl);
+        } else {
+            getAgencyList();
+        }
+    }, [agencyIdFromUrl]);
 
     const getAgencyList = async () => {
         setIsLoading(true);
