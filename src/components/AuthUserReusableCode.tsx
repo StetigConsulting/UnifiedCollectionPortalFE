@@ -12,9 +12,13 @@ interface AuthUserReusableCodeProps {
 
 function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUserReusableCodeProps) {
     return (
-        <SidebarProvider>
+        <SidebarProvider style={{
+            display: '-webkit-box',
+            boxSizing: 'border-box'
+        }}>
             <AppSidebar />
-            {isLoading &&
+            {
+                isLoading &&
                 <div className="absolute inset-0 flex items-center justify-center z-50"
                     style={{
                         backdropFilter: 'blur(1px)'
@@ -25,12 +29,12 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
                     />
                 </div>
             }
-            <SidebarInset>
+            <SidebarInset className='flex-1' style={{ WebkitBoxFlex: 1 }}>
                 <CustomBreadcrumb pageTitle={pageTitle}>
                     {children}
                 </CustomBreadcrumb>
             </SidebarInset>
-        </SidebarProvider>
+        </SidebarProvider >
     )
 }
 
