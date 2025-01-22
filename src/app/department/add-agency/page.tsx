@@ -427,7 +427,7 @@ const AddAgency = () => {
               label="Division"
               required={true}
               list={divisions}
-              disabled={formData.circle.length == 0}
+              disabled={formData?.circle?.length == 0}
               value={watch('division') || []}
               onChange={(selectedValues) => setValue('division', selectedValues)}
               multi={formData.workingLevel == levelWIthId.DIVISION}
@@ -443,7 +443,7 @@ const AddAgency = () => {
                 placeholder="Select Sub Division"
                 list={subDivisions}
                 required={true}
-                disabled={formData.division.length == 0}
+                disabled={formData?.division?.length == 0}
                 value={watch('subDivision') || []}
                 multi={formData.workingLevel == levelWIthId.SUB_DIVISION}
                 onChange={(selectedValues) => setValue('subDivision', selectedValues)}
@@ -458,7 +458,7 @@ const AddAgency = () => {
                 placeholder="Select Section"
                 list={sections}
                 required={true}
-                disabled={formData.subDivision.length == 0}
+                disabled={formData?.subDivision?.length == 0}
                 value={watch('section') || []}
                 multi={formData.workingLevel == levelWIthId.SECTION}
                 onChange={(selectedValues) => setValue('section', selectedValues)}
