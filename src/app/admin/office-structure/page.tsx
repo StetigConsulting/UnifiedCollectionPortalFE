@@ -46,7 +46,7 @@ const OfficeStructurePage = () => {
     );
 
     return (
-        <AuthUserReusableCode pageTitle="Office Structure">
+        <AuthUserReusableCode pageTitle="Office Structure" isLoading={loading}>
             <div className="space-y-6">
                 <div className="flex justify-between items-center">
                     <div className='flex space-x-4'>
@@ -63,9 +63,7 @@ const OfficeStructurePage = () => {
                     />
                 </div>
                 <div>
-                    {loading ? (
-                        <p>Loading...</p>
-                    ) : filteredOfficeStructureData.length > 0 ? (
+                    {filteredOfficeStructureData.length > 0 ? (
                         <Table>
                             <TableHeader>
                                 <TableRow>

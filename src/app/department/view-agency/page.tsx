@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { activateAgencyAccount, deactivateAgencyAccountAPI, getAgenciesWithDiscom } from '@/app/api-calls/department/api';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
-import { Pencil, UserCheck, UserX } from 'lucide-react';
+import { CalendarArrowUp, Pencil, UserCheck, UserX } from 'lucide-react';
 import { testDiscom } from '@/lib/utils';
 import ReactTable from '@/components/ReactTable';
 import AlertPopup from '@/components/Agency/ViewAgency/AlertPopup';
@@ -108,6 +108,10 @@ const ViewAgency = () => {
         router.push(`/department/edit-agency?id=${id}`);
     }
 
+    const handleExtendValidity = (id: number) => {
+        router.push(`/department/extend-validity?id=${id}`);
+    }
+
     const tableData = agencyList.map((item, index) => ({
         ...item,
         action: item.isActive ? (
@@ -118,6 +122,7 @@ const ViewAgency = () => {
                     title='Confirm Deactivating' description='Are you sure you want to save the deactivate agent? Please review the details carefully before confirming.' continueButtonText='Confirm'
                 />
                 <Pencil className='cursor-pointer h-5 w-5' onClick={() => handleEditAgency(item.id)} />
+                <CalendarArrowUp className='cursor-pointer h-5 w-5' onClick={() => handleExtendValidity(item.id)} />
             </div>
         ) : (
             <div className='flex gap-2'>
@@ -127,6 +132,7 @@ const ViewAgency = () => {
                     title='Confirm Deactivating' description='Are you sure you want to save the deactivate agent? Please review the details carefully before confirming.' continueButtonText='Confirm'
                 />
                 <Pencil className='cursor-pointer h-5 w-5' onClick={() => handleEditAgency(item.id)} />
+                <CalendarArrowUp className='cursor-pointer h-5 w-5' onClick={() => handleExtendValidity(item.id)} />
             </div>
         ),
     }));
