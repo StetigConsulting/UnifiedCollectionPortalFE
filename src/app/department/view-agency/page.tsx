@@ -97,12 +97,13 @@ const ViewAgency = () => {
             <AlertPopup triggerCode={<UserX
                 className="cursor-pointer text-red-500"
             />} handleContinue={() => deactivateAgencyUser(item.id)}
-                title='hel' description='fff' continueButtonText='hhfh' handleCancle={() => { }}
+                title='Confirm Deactivating' description='Are you sure you want to save the deactivate agent? Please review the details carefully before confirming.' continueButtonText='Confirm'
             />
         ) : (
-            <UserCheck
-                onClick={() => activateAgencyUser(item.id)}
+            <AlertPopup triggerCode={<UserCheck
                 className="cursor-pointer text-green-500"
+            />} handleContinue={() => activateAgencyUser(item.id)}
+                title='Confirm Deactivating' description='Are you sure you want to save the deactivate agent? Please review the details carefully before confirming.' continueButtonText='Confirm'
             />
         ),
     }));

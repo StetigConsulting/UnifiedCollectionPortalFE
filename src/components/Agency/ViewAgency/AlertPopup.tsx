@@ -11,7 +11,7 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 
-function AlertPopup({ triggerCode, title, description, handleCancle, handleContinue, continueButtonText }) {
+function AlertPopup({ triggerCode, title, description, handleContinue, continueButtonText }) {
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>
