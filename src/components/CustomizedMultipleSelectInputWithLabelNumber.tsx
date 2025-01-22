@@ -15,6 +15,7 @@ interface SelectProps {
     containerClass?: string;
     errors?: { message?: string };
     onChange: (selectedValue: number[]) => void;
+    disabled?: boolean;
 }
 
 const CustomizedMultipleSelectInputWithLabelNumber: React.FC<SelectProps> = ({
@@ -27,6 +28,7 @@ const CustomizedMultipleSelectInputWithLabelNumber: React.FC<SelectProps> = ({
     containerClass = "",
     errors,
     onChange,
+    disabled = false,
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedValues, setSelectedValues] = useState<number[]>(value);
@@ -74,7 +76,7 @@ const CustomizedMultipleSelectInputWithLabelNumber: React.FC<SelectProps> = ({
                 {label} {required && <span className="text-red-500">*</span>}
             </label>
             <div
-                className="border rounded-md w-full p-2 bg-white cursor-pointer"
+                className={`border rounded-md w-full p-2 ${disabled ? "bg-gray-100 cursor-not-allowed" : "bg-white cursor-pointer"}`}
                 onClick={toggleDropdown}
             >
                 {selectedValues.length > 0 ? (
@@ -84,7 +86,7 @@ const CustomizedMultipleSelectInputWithLabelNumber: React.FC<SelectProps> = ({
                             return (
                                 <span
                                     key={selectedValue}
-                                    className="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-sm"
+                                    className={`px-2 py-1 rounded-full text-sm ${disabled ? "bg-gray-200 text-gray-500" : "bg-blue-100 text-blue-600"}`}
                                 >
                                     {selectedOption?.label}
                                 </span>
@@ -96,21 +98,25 @@ const CustomizedMultipleSelectInputWithLabelNumber: React.FC<SelectProps> = ({
                 )}
             </div>
 
-            {isOpen && (
+            {isOpen && !disabled && (
                 <div
                     className="absolute z-10 bg-white border rounded-md mt-2 shadow-lg w-full max-h-48 overflow-y-auto"
                     onClick={(e) => e.stopPropagation()}
                 >
-                    {list?.map((option) => (
-                        <div
-                            key={option.value}
-                            onClick={() => handleOptionClick(option.value)}
-                            className={`p-2 hover:bg-blue-50 cursor-pointer ${selectedValues.includes(option.value) ? "bg-blue-100" : ""
-                                }`}
-                        >
-                            {option.label}
-                        </div>
-                    ))}
+                    {list?.length > 0 ? <>
+                        {list?.map((option) => (
+                            <div
+                                key={option.value}
+                                onClick={() => handleOptionClick(option.value)}
+                                className={`p-2 hover:bg-blue-50 cursor-pointer ${selectedValues.includes(option.value) ? "bg-blue-100" : ""
+                                    }`}
+                            >
+                                {option.label}
+                            </div>
+                        ))}
+                    </> :
+                        <div className="p-2">No options available</div>
+                    }
                 </div>
             )}
 
