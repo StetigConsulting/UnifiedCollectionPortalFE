@@ -15,11 +15,12 @@ import { testDiscom } from '@/lib/utils';
 
 interface CreateNewLevelPopupProps {
     fetchData: () => void;
+    currentLevel: number;
 }
 
 type FormData = z.infer<typeof createNewLevelSchema>;
 
-const CreateNewLevelPopup: React.FC<CreateNewLevelPopupProps> = ({ fetchData }) => {
+const CreateNewLevelPopup: React.FC<CreateNewLevelPopupProps> = ({ fetchData, currentLevel }) => {
     const [levelCount, setLevelCount] = useState<number>(1);
     const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
     const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -42,7 +43,7 @@ const CreateNewLevelPopup: React.FC<CreateNewLevelPopupProps> = ({ fetchData }) 
         const payload = {
             user_id: 6,
             discom_id: testDiscom,
-            level: levelCount,
+            level: currentLevel,
             level_name: formData.levelName,
             level_type: formData.levelType,
         };
@@ -88,10 +89,10 @@ const CreateNewLevelPopup: React.FC<CreateNewLevelPopupProps> = ({ fetchData }) 
                 <DialogContent>
                     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
                         <DialogHeader>
-                            <DialogTitle>Create Level</DialogTitle>
+                            <DialogTitle>Create Level {currentLevel}</DialogTitle>
                         </DialogHeader>
-                        <div className="flex items-center justify-between">
-                            <span className="text-sm font-medium">Level {levelCount}</span>
+                        {/* <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium">Level {currentLevel}</span>
                             <div className="flex space-x-2">
                                 <Button type="button" variant="outline" onClick={decrementLevel}>
                                     -
@@ -100,10 +101,10 @@ const CreateNewLevelPopup: React.FC<CreateNewLevelPopupProps> = ({ fetchData }) 
                                     +
                                 </Button>
                             </div>
-                        </div>
+                        </div> */}
                         <CustomizedInputWithLabel
-                            label={`Enter Level ${levelCount} Name`}
-                            placeholder={`Enter Level ${levelCount} Name`}
+                            label={`Level ${currentLevel} Name`}
+                            placeholder={`Enter Level ${currentLevel} Name`}
                             errors={errors.levelName}
                             {...register('levelName')}
                         />

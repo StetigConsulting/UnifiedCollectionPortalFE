@@ -8,21 +8,25 @@ import { PROTECTED_SUB_ROUTES, PUBLIC_ROUTES, SIGNIN } from "./lib/utils";
 export async function middleware(request: any) {
     const { nextUrl } = request;
 
-    const session = await auth();
-    console.log("Session is", session?.user);
-    const isAuthenticated = !!session?.user;
-    console.log(isAuthenticated);
+    // const session = await auth();
+    // console.log("Session is", session?.user);
+    // const isAuthenticated = !!session?.user;
+    // console.log(isAuthenticated);
 
-    const isPublicRoute = (
-        PUBLIC_ROUTES.find(route => nextUrl.pathname.startsWith(route)) &&
-        !PROTECTED_SUB_ROUTES.find(
-            route => nextUrl.pathname.includes(route)
-        )
-    )
+    // const isPublicRoute = (
+    //     PUBLIC_ROUTES.find(route => nextUrl.pathname.startsWith(route)) &&
+    //     !PROTECTED_SUB_ROUTES.find(
+    //         route => nextUrl.pathname.includes(route)
+    //     )
+    // )
 
-    console.log(isPublicRoute);
+    // console.log(isPublicRoute);
 
-    if (!isAuthenticated && !isPublicRoute) {
+    // if (!isAuthenticated && !isPublicRoute) {
+    //     return NextResponse.redirect(new URL(SIGNIN, nextUrl));
+    // }
+    console.log(nextUrl);
+    if (nextUrl.pathname === '/') {
         return NextResponse.redirect(new URL(SIGNIN, nextUrl));
     }
 }

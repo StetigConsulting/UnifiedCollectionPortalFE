@@ -18,6 +18,7 @@ import { AgencyDataInterface } from "@/lib/interface";
 import { levelWIthId, testDiscom } from "@/lib/utils";
 import { addAgencySchema } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -519,7 +520,9 @@ const AddAgency = () => {
         </div>
         <div className="flex justify-end mt-4">
           <Button type="submit" variant="default" disabled={isSubmitting}>
-            {isSubmitting ? "Submitting..." : "Submit"}
+            {isSubmitting ? <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
+            </> : "Submit"}
           </Button>
         </div>
       </form>

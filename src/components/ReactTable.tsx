@@ -17,6 +17,8 @@ interface TableProps<T> {
     itemsPerPage?: number;
     onRowClick?: (row: T) => void;
     className?: string;
+    avoidSrNo?: boolean;
+    customActionButton?: React.ReactNode;
 }
 
 const ReactTable = <T extends Record<string, any>>({
@@ -25,6 +27,8 @@ const ReactTable = <T extends Record<string, any>>({
     itemsPerPage = 50,
     onRowClick,
     className,
+    avoidSrNo = false,
+    customActionButton
 }: TableProps<T>) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [sortField, setSortField] = useState<keyof T | null>(null);
@@ -130,12 +134,14 @@ const ReactTable = <T extends Record<string, any>>({
     return (
         <div className={`space-y-4 ${className}`}>
             <header className="flex justify-between items-center">
-                <div className="flex space-x-2">
-                    <Button variant="default" onClick={handleCopy}>Copy</Button>
-                    <Button variant="default" onClick={exportToExcel}>Excel</Button>
-                    <Button variant="default" onClick={exportToCSV}>CSV</Button>
-                    <Button variant="default">PDF</Button>
-                </div>
+                {customActionButton ? customActionButton :
+                    <div className="flex space-x-2">
+                        <Button variant="default" onClick={handleCopy}>Copy</Button>
+                        <Button variant="default" onClick={exportToExcel}>Excel</Button>
+                        <Button variant="default" onClick={exportToCSV}>CSV</Button>
+                        <Button variant="default">PDF</Button>
+                    </div>
+                }
                 <Input
                     type="text"
                     placeholder="Search"
@@ -148,7 +154,7 @@ const ReactTable = <T extends Record<string, any>>({
                 <table border={1} width="100%" cellPadding={5} className='w-full caption-bottom text-sm min-w-full border border-gray-200 divide-y divide-gray-200'>
                     <thead className='[&_tr]:border-b bg-gray-100'>
                         <tr className='border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted'>
-                            <th>Sr.No</th>
+                            {!avoidSrNo && <th>Sr.No</th>}
                             {columns.map(column => (
                                 <th
                                     key={column.key as string}
@@ -170,7 +176,8 @@ const ReactTable = <T extends Record<string, any>>({
                                     style={{ cursor: onRowClick ? 'pointer' : 'default' }}
                                     className='border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted'
                                 >
-                                    <td>{index + 1}</td>
+                                    {!avoidSrNo &&
+                                        <td>{index + 1}</td>}
                                     {columns.map(column => (
                                         <td key={column.key as string}
                                             className='p-2 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] whitespace-nowrap'

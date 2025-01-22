@@ -13,6 +13,7 @@ import { extendValidity, getAgenciesWithDiscom, getAgencyById } from '@/app/api-
 import { testDiscom } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useSearchParams } from 'next/navigation';
+import { Loader2 } from 'lucide-react';
 
 type FormData = z.infer<typeof extendValiditySchema>;
 
@@ -208,7 +209,9 @@ const ExtendValidity = () => {
                 </div>
                 <div className="flex justify-end mt-4">
                     <Button type="submit" variant="default" disabled={isSubmitting}>
-                        {isSubmitting ? "Submitting..." : "Submit"}
+                        {isSubmitting ? <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
+                        </> : "Submit"}
                     </Button>
                 </div>
             </form>
