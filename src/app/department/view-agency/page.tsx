@@ -24,20 +24,32 @@ const ViewAgency = () => {
         try {
             const response = await getAgenciesWithDiscom(testDiscom);
             setAgencyList(
-                response?.data?.map((item) => ({
-                    id: item.id,
-                    agencyName: item.agency_name,
-                    agencyAddress: item.agency_address,
-                    contactPerson: item.contact_person,
-                    phone: item.phone,
-                    maxLimit: item.maximum_limit,
-                    woNumber: item.wo_number,
-                    validity: item.validity_end_date,
-                    divCode: item.divCode || 'N/A',
-                    permissions: item.permissions || 'N/A',
-                    collectionModes: item.collectionModes || 'N/A',
-                    isActive: item.is_active,
-                }))
+                response?.data?.map((item) => {
+                    let data = [];
+                    if (item.collection_type_energy) {
+                        data.push('Enengy')
+                    }
+                    if (item.collection_type_non_energy) {
+                        data.push('Non-Enengy')
+                    }
+
+                    item.non_energy_types.map((mode) => data.push(mode.type_name))
+
+                    return ({
+                        id: item.id,
+                        agencyName: item.agency_name,
+                        agencyAddress: item.agency_address,
+                        contactPerson: item.contact_person,
+                        phone: item.phone,
+                        maxLimit: item.maximum_limit,
+                        woNumber: item.wo_number,
+                        validity: item.validity_end_date,
+                        divCode: item.divCode || 'N/A',
+                        permissions: item.collection_payment_modes.map((mode) => mode.mode_name).join(", ") || 'N/A',
+                        collectionModes: data.join(', ') || 'N/A',
+                        isActive: item.is_active,
+                    })
+                })
             );
         } catch (error) {
             console.error('Failed to get agency:', error);
