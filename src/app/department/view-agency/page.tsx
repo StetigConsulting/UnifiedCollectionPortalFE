@@ -74,7 +74,7 @@ const ViewAgency = () => {
 
     const columns = useMemo(
         () => [
-            { label: 'Action', key: 'action', sortable: false },
+            { label: 'Action', key: 'action', sortable: false, ignored: true },
             { label: 'Agency ID', key: 'id', sortable: true },
             { label: 'Agency Name', key: 'agencyName', sortable: true },
             { label: 'Address', key: 'agencyAddress', sortable: true },
@@ -107,31 +107,13 @@ const ViewAgency = () => {
 
     return (
         <AuthUserReusableCode pageTitle="View Agency" isLoading={isLoading}>
-            <div className="p-4 space-y-4">
-                <header className="flex justify-between items-center">
-                    <div className="flex space-x-2">
-                        <Button variant="default">View</Button>
-                        <Button variant="default">Excel</Button>
-                        <Button variant="default">CSV</Button>
-                        <Button variant="default">PDF</Button>
-                    </div>
-                    <Input
-                        type="text"
-                        placeholder="Search"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        className="w-64"
-                    />
-                </header>
 
-                <ReactTable
-                    data={tableData.filter((item) =>
-                        item.agencyName.toLowerCase().includes(search.toLowerCase())
-                    )}
-                    columns={columns}
-                    itemsPerPage={5}
-                />
-            </div>
+            <ReactTable
+                data={tableData.filter((item) =>
+                    item.agencyName.toLowerCase().includes(search.toLowerCase())
+                )}
+                columns={columns}
+            />
         </AuthUserReusableCode>
     );
 };
