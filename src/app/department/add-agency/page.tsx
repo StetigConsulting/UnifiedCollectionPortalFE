@@ -18,6 +18,7 @@ import { AgencyDataInterface } from "@/lib/interface";
 import { levelWIthId, testDiscom } from "@/lib/utils";
 import { addAgencySchema } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -87,9 +88,13 @@ const AddAgency = () => {
       console.log("API Response:", response);
       location.reload();
     } catch (error) {
-      console.error("Failed to create agency:", error.data[Object.keys(error.data)[0]]);
-      let errorMessage = error.data[Object.keys(error.data)[0]]
-      toast.error(errorMessage)
+      console.error("Failed to create agency:", Object.keys(error.data)
+        .map((key) => error.data[key])
+        .join(', '));
+      let errorMessage = Object.keys(error.data)
+        .map((key) => error.data[key])
+        .join(', ');
+      toast.error(errorMessage || error.error)
     } finally {
       setIsSubmitting(false);
     }
@@ -145,7 +150,7 @@ const AddAgency = () => {
           setSubDivisions([]);
           setSections([]);
           if (newValue?.new?.length > 0 && formData.workingLevel !== levelWIthId.CIRCLE) {
-            getDivisions(newValue?.new);
+            getDivisions(newValue?.new[0]);
           }
         }
 
@@ -155,7 +160,7 @@ const AddAgency = () => {
           setValue("section", []);
           setSubDivisions([]);
           setSections([]);
-          if (newValue?.new.length > 0 && formData.workingLevel === levelWIthId.SUB_DIVISION || formData.workingLevel === levelWIthId.SECTION) {
+          if (newValue?.new.length > 0 && (formData.workingLevel === levelWIthId.SUB_DIVISION || formData.workingLevel === levelWIthId.SECTION)) {
             getSubDivisions(newValue?.new[0]);
           }
         }
@@ -231,6 +236,8 @@ const AddAgency = () => {
           })
       );
     })
+
+    setValue('initialBalance', 0);
   }, []);
 
   const getDivisions = (id) => {
@@ -382,7 +389,7 @@ const AddAgency = () => {
             label="Initial Balance"
             required={true}
             errors={errors.initialBalance}
-            containerClass=""
+            disabled
             placeholder="Enter Initial Balance"
             {...register("initialBalance")}
           />
@@ -513,7 +520,9 @@ const AddAgency = () => {
         </div>
         <div className="flex justify-end mt-4">
           <Button type="submit" variant="default" disabled={isSubmitting}>
-            {isSubmitting ? "Submitting..." : "Submit"}
+            {isSubmitting ? <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
+            </> : "Submit"}
           </Button>
         </div>
       </form>

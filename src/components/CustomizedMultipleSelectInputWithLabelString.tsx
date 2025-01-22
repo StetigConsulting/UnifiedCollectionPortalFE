@@ -15,6 +15,7 @@ interface SelectProps {
     containerClass?: string;
     errors?: { message?: string };
     onChange: (selectedValue: string[]) => void;
+    disabled?: boolean;
 }
 
 const CustomizedMultipleSelectInputWithLabelString: React.FC<SelectProps> = ({
@@ -27,6 +28,7 @@ const CustomizedMultipleSelectInputWithLabelString: React.FC<SelectProps> = ({
     containerClass = "",
     errors,
     onChange,
+    disabled = false,
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedValues, setSelectedValues] = useState<string[]>(value);
@@ -74,25 +76,26 @@ const CustomizedMultipleSelectInputWithLabelString: React.FC<SelectProps> = ({
                 {label} {required && <span className="text-red-500">*</span>}
             </label>
             <div
-                className="border rounded-md w-full p-2 bg-white cursor-pointer"
+                className={`border rounded-md w-full ${disabled ? "bg-gray-100 cursor-not-allowed" : "bg-white cursor-pointer"}`}
+                style={{ padding: '8px' }}
                 onClick={toggleDropdown}
             >
                 {selectedValues.length > 0 ? (
                     <div className="flex flex-wrap gap-2">
-                        {selectedValues.map((selectedValue) => {
+                        {selectedValues.map((selectedValue, i) => {
                             const selectedOption = list?.find((o) => o.value === selectedValue);
                             return (
                                 <span
                                     key={selectedValue}
-                                    className="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-sm"
+                                    className={`rounded-full text-sm`}
                                 >
-                                    {selectedOption?.label}
+                                    {selectedOption?.label} {selectedValues.length !== i + 1 ? ', ' : ''}
                                 </span>
                             );
                         })}
                     </div>
                 ) : (
-                    <span className="text-gray-500">{placeholder}</span>
+                    <span className="text-gray-500 text-sm">{placeholder}</span>
                 )}
             </div>
 

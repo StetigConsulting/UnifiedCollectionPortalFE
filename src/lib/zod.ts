@@ -56,11 +56,10 @@ export const addAgencySchema = z.object({
   paymentDate: z.string().optional(),
   transactionId: z.string().optional(),
   initialBalance: z
-    .string()
-    .nonempty("Initial Balance is required")
-    .transform((val) => parseFloat(val))
-    .refine((val) => !isNaN(val) && val >= 0, "Initial Balance must be a positive number or zero")
-    .optional(),
+    .number({
+      required_error: "Initial Balance is required",
+      invalid_type_error: "Initial Balance must"
+    }),
   paymentMode: z.string().optional(),
   paymentRemark: z.string().optional(),
   workingLevel: z.string().nonempty("Working Level is required"),

@@ -12,6 +12,7 @@ import { rechargeSchema } from '@/lib/zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'sonner';
+import { Loader2 } from 'lucide-react';
 
 
 type FormData = z.infer<typeof rechargeSchema>;
@@ -110,6 +111,7 @@ const Recharge = () => {
                         containerClass=""
                         placeholder="Select Agency"
                         list={agencyList}
+                        required
                         {...register("agency")}
                     />
                     <CustomizedInputWithLabel
@@ -149,6 +151,7 @@ const Recharge = () => {
                         errors={errors.amount}
                         containerClass=""
                         type='number'
+                        required
                         placeholder="Enter Amount"
                         {...register("amount", { valueAsNumber: true })}
                     />
@@ -180,7 +183,9 @@ const Recharge = () => {
                     </div>
                     <div className='self-center'>
                         <Button type="submit" variant="default" disabled={isSubmitting}>
-                            {isSubmitting ? "Submitting..." : "Submit"}
+                            {isSubmitting ? <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
+                            </> : "Submit"}
                         </Button>
                     </div>
                 </div>

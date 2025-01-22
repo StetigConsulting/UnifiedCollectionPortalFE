@@ -13,6 +13,7 @@ import { editAgency, getAgenciesWithDiscom, getAgencyById } from '@/app/api-call
 import { testDiscom } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useSearchParams } from 'next/navigation';
+import { Loader2 } from 'lucide-react';
 
 type FormData = z.infer<typeof editAgencySchema>;
 
@@ -81,7 +82,7 @@ const EditAgency = () => {
             const response = await getAgencyById(id);
             const agency = response.data;
             console.log("Agency Data:", agency);
-            setValue('agencyId', agency.id || '');
+            setValue('agencyId', agency.id || null);
             setValue('agencyName', agency.id || '');
             setValue('phoneNumber', agency.phone || '');
             setValue('address', agency.agency_address || '');
@@ -137,7 +138,7 @@ const EditAgency = () => {
         if (selectedAgency) {
             const agency = agencyList.find((item) => item.id === Number(selectedAgency));
             if (agency) {
-                setValue('agencyId', agency.id || '');
+                setValue('agencyId', agency.id || null);
                 setValue('agencyName', agency.id || '');
                 setValue('phoneNumber', agency.phone || '');
                 setValue('address', agency.agency_address || '');
@@ -159,12 +160,12 @@ const EditAgency = () => {
                         containerClass="col-span-2"
                         placeholder="Select Agency"
                         list={agencyList}
+                        required
                         {...register("agency")}
                     />
                     <CustomizedInputWithLabel
                         label="Agency ID"
                         errors={errors.agencyId}
-                        containerClass=""
                         placeholder="Agency ID"
                         {...register('agencyId')}
                         disabled
@@ -172,27 +173,28 @@ const EditAgency = () => {
                     <CustomizedInputWithLabel
                         label="Agency Name"
                         errors={errors.agencyName}
-                        containerClass=""
+                        required
                         placeholder="Enter Agency Name"
                         {...register('agencyName')}
                     />
                     <CustomizedInputWithLabel
                         label="Maximum Amount"
                         errors={errors.maximumAmount}
-                        containerClass=""
+                        required
                         placeholder="Enter Maximum Amount"
                         {...register('maximumAmount', { valueAsNumber: true })}
                     />
                     <CustomizedInputWithLabel
                         label="Maximum Agent"
                         errors={errors.maximumAgent}
-                        containerClass=""
+                        required
                         placeholder="Enter Maximum Agent"
                         {...register('maximumAgent', { valueAsNumber: true })}
                     />
                     <CustomizedInputWithLabel
                         label="Address"
                         errors={errors.address}
+                        required
                         containerClass="col-span-2"
                         placeholder="Enter New Address"
                         {...register('address')}
@@ -201,21 +203,20 @@ const EditAgency = () => {
                         <CustomizedInputWithLabel
                             label="WO Number"
                             errors={errors.woNumber}
-                            containerClass=""
                             placeholder="Enter WO Number"
                             {...register('woNumber')}
                         />
                         <CustomizedInputWithLabel
                             label="Contact Person"
                             errors={errors.contactPerson}
-                            containerClass=""
+                            required
                             placeholder="Enter Contact Person"
                             {...register('contactPerson')}
                         />
                         <CustomizedInputWithLabel
                             label="Phone Number"
                             errors={errors.phoneNumber}
-                            containerClass=""
+                            required
                             placeholder="Enter Phone Number"
                             {...register('phoneNumber')}
                         />
@@ -223,7 +224,9 @@ const EditAgency = () => {
                 </div>
                 <div className="flex justify-end mt-4">
                     <Button type="submit" variant="default" disabled={isSubmitting}>
-                        {isSubmitting ? "Submitting..." : "Submit"}
+                        {isSubmitting ? <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
+                        </> : "Submit"}
                     </Button>
                 </div>
             </form>

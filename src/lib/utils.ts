@@ -19,6 +19,7 @@ export const generateCaptcha = () => {
 };
 
 export const formatDate = (dateString: string): string => {
+  console.log(dateString)
   const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: 'long',
@@ -83,3 +84,18 @@ export function numberToWords(num: number): string {
 
   return result.trim();
 }
+
+
+export const SIGNIN = '/auth/signin';
+export const ROOT = '/';
+
+export const PUBLIC_ROUTES = [
+  '/auth/signin',
+  '/auth/signup'
+]
+
+export const PROTECTED_SUB_ROUTES = [
+
+]
+
+export const ADMIN_ONLY_ROUTES = ["/users", "/settings"];
