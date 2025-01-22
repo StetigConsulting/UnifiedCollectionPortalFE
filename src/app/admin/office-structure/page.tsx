@@ -21,7 +21,14 @@ const OfficeStructurePage = () => {
             if (!response.ok) throw new Error('Failed to fetch office structure data');
 
             const data = await response.json();
-            setOfficeStructureData(Array.isArray(data.data) ? data.data : []);
+            setOfficeStructureData(
+                data?.data?.map((item) => {
+                    return ({
+                        ...item,
+                        createdOn: formatDate(item.createdOn),
+                    })
+                })
+            );
             const maxLevel = data.data.length > 0 ? Math.max(...data.data.map((item) => item.level || 1)) + 1 : 1;
             setMaxLevel(maxLevel);
         } catch (error) {
@@ -42,23 +49,10 @@ const OfficeStructurePage = () => {
             { label: 'Level', key: 'level', sortable: true },
             { label: 'Level Type', key: 'levelType', sortable: true },
             { label: 'Name', key: 'levelName', sortable: true },
-            { label: 'Created At', key: 'createdOn', sortable: true, cell: (row) => formatDate(row.createdOn) },
+            { label: 'Created At', key: 'createdOn', sortable: true, }
         ],
         []
     );
-
-    const tableData = useMemo(() => {
-        return officeStructureData
-            .filter(
-                (item) =>
-                    item.levelType.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    item.levelName.toLowerCase().includes(searchQuery.toLowerCase())
-            )
-            .map((item) => ({
-                ...item,
-                createdOn: formatDate(item.createdOn),
-            }));
-    }, [officeStructureData, searchQuery]);
 
     return (
         <AuthUserReusableCode pageTitle="Office Structure" isLoading={loading}>
