@@ -42,3 +42,9 @@ export interface editAgencyInterface {
     maximum_limit: number;
     max_agent: number;
 }
+
+export interface extendValidityInterface {
+    id: number;
+    validity_from_date: string;
+    validity_to_date: string;
+}

@@ -1,4 +1,4 @@
-import { AgencyDataInterface, editAgencyInterface, rechargeAgencyInterface } from "@/lib/interface";
+import { AgencyDataInterface, editAgencyInterface, extendValidityInterface, rechargeAgencyInterface } from "@/lib/interface";
 import axios from 'axios';
 
 const api = axios.create({
@@ -124,6 +124,16 @@ const deactivateAgencyAccountAPI = async (agencyData: number) => {
   }
 };
 
+const extendValidity = async (agencyData: extendValidityInterface) => {
+  try {
+    const response = await api.put('/agencies/extend-validity', agencyData);
+    return response.data;
+  } catch (error: any) {
+    console.log(error);
+    throw error?.response?.data
+  }
+};
+
 export {
   getAllPaymentModes,
   getAllNonEnergyTypes,
@@ -132,5 +142,5 @@ export {
   getLevels,
   getAgenciesWithDiscom,
   rechargeAgency,
-  editAgency, activateAgencyAccount, deactivateAgencyAccountAPI, getAgencyById
+  editAgency, activateAgencyAccount, deactivateAgencyAccountAPI, getAgencyById, extendValidity
 };
