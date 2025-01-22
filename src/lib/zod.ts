@@ -190,7 +190,18 @@ export const rechargeSchema = z.object({
 });
 
 export const editAgencySchema = z.object({
-  agency: z.string().nonempty("Agency is required"),
+  agency: z
+    .union([z.string(), z.number()])
+    .transform((val) => {
+      const num = Number(val);
+      if (isNaN(num)) {
+        throw new Error("Agency must be a valid number");
+      }
+      return num;
+    })
+    .refine((val) => val > 0, {
+      message: "Agency is required and must be greater than 0",
+    }),
   agencyName: z.string().nonempty("Agency name is required"),
   agencyId: z.number({
     required_error: "Agency ID is required",
