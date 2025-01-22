@@ -41,11 +41,12 @@ const ExtendValidity = () => {
                         list={[]}
                         {...register('division')}
                     />
-                    <CustomizedInputWithLabel
+                    <CustomizedSelectInputWithLabel
                         label="Agency Name"
                         errors={errors.agencyName}
                         containerClass="col-span-2"
                         placeholder="Select Agency Name"
+                        list={[]}
                         {...register('agencyName')}
                     />
                     <CustomizedInputWithLabel

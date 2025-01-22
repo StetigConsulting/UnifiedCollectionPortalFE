@@ -40,6 +40,8 @@ const AddAgency = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const onSubmit = async (data: FormData) => {
     console.log("Form Data:", data);
     const agencyData: AgencyDataInterface = {
@@ -195,7 +197,7 @@ const AddAgency = () => {
             })
         );
       })
-      .catch((err) => { });
+      .catch((err) => { })
     getAllNonEnergyTypes().then((data) => {
       setNonEnergyTypes(
         data?.data?.map((ite) => {
@@ -205,7 +207,7 @@ const AddAgency = () => {
           };
         })
       );
-    });
+    })
     getLevelsDiscomId("1001").then((data) => {
       setCircles(
         data?.data?.officeStructure?.map((ite) => {
@@ -215,7 +217,7 @@ const AddAgency = () => {
           };
         })
       );
-    });
+    })
 
     getLevels("1001").then((data) => {
       setWorkingLevel(
@@ -228,10 +230,11 @@ const AddAgency = () => {
             };
           })
       );
-    });
+    })
   }, []);
 
   const getDivisions = (id) => {
+    setIsLoading(true)
     getLevelsDiscomId(id).then((data) => {
       setDivisions(
         data?.data?.officeStructure?.map((ite) => {
@@ -241,10 +244,11 @@ const AddAgency = () => {
           };
         })
       );
-    });
+    }).finally(() => { setIsLoading(false); });
   };
 
   const getSubDivisions = (id) => {
+    setIsLoading(true)
     getLevelsDiscomId(id).then((data) => {
       setSubDivisions(
         data?.data?.officeStructure?.map((ite) => {
@@ -254,10 +258,11 @@ const AddAgency = () => {
           };
         })
       );
-    });
+    }).finally(() => { setIsLoading(false); })
   };
 
   const getSections = (id) => {
+    setIsLoading(true)
     getLevelsDiscomId(id).then((data) => {
       setSections(
         data?.data?.officeStructure?.map((ite) => {
@@ -267,11 +272,11 @@ const AddAgency = () => {
           };
         })
       );
-    });
+    }).finally(() => { setIsLoading(false); });
   };
 
   return (
-    <AuthUserReusableCode pageTitle="Add Agency">
+    <AuthUserReusableCode pageTitle="Add Agency" isLoading={isLoading}>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <CustomizedInputWithLabel
@@ -422,6 +427,7 @@ const AddAgency = () => {
               label="Division"
               required={true}
               list={divisions}
+              disabled={formData.circle.length == 0}
               value={watch('division') || []}
               onChange={(selectedValues) => setValue('division', selectedValues)}
               multi={formData.workingLevel == levelWIthId.DIVISION}
@@ -437,6 +443,7 @@ const AddAgency = () => {
                 placeholder="Select Sub Division"
                 list={subDivisions}
                 required={true}
+                disabled={formData.division.length == 0}
                 value={watch('subDivision') || []}
                 multi={formData.workingLevel == levelWIthId.SUB_DIVISION}
                 onChange={(selectedValues) => setValue('subDivision', selectedValues)}
@@ -451,6 +458,7 @@ const AddAgency = () => {
                 placeholder="Select Section"
                 list={sections}
                 required={true}
+                disabled={formData.subDivision.length == 0}
                 value={watch('section') || []}
                 multi={formData.workingLevel == levelWIthId.SECTION}
                 onChange={(selectedValues) => setValue('section', selectedValues)}
