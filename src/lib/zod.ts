@@ -228,17 +228,27 @@ export const editAgencySchema = z.object({
 });
 
 export const extendValiditySchema = z.object({
-  circle: z.string().nonempty("Circle type is required"),
-  division: z.string().nonempty("Division is required"),
-  agencyName: z.string().nonempty("Agency name is required"),
-  agencyId: z.string().nonempty("Agency ID is required"),
-  currentValidity: z.string().nonempty("Current validity is required"),
-  validityDate: z
+  // circle: z.string().nonempty("Circle type is required"),
+  // division: z.string().nonempty("Division is required"),
+  agencyName: z.string().nonempty("Agency ID is required"),
+  agencyId: z.number({
+    required_error: "Agency Id is required",
+    invalid_type_error: "Agency Id must be a number",
+  }),
+  currentFromValidity: z.string().nonempty("Current from validity is required"),
+  currentToValidity: z.string().nonempty("Current to validity is required"),
+  newFromValidity: z
     .string()
-    .nonempty("Validity date is required")
+    .nonempty("New From Validity date is required")
     .refine((value) => !isNaN(Date.parse(value)), {
       message: "Validity date must be a valid date",
     }),
+  newToValidity: z
+    .string()
+    .nonempty("New To Validity date is required")
+    .refine((value) => !isNaN(Date.parse(value)), {
+      message: "Validity date must be a valid date",
+    })
 });
 
 export const resetDeviceSchema = z.object({

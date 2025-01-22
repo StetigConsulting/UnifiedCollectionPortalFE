@@ -44,7 +44,7 @@ const ViewAgency = () => {
                         maxLimit: item.maximum_limit,
                         woNumber: item.wo_number,
                         validity: item.validity_end_date,
-                        divCode: item.divCode || 'N/A',
+                        divCode: item.working_level_offices.map((mode) => mode.office_description).join(', ') || 'N/A',
                         permissions: item.collection_payment_modes.map((mode) => mode.mode_name).join(", ") || 'N/A',
                         collectionModes: data.join(', ') || 'N/A',
                         isActive: item.is_active,
