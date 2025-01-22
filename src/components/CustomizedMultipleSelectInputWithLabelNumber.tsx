@@ -76,25 +76,26 @@ const CustomizedMultipleSelectInputWithLabelNumber: React.FC<SelectProps> = ({
                 {label} {required && <span className="text-red-500">*</span>}
             </label>
             <div
-                className={`border rounded-md w-full p-2 ${disabled ? "bg-gray-100 cursor-not-allowed" : "bg-white cursor-pointer"}`}
+                className={`border rounded-md w-full ${disabled ? "bg-gray-100 cursor-not-allowed" : "bg-white cursor-pointer"}`}
+                style={{ padding: '8px' }}
                 onClick={toggleDropdown}
             >
                 {selectedValues.length > 0 ? (
                     <div className="flex flex-wrap gap-2">
-                        {selectedValues?.map((selectedValue) => {
+                        {selectedValues?.map((selectedValue, i) => {
                             const selectedOption = list?.find((o) => o.value === selectedValue);
                             return (
                                 <span
                                     key={selectedValue}
-                                    className={`px-2 py-1 rounded-full text-sm ${disabled ? "bg-gray-200 text-gray-500" : "bg-blue-100 text-blue-600"}`}
+                                    className={`rounded-full text-sm`}
                                 >
-                                    {selectedOption?.label}
+                                    {selectedOption?.label} {selectedValues.length !== i + 1 ? ', ' : ''}
                                 </span>
                             );
                         })}
                     </div>
                 ) : (
-                    <span className="text-gray-500">{placeholder}</span>
+                    <span className="text-gray-500 text-sm">{placeholder}</span>
                 )}
             </div>
 

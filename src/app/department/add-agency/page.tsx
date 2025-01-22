@@ -145,7 +145,7 @@ const AddAgency = () => {
           setSubDivisions([]);
           setSections([]);
           if (newValue?.new?.length > 0 && formData.workingLevel !== levelWIthId.CIRCLE) {
-            getDivisions(newValue?.new);
+            getDivisions(newValue?.new[0]);
           }
         }
 
@@ -155,7 +155,7 @@ const AddAgency = () => {
           setValue("section", []);
           setSubDivisions([]);
           setSections([]);
-          if (newValue?.new.length > 0 && formData.workingLevel === levelWIthId.SUB_DIVISION || formData.workingLevel === levelWIthId.SECTION) {
+          if (newValue?.new.length > 0 && (formData.workingLevel === levelWIthId.SUB_DIVISION || formData.workingLevel === levelWIthId.SECTION)) {
             getSubDivisions(newValue?.new[0]);
           }
         }
