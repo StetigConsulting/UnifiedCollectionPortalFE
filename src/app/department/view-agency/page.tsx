@@ -117,7 +117,7 @@ const ViewAgency = () => {
                 />} handleContinue={() => deactivateAgencyUser(item.id)}
                     title='Confirm Deactivating' description='Are you sure you want to save the deactivate agent? Please review the details carefully before confirming.' continueButtonText='Confirm'
                 />
-                <Pencil className='cursor-pointer' onClick={() => handleEditAgency(item.id)} />
+                <Pencil className='cursor-pointer h-5 w-5' onClick={() => handleEditAgency(item.id)} />
             </div>
         ) : (
             <div className='flex gap-2'>
@@ -126,7 +126,7 @@ const ViewAgency = () => {
                 />} handleContinue={() => activateAgencyUser(item.id)}
                     title='Confirm Deactivating' description='Are you sure you want to save the deactivate agent? Please review the details carefully before confirming.' continueButtonText='Confirm'
                 />
-                <Pencil className='cursor-pointer' onClick={() => handleEditAgency(item.id)} />
+                <Pencil className='cursor-pointer h-5 w-5' onClick={() => handleEditAgency(item.id)} />
             </div>
         ),
     }));
