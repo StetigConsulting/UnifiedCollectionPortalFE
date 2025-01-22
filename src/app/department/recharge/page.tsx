@@ -110,6 +110,7 @@ const Recharge = () => {
                         containerClass=""
                         placeholder="Select Agency"
                         list={agencyList}
+                        required
                         {...register("agency")}
                     />
                     <CustomizedInputWithLabel
@@ -149,6 +150,7 @@ const Recharge = () => {
                         errors={errors.amount}
                         containerClass=""
                         type='number'
+                        required
                         placeholder="Enter Amount"
                         {...register("amount", { valueAsNumber: true })}
                     />

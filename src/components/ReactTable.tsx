@@ -93,13 +93,29 @@ const ReactTable = <T extends Record<string, any>>({
     };
 
     const exportToExcel = () => {
+        const now = new Date();
+        const formattedDate = now.toLocaleDateString('en-GB').split('/').reverse().join('');
+        const formattedTime = now
+            .toLocaleTimeString('en-GB', { hour12: false })
+            .replace(/:/g, '_');
+
+        const filename = `Agency_${formattedDate}_${formattedTime}.xlsx`;
+
         const worksheet = XLSX.utils.json_to_sheet(data);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');
-        XLSX.writeFile(workbook, 'Data.xlsx');
+        XLSX.writeFile(workbook, filename);
     };
 
     const exportToCSV = () => {
+        const now = new Date();
+        const formattedDate = now.toLocaleDateString('en-GB').split('/').reverse().join('');
+        const formattedTime = now
+            .toLocaleTimeString('en-GB', { hour12: false })
+            .replace(/:/g, '_');
+
+        const filename = `Agency_${formattedDate}_${formattedTime}.csv`;
+
         const csvData = data.map((row) =>
             visibleColumns.map((col) => row[col.key]).join(',')
         );
@@ -107,7 +123,7 @@ const ReactTable = <T extends Record<string, any>>({
         const blob = new Blob([csvString], { type: 'text/csv' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.download = 'Data.csv';
+        link.download = filename;
         link.click();
     };
 
@@ -132,6 +148,7 @@ const ReactTable = <T extends Record<string, any>>({
                 <table border={1} width="100%" cellPadding={5} className='w-full caption-bottom text-sm min-w-full border border-gray-200 divide-y divide-gray-200'>
                     <thead className='[&_tr]:border-b bg-gray-100'>
                         <tr className='border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted'>
+                            <th>Sr.No</th>
                             {columns.map(column => (
                                 <th
                                     key={column.key as string}
@@ -153,6 +170,7 @@ const ReactTable = <T extends Record<string, any>>({
                                     style={{ cursor: onRowClick ? 'pointer' : 'default' }}
                                     className='border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted'
                                 >
+                                    <td>{index + 1}</td>
                                     {columns.map(column => (
                                         <td key={column.key as string}
                                             className='p-2 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] whitespace-nowrap'

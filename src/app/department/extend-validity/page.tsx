@@ -174,18 +174,18 @@ const ExtendValidity = () => {
                         disabled
                     />
                     <CustomizedInputWithLabel
-                        label="Current From Validity"
+                        label="Current Validity From"
                         errors={errors.currentFromValidity}
                         containerClass=""
-                        placeholder="Current From Validity"
+                        placeholder="Current Validity From"
                         {...register('currentFromValidity')}
                         disabled
                     />
                     <CustomizedInputWithLabel
-                        label="Current To Validity"
+                        label="Current Validity To"
                         errors={errors.currentToValidity}
                         containerClass=""
-                        placeholder="Current To Validity"
+                        placeholder="Current Validity To"
                         {...register('currentToValidity')}
                         disabled
                     />

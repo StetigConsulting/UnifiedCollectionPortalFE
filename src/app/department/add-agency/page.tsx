@@ -87,9 +87,13 @@ const AddAgency = () => {
       console.log("API Response:", response);
       location.reload();
     } catch (error) {
-      console.error("Failed to create agency:", error.data[Object.keys(error.data)[0]]);
-      let errorMessage = error.data[Object.keys(error.data)[0]]
-      toast.error(errorMessage)
+      console.error("Failed to create agency:", Object.keys(error.data)
+        .map((key) => error.data[key])
+        .join(', '));
+      let errorMessage = Object.keys(error.data)
+        .map((key) => error.data[key])
+        .join(', ');
+      toast.error(errorMessage || error.error)
     } finally {
       setIsSubmitting(false);
     }
@@ -231,6 +235,8 @@ const AddAgency = () => {
           })
       );
     })
+
+    setValue('initialBalance', 0);
   }, []);
 
   const getDivisions = (id) => {
@@ -382,7 +388,7 @@ const AddAgency = () => {
             label="Initial Balance"
             required={true}
             errors={errors.initialBalance}
-            containerClass=""
+            disabled
             placeholder="Enter Initial Balance"
             {...register("initialBalance")}
           />
