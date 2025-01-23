@@ -88,7 +88,34 @@ const data = {
       title: "Report",
       icon: NotepadText,
       url: "#",
-      path: "#",
+      path: '/agency/report/',
+      items: [
+        {
+          title: "Top up history",
+          icon: UserPlus2,
+          url: "/agency/report/top-up-history",
+        },
+        {
+          title: "Collector Top up history",
+          icon: UserPlus2,
+          url: "/agency/report/collector-top-up-history",
+        },
+        {
+          title: "Transaction record",
+          icon: UserPlus2,
+          url: "/agency/report/transaction-record",
+        },
+        {
+          title: "Login history",
+          icon: UserPlus2,
+          url: "/agency/report/login-history",
+        },
+        {
+          title: "Daily Collection",
+          icon: UserPlus2,
+          url: "/agency/report/daily-collection",
+        }
+      ]
     },
     {
       title: "News/Notice",
