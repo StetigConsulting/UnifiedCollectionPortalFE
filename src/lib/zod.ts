@@ -331,3 +331,19 @@ export const fileUploadSchema = z.object({
       message: "File size must be under 5MB",
     }),
 });
+
+export const addCollectorSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  phoneNumber: z.string().min(1, "Phone Number is required"),
+  validity: z.string().min(1, "Select Validity Date"),
+  maximumLimit: z.number().min(0, "Maximum Limit must be greater than or equal to 0"),
+  initialBalance: z.number().min(0, "Initial Balance must be greater than or equal to 0"),
+  binder: z.string().min(1, "Binder is required"),
+  subDivision: z.string().min(1, "Select Sub Division"),
+  section: z.number().min(0, "Section is required"),
+  permission: z.array(z.string()).min(1, "At least one permission is required"),
+  collectionType: z.array(z.string()).min(1, "At least one collection type is required"),
+  nonEnergy: z.array(z.string()).optional(),
+});
+
+export type AddCollectorFormData = z.infer<typeof addCollectorSchema>;
