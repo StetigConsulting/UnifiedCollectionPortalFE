@@ -1,21 +1,21 @@
-import React from 'react'
+import React from 'react';
 
-const CustomizedInputWithLabel = ({ label, errors = null, required = false, containerClass = '', ...props }) => {
+const CustomizedInputWithLabel = ({ label = '', errors = null, required = false, containerClass = '', ...props }) => {
     return (
-        <div className={containerClass}>
-            <label htmlFor="start-date" className="block text-sm font-medium text-gray-700 mb-1">
-                {label}{required ? <span className="text-red-500">*</span> : ''}
-            </label>
+        <div className={`${containerClass}`}>
+            {label && <label htmlFor="start-date" className="block text-sm font-medium text-gray-700 mb-1">
+                {label}{required ? <span className="text-red-500 ml-1">*</span> : ''}
+            </label>}
             <input
                 type="text"
-                className="border rounded p-2 w-full"
+                className="border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm w-full focus:outline-none focus:ring focus:ring-blue-500 focus:border-blue-500 transition-all ease-in-out"
                 {...props}
             />
             {errors && (
-                <p className="text-red-500">{errors.message}</p>
+                <p className="text-red-500 text-xs mt-1">{errors.message}</p>
             )}
         </div>
-    )
-}
+    );
+};
 
-export default CustomizedInputWithLabel
+export default CustomizedInputWithLabel;

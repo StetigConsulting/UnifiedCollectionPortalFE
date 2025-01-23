@@ -3,6 +3,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { toast } from 'sonner';
 import * as XLSX from 'xlsx';
+import CustomizedInputWithLabel from './CustomizedInputWithLabel';
 
 interface ColumnConfig<T> {
     label: string;
@@ -134,8 +135,8 @@ const ReactTable = <T extends Record<string, any>>({
     };
 
     return (
-        <div className={`space-y-4 ${className}`}>
-            <header className="flex justify-between items-center">
+        <div className={`${className}`}>
+            <div className="flex justify-between items-center py-4">
                 {customActionButton ? customActionButton :
                     <div className="flex space-x-2">
                         <Button variant="default" onClick={handleCopy}>Copy</Button>
@@ -144,19 +145,18 @@ const ReactTable = <T extends Record<string, any>>({
                         <Button variant="default">PDF</Button>
                     </div>
                 }
-                <Input
+                <CustomizedInputWithLabel
                     type="text"
                     placeholder="Search"
                     value={searchTerm}
                     onChange={(e) => handleSearch(e)}
-                    className="w-64"
                 />
-            </header>
+            </div>
             <div className='overflow-x-auto w-full'>
                 <table border={1} width="100%" cellPadding={5} className='w-full caption-bottom text-sm min-w-full border border-gray-200 divide-y divide-gray-200'>
                     <thead className='[&_tr]:border-b bg-gray-100'>
                         <tr className='border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted'>
-                            {!avoidSrNo && <th>Sr.No</th>}
+                            {!avoidSrNo && <th className='h-10 px-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] whitespace-nowrap'>Sr.No</th>}
                             {columns.map(column => (
                                 <th
                                     key={column.key as string}

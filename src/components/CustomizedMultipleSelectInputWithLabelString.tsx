@@ -117,7 +117,7 @@ const CustomizedMultipleSelectInputWithLabelString: React.FC<SelectProps> = ({
                 </div>
             )}
 
-            {errors?.message && <p className="text-red-500 text-sm mt-1">{errors.message}</p>}
+            {errors?.message && <p className="text-red-500 text-xs mt-1">{errors.message}</p>}
         </div>
     );
 };

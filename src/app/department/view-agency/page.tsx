@@ -176,7 +176,7 @@ const ViewAgency = () => {
 
     return (
         <AuthUserReusableCode pageTitle="View Agency" isLoading={isLoading}>
-            <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="grid grid-cols-2 gap-4">
                 <CustomizedSelectInputWithLabel
                     label="Agency status"
                     list={listOfAgencyStatus}
