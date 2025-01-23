@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
-import { activateAgencyAccount, deactivateAgencyAccountAPI, getAgenciesWithDiscom } from '@/app/api-calls/department/api';
+import { activateAgencyAccount, deactivateAgencyAccountAPI, getAgenciesWithDiscom, getLevels } from '@/app/api-calls/department/api';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import { CalendarArrowUp, Pencil, UserCheck, UserX } from 'lucide-react';
 import { testDiscom } from '@/lib/utils';
@@ -23,6 +23,11 @@ const ViewAgency = () => {
         setIsLoading(true);
         try {
             const response = await getAgenciesWithDiscom(testDiscom);
+            const discomList = await getLevels(testDiscom);
+            const listOfLevel = discomList.data.reduce((acc, item) => {
+                acc[item.id] = item.levelName;
+                return acc;
+            }, {});
             setAgencyList(
                 response?.data?.map((item) => {
                     let data = [];
@@ -44,7 +49,8 @@ const ViewAgency = () => {
                         maxLimit: item.maximum_limit,
                         woNumber: item.wo_number,
                         validity: item.validity_end_date,
-                        divCode: item.working_level_offices.map((mode) => mode.office_description).join(', ') || 'N/A',
+                        workingOffice: listOfLevel[item.working_level] || 'N/A',
+                        workingLevelOffice: item.working_level_offices.map((mode) => mode.office_description).join(', ') || 'N/A',
                         permissions: item.collection_payment_modes.map((mode) => mode.mode_name).join(", ") || 'N/A',
                         collectionModes: data.join(', ') || 'N/A',
                         isActive: item.is_active,
@@ -95,7 +101,8 @@ const ViewAgency = () => {
             { label: 'Max Limit', key: 'maxLimit', sortable: true },
             { label: 'WO Number', key: 'woNumber', sortable: true },
             { label: 'Validity', key: 'validity', sortable: true },
-            { label: 'Div Code', key: 'divCode', sortable: true },
+            { label: 'Working Office', key: 'workingOffice', sortable: true },
+            { label: 'Working Level Office', key: 'workingLevelOffice', sortable: true },
             { label: 'Permissions', key: 'permissions', sortable: true },
             { label: 'Collection Modes', key: 'collectionModes', sortable: true },
         ],
