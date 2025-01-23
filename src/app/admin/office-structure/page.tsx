@@ -57,10 +57,12 @@ const OfficeStructurePage = () => {
     return (
         <AuthUserReusableCode pageTitle="Office Structure" isLoading={loading}>
             <div className="space-y-6">
-                <ReactTable data={officeStructureData} columns={columns} avoidSrNo={true} customActionButton={<div className="flex space-x-4">
-                    <CreateNewLevelPopup fetchData={fetchOfficeStructureData} currentLevel={maxLevel} />
-                    <CreateNewLevelUploadPopup fetchData={fetchOfficeStructureData} />
-                </div>} />
+                <ReactTable data={officeStructureData} columns={columns} avoidSrNo={true}
+                    customActionButton={<div className="flex space-x-4">
+                        <CreateNewLevelPopup fetchData={fetchOfficeStructureData} currentLevel={maxLevel} />
+                        <CreateNewLevelUploadPopup fetchData={fetchOfficeStructureData} />
+                    </div>}
+                    noPagination />
             </div>
         </AuthUserReusableCode>
     );

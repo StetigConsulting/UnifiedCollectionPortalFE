@@ -19,6 +19,7 @@ interface TableProps<T> {
     className?: string;
     avoidSrNo?: boolean;
     customActionButton?: React.ReactNode;
+    noPagination?: boolean;
 }
 
 const ReactTable = <T extends Record<string, any>>({
@@ -28,7 +29,8 @@ const ReactTable = <T extends Record<string, any>>({
     onRowClick,
     className,
     avoidSrNo = false,
-    customActionButton
+    customActionButton,
+    noPagination
 }: TableProps<T>) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [sortField, setSortField] = useState<keyof T | null>(null);
@@ -193,15 +195,16 @@ const ReactTable = <T extends Record<string, any>>({
                     </tbody>
                 </table>
             </div>
-            <div style={{ marginTop: '10px', textAlign: 'center' }}>
-                <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
-                    Previous
-                </button>
-                <span style={{ margin: '0 10px' }}>Page {currentPage} of {totalPages}</span>
-                <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
-                    Next
-                </button>
-            </div>
+            {!noPagination &&
+                <div style={{ marginTop: '10px', textAlign: 'center' }}>
+                    <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
+                        Previous
+                    </button>
+                    <span style={{ margin: '0 10px' }}>Page {currentPage} of {totalPages}</span>
+                    <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
+                        Next
+                    </button>
+                </div>}
         </div>
     );
 };
