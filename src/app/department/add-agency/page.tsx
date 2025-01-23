@@ -8,7 +8,6 @@ import {
   getLevelsDiscomId,
 } from "@/app/api-calls/department/api";
 import AuthUserReusableCode from "@/components/AuthUserReusableCode";
-import CustomizedCheckboxGroupWithLabel from "@/components/CustomizedCheckboxGroupWithLabel";
 import CustomizedInputWithLabel from "@/components/CustomizedInputWithLabel";
 import CustomizedMultipleSelectInputWithLabel from "@/components/CustomizedMultipleSelectInputWithLabelNumber";
 import CustomizedMultipleSelectInputWithLabelString from "@/components/CustomizedMultipleSelectInputWithLabelString";
@@ -71,8 +70,7 @@ const AddAgency = () => {
       non_energy_types: data.collectionType.includes("Non-Energy")
         ? data.nonEnergy.map(Number)
         : undefined,
-      working_level_offices: [parseInt(data.workingLevel)],
-      collector_types: data.workingLevel === levelWIthId.CIRCLE
+      working_level_offices: data.workingLevel === levelWIthId.CIRCLE
         ? data.circle.map(Number)
         : data.workingLevel === levelWIthId.DIVISION
           ? data.division.map(Number)

@@ -87,7 +87,7 @@ const CustomizedMultipleSelectInputWithLabelString: React.FC<SelectProps> = ({
                             return (
                                 <span
                                     key={selectedValue}
-                                    className={`rounded-full text-sm`}
+                                    className={`rounded-full text-sm bg-blue-100 px-2 py-1`}
                                 >
                                     {selectedOption?.label} {selectedValues.length !== i + 1 ? ', ' : ''}
                                 </span>
