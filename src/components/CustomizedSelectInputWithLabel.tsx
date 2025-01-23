@@ -1,23 +1,54 @@
-import React from 'react'
+import React from 'react';
 
-const CustomizedSelectInputWithLabel = ({ label, errors, required = false, containerClass = '', list, ...props }) => {
+type SelectOption = {
+    [key: string]: any;
+    id?: string | number;
+    value: string | number;
+    label: string;
+};
+
+type CustomizedSelectInputWithLabelProps = {
+    label: string;
+    errors?: any;
+    required?: boolean;
+    containerClass?: string;
+    list: SelectOption[];
+    placeholder?: string;
+    removeDefaultOption?: boolean;
+} & React.SelectHTMLAttributes<HTMLSelectElement>;
+
+const CustomizedSelectInputWithLabel: React.FC<CustomizedSelectInputWithLabelProps> = ({
+    label,
+    errors,
+    required = false,
+    containerClass = '',
+    list = [],
+    placeholder,
+    removeDefaultOption,
+    ...props
+}) => {
     return (
-        <div className={containerClass}>
-            <label htmlFor="start-date" className="block text-sm font-medium text-gray-700 mb-1">
-                {label}{required ? <span className="text-red-500">*</span> : ''}
+        <div className={`flex flex-col ${containerClass}`}>
+            <label htmlFor={props.id || 'select-input'} className="block text-sm font-medium text-gray-700 mb-1">
+                {label}{required && <span className="text-red-500 ml-1">*</span>}
             </label>
-            <select {...props} id="designation" className="border rounded w-full" style={{ padding: '10px' }}>
-                <option value="">{props.placeholder}</option>
-                {list.map(data => (
-                    <option key={data.id ? data.id : data.value} value={data.value}>{data.label}</option>
+            <select
+                {...props}
+                id={props.id || 'select-input'}
+                className="border border-gray-300 rounded-md shadow-sm w-full px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-indigo-300 focus:border-indigo-500"
+                style={{ flex: 1, }}
+            >
+                {!removeDefaultOption && <option value="">{placeholder || 'Select an option'}</option>}
+                {list.map((data) => (
+                    <option key={data.id || data.value} value={data.value}>{data.label}</option>
                 ))}
             </select>
 
             {errors && (
-                <p className="text-red-500">{errors.message}</p>
+                <p className="text-red-500 text-xs mt-1">{errors.message}</p>
             )}
         </div>
-    )
-}
+    );
+};
 
-export default CustomizedSelectInputWithLabel
+export default CustomizedSelectInputWithLabel;
