@@ -9,11 +9,16 @@ import { testDiscom } from '@/lib/utils';
 import ReactTable from '@/components/ReactTable';
 import AlertPopup from '@/components/Agency/ViewAgency/AlertPopup';
 import { useRouter } from 'next/navigation';
+import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
+import { Button } from '@/components/ui/button';
 
 const ViewAgency = () => {
     const [search, setSearch] = useState('');
     const [agencyList, setAgencyList] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [statusFilter, setStatusFilter] = useState('all');
+    const [workingLevelFilter, setWorkingLevelFilter] = useState('all');
+    const [workingLevelList, setWorkingLevelList] = useState([])
 
     useEffect(() => {
         getAgencyList();
@@ -28,6 +33,12 @@ const ViewAgency = () => {
                 acc[item.id] = item.levelName;
                 return acc;
             }, {});
+            const levelOptions = discomList.data.map((item) => ({
+                label: item.levelName,
+                value: item.levelName,
+            }));
+            let data = [{ label: 'All', value: 'all' }, ...levelOptions];
+            setWorkingLevelList(data)
             setAgencyList(
                 response?.data?.map((item) => {
                     let data = [];
@@ -119,7 +130,15 @@ const ViewAgency = () => {
         router.push(`/department/extend-validity?id=${id}`);
     }
 
-    const tableData = agencyList.map((item, index) => ({
+    const filteredAgencies = agencyList.filter((item) => {
+        const isStatusMatch =
+            statusFilter === 'all' || (statusFilter === 'active' ? item.isActive : !item.isActive);
+        const isWorkingLevelMatch = workingLevelFilter === 'all' || item.workingOffice === workingLevelFilter;
+
+        return isStatusMatch && isWorkingLevelMatch;
+    });
+
+    const tableData = filteredAgencies.map((item, index) => ({
         ...item,
         action: item.isActive ? (
             <div className='flex gap-2'>
@@ -144,15 +163,37 @@ const ViewAgency = () => {
         ),
     }));
 
+    const listOfAgencyStatus = [{
+        label: 'All',
+        value: 'all',
+    }, {
+        label: 'Active',
+        value: 'active',
+    }, {
+        label: 'Inactive',
+        value: 'inactive',
+    }]
+
     return (
         <AuthUserReusableCode pageTitle="View Agency" isLoading={isLoading}>
-
+            <div className="grid grid-cols-2 gap-4 mb-4">
+                <CustomizedSelectInputWithLabel
+                    label="Agency status"
+                    list={listOfAgencyStatus}
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                    removeDefaultOption
+                />
+                <CustomizedSelectInputWithLabel label="Working Level" value={workingLevelFilter}
+                    list={workingLevelList} onChange={(e) => setWorkingLevelFilter(e.target.value)} removeDefaultOption />
+            </div>
             <ReactTable
                 data={tableData.filter((item) =>
                     item.agencyName.toLowerCase().includes(search.toLowerCase())
                 )}
                 columns={columns}
             />
+
         </AuthUserReusableCode>
     );
 };
