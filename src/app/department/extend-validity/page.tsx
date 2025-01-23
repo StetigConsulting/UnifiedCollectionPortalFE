@@ -27,7 +27,7 @@ const ExtendValidity = () => {
     const onSubmit = async (data: FormData) => {
 
         let payload = {
-            id: data.agencyId,
+            agency_id: data.agencyId,
             validity_from_date: data.newFromValidity,
             validity_to_date: data.newToValidity
         }
@@ -164,6 +164,7 @@ const ExtendValidity = () => {
                         containerClass="col-span-2"
                         placeholder="Select Agency Name"
                         list={agencyList}
+                        required
                         {...register('agencyName')}
                     />
                     <CustomizedInputWithLabel
@@ -191,19 +192,21 @@ const ExtendValidity = () => {
                         disabled
                     />
                     <CustomizedInputWithLabel
-                        label="Validity Date"
+                        label="Validity From Date"
                         errors={errors.newFromValidity}
                         containerClass=""
                         placeholder="Choose Validity Date"
                         type="date"
+                        required
                         {...register('newFromValidity')}
                     />
                     <CustomizedInputWithLabel
-                        label="Validity Date"
+                        label="Validity To Date"
                         errors={errors.newToValidity}
                         containerClass=""
                         placeholder="Choose Validity Date"
                         type="date"
+                        required
                         {...register('newToValidity')}
                     />
                 </div>
