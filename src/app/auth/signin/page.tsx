@@ -76,7 +76,6 @@ const SignUpForm = () => {
 			} else {
 				toast.error(result.message || 'Failed to send OTP.');
 				setIsValidating(false);
-				setIsOTPPopup(false);
 				generateNewCaptcha()
 			}
 		} catch (error) {
