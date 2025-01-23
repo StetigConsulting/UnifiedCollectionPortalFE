@@ -44,7 +44,7 @@ export interface editAgencyInterface {
 }
 
 export interface extendValidityInterface {
-    id: number;
+    agency_id: number;
     validity_from_date: string;
     validity_to_date: string;
 }
