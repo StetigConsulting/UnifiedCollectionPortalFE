@@ -3,6 +3,7 @@ import { SidebarInset, SidebarProvider } from './ui/sidebar'
 import { AppSidebar } from './AppSidebar'
 import CustomBreadcrumb from './CustomBreadcrumb'
 import { InfinitySpin } from 'react-loader-spinner'
+import Image from 'next/image'
 
 interface AuthUserReusableCodeProps {
     children: React.ReactNode;
@@ -23,10 +24,12 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
                     style={{
                         backdropFilter: 'blur(1px)'
                     }}>
-                    <InfinitySpin
-                        width="200"
-                        color="#18181b"
-                    />
+                    <Image alt=""
+                        width={150}
+                        height={1000}
+                        loading="lazy"
+                        className="mx-auto object-contain"
+                        src='/images/loader.gif' />
                 </div>
             }
             <SidebarInset className='flex-1' style={{ WebkitBoxFlex: 1 }}>

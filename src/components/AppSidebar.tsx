@@ -140,7 +140,8 @@ export function AppSidebar() {
           alt=""
           width={150}
           height={1000}
-          src="/images/logo.jpg"
+          priority
+          src="/images/logo.png"
           className="mx-auto object-contain"
         />
       </SidebarHeader>
