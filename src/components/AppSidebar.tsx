@@ -141,6 +141,7 @@ export function AppSidebar() {
           width={150}
           height={1000}
           priority
+          unoptimized
           src="/images/logo.png"
           className="mx-auto object-contain"
         />
