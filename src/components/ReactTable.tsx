@@ -40,7 +40,7 @@ const ReactTable = <T extends Record<string, any>>({
 
     const filteredData = data.filter(item =>
         columns.some(column =>
-            item[column.key].toString().toLowerCase().includes(searchTerm.toLowerCase())
+            item[column.key]?.toString()?.toLowerCase().includes(searchTerm.toLowerCase())
         )
     );
 

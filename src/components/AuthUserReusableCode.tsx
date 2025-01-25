@@ -27,7 +27,7 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
                     <Image alt=""
                         width={150}
                         height={1000}
-                        loading="lazy"
+                        unoptimized
                         className="mx-auto object-contain"
                         src='/images/loader.gif' />
                 </div>

@@ -52,7 +52,7 @@ export function NavMain({
                 <a href={item.url}>
                   <SidebarMenuButton
                     tooltip={item.title}
-                    className={cn(pathname.includes(item.path) && "bg-blue-300")}
+                    className={cn(pathname.includes(item.path) && "bg-themeColor py-5 text-white")}
                   >
                     {item.icon && <item.icon />}
                     <span>{item.title}</span>
