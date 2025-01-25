@@ -28,25 +28,25 @@ const dashboard = () => {
     <AuthUserReusableCode pageTitle="Dashboard">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex items-center space-x-4"
+        className="grid grid-cols-2 gap-4"
       >
         <CustomizedInputWithLabel
-          containerClass={"w-1/4"}
           {...register("fromDate")}
           errors={errors.fromDate}
           label="From Date"
           type="date"
         />
         <CustomizedInputWithLabel
-          containerClass={"w-1/4"}
           {...register("toDate")}
           errors={errors.toDate}
           label="To Date"
           type="date"
         />
-        <Button variant="default" className="self-center">
-          Search
-        </Button>
+        <div className="text-end col-span-2">
+          <Button variant="default" className="self-center">
+            Search
+          </Button>
+        </div>
       </form>
     </AuthUserReusableCode>
   );

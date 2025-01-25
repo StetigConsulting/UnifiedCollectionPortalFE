@@ -111,9 +111,49 @@ const data = {
           url: "/agency/report/login-history",
         },
         {
-          title: "Daily Collection",
+          title: "Daily Agent Collection",
           icon: UserPlus2,
-          url: "/agency/report/daily-collection",
+          url: "/agency/report/daily-agent-collection",
+        },
+        {
+          title: "Agent wise Collection",
+          icon: UserPlus2,
+          url: "/agency/report/agency-wise-collection",
+        },
+        {
+          title: "Collector wise",
+          icon: UserPlus2,
+          url: "/agency/report/collector-wise",
+        },
+        {
+          title: "Cancel wise receipt",
+          icon: UserPlus2,
+          url: "/agency/report/cancel-wise-receipt",
+        },
+        {
+          title: "Denied consumer report",
+          icon: UserPlus2,
+          url: "/agency/report/denied-consumer",
+        },
+        {
+          title: "Counter collector",
+          icon: UserPlus2,
+          url: "/agency/report/counter-collector",
+        },
+        {
+          title: "Collector activity",
+          icon: UserPlus2,
+          url: "/agency/report/collector-activity",
+        },
+        {
+          title: "Wallet history",
+          icon: UserPlus2,
+          url: "/agency/report/wallet-history",
+        },
+        {
+          title: "CC wallet history",
+          icon: UserPlus2,
+          url: "/agency/report/cc-wallet-history",
         }
       ]
     },
