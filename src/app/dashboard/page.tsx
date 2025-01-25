@@ -44,7 +44,7 @@ const dashboard = () => {
           label="To Date"
           type="date"
         />
-        <Button variant="default" className="px-4 py-2 self-end">
+        <Button variant="default" className="self-center">
           Search
         </Button>
       </form>
