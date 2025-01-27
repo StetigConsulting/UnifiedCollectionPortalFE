@@ -23,160 +23,168 @@ export const dashboardSchema = object({
     }),
 });
 
-export const addAgencySchema = z.object({
-  agencyName: z.string().nonempty("Agency Name is required"),
-  vendorId: z.string().optional(),
-  registeredAddress: z.string().nonempty("Registered Address is required"),
-  woNumber: z.string().optional(),
-  email: z
-    .string()
-    .email("Invalid email address")
-    .optional()
-    .or(z.literal("").optional()),
-  contactPerson: z.string().nonempty("Contact Person is required"),
-  phoneNumber: z
-    .string()
-    .regex(/^\d+$/, "Phone Number must contain only digits")
-    .length(10, "Phone Number must be exactly 10 digits")
-    .nonempty("Phone Number is required"),
-  maximumLimit: z
-    .string()
-    .nonempty("Maximum Limit is required")
-    .transform((val) => parseFloat(val))
-    .refine((val) => !isNaN(val) && val >= 0, "Maximum Limit must be a positive number or zero")
-    .optional(),
-  maximumAgent: z
-    .string()
-    .nonempty("Maximum Agent is required")
-    .transform((val) => parseFloat(val))
-    .refine((val) => !isNaN(val) && val >= 0, "Maximum Agent must be a positive number or zero")
-    .optional(),
-  validityFromDate: z.string().nonempty("Validity From Date is required"),
-  validityToDate: z.string().nonempty("Validity To Date is required"),
-  paymentDate: z.string().optional(),
-  transactionId: z.string().optional(),
-  initialBalance: z
-    .number({
+export const addAgencySchema = z
+  .object({
+    agencyName: z.string().nonempty("Agency Name is required"),
+    vendorId: z.string().optional(),
+    registeredAddress: z.string().nonempty("Registered Address is required"),
+    woNumber: z.string().optional(),
+    email: z
+      .string()
+      .email("Invalid email address")
+      .optional()
+      .or(z.literal("").optional()),
+    contactPerson: z.string().nonempty("Contact Person is required"),
+    phoneNumber: z
+      .string()
+      .regex(/^\d+$/, "Phone Number must contain only digits")
+      .length(10, "Phone Number must be exactly 10 digits")
+      .nonempty("Phone Number is required"),
+    maximumLimit: z
+      .string()
+      .nonempty("Maximum Limit is required")
+      .transform((val) => parseFloat(val))
+      .refine(
+        (val) => !isNaN(val) && val >= 0,
+        "Maximum Limit must be a positive number or zero"
+      )
+      .optional(),
+    maximumAgent: z
+      .string()
+      .nonempty("Maximum Agent is required")
+      .transform((val) => parseFloat(val))
+      .refine(
+        (val) => !isNaN(val) && val >= 0,
+        "Maximum Agent must be a positive number or zero"
+      )
+      .optional(),
+    validityFromDate: z.string().nonempty("Validity From Date is required"),
+    validityToDate: z.string().nonempty("Validity To Date is required"),
+    paymentDate: z.string().optional(),
+    transactionId: z.string().optional(),
+    initialBalance: z.number({
       required_error: "Initial Balance is required",
-      invalid_type_error: "Initial Balance must"
+      invalid_type_error: "Initial Balance must",
     }),
-  paymentMode: z.string().optional(),
-  paymentRemark: z.string().optional(),
-  workingLevel: z.string().nonempty("Working Level is required"),
-  circle: z.array(z.number()).optional(),
-  division: z.array(z.number()).optional(),
-  subDivision: z.array(z.number()).optional(),
-  section: z.array(z.number()).optional(),
-  permission: z
-    .array(z.number())
-    .refine(
-      (permissions) => permissions.length > 0,
-      "At least one Permission is required"
-    ),
-  collectionType: z
-    .array(z.string())
-    .refine(
-      (collectionType) => collectionType.length > 0,
-      "At least one Collection Type is required"
-    ),
-  nonEnergy: z
-    .array(z.number()).optional().default([])
-}).superRefine((data, ctx) => {
-  if (data.collectionType && data.collectionType.includes('Non-Energy') && data.nonEnergy && data.nonEnergy.length === 0) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: 'At least one Non-energy type is required',
-      path: ['nonEnergy'],
-    })
-  }
-  if (data.workingLevel && data.workingLevel === levelWIthId.SECTION) {
-    if (data.section.length === 0) {
+    paymentMode: z.string().optional(),
+    paymentRemark: z.string().optional(),
+    workingLevel: z.string().nonempty("Working Level is required"),
+    circle: z.array(z.number()).optional(),
+    division: z.array(z.number()).optional(),
+    subDivision: z.array(z.number()).optional(),
+    section: z.array(z.number()).optional(),
+    permission: z
+      .array(z.number())
+      .refine(
+        (permissions) => permissions.length > 0,
+        "At least one Permission is required"
+      ),
+    collectionType: z
+      .array(z.string())
+      .refine(
+        (collectionType) => collectionType.length > 0,
+        "At least one Collection Type is required"
+      ),
+    nonEnergy: z.array(z.number()).optional().default([]),
+  })
+  .superRefine((data, ctx) => {
+    if (
+      data.collectionType &&
+      data.collectionType.includes("Non-Energy") &&
+      data.nonEnergy &&
+      data.nonEnergy.length === 0
+    ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'At least one Section type is required',
-        path: ['section'],
-      })
+        message: "At least one Non-energy type is required",
+        path: ["nonEnergy"],
+      });
     }
-    if (data.subDivision.length === 0) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Sub division is required',
-        path: ['subDivision'],
-      })
+    if (data.workingLevel && data.workingLevel === levelWIthId.SECTION) {
+      if (data.section.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "At least one Section type is required",
+          path: ["section"],
+        });
+      }
+      if (data.subDivision.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Sub division is required",
+          path: ["subDivision"],
+        });
+      }
+      if (data.division.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Division is required",
+          path: ["division"],
+        });
+      }
+      if (data.circle.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Circle is required",
+          path: ["circle"],
+        });
+      }
     }
-    if (data.division.length === 0) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Division is required',
-        path: ['division'],
-      })
+    if (data.workingLevel && data.workingLevel === levelWIthId.SUB_DIVISION) {
+      if (data.subDivision.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Atleast one sub division is required",
+          path: ["subDivision"],
+        });
+      }
+      if (data.division.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Division is required",
+          path: ["division"],
+        });
+      }
+      if (data.circle.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Circle is required",
+          path: ["circle"],
+        });
+      }
     }
-    if (data.circle.length === 0) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Circle is required',
-        path: ['circle'],
-      })
+    if (data.workingLevel && data.workingLevel === levelWIthId.DIVISION) {
+      if (data.division.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Atleast one division is required",
+          path: ["division"],
+        });
+      }
+      if (data.circle.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Circle is required",
+          path: ["circle"],
+        });
+      }
     }
-  }
-  if (data.workingLevel && data.workingLevel === levelWIthId.SUB_DIVISION) {
-    if (data.subDivision.length === 0) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Atleast one sub division is required',
-        path: ['subDivision'],
-      })
+    if (data.workingLevel && data.workingLevel === levelWIthId.CIRCLE) {
+      if (data.circle.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Atleast one circle is required",
+          path: ["circle"],
+        });
+      }
     }
-    if (data.division.length === 0) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Division is required',
-        path: ['division'],
-      })
-    }
-    if (data.circle.length === 0) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Circle is required',
-        path: ['circle'],
-      })
-    }
-  }
-  if (data.workingLevel && data.workingLevel === levelWIthId.DIVISION) {
-    if (data.division.length === 0) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Atleast one division is required',
-        path: ['division'],
-      })
-    }
-    if (data.circle.length === 0) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Circle is required',
-        path: ['circle'],
-      })
-    }
-  }
-  if (data.workingLevel && data.workingLevel === levelWIthId.CIRCLE) {
-    if (data.circle.length === 0) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Atleast one circle is required',
-        path: ['circle'],
-      })
-    }
-  }
-})
-
+  });
 
 export const rechargeSchema = z.object({
   agency: z.string().nonempty("Agency is required"),
   agencyName: z.string().optional(),
   agencyId: z.number().optional(),
-  phoneNumber: z
-    .string()
-    .optional(),
+  phoneNumber: z.string().optional(),
   transactionType: z.string().optional(),
   amount: z
     .number({
@@ -185,7 +193,10 @@ export const rechargeSchema = z.object({
     })
     .positive("Amount must be greater than 0"),
   currentBalance: z.number().optional(),
-  remark: z.string().max(255, "Remark must be less than 255 characters").optional(),
+  remark: z
+    .string()
+    .max(255, "Remark must be less than 255 characters")
+    .optional(),
 });
 
 export const editAgencySchema = z.object({
@@ -258,7 +269,7 @@ export const extendValiditySchema = z.object({
     .nonempty("New To Validity date is required")
     .refine((value) => !isNaN(Date.parse(value)), {
       message: "Validity date must be a valid date",
-    })
+    }),
 });
 
 export const resetDeviceSchema = z.object({
@@ -322,27 +333,34 @@ export const createNewLevelSchema = z.object({
 });
 
 export const fileUploadSchema = z.object({
-  file: z
-    .instanceof(File)
-    .refine((file) => file.type === "text/csv", {
-      message: "Only CSV files are allowed",
-    })
-    .refine((file) => file.size <= 5 * 1024 * 1024, {
-      message: "File size must be under 5MB",
-    }),
+  file: z.any(),
+  // z
+  //   .instanceof(File)
+  //   .refine((file) => file.type === "text/csv", {
+  //     message: "Only CSV files are allowed",
+  //   })
+  //   .refine((file) => file.size <= 5 * 1024 * 1024, {
+  //     message: "File size must be under 5MB",
+  //   }),
 });
 
 export const addCollectorSchema = z.object({
   name: z.string().min(1, "Name is required"),
   phoneNumber: z.string().min(1, "Phone Number is required"),
   validity: z.string().min(1, "Select Validity Date"),
-  maximumLimit: z.number().min(0, "Maximum Limit must be greater than or equal to 0"),
-  initialBalance: z.number().min(0, "Initial Balance must be greater than or equal to 0"),
+  maximumLimit: z
+    .number()
+    .min(0, "Maximum Limit must be greater than or equal to 0"),
+  initialBalance: z
+    .number()
+    .min(0, "Initial Balance must be greater than or equal to 0"),
   binder: z.string().min(1, "Binder is required"),
   subDivision: z.string().min(1, "Select Sub Division"),
   section: z.number().min(0, "Section is required"),
   permission: z.array(z.string()).min(1, "At least one permission is required"),
-  collectionType: z.array(z.string()).min(1, "At least one collection type is required"),
+  collectionType: z
+    .array(z.string())
+    .min(1, "At least one collection type is required"),
   nonEnergy: z.array(z.string()).optional(),
 });
 
