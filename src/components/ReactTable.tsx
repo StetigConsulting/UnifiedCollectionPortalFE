@@ -143,9 +143,10 @@ const ReactTable = <T extends Record<string, any>>({
     };
 
     const handleRowSelect = (row: T) => {
-        const newRow = selectedRow === row ? null : row;
-        if (onRowSelect) {
-            onRowSelect(newRow);
+        if (selectedRow?.id === row.id) {
+            onRowSelect?.(null);
+        } else {
+            onRowSelect?.(row);
         }
     };
 

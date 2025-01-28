@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { activateAgencyAccount, deactivateAgencyAccountAPI, getAgenciesWithDiscom, getLevels } from '@/app/api-calls/department/api';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
-import { CalendarArrowUp, Pencil, UserCheck, UserX } from 'lucide-react';
+import { CalendarArrowUp, CreditCard, Pencil, Power, PowerOff, UserCheck, UserX } from 'lucide-react';
 import { testDiscom } from '@/lib/utils';
 import ReactTable from '@/components/ReactTable';
 import AlertPopup from '@/components/Agency/ViewAgency/AlertPopup';
@@ -106,7 +106,7 @@ const ViewAgency = () => {
 
     const columns = useMemo(
         () => [
-            { label: 'Action', key: 'action', sortable: false, ignored: true },
+            // { label: 'Action', key: 'action', sortable: false, ignored: true },
             { label: 'Agency ID', key: 'id', sortable: true },
             { label: 'Agency Name', key: 'agencyName', sortable: true },
             { label: 'Address', key: 'agencyAddress', sortable: true },
@@ -145,27 +145,27 @@ const ViewAgency = () => {
 
     const tableData = filteredAgencies.map((item, index) => ({
         ...item,
-        action: item.isActive ? (
-            <div className='flex gap-2'>
-                <AlertPopup triggerCode={<UserX
-                    className="cursor-pointer text-red-500"
-                />} handleContinue={() => deactivateAgencyUser(item.id)}
-                    title='Confirm Deactivating' description='Are you sure you want to save the deactivate Agency? Please review the details carefully before confirming.' continueButtonText='Confirm'
-                />
-                <Pencil className='cursor-pointer h-5 w-5' onClick={() => handleEditAgency(item.id)} />
-                <CalendarArrowUp className='cursor-pointer h-5 w-5' onClick={() => handleExtendValidity(item.id)} />
-            </div>
-        ) : (
-            <div className='flex gap-2'>
-                <AlertPopup triggerCode={<UserCheck
-                    className="cursor-pointer text-green-500"
-                />} handleContinue={() => activateAgencyUser(item.id)}
-                    title='Confirm Activating' description='Are you sure you want to save the activate Agency? Please review the details carefully before confirming.' continueButtonText='Confirm'
-                />
-                <Pencil className='cursor-pointer h-5 w-5' onClick={() => handleEditAgency(item.id)} />
-                <CalendarArrowUp className='cursor-pointer h-5 w-5' onClick={() => handleExtendValidity(item.id)} />
-            </div>
-        ),
+        // action: item.isActive ? (
+        //     <div className='flex gap-2'>
+        //         <AlertPopup triggerCode={<UserX
+        //             className="cursor-pointer text-red-500"
+        //         />} handleContinue={() => deactivateAgencyUser(item.id)}
+        //             title='Confirm Deactivating' description='Are you sure you want to save the deactivate Agency? Please review the details carefully before confirming.' continueButtonText='Confirm'
+        //         />
+        //         <Pencil className='cursor-pointer h-5 w-5' onClick={() => handleEditAgency(item.id)} />
+        //         <CalendarArrowUp className='cursor-pointer h-5 w-5' onClick={() => handleExtendValidity(item.id)} />
+        //     </div>
+        // ) : (
+        //     <div className='flex gap-2'>
+        //         <AlertPopup triggerCode={<UserCheck
+        //             className="cursor-pointer text-green-500"
+        //         />} handleContinue={() => activateAgencyUser(item.id)}
+        //             title='Confirm Activating' description='Are you sure you want to save the activate Agency? Please review the details carefully before confirming.' continueButtonText='Confirm'
+        //         />
+        //         <Pencil className='cursor-pointer h-5 w-5' onClick={() => handleEditAgency(item.id)} />
+        //         <CalendarArrowUp className='cursor-pointer h-5 w-5' onClick={() => handleExtendValidity(item.id)} />
+        //     </div>
+        // ),
     }));
 
     const listOfAgencyStatus = [{
@@ -187,19 +187,19 @@ const ViewAgency = () => {
     const getSelectedRowButton = () => {
         return <div className="space-x-2">
             {selectedRow?.isActive ? <AlertPopup triggerCode={<Button variant='destructive' className="cursor-pointer">
-                <UserX />
+                <PowerOff />
                 Deactivate
             </Button>} handleContinue={() => deactivateAgencyUser(selectedRow.id)}
                 title='Confirm Deactivating' description='Are you sure you want to save the deactivate Agency? Please review the details carefully before confirming.' continueButtonText='Confirm'
             /> :
                 <AlertPopup triggerCode={<Button variant='success' className="cursor-pointer">
-                    <UserX />
+                    <Power />
                     Activate
                 </Button>} handleContinue={() => activateAgencyUser(selectedRow.id)}
                     title='Confirm Activating' description='Are you sure you want to save the activate Agency? Please review the details carefully before confirming.' continueButtonText='Confirm'
                 />}
-            <Button variant='success' onClick={() => handleEditAgency(selectedRow.id)}><Pencil className='cursor-pointer h-5 w-5' />Extend Validity</Button>
-            <Button variant='default' onClick={() => handleExtendValidity(selectedRow.id)} ><CalendarArrowUp className='cursor-pointer h-5 w-5' />Edit Agency</Button>
+            <Button variant='success' onClick={() => handleExtendValidity(selectedRow.id)}><CreditCard className='cursor-pointer h-5 w-5' />Extend Validity</Button>
+            <Button variant='default' onClick={() => handleEditAgency(selectedRow.id)} ><Pencil className='cursor-pointer h-5 w-5' />Edit Agency</Button>
         </div>
     }
 
