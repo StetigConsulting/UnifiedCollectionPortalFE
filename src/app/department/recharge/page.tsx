@@ -172,13 +172,9 @@ const Recharge = () => {
                     />
                 </div>
 
-                <div className="flex justify-end mt-4">
-
-                </div>
-
-                <div className="mt-4 p-4 border rounded-md flex">
-                    <div className='flex-1'>
-                        <p>Recharge Amount: {numberToWords(formData.amount)}</p>
+                <div className="mt-4 p-4 border rounded-md flex bg-white">
+                    <div className='flex-1 capitalize'>
+                        <p>Recharge Amount: <span className='text-green-800'>{numberToWords(formData.amount)}</span></p>
                         <p>Current Balance: {numberToWords(formData.currentBalance)}</p>
                     </div>
                     <div className='self-center'>
