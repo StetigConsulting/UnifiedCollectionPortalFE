@@ -220,6 +220,7 @@ const ViewAgency = () => {
                 data={tableData.filter((item) =>
                     item.agencyName.toLowerCase().includes(search.toLowerCase())
                 )}
+                isSelectable={true}
                 onRowSelect={handleRowSelection}
                 onRowSelectButtons={
                     getSelectedRowButton()

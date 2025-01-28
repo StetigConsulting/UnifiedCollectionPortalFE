@@ -24,6 +24,7 @@ interface TableProps<T> {
     noPagination?: boolean;
     onRowSelectButtons?: React.ReactNode;
     selectedRow?: any;
+    isSelectable?: boolean;
 }
 
 const ReactTable = <T extends Record<string, any>>({
@@ -38,6 +39,7 @@ const ReactTable = <T extends Record<string, any>>({
     noPagination,
     onRowSelectButtons,
     selectedRow,
+    isSelectable = false
 }: TableProps<T>) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [sortField, setSortField] = useState<keyof T | null>(null);
@@ -166,7 +168,7 @@ const ReactTable = <T extends Record<string, any>>({
                     onChange={(e) => handleSearch(e)}
                 />
             </div>
-            {selectedRow !== null && (
+            {isSelectable && selectedRow !== null && (
                 <div className="mb-4 flex justify-center">
                     {onRowSelectButtons}
                 </div>
@@ -175,6 +177,7 @@ const ReactTable = <T extends Record<string, any>>({
                 <table border={1} width="100%" cellPadding={5} className='w-full caption-bottom text-sm min-w-full border border-gray-200 divide-y divide-gray-200'>
                     <thead className='[&_tr]:border-b bg-gray-100'>
                         <tr className='border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted'>
+                            {isSelectable && <th></th>}
                             {!avoidSrNo && <th className='h-10 px-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] whitespace-nowrap'>Sr.No</th>}
                             {columns.map(column => (
                                 <th
@@ -197,13 +200,13 @@ const ReactTable = <T extends Record<string, any>>({
                                     style={{ cursor: onRowClick ? 'pointer' : 'default' }}
                                     className='border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted'
                                 >
-                                    <td className="p-2 text-center">
+                                    {isSelectable && <td className="p-2 text-center">
                                         <input
                                             type="checkbox"
                                             checked={selectedRow?.id === item?.id}
                                             onChange={() => handleRowSelect(item)}
                                         />
-                                    </td>
+                                    </td>}
                                     {!avoidSrNo &&
                                         <td>{index + 1}</td>}
                                     {columns.map(column => (
