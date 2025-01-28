@@ -96,7 +96,7 @@ const CreateNewLevelUploadPopup: React.FC<CreateNewLevelUploadPopupProps> = ({ f
                             </label>
                             {fileName && <p className="text-sm text-green-500 mt-2">{fileName}</p>}
                         </div>
-                        {errors.file && <p className="text-red-500 text-sm">{errors.file.message}</p>}
+                        {/* {errors.file && <p className="text-red-500 text-sm">{errors.file.message}</p>} */}
                         <DialogFooter>
                             <div className="flex justify-end space-x-4">
                                 <DialogClose asChild>
