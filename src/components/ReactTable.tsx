@@ -17,10 +17,13 @@ interface TableProps<T> {
     columns: ColumnConfig<T>[];
     itemsPerPage?: number;
     onRowClick?: (row: T) => void;
+    onRowSelect?: (selectedRow: T | null) => void;
     className?: string;
     avoidSrNo?: boolean;
     customActionButton?: React.ReactNode;
     noPagination?: boolean;
+    onRowSelectButtons?: React.ReactNode;
+    selectedRow?: any;
 }
 
 const ReactTable = <T extends Record<string, any>>({
@@ -28,10 +31,13 @@ const ReactTable = <T extends Record<string, any>>({
     columns,
     itemsPerPage = 50,
     onRowClick,
+    onRowSelect,
     className,
     avoidSrNo = false,
     customActionButton,
-    noPagination
+    noPagination,
+    onRowSelectButtons,
+    selectedRow,
 }: TableProps<T>) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [sortField, setSortField] = useState<keyof T | null>(null);
@@ -134,6 +140,14 @@ const ReactTable = <T extends Record<string, any>>({
         link.click();
     };
 
+    const handleRowSelect = (row: T) => {
+        const newRow = selectedRow === row ? null : row;
+        if (onRowSelect) {
+            onRowSelect(newRow);
+        }
+    };
+
+
     return (
         <div className={`${className}`}>
             <div className="flex justify-between items-center py-4">
@@ -152,6 +166,11 @@ const ReactTable = <T extends Record<string, any>>({
                     onChange={(e) => handleSearch(e)}
                 />
             </div>
+            {selectedRow !== null && (
+                <div className="mb-4 flex justify-center">
+                    {onRowSelectButtons}
+                </div>
+            )}
             <div className='overflow-x-auto w-full'>
                 <table border={1} width="100%" cellPadding={5} className='w-full caption-bottom text-sm min-w-full border border-gray-200 divide-y divide-gray-200'>
                     <thead className='[&_tr]:border-b bg-gray-100'>
@@ -178,6 +197,13 @@ const ReactTable = <T extends Record<string, any>>({
                                     style={{ cursor: onRowClick ? 'pointer' : 'default' }}
                                     className='border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted'
                                 >
+                                    <td className="p-2 text-center">
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedRow?.id === item?.id}
+                                            onChange={() => handleRowSelect(item)}
+                                        />
+                                    </td>
                                     {!avoidSrNo &&
                                         <td>{index + 1}</td>}
                                     {columns.map(column => (

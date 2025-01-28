@@ -19,6 +19,7 @@ const ViewAgency = () => {
     const [statusFilter, setStatusFilter] = useState('all');
     const [workingLevelFilter, setWorkingLevelFilter] = useState('all');
     const [workingLevelList, setWorkingLevelList] = useState([])
+    const [selectedRow, setSelectedRow] = useState<any | null>(null);
 
     useEffect(() => {
         getAgencyList();
@@ -81,6 +82,7 @@ const ViewAgency = () => {
             await activateAgencyAccount(id);
             toast.success('Agency activated successfully');
             getAgencyList();
+            setSelectedRow(null)
         } catch (error) {
             console.error('Failed to activate agency:', error);
         } finally {
@@ -94,6 +96,7 @@ const ViewAgency = () => {
             await deactivateAgencyAccountAPI(id);
             toast.success('Agency deactivated successfully');
             getAgencyList();
+            setSelectedRow(null)
         } catch (error) {
             console.error('Failed to deactivate agency:', error);
         } finally {
@@ -124,10 +127,12 @@ const ViewAgency = () => {
 
     const handleEditAgency = (id: number) => {
         router.push(`/department/edit-agency?id=${id}`);
+        setIsLoading(true)
     }
 
     const handleExtendValidity = (id: number) => {
         router.push(`/department/extend-validity?id=${id}`);
+        setIsLoading(true)
     }
 
     const filteredAgencies = agencyList.filter((item) => {
@@ -174,6 +179,30 @@ const ViewAgency = () => {
         value: 'inactive',
     }]
 
+    const handleRowSelection = (row: any) => {
+        console.log(row)
+        setSelectedRow(row)
+    }
+
+    const getSelectedRowButton = () => {
+        return <div className="space-x-2">
+            {selectedRow?.isActive ? <AlertPopup triggerCode={<Button variant='destructive' className="cursor-pointer">
+                <UserX />
+                Deactivate
+            </Button>} handleContinue={() => deactivateAgencyUser(selectedRow.id)}
+                title='Confirm Deactivating' description='Are you sure you want to save the deactivate Agency? Please review the details carefully before confirming.' continueButtonText='Confirm'
+            /> :
+                <AlertPopup triggerCode={<Button variant='success' className="cursor-pointer">
+                    <UserX />
+                    Activate
+                </Button>} handleContinue={() => activateAgencyUser(selectedRow.id)}
+                    title='Confirm Activating' description='Are you sure you want to save the activate Agency? Please review the details carefully before confirming.' continueButtonText='Confirm'
+                />}
+            <Button variant='success' onClick={() => handleEditAgency(selectedRow.id)}><Pencil className='cursor-pointer h-5 w-5' />Extend Validity</Button>
+            <Button variant='default' onClick={() => handleExtendValidity(selectedRow.id)} ><CalendarArrowUp className='cursor-pointer h-5 w-5' />Edit Agency</Button>
+        </div>
+    }
+
     return (
         <AuthUserReusableCode pageTitle="View Agency" isLoading={isLoading}>
             <div className="grid grid-cols-2 gap-4">
@@ -191,10 +220,15 @@ const ViewAgency = () => {
                 data={tableData.filter((item) =>
                     item.agencyName.toLowerCase().includes(search.toLowerCase())
                 )}
+                onRowSelect={handleRowSelection}
+                onRowSelectButtons={
+                    getSelectedRowButton()
+                }
+                selectedRow={selectedRow}
                 columns={columns}
             />
 
-        </AuthUserReusableCode>
+        </AuthUserReusableCode >
     );
 };
 
