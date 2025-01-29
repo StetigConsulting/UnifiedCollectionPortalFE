@@ -78,7 +78,7 @@ export function NavMain({
                 <SidebarMenuSub className="border-l-0 mx-0">
                   {item.items?.map((subItem) => (
                     <SidebarMenuSubItem key={subItem.title}>
-                      <SidebarMenuSubButton className={cn(pathname.includes(subItem.url) && "bg-blue-50")} asChild>
+                      <SidebarMenuSubButton className={cn(pathname.includes(subItem.url) && "bg-lightThemeColor")} asChild>
                         <a href={subItem.url}>
                           {subItem.icon && <subItem.icon />}
                           <span>{subItem.title}</span>

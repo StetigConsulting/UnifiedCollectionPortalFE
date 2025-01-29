@@ -452,3 +452,9 @@ export const resetCollectorBalanceSchema = z.object({
 });
 
 export type ResetCollectorFormData = z.infer<typeof resetCollectorBalanceSchema>;
+
+export const paymentModeSchema = z.object({
+  selectedPaymentModes: z.array(z.enum(['Cash', 'Cheque', 'DD', 'Activate'])).min(1, {
+    message: 'At least one payment mode must be selected.',
+  }),
+});
