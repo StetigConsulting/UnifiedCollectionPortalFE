@@ -73,6 +73,49 @@ const data = {
       ],
     },
     {
+      title: "Entry",
+      icon: Folder,
+      url: "#",
+      path: '/agency/',
+      items: [
+        {
+          title: "Add Agency",
+          icon: UserPlus2,
+          url: "/agency/add-collector",
+        },
+        {
+          title: "Add Counter Collector",
+          icon: UserPlus2,
+          url: "/agency/add-counter-collector",
+        },
+        {
+          title: "View Collector",
+          icon: UserPlus2,
+          url: "/agency/view-collector",
+        },
+        {
+          title: "Binder Mapping",
+          icon: UserPlus2,
+          url: "/agency/binder-mapping",
+        },
+        {
+          title: "Recharge",
+          icon: UserPlus2,
+          url: "/agency/recharge",
+        },
+        {
+          title: "Extend Validity",
+          icon: UserPlus2,
+          url: "/agency/extend-validity",
+        },
+        {
+          title: "Reset Collector",
+          icon: UserPlus2,
+          url: "/agency/reset-collector",
+        },
+      ]
+    },
+    {
       title: 'Department User',
       url: '/admin/department-user',
       icon: Gauge,

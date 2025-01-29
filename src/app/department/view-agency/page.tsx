@@ -205,18 +205,18 @@ const ViewAgency = () => {
 
     return (
         <AuthUserReusableCode pageTitle="View Agency" isLoading={isLoading}>
-            <div className="grid grid-cols-2 gap-4">
-                <CustomizedSelectInputWithLabel
-                    label="Agency status"
-                    list={listOfAgencyStatus}
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                    removeDefaultOption
-                />
-                <CustomizedSelectInputWithLabel label="Working Level" value={workingLevelFilter}
-                    list={workingLevelList} onChange={(e) => setWorkingLevelFilter(e.target.value)} removeDefaultOption />
-            </div>
             <ReactTable
+                additionalData={<div className="grid grid-cols-2 gap-4">
+                    <CustomizedSelectInputWithLabel
+                        label="Agency status"
+                        list={listOfAgencyStatus}
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                        removeDefaultOption
+                    />
+                    <CustomizedSelectInputWithLabel label="Working Level" value={workingLevelFilter}
+                        list={workingLevelList} onChange={(e) => setWorkingLevelFilter(e.target.value)} removeDefaultOption />
+                </div>}
                 data={tableData.filter((item) =>
                     item.agencyName.toLowerCase().includes(search.toLowerCase())
                 )}

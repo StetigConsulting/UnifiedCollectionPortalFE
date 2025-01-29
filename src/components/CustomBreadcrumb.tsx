@@ -19,7 +19,7 @@ const CustomBreadcrumb: React.FC<CustomBreadcrumbProps> = ({ pageTitle, children
     };
 
     return (
-        <>
+        <div className='flex flex-col h-screen'>
             <header className="flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 border-b px-4">
                 <SidebarTrigger className="-ml-1" />
                 <Button
@@ -46,15 +46,15 @@ const CustomBreadcrumb: React.FC<CustomBreadcrumbProps> = ({ pageTitle, children
                     </BreadcrumbList>
                 </Breadcrumb>
             </header>
-            <div className="flex flex-col gap-4 p-4">
-                <header className="">
+            <div className="flex-1 overflow-auto p-4">
+                <header className="mb-4">
                     <h1 className="text-2xl font-bold">{pageTitle}</h1>
                 </header>
                 <div style={{ backgroundColor: '#80808021', padding: '15px' }}>
                     {children}
                 </div>
             </div>
-        </>
+        </div>
     )
 }
 
