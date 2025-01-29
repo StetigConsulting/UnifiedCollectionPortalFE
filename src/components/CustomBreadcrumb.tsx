@@ -46,11 +46,13 @@ const CustomBreadcrumb: React.FC<CustomBreadcrumbProps> = ({ pageTitle, children
                     </BreadcrumbList>
                 </Breadcrumb>
             </header>
-            <div className="flex-1 overflow-auto p-4">
-                <header className="mb-4">
-                    <h1 className="text-2xl font-bold">{pageTitle}</h1>
-                </header>
-                <div style={{ backgroundColor: '#80808021', padding: '15px' }}>
+            <header className="p-4">
+                <h1 className="text-2xl font-bold">{pageTitle}</h1>
+            </header>
+            <div className="flex-1 overflow-auto p-4 pt-0">
+                <div className='bg-lightThemeColor'
+                    style={{ backgroundColor: '#80808021', padding: '15px' }}
+                >
                     {children}
                 </div>
             </div>

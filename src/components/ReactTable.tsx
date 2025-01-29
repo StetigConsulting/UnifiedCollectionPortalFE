@@ -181,7 +181,7 @@ const ReactTable = <T extends Record<string, any>>({
             </div>
             <div className='overflow-x-auto w-full'>
                 <table border={1} width="100%" cellPadding={5} className='w-full caption-bottom text-sm min-w-full border border-gray-200 divide-y divide-gray-200'>
-                    <thead className='[&_tr]:border-b bg-gray-100'>
+                    <thead className='[&_tr]:border-b bg-gray-100 sticky top-0 z-10'>
                         <tr className='border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted'>
                             {isSelectable && <th></th>}
                             {!avoidSrNo && <th className='h-10 px-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] whitespace-nowrap'>Sr.No</th>}
