@@ -365,3 +365,90 @@ export const addCollectorSchema = z.object({
 });
 
 export type AddCollectorFormData = z.infer<typeof addCollectorSchema>;
+
+export const addCounterCollectorSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  phoneNumber: z.string().min(1, 'Phone Number is required').regex(/^\d{10}$/, 'Phone number must be 10 digits'),
+  maximumLimit: z.number().min(1, 'Maximum Limit should be a positive number'),
+  initialBalance: z.number().min(0, 'Initial Balance cannot be negative'),
+  validity: z.string().min(1, 'Validity is required'),
+  permission: z.array(z.string()).min(1, "At least one permission is required"),
+  collectionType: z.array(z.string()).min(1, "At least one collection type is required"),
+  nonEnergy: z.array(z.string()).optional(),
+});
+
+export type AddCounterCollectorFormData = z.infer<typeof addCounterCollectorSchema>;
+
+export const binderMappingSchema = z.object({
+  collectorMobile: z
+    .string()
+    .min(1, { message: 'Collector Mobile is required' })
+    .regex(/^\d{10}$/, { message: 'Invalid mobile number' }),
+
+  agentId: z
+    .string()
+    .min(1, { message: 'Agent ID is required' }),
+
+  agentMobileNumber: z
+    .string()
+    .min(1, { message: 'Agent Mobile Number is required' })
+    .regex(/^\d{10}$/, { message: 'Invalid agent mobile number' }),
+
+  agencyName: z
+    .string()
+    .min(1, { message: 'Agency Name is required' }),
+
+  division: z
+    .string()
+    .min(1, { message: 'Division is required' }),
+
+  binder: z
+    .array(z.string())
+    .min(1, { message: 'At least one binder must be selected' }),
+
+  allocatedBinder: z
+    .array(z.string())
+    .optional(),
+});
+
+export type BinderMappingFormData = z.infer<typeof binderMappingSchema>;
+
+
+export const rechargeSchemaCollector = z.object({
+  collectorMobile: z.string().min(1, "Collector Mobile is required"),
+  agencyId: z.string().min(1, "Agency ID is required"),
+  agencyName: z.string().min(1, "Agency Name is required"),
+  phoneNumber: z.string().min(10, "Phone Number should be 10 digits"),
+  amount: z.number().positive("Amount must be greater than 0"),
+  transactionType: z.enum(["Recharge", "Refund"]),
+  currentBalance: z.number().positive("Current Balance must be greater than 0"),
+  remark: z.string().optional(),
+});
+
+export type RechargeCollectorFormData = z.infer<typeof rechargeSchemaCollector>;
+
+export const extendValiditySchemaCollector = z.object({
+  collectorName: z.string().min(1, "Collector Name is required"),
+  collectorId: z.string().min(1, "Collector ID is required"),
+  currentValidity: z.string().min(1, "Current Validity is required"),
+  validityDate: z
+    .string()
+    .min(1, "Validity Date is required")
+    .refine((val) => !isNaN(Date.parse(val)), {
+      message: "Invalid date format",
+    }),
+});
+
+export type ExtendValidityCollectorFormData = z.infer<typeof extendValiditySchemaCollector>;
+
+export const resetCollectorBalanceSchema = z.object({
+  collectorMobile: z.string().min(1, "Collector mobile is required"),
+  agencyName: z.string().min(1, "Agency name is required"),
+  agencyId: z.string().min(1, "Agency ID is required"),
+  phoneNumber: z.string().min(1, "Phone number is required"),
+  transactionType: z.string().min(1, "Transaction type is required").default("Reset"),
+  currentBalance: z.number().min(0, "Current balance must be a positive number"),
+  remark: z.string().optional(),
+});
+
+export type ResetCollectorFormData = z.infer<typeof resetCollectorBalanceSchema>;

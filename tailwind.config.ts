@@ -11,6 +11,7 @@ export default {
 		extend: {
 			colors: {
 				themeColor: '#6183C3',
+				lightThemeColor: '#E6EDF6',
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				card: {

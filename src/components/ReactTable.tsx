@@ -21,6 +21,7 @@ interface TableProps<T> {
     className?: string;
     avoidSrNo?: boolean;
     customActionButton?: React.ReactNode;
+    additionalData?: React.ReactNode;
     noPagination?: boolean;
     onRowSelectButtons?: React.ReactNode;
     selectedRow?: any;
@@ -39,7 +40,8 @@ const ReactTable = <T extends Record<string, any>>({
     noPagination,
     onRowSelectButtons,
     selectedRow,
-    isSelectable = false
+    isSelectable = false,
+    additionalData
 }: TableProps<T>) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [sortField, setSortField] = useState<keyof T | null>(null);
@@ -153,27 +155,30 @@ const ReactTable = <T extends Record<string, any>>({
 
     return (
         <div className={`${className}`}>
-            <div className="flex justify-between items-center py-4">
-                {customActionButton ? customActionButton :
-                    <div className="flex space-x-2">
-                        <Button variant="default" onClick={handleCopy}>Copy</Button>
-                        <Button variant="default" onClick={exportToExcel}>Excel</Button>
-                        <Button variant="default" onClick={exportToCSV}>CSV</Button>
-                        <Button variant="default">PDF</Button>
-                    </div>
-                }
-                <CustomizedInputWithLabel
-                    type="text"
-                    placeholder="Search"
-                    value={searchTerm}
-                    onChange={(e) => handleSearch(e)}
-                />
-            </div>
-            {isSelectable && selectedRow !== null && (
-                <div className="mb-4 flex justify-center">
-                    {onRowSelectButtons}
+            <div className=''>
+                {additionalData && additionalData}
+                <div className="flex justify-between items-center py-4">
+                    {customActionButton ? customActionButton :
+                        <div className="flex space-x-2">
+                            <Button variant="default" onClick={handleCopy}>Copy</Button>
+                            <Button variant="default" onClick={exportToExcel}>Excel</Button>
+                            <Button variant="default" onClick={exportToCSV}>CSV</Button>
+                            <Button variant="default">PDF</Button>
+                        </div>
+                    }
+                    <CustomizedInputWithLabel
+                        type="text"
+                        placeholder="Search"
+                        value={searchTerm}
+                        onChange={(e) => handleSearch(e)}
+                    />
                 </div>
-            )}
+                {isSelectable && selectedRow !== null && (
+                    <div className="mb-4 flex justify-center">
+                        {onRowSelectButtons}
+                    </div>
+                )}
+            </div>
             <div className='overflow-x-auto w-full'>
                 <table border={1} width="100%" cellPadding={5} className='w-full caption-bottom text-sm min-w-full border border-gray-200 divide-y divide-gray-200'>
                     <thead className='[&_tr]:border-b bg-gray-100'>
