@@ -116,16 +116,30 @@ const data = {
       ]
     },
     {
-      title: 'Department User',
-      url: '/admin/department-user',
-      icon: Gauge,
-      path: '/admin/department-user'
-    },
-    {
-      title: 'Office Structure',
-      url: '/admin/office-structure',
-      icon: Gauge,
-      path: '/admin/office-stucture'
+      title: "Admin",
+      icon: Folder,
+      url: "#",
+      path: '/admin/',
+      items: [
+        {
+          title: 'Department User',
+          url: '/admin/department-user',
+          icon: Gauge,
+          path: '/admin/department-user'
+        },
+        {
+          title: 'Office Structure',
+          url: '/admin/office-structure',
+          icon: Gauge,
+          path: '/admin/office-stucture'
+        },
+        {
+          title: 'Payment configuration',
+          url: '/admin/payment-configuration',
+          icon: Gauge,
+          path: '/admin/payment-configuration'
+        }
+      ],
     },
     {
       title: "Report",
