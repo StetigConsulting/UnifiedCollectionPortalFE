@@ -138,7 +138,31 @@ const data = {
           url: '/admin/payment-configuration',
           icon: Gauge,
           path: '/admin/payment-configuration'
-        }
+        },
+        {
+          title: 'Denied to pay',
+          url: '/admin/denied-to-pay',
+          icon: Gauge,
+          path: '/admin/denied-to-pay',
+        },
+        {
+          title: 'Non energy type',
+          url: '/admin/non-energy-type',
+          icon: Gauge,
+          path: '/admin/non-energy-type',
+        },
+        {
+          title: 'Add Collector type',
+          url: '/admin/add-collector-type',
+          icon: Gauge,
+          path: '/admin/add-collector-type',
+        },
+        {
+          title: 'Color Coding',
+          url: '/admin/color-coding',
+          icon: Gauge,
+          path: '/admin/color-coding',
+        },
       ],
     },
     {
