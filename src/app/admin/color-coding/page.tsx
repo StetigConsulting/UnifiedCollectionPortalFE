@@ -11,24 +11,7 @@ import { toast } from 'sonner';
 const ColorCodingLogicTable = () => {
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [colorLogicEntries, setColorLogicEntries] = useState([
-        {
-            ccId: 'INC123456',
-            value1: '243 days',
-            value2: '01-04-2025',
-            backgroundColor: 'Red',
-            fontType: 'Actual',
-            fontColor: '#FFFFFF',
-        },
-        {
-            ccId: 'INC654321',
-            value1: '180 days',
-            value2: '01-10-2024',
-            backgroundColor: 'Blue',
-            fontType: 'Italic',
-            fontColor: '#000000',
-        },
-    ]);
+    const [colorLogicEntries, setColorLogicEntries] = useState([]);
 
     const columns = [
         { label: 'CC ID', key: 'ccId', sortable: true },
