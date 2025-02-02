@@ -458,3 +458,41 @@ export const paymentModeSchema = z.object({
     message: 'At least one payment mode must be selected.',
   }),
 });
+
+export const deniedToPaySchema = z.object({
+  deniedReason: z.array(z.string()).min(1, { message: "Please select at least one reason" }),
+  paidReason: z.string().nonempty({ message: "Please select a paid reason" }),
+  maxCountPerDay: z.number().min(1, { message: "Max count must be greater than or equal to 1" }),
+});
+
+export const nonEnergyTypeSchema = z.object({
+  nonEnergyType: z.array(z.string()).min(1, "At least one option must be selected"),
+});
+
+export const addCollectorTypeSchema = z.object({
+  collectorType: z.array(z.string()).min(1, "At least one collector type must be selected"),
+});
+
+export const colorCodingLogicSchema = z.object({
+  colorLogicEntries: z.array(
+    z.object({
+      value1Type: z.string().min(1, "Value 1 Type is required"),
+      days: z.number().min(1, "Days must be at least 1").optional(),
+      value2Type: z.string().min(1, "Value 2 Type is required"),
+      date: z.string().min(1, "Date is required").optional(),
+      backgroundColor: z.string().min(1, "Background Color is required"),
+      fontColor: z.string().min(1, "Font Color is required"),
+      fontType: z.string().min(1, "Font Type is required"),
+    })
+  ).nonempty("At least one logic must be added"),
+});
+
+export const addIncentiveSchema = z.object({
+  applicableLevel: z.string().min(1, 'Applicable level is required'),
+  circle: z.string().min(1, 'Circle is required'),
+  division: z.string().min(1, 'Division is required'),
+  subDivision: z.string().min(1, 'Sub Division is required'),
+  section: z.string().min(1, 'Section is required'),
+  currentPercentage: z.number().min(0, 'Current percentage must be a positive number'),  // Changed to number
+  arrearPercentage: z.number().min(0, 'Arrears percentage must be a positive number'),  // Changed to number
+});
