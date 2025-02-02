@@ -163,6 +163,18 @@ const data = {
           icon: Gauge,
           path: '/admin/color-coding',
         },
+        {
+          title: 'Incentive',
+          url: '/admin/incentive',
+          icon: Gauge,
+          path: '/admin/incentive',
+        },
+        {
+          title: 'Import',
+          url: '/admin/import',
+          icon: Gauge,
+          path: '/admin/import',
+        },
       ],
     },
     {
