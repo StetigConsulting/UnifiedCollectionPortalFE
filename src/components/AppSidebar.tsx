@@ -175,6 +175,12 @@ const data = {
           icon: Gauge,
           path: '/admin/import',
         },
+        {
+          title: 'Receipt for postpaid',
+          url: '/admin/receipt-for-postpaid',
+          icon: Gauge,
+          path: '/admin/receipt-for-postpaid',
+        },
       ],
     },
     {
