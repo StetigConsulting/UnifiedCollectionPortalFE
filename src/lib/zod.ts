@@ -493,6 +493,16 @@ export const addIncentiveSchema = z.object({
   division: z.string().min(1, 'Division is required'),
   subDivision: z.string().min(1, 'Sub Division is required'),
   section: z.string().min(1, 'Section is required'),
-  currentPercentage: z.number().min(0, 'Current percentage must be a positive number'),  // Changed to number
-  arrearPercentage: z.number().min(0, 'Arrears percentage must be a positive number'),  // Changed to number
+  currentPercentage: z.number().min(0, 'Current percentage must be a positive number'),
+  arrearPercentage: z.number().min(0, 'Arrears percentage must be a positive number'),
+});
+
+export const addReceiptSchema = z.object({
+  applicableLevel: z.string().min(1, "Applicable level is required"),
+  circle: z.string().min(1, "Circle is required"),
+  division: z.string().min(1, "Division is required"),
+  section: z.string().min(1, "Section is required"),
+  receiptsPerMonth: z.string().min(1, "Receipts per month is required").regex(/^\d+$/, "Receipts per month must be a number"),
+  receiptsPerDay: z.string().min(1, "Receipts per day is required").regex(/^\d+$/, "Receipts per day must be a number"),
+  secondReceiptAllowed: z.boolean(),
 });
