@@ -497,12 +497,19 @@ export const addIncentiveSchema = z.object({
   arrearPercentage: z.number().min(0, 'Arrears percentage must be a positive number'),
 });
 
-export const addReceiptSchema = z.object({
-  applicableLevel: z.string().min(1, "Applicable level is required"),
-  circle: z.string().min(1, "Circle is required"),
-  division: z.string().min(1, "Division is required"),
-  section: z.string().min(1, "Section is required"),
-  receiptsPerMonth: z.string().min(1, "Receipts per month is required").regex(/^\d+$/, "Receipts per month must be a number"),
-  receiptsPerDay: z.string().min(1, "Receipts per day is required").regex(/^\d+$/, "Receipts per day must be a number"),
-  secondReceiptAllowed: z.boolean(),
+export const addReceiptsSchema = z.object({
+  configRule: z.string().min(1, 'Config rule is required'),
+  receipts: z.array(
+    z.object({
+      applicableLevel: z.string().min(1, 'Applicable Level is required'),
+      circle: z.string().min(1, 'Circle is required'),
+      division: z.string().min(1, 'Division is required'),
+      subDivision: z.string().min(1, 'Sub Division is required'),
+      section: z.string().min(1, 'Section is required'),
+      receiptsPerMonth: z.number().min(1, 'Must be at least 1 receipt per month'),
+      receiptsPerDay: z.number().min(1, 'Must be at least 1 receipt per day'),
+      allowSecondReceipt: z.boolean(),
+    })
+  ).nonempty('At least one receipt entry must be added'),
 });
+
