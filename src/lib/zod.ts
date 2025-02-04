@@ -497,19 +497,262 @@ export const addIncentiveSchema = z.object({
   arrearPercentage: z.number().min(0, 'Arrears percentage must be a positive number'),
 });
 
+
+// export const addReceiptsSchema = z.object({
+//   configRule: z.string().min(1, 'Config rule is required'),
+//   receipts: z.array(
+//     z.object({
+//       applicableLevel: z.string().min(1, 'Applicable Level is required'),
+//       circle: z.array(z.number()).optional(),
+//       division: z.array(z.number()).optional(),
+//       subDivision: z.array(z.number()).optional(),
+//       section: z.array(z.number()).optional(),
+//       receiptsPerMonth: z.number().min(1, 'Must be at least 1 receipt per month'),
+//       receiptsPerDay: z.number().min(1, 'Must be at least 1 receipt per day'),
+//       allowSecondReceipt: z.boolean(),
+//     })
+//   ).nonempty('At least one receipt entry must be added'),
+// });
+
 export const addReceiptsSchema = z.object({
   configRule: z.string().min(1, 'Config rule is required'),
   receipts: z.array(
     z.object({
-      applicableLevel: z.string().min(1, 'Applicable Level is required'),
-      circle: z.string().min(1, 'Circle is required'),
-      division: z.string().min(1, 'Division is required'),
-      subDivision: z.string().min(1, 'Sub Division is required'),
-      section: z.string().min(1, 'Section is required'),
-      receiptsPerMonth: z.number().min(1, 'Must be at least 1 receipt per month'),
-      receiptsPerDay: z.number().min(1, 'Must be at least 1 receipt per day'),
+      applicableLevel: z.string().optional(),
+      circle: z.array(z.number()).optional(),
+      division: z.array(z.number()).optional(),
+      subDivision: z.array(z.number()).optional(),
+      section: z.array(z.number()).optional(),
+      receiptsPerMonth: z.number().optional(),
+      receiptsPerDay: z.number().optional(),
       allowSecondReceipt: z.boolean(),
     })
-  ).nonempty('At least one receipt entry must be added'),
+  ).nonempty('At least one receipt entry must be added')
+}).superRefine((data, ctx) => {
+  const configRule = data.configRule;
+
+  data.receipts.forEach((receipt, index) => {
+    if (configRule === 'Levelwise') {
+      if (!receipt.applicableLevel) {
+        ctx.addIssue({
+          path: [`receipts`, index, 'applicableLevel'],
+          message: 'Applicable Level is required',
+          code: z.ZodIssueCode.custom,
+        });
+      } else {
+        if (receipt.applicableLevel === levelWIthId.SECTION) {
+          if (!receipt.circle?.length) {
+            ctx.addIssue({
+              path: [`receipts`, index, 'circle'],
+              message: 'Circle is required',
+              code: z.ZodIssueCode.custom,
+            });
+          }
+          if (!receipt.division?.length) {
+            ctx.addIssue({
+              path: [`receipts`, index, 'division'],
+              message: 'Division is required',
+              code: z.ZodIssueCode.custom,
+            });
+          }
+          if (!receipt.subDivision?.length) {
+            ctx.addIssue({
+              path: [`receipts`, index, 'subDivision'],
+              message: 'Sub Division is required',
+              code: z.ZodIssueCode.custom,
+            });
+          }
+          if (!receipt.section?.length) {
+            ctx.addIssue({
+              path: [`receipts`, index, 'section'],
+              message: 'Section is required',
+              code: z.ZodIssueCode.custom,
+            });
+          }
+        }
+        else if (receipt.applicableLevel === levelWIthId.SUB_DIVISION) {
+          if (!receipt.circle?.length) {
+            ctx.addIssue({
+              path: [`receipts`, index, 'circle'],
+              message: 'Circle is required',
+              code: z.ZodIssueCode.custom,
+            });
+          }
+          if (!receipt.division?.length) {
+            ctx.addIssue({
+              path: [`receipts`, index, 'division'],
+              message: 'Division is required',
+              code: z.ZodIssueCode.custom,
+            });
+          }
+          if (!receipt.subDivision?.length) {
+            ctx.addIssue({
+              path: [`receipts`, index, 'subDivision'],
+              message: 'Sub Division is required',
+              code: z.ZodIssueCode.custom,
+            });
+          }
+        } else if (receipt.applicableLevel === levelWIthId.DIVISION) {
+          if (!receipt.circle?.length) {
+            ctx.addIssue({
+              path: [`receipts`, index, 'circle'],
+              message: 'Circle is required',
+              code: z.ZodIssueCode.custom,
+            });
+          }
+          if (!receipt.division?.length) {
+            ctx.addIssue({
+              path: [`receipts`, index, 'division'],
+              message: 'Division is required',
+              code: z.ZodIssueCode.custom,
+            });
+          }
+        } else if (receipt.applicableLevel === levelWIthId.CIRCLE) {
+          if (!receipt.circle?.length) {
+            ctx.addIssue({
+              path: [`receipts`, index, 'circle'],
+              message: 'Circle is required',
+              code: z.ZodIssueCode.custom,
+            });
+          }
+        }
+      }
+    }
+    if (receipt.receiptsPerMonth <= 0) {
+      ctx.addIssue({
+        path: [`receipts`, index, 'receiptsPerMonth'],
+        message: 'Receipts per month must be greater than 0',
+        code: z.ZodIssueCode.custom,
+      });
+    }
+    if (receipt.receiptsPerDay <= 0) {
+      ctx.addIssue({
+        path: [`receipts`, index, 'receiptsPerDay'],
+        message: 'Receipts per day must be greater than 0',
+        code: z.ZodIssueCode.custom,
+      });
+    }
+  });
 });
 
+
+export const editReceiptsSchema = z.object({
+  configRule: z.string().min(1, 'Config rule is required'),
+  receipts: z.array(
+    z.object({
+      applicableLevel: z.string().optional(),
+      circle: z.array(z.number()).optional(),
+      division: z.array(z.number()).optional(),
+      subDivision: z.array(z.number()).optional(),
+      section: z.array(z.number()).optional(),
+      receiptsPerMonth: z.number().optional(),
+      receiptsPerDay: z.number().optional(),
+      allowSecondReceipt: z.boolean(),
+    })
+  ).nonempty('At least one receipt entry must be added')
+}).superRefine((data, ctx) => {
+  const configRule = data.configRule;
+
+  data.receipts.forEach((receipt, index) => {
+    if (configRule === 'Levelwise') {
+      if (!receipt.applicableLevel) {
+        ctx.addIssue({
+          path: [`receipts`, index, 'applicableLevel'],
+          message: 'Applicable Level is required',
+          code: z.ZodIssueCode.custom,
+        });
+      } else {
+        if (receipt.applicableLevel === levelWIthId.SECTION) {
+          if (!receipt.circle?.length) {
+            ctx.addIssue({
+              path: [`receipts`, index, 'circle'],
+              message: 'Circle is required',
+              code: z.ZodIssueCode.custom,
+            });
+          }
+          if (!receipt.division?.length) {
+            ctx.addIssue({
+              path: [`receipts`, index, 'division'],
+              message: 'Division is required',
+              code: z.ZodIssueCode.custom,
+            });
+          }
+          if (!receipt.subDivision?.length) {
+            ctx.addIssue({
+              path: [`receipts`, index, 'subDivision'],
+              message: 'Sub Division is required',
+              code: z.ZodIssueCode.custom,
+            });
+          }
+          if (!receipt.section?.length) {
+            ctx.addIssue({
+              path: [`receipts`, index, 'section'],
+              message: 'Section is required',
+              code: z.ZodIssueCode.custom,
+            });
+          }
+        }
+        else if (receipt.applicableLevel === levelWIthId.SUB_DIVISION) {
+          if (!receipt.circle?.length) {
+            ctx.addIssue({
+              path: [`receipts`, index, 'circle'],
+              message: 'Circle is required',
+              code: z.ZodIssueCode.custom,
+            });
+          }
+          if (!receipt.division?.length) {
+            ctx.addIssue({
+              path: [`receipts`, index, 'division'],
+              message: 'Division is required',
+              code: z.ZodIssueCode.custom,
+            });
+          }
+          if (!receipt.subDivision?.length) {
+            ctx.addIssue({
+              path: [`receipts`, index, 'subDivision'],
+              message: 'Sub Division is required',
+              code: z.ZodIssueCode.custom,
+            });
+          }
+        } else if (receipt.applicableLevel === levelWIthId.DIVISION) {
+          if (!receipt.circle?.length) {
+            ctx.addIssue({
+              path: [`receipts`, index, 'circle'],
+              message: 'Circle is required',
+              code: z.ZodIssueCode.custom,
+            });
+          }
+          if (!receipt.division?.length) {
+            ctx.addIssue({
+              path: [`receipts`, index, 'division'],
+              message: 'Division is required',
+              code: z.ZodIssueCode.custom,
+            });
+          }
+        } else if (receipt.applicableLevel === levelWIthId.CIRCLE) {
+          if (!receipt.circle?.length) {
+            ctx.addIssue({
+              path: [`receipts`, index, 'circle'],
+              message: 'Circle is required',
+              code: z.ZodIssueCode.custom,
+            });
+          }
+        }
+      }
+    }
+    if (receipt.receiptsPerMonth <= 0) {
+      ctx.addIssue({
+        path: [`receipts`, index, 'receiptsPerMonth'],
+        message: 'Receipts per month must be greater than 0',
+        code: z.ZodIssueCode.custom,
+      });
+    }
+    if (receipt.receiptsPerDay <= 0) {
+      ctx.addIssue({
+        path: [`receipts`, index, 'receiptsPerDay'],
+        message: 'Receipts per day must be greater than 0',
+        code: z.ZodIssueCode.custom,
+      });
+    }
+  });
+});

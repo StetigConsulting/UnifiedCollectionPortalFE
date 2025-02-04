@@ -48,3 +48,17 @@ export interface extendValidityInterface {
     validity_from_date: string;
     validity_to_date: string;
 }
+
+export interface ReceiptForPostpaid {
+    id?: number;
+    discom_id: number;
+    office_structure_id?: number;
+    rule_level: string;
+    rule_name: string;
+    json_rule: {
+        receipt_per_month_per_bill: number;
+        second_receipt_different_payment_mode: boolean;
+        receipt_per_day_per_bill: number;
+    };
+}
+
