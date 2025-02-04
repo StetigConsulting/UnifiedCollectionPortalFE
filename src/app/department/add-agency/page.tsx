@@ -211,7 +211,7 @@ const AddAgency = () => {
         })
       );
     })
-    getLevelsDiscomId("1001").then((data) => {
+    getLevelsDiscomId(testDiscom).then((data) => {
       setCircles(
         data?.data?.officeStructure?.map((ite) => {
           return {
@@ -222,7 +222,7 @@ const AddAgency = () => {
       );
     })
 
-    getLevels("1001").then((data) => {
+    getLevels(testDiscom).then((data) => {
       setWorkingLevel(
         data?.data
           ?.filter((ite) => ite.levelType == "MAIN")
