@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
 import ReactTable from '@/components/ReactTable';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
-import { deleteReceiptForPostpaidById, getListOfReceiptForPostpaid } from '@/app/api-calls/admin/api';
+import { deleteBusinessRule, getListOfReceiptForPostpaid } from '@/app/api-calls/admin/api';
 import { testDiscom } from '@/lib/utils';
 import { Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -121,7 +121,7 @@ const ReceiptsForPostpaid = () => {
     const handleDelete = async (id: number) => {
         setIsLoading(true);
         try {
-            await deleteReceiptForPostpaidById(id);
+            await deleteBusinessRule(id);
             toast.success('Receipt deleted successfully');
             getListOfAllReceipt()
         } catch (error) {

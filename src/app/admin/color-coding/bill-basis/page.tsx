@@ -3,12 +3,12 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Pencil, Trash2 } from 'lucide-react';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import ReactTable from '@/components/ReactTable'; // Referencing your reusable table component
 import { toast } from 'sonner';
 import TabForRouting from '@/components/ColorCoding/TabForRouting';
-import { getColorCodingBillBasis } from '@/app/api-calls/admin/api';
+import { deleteBusinessRule, getColorCodingBillBasis } from '@/app/api-calls/admin/api';
 import { testDiscom } from '@/lib/utils';
 
 const BillBasis = () => {
@@ -27,15 +27,32 @@ const BillBasis = () => {
         },
     ];
 
-    const handleEdit = (index: number) => {
-        toast.success('Edit functionality is not implemented yet.');
-    };
+    const tableData = colorLogicEntries.map((item, index) => ({
+        ...item,
+        action: <div className='flex gap-2'>
+            <Trash2 className='cursor-pointer h-5 w-5' onClick={() => handleDelete(item.id)} />
+            <Pencil className='cursor-pointer h-5 w-5' onClick={() => handleEdit(item.id)} />
+        </div>
+    }));
 
-    const handleDelete = (index: number) => {
-        const updatedEntries = colorLogicEntries.filter((_, i) => i !== index);
-        setColorLogicEntries(updatedEntries);
-        toast.success('Row deleted successfully!');
-    };
+    const handleDelete = async (id: number) => {
+        setIsLoading(true);
+        try {
+            await deleteBusinessRule(id);
+            toast.success('Receipt deleted successfully');
+            getListOfData()
+        } catch (error) {
+            let msg = error?.error
+            console.error('Failed to delete receipt:', msg);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    const handleEdit = (id: number) => {
+        setIsLoading(true)
+        router.push(`/admin/color-coding/bill-basis/add?id=${id}`)
+    }
 
     useEffect(() => {
         getListOfData()
@@ -58,7 +75,7 @@ const BillBasis = () => {
         <AuthUserReusableCode pageTitle="Bill basis" isLoading={isLoading}>
             {/* <TabForRouting router={router} /> */}
             <ReactTable
-                data={colorLogicEntries}
+                data={tableData}
                 columns={columns}
                 hideSearchAndOtherButtons
             />

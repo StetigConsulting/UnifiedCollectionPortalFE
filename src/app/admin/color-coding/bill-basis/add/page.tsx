@@ -75,7 +75,7 @@ const AddBillBasis = () => {
             const response = await createColorCodingBillBasis(payload);
             console.log('Submitting Data:', response.data);
             toast.success('Color coding rules saved successfully!');
-            router.push('/admin/color-coding/bill-basis');
+            router.replace('/admin/color-coding/bill-basis');
         } catch (error) {
             console.log('Error:', error?.error)
             toast.error('Error: ' + error?.error);
@@ -95,7 +95,7 @@ const AddBillBasis = () => {
                     <div key={field.id} className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
                             <CustomizedSelectInputWithLabel
-                                label="Value 2 Type"
+                                label="Select Font type"
                                 list={fontType}
                                 {...register(`fonts.${index}.fontType`)}
                                 errors={errors.fonts?.[index]?.fontType}
