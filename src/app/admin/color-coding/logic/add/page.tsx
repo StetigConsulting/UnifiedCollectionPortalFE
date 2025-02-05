@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -8,11 +8,11 @@ import { Button } from '@/components/ui/button';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
 import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { colorCodingLogicSchema } from '@/lib/zod';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
-import { createColorCodingLogic } from '@/app/api-calls/admin/api';
+import { createColorCodingLogic, getBusinessRuleDateById, updateColorCodingLogic } from '@/app/api-calls/admin/api';
 import { testDiscom } from '@/lib/utils';
 import moment from 'moment';
 
@@ -56,6 +56,7 @@ const AddColorCodingLogic = () => {
         setIsSubmitting(true);
         try {
             let payload = {
+                id: null,
                 discom_id: parseInt(testDiscom),
                 office_structure_id: parseInt(testDiscom),
                 rule_level: "Discomwise",
@@ -64,6 +65,13 @@ const AddColorCodingLogic = () => {
                     ranges: [],
                 },
             };
+
+            if (idFromUrl) {
+                payload = {
+                    ...payload,
+                    id: parseInt(idFromUrl),
+                }
+            }
 
             let rangeData = [];
             for (const current of data.colorCodings) {
@@ -89,7 +97,12 @@ const AddColorCodingLogic = () => {
                 },
             };
 
-            const response = await createColorCodingLogic(payload);
+            let response: any;
+            if (idFromUrl) {
+                response = await updateColorCodingLogic(payload);
+            } else {
+                response = await createColorCodingLogic(payload);
+            }
             console.log('Submitting Data:', response.data);
             toast.success('Color coding rules saved successfully!');
             router.push('/admin/color-coding');
@@ -104,6 +117,38 @@ const AddColorCodingLogic = () => {
     const handleBackgroundColorChange = (index: number, color: string) => {
         setValue(`colorCodings.${index}.colorCode`, color);
     };
+
+    const searchParams = useSearchParams();
+    const idFromUrl = searchParams.get('id');
+
+    useEffect(() => {
+        if (idFromUrl) {
+            getLogicDetails(idFromUrl);
+        }
+    }, [idFromUrl]);
+
+    const getLogicDetails = async (id: string) => {
+        setIsLoading(true);
+        try {
+            const response = await getBusinessRuleDateById(id);
+            console.log("API Response:", response.data.json_rule.ranges);
+            let fetchedData = response.data.json_rule.ranges.map((data, index) => {
+                return {
+                    value1Type: data.R1.type,
+                    value1: data.R1.type === 'DATE' ? moment(data.R1.value).format('YYYY-MM-DD') : data.R1.value,
+                    value2Type: data.R2.type,
+                    value2: data.R2.type === 'DATE' ? moment(data.R2.value).format('YYYY-MM-DD') : data.R2.value,
+                    colorCode: data.color_code,
+                }
+            })
+            setValue('colorCodings', fetchedData);
+        } catch (error) {
+            console.error("Failed to create agency:", error.data[Object.keys(error.data)[0]]);
+        } finally {
+            setIsLoading(false);
+        }
+
+    }
 
     return (
         <AuthUserReusableCode pageTitle="Add Color Coding Logic" isLoading={isLoading}>
