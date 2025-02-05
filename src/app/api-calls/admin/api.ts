@@ -41,7 +41,7 @@ const getReceiptForPostpaidById = async (id: string) => {
     }
 };
 
-const deleteReceiptForPostpaidById = async (id: number) => {
+const deleteBusinessRule = async (id: number) => {
     try {
         const response = await api.delete(`/v1/business-rules/${id}`);
         return response.data;
@@ -113,7 +113,7 @@ const createColorCodingEcl = async (data: ECLFlaggedCustomerRule) => {
 };
 
 export {
-    createReceiptForPostpaid, getListOfReceiptForPostpaid, deleteReceiptForPostpaidById, getReceiptForPostpaidById,
+    createReceiptForPostpaid, getListOfReceiptForPostpaid, deleteBusinessRule, getReceiptForPostpaidById,
     editReceiptForPostpaid, createColorCodingLogic, getColorCodingBillBasis, createColorCodingBillBasis, getColorCodingLogic,
     createColorCodingEcl, getColorCodingEclFlag
 }
