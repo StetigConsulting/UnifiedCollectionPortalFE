@@ -79,7 +79,7 @@ const data = {
       path: '/agency/',
       items: [
         {
-          title: "Add Agency",
+          title: "Add Collector",
           icon: UserPlus2,
           url: "/agency/add-collector",
         },

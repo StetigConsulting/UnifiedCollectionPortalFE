@@ -5,48 +5,92 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { addCounterCollectorSchema, AddCounterCollectorFormData } from '@/lib/zod';
 import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
-import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import CustomizedMultipleSelectInputWithLabelString from '@/components/CustomizedMultipleSelectInputWithLabelString';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
-
-interface SelectOption {
-    value: string;
-    label: string;
-}
+import { getAllNonEnergyTypes, getAllPaymentModes } from '@/app/api-calls/department/api';
+import { createCounterCollector } from '@/app/api-calls/agency/api';
+import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
+import { Loader2 } from 'lucide-react';
 
 const AddCounterCollector = () => {
-    const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<AddCounterCollectorFormData>({
+    const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm<AddCounterCollectorFormData>({
         resolver: zodResolver(addCounterCollectorSchema),
+        defaultValues: {
+            initialBalance: 0
+        },
     });
 
     const [isLoading, setIsLoading] = useState(false);
 
-    const [binders, setBinders] = useState<SelectOption[]>([]);
-    const [subDivisions, setSubDivisions] = useState<SelectOption[]>([]);
-    const [sections, setSections] = useState<SelectOption[]>([]);
-    const [permissions, setPermissions] = useState<SelectOption[]>([]);
-    const [collectionTypes, setCollectionTypes] = useState<SelectOption[]>([]);
-    const [nonEnergyTypes, setNonEnergyTypes] = useState<SelectOption[]>([]);
+    const [permissions, setPermissions] = useState([]);
+    const [nonEnergyTypes, setNonEnergyTypes] = useState([]);
 
-    // Fetching data (mocked as comments for now)
     useEffect(() => {
-        // getBinders().then(setBinders);
-        // getSubDivisions().then(setSubDivisions);
-        // getSections().then(setSections);
-        // getPermissions().then(setPermissions);
-        // getCollectionTypes().then(setCollectionTypes);
-        // getNonEnergyTypes().then(setNonEnergyTypes);
+        setIsLoading(true)
+        getAllPaymentModes()
+            .then((data) => {
+                setPermissions(
+                    data?.data
+                        ?.filter((ite) => ite.mode_type == "Collection")
+                        ?.map((ite) => {
+                            return {
+                                label: ite.mode_name,
+                                value: ite.id,
+                            };
+                        })
+                );
+                setIsLoading(false)
+            })
+            .catch((err) => { })
+        getAllNonEnergyTypes().then((data) => {
+            setNonEnergyTypes(
+                data?.data?.map((ite) => {
+                    return {
+                        label: ite.type_name,
+                        value: ite.id,
+                    };
+                })
+            );
+            setIsLoading(false)
+        })
+        setValue('initialBalance', 0);
     }, []);
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const onSubmit = async (data: AddCounterCollectorFormData) => {
+        setIsSubmitting(true)
         try {
-            // const response = await createCounterCollector(data);
+            let payload = {
+                "agency_id": 30, //hardcoded
+                "agent_name": data.name,
+                "primary_phone": data.personalPhoneNumber,
+                "secondary_phone": data.officePhoneNumber,
+                "maximum_limit": data.maximumLimit,
+                "validity_from_date": data.fromValidity,
+                "validity_to_date": data.toValidity,
+                "collection_payment_modes": data.permission,
+                "working_level": 68,//hardcoded
+                "collection_type_energy": data.collectionType.includes('Energy'),
+                "collection_type_non_energy": data.collectionType.includes('Non-Energy'),
+                "is_active": true,
+                "non_energy_types": data.nonEnergy,
+                "working_level_office": 1325,//hardcoded
+                "collector_type": 1,//hardcoded
+                "work_type": "Offline",
+                "collector_role": "Counter Collector"
+            }
+            await createCounterCollector(payload, 6);
             toast.success('Counter Collector added successfully!');
+            reset()
         } catch (error) {
-            toast.error('Failed to add Counter Collector.');
+            let errorMessage = error?.data ? error?.data[Object.keys(error?.data)[0]] : error?.error;
+            toast.error('Error: ' + errorMessage);
             console.error('Error:', error);
+        } finally {
+            setIsSubmitting(false)
         }
     };
 
@@ -63,36 +107,50 @@ const AddCounterCollector = () => {
                         errors={errors.name}
                     />
                     <CustomizedInputWithLabel
-                        label="Phone Number"
+                        label="Office Phone Number"
                         placeholder="Enter Phone Number"
                         required
-                        {...register('phoneNumber')}
-                        errors={errors.phoneNumber}
+                        {...register('officePhoneNumber')}
+                        errors={errors.officePhoneNumber}
+                    />
+                    <CustomizedInputWithLabel
+                        label="Personal Phone Number"
+                        placeholder="Enter Phone Number"
+                        required
+                        {...register('personalPhoneNumber')}
+                        errors={errors.personalPhoneNumber}
                     />
                     <CustomizedInputWithLabel
                         label="Maximum Limit"
                         type="number"
                         placeholder="Enter Maximum Limit"
                         required
-                        {...register('maximumLimit')}
+                        {...register('maximumLimit', { valueAsNumber: true })}
                         errors={errors.maximumLimit}
                     />
-                    <CustomizedSelectInputWithLabel
+                    <CustomizedInputWithLabel
                         label="Validity"
-                        list={[]}
                         required
-                        {...register('validity')}
-                        errors={errors.validity}
+                        type='date'
+                        {...register('fromValidity')}
+                        errors={errors.fromValidity}
+                    />
+                    <CustomizedInputWithLabel
+                        label="Validity"
+                        required
+                        type='date'
+                        {...register('toValidity')}
+                        errors={errors.toValidity}
                     />
                     <CustomizedInputWithLabel
                         label="Initial Balance"
                         type="number"
                         placeholder="Enter Initial Balance"
-                        required
+                        disabled
                         {...register('initialBalance')}
                         errors={errors.initialBalance}
                     />
-                    <CustomizedMultipleSelectInputWithLabelString
+                    <CustomizedMultipleSelectInputWithLabelNumber
                         label="Permission"
                         list={permissions}
                         multi={true}
@@ -104,15 +162,19 @@ const AddCounterCollector = () => {
                     />
                     <CustomizedMultipleSelectInputWithLabelString
                         label="Collection Type"
-                        list={collectionTypes}
-                        required
-                        multi={true}
                         errors={errors.collectionType}
+                        placeholder="Select Collection"
+                        list={[
+                            { label: "Energy", value: "Energy" },
+                            { label: "Non-Energy", value: "Non-Energy" },
+                        ]}
+                        required={true}
                         value={watch('collectionType') || []}
+                        multi={true}
                         onChange={(selectedValues) => setValue('collectionType', selectedValues)}
                     />
-                    {watch("collectionType")?.includes("Non Energy") && (
-                        <CustomizedMultipleSelectInputWithLabelString
+                    {watch("collectionType")?.includes("Non-Energy") && (
+                        <CustomizedMultipleSelectInputWithLabelNumber
                             label="Non Energy"
                             list={nonEnergyTypes}
                             multi={true}
@@ -125,7 +187,15 @@ const AddCounterCollector = () => {
                     )}
                 </div>
                 <div className="flex justify-end mt-4">
-                    <Button type="submit">Submit</Button>
+                    <Button type="submit" variant="default" disabled={isSubmitting}>
+                        {isSubmitting ? (
+                            <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
+                            </>
+                        ) : (
+                            'Submit'
+                        )}
+                    </Button>
                 </div>
             </form>
         </AuthUserReusableCode>

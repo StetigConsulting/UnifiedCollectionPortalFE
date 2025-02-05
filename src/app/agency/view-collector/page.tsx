@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import ReactTable from "@/components/ReactTable";
 import AuthUserReusableCode from "@/components/AuthUserReusableCode";
-import { UserRoundPlus } from "lucide-react";
+import { UserRoundMinus, UserRoundPlus } from "lucide-react";
+import { activateAgentById, deactivateAgentById, getAllAgentByAgencyId } from "@/app/api-calls/agency/api";
 
 // API calls (commented out for now)
 // import { activateCollector, deactivateCollector, fetchCollectors } from "@/app/api-calls/collector/api"; 
@@ -21,12 +22,13 @@ const ViewCollector = () => {
     const loadCollectors = async () => {
         setIsLoading(true);
         try {
-            // const response = await fetchCollectors();
-            const response = [
-                { id: 1, mobileNumber: '7738141900', name: 'Satyam Aryaan', subDivision: '3411', section: '341101', maximumLimit: 'Rs. 200000', balance: 'Rs. 2000', validity: '06-12-2024', isActive: true },
-                { id: 2, mobileNumber: '7738141901', name: 'Satyam Aryaan', subDivision: '3411', section: '341101', maximumLimit: 'Rs. 200000', balance: 'Rs. 2000', validity: '06-12-2024', isActive: false },
-            ];
-            setCollectors(response);
+            const response = await getAllAgentByAgencyId(30)//hardcoded
+            const updatedCollectors = response.data.map((item) => ({
+                ...item,
+                workingLevelOffcie: item.working_level_office.office_description
+            }));
+
+            setCollectors(updatedCollectors);
         } catch (error) {
             toast.error("Failed to load collectors.");
             console.error("Error fetching collectors:", error);
@@ -35,24 +37,24 @@ const ViewCollector = () => {
         }
     };
 
-    const activate = async (id: number) => {
+    const activateAgent = async (id: number) => {
         setIsLoading(true);
         try {
-            // await activateCollector(id); 
-            toast.success("Collector activated successfully.");
+            await activateAgentById(id, 6);//harcoded
+            toast.success("Agent activated successfully.");
             loadCollectors();
         } catch (error) {
-            toast.error("Failed to activate the collector.");
-            console.error("Error activating collector:", error);
+            toast.error("Failed to activate the Agent.");
+            console.error("Error activating Agent:", error);
         } finally {
             setIsLoading(false);
         }
     };
 
-    const deactivate = async (id: number) => {
+    const deactivateAgent = async (id: number) => {
         setIsLoading(true);
         try {
-            // await deactivateCollector(id); 
+            await deactivateAgentById(id, 6);//harcoded
             toast.success("Collector deactivated successfully.");
             loadCollectors();
         } catch (error) {
@@ -65,24 +67,24 @@ const ViewCollector = () => {
 
     const columns = useMemo(() => [
         { label: "Action", key: "action", sortable: false, ignored: true },
-        { label: "Mobile Number", key: "mobileNumber", sortable: true },
-        { label: "Name", key: "name", sortable: true },
-        { label: "Sub Division", key: "subDivision", sortable: true },
-        { label: "Section", key: "section", sortable: true },
-        { label: "Maximum Limit", key: "maximumLimit", sortable: true },
-        { label: "Balance", key: "balance", sortable: true },
-        { label: "Validity", key: "validity", sortable: true },
+        { label: "Mobile Number", key: "primary_phone", sortable: true },
+        { label: "Name", key: "agent_name", sortable: true },
+        { label: "Working level office", key: "workingLevelOffcie", sortable: true },
+        { label: "Maximum Limit", key: "maximum_limit", sortable: true },
+        { label: "Balance", key: "current_balance", sortable: true },
+        { label: "From Validity", key: "validity_from_date", sortable: true },
+        { label: "To Validity", key: "validity_to_date", sortable: true },
     ], []);
 
     const tableData = collectors.map((item) => ({
         ...item,
-        action: item.isActive ? (
+        action: item.is_active ? (
             <div className="flex gap-2">
-                <UserRoundPlus className="text-red-500 cursor-pointer" onClick={() => deactivate(item.id)} />
+                <UserRoundMinus className="text-red-500 cursor-pointer" onClick={() => deactivateAgent(item.id)} />
             </div>
         ) : (
             <div className="flex gap-2">
-                <UserRoundPlus className="text-themeColor cursor-pointer" onClick={() => activate(item.id)} />
+                <UserRoundPlus className="text-themeColor cursor-pointer" onClick={() => activateAgent(item.id)} />
             </div>
         ),
     }));

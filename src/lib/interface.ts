@@ -111,3 +111,30 @@ export interface ECLFlaggedCustomerRule {
         bg_color_code: string;
     };
 }
+
+export interface AddCounterCollector {
+    agency_id: number;
+    agent_name: string;
+    primary_phone: string;
+    secondary_phone: string;
+    maximum_limit: number;
+    validity_from_date: string;
+    validity_to_date: string;
+    collection_payment_modes: number[];
+    working_level: number;
+    collection_type_energy: boolean;
+    collection_type_non_energy: boolean;
+    is_active: boolean;
+    non_energy_types: number[];
+    working_level_office: number;
+    collector_type: number;
+    work_type: string;
+    collector_role: string;
+}
+
+export interface ChangeCounterCollector {
+    agent_id: number;
+    collection_type_energy: boolean;
+    collection_type_non_energy: boolean;
+    non_energy_types?: number[];
+}

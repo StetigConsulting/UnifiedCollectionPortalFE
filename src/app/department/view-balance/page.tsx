@@ -24,7 +24,6 @@ const mockData = [
 ];
 
 const ViewBalance = () => {
-    const [search, setSearch] = useState('');
     const [agencyList, setAgencyList] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [workingLevelList, setWorkingLevelList] = useState([])
@@ -74,6 +73,7 @@ const ViewBalance = () => {
                         permissions: item.collection_payment_modes.map((mode) => mode.mode_name).join(", ") || 'N/A',
                         collectionModes: data.join(', ') || 'N/A',
                         isActive: item.is_active,
+                        current_balance: item.current_balance
                     })
                 })
             );
@@ -88,8 +88,9 @@ const ViewBalance = () => {
         () => [
             { label: 'Agency ID', key: 'id', sortable: true },
             { label: 'Agency Name', key: 'agencyName', sortable: true },
-            { label: 'Division', key: 'division', sortable: true },
-            { label: 'Current Balance', key: 'currentBalance', sortable: true },
+            { label: 'Working level', key: 'workingOffice', sortable: true },
+            { label: 'Working office', key: 'workingLevelOffice', sortable: true },
+            { label: 'Current Balance', key: 'current_balance', sortable: true },
             { label: 'Action', key: 'action', sortable: false, ignored: true },
         ],
         []
