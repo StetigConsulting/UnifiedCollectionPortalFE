@@ -1,181 +1,203 @@
 'use client';
 
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { colorCodingLogicSchema } from "@/lib/zod";
-import { Button } from "@/components/ui/button";
-import CustomizedSelectInputWithLabel from "@/components/CustomizedSelectInputWithLabel";
-import CustomizedInputWithLabel from "@/components/CustomizedInputWithLabel";
-import AuthUserReusableCode from "@/components/AuthUserReusableCode";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
-import { z } from "zod";
+import React, { useState } from 'react';
+import { useForm, useFieldArray } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Button } from '@/components/ui/button';
+import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
+import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
+import { Loader2 } from 'lucide-react';
+import { colorCodingLogicSchema } from '@/lib/zod';
+import AuthUserReusableCode from '@/components/AuthUserReusableCode';
+import { createColorCodingLogic } from '@/app/api-calls/admin/api';
+import { testDiscom } from '@/lib/utils';
 
 type FormData = z.infer<typeof colorCodingLogicSchema>;
 
-const ColorCodingLogic = () => {
+const ColorCodingForm = () => {
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<FormData>({
-        resolver: zodResolver(colorCodingLogicSchema),
-    });
+    const [isLoading, setIsLoading] = useState(false);
 
-    const formData = watch();
-
-    const [colorLogicEntries, setColorLogicEntries] = useState([
-        {
-            value1Type: "Days",
-            days: "",
-            value2Type: "Date",
-            date: "",
-            backgroundColor: "#ffffff",
-            fontColor: "#000000",
-            fontType: "Actual",
-        }
+    const [valueTypePicklist, setValueTypePicklist] = useState([
+        { label: 'Date', value: 'DATE' },
+        { label: 'Day', value: 'DAYS' },
     ]);
 
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        setValue,
+        watch,
+        control,
+    } = useForm<FormData>({
+        resolver: zodResolver(colorCodingLogicSchema),
+        defaultValues: {
+            colorCodings: [
+                {
+                    value1Type: '',
+                    value1: null,
+                    value2Type: '',
+                    value2: '',
+                    colorCode: '',
+                },
+            ],
+        },
+    });
+
+    const { fields, append, remove } = useFieldArray({ control, name: 'colorCodings' });
+
     const onSubmit = async (data: FormData) => {
+        setIsSubmitting(true);
         try {
-            setIsSubmitting(true);
-            toast.success("Form submitted successfully!");
+            let payload = {
+                discom_id: parseInt(testDiscom),
+                office_structure_id: parseInt(testDiscom),
+                rule_level: "Discomwise",
+                rule_name: "PAYMENT_STATUS_COLOR_CODING",
+                json_rule: {
+                    ranges: [],
+                },
+            };
+
+            let rangeData = [];
+            for (const current of data.colorCodings) {
+                let currentData = {
+                    R1: {
+                        type: current.value1Type,
+                        value: current.value1,
+                    },
+                    R2: {
+                        type: current.value2Type,
+                        value: current.value2,
+                    },
+                    order: rangeData.length + 1,
+                    color: current.colorCode,
+                };
+                rangeData.push(currentData);
+            }
+
+            payload = {
+                ...payload,
+                json_rule: {
+                    ranges: rangeData,
+                },
+            };
+
+            const response = await createColorCodingLogic(payload);
+            console.log('Submitting Data:', response.data);
+            toast.success('Color coding rules saved successfully!');
+            router.push('/admin/color-coding');
         } catch (error) {
-            toast.error("Failed to submit the form.");
+            toast.error('Failed to save color coding rules.');
         } finally {
             setIsSubmitting(false);
         }
     };
 
-    const handleCancel = () => {
-        router.back();
-    };
-
-    const addMoreLogic = () => {
-        setColorLogicEntries([
-            ...colorLogicEntries,
-            {
-                value1Type: "Days",
-                days: "",
-                value2Type: "Date",
-                date: "",
-                backgroundColor: "#ffffff",
-                fontColor: "#000000",
-                fontType: "Actual",
-            }
-        ]);
-    };
-
     const handleBackgroundColorChange = (index: number, color: string) => {
-        const newEntries = [...colorLogicEntries];
-        newEntries[index].backgroundColor = color;
-        setColorLogicEntries(newEntries);
-    };
-
-    const handleFontColorChange = (index: number, color: string) => {
-        const newEntries = [...colorLogicEntries];
-        newEntries[index].fontColor = color;
-        setColorLogicEntries(newEntries);
+        setValue(`colorCodings.${index}.colorCode`, color);
     };
 
     return (
-        <AuthUserReusableCode pageTitle="Color Coding Logic">
+        <AuthUserReusableCode pageTitle="Receipts for Postpaid" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                {colorLogicEntries.map((logic, index) => (
-                    <div key={index} className="space-y-4">
+                {fields.map((field, index) => (
+                    <div key={field.id} className="p-4 space-y-4">
                         <div className="grid grid-cols-2 gap-4">
                             <CustomizedSelectInputWithLabel
                                 label="Value 1 Type"
-                                list={[{ label: "Days", value: "Days" }, { label: "Date", value: "Date" }]}
-                                {...register(`colorLogicEntries.${index}.value1Type`)}
-                                value={logic.value1Type}
+                                list={valueTypePicklist}
+                                {...register(`colorCodings.${index}.value1Type`)}
+                                errors={errors.colorCodings?.[index]?.value1Type}
                             />
+                            {watch(`colorCodings.${index}.value1Type`) === 'DAYS' ? (
+                                <CustomizedInputWithLabel
+                                    label="Days"
+                                    type="number"
+                                    {...register(`colorCodings.${index}.value1`)}
+                                    errors={errors.colorCodings?.[index]?.value1}
+                                />
+                            ) : (
+                                <CustomizedInputWithLabel
+                                    label="Date"
+                                    type="date"
+                                    {...register(`colorCodings.${index}.value1`)}
+                                    errors={errors.colorCodings?.[index]?.value1}
+                                />
+                            )}
+                        </div>
 
-                            <CustomizedInputWithLabel
-                                label="Days"
-                                type="number"
-                                {...register(`colorLogicEntries.${index}.days`)}
-                                value={logic.days}
-                            />
-
+                        <div className="grid grid-cols-2 gap-4">
                             <CustomizedSelectInputWithLabel
                                 label="Value 2 Type"
-                                list={[{ label: "Date", value: "Date" }, { label: "Days", value: "Days" }]}
-                                {...register(`colorLogicEntries.${index}.value2Type`)}
-                                value={logic.value2Type}
+                                list={valueTypePicklist}
+                                {...register(`colorCodings.${index}.value2Type`)}
+                                errors={errors.colorCodings?.[index]?.value2Type}
                             />
+                            {watch(`colorCodings.${index}.value2Type`) === 'DAYS' ? (
+                                <CustomizedInputWithLabel
+                                    label="Days"
+                                    type="number"
+                                    {...register(`colorCodings.${index}.value2`)}
+                                    errors={errors.colorCodings?.[index]?.value2}
+                                />
+                            ) : (
+                                <CustomizedInputWithLabel
+                                    label="Date"
+                                    type="date"
+                                    {...register(`colorCodings.${index}.value2`)}
+                                    errors={errors.colorCodings?.[index]?.value2}
+                                />
+                            )}
+                        </div>
 
-                            <CustomizedInputWithLabel
-                                label="Date"
-                                type="date"
-                                {...register(`colorLogicEntries.${index}.date`)}
-                                value={logic.date}
-                            />
-
-                            <div className="space-y-2">
-                                <label className="block text-sm font-medium text-gray-700">Select Background Color</label>
-                                <div className="flex items-center space-x-2">
-                                    <div className="w-full">
-                                        <CustomizedInputWithLabel type="text"
-                                            value={logic.backgroundColor}
-                                            readOnly />
-                                    </div>
-                                    <input
-                                        type="color"
-                                        value={logic.backgroundColor}
-                                        onChange={(e) => handleBackgroundColorChange(index, e.target.value)}
-                                        className="w-10 h-10 border rounded-full cursor-pointer"
-                                    />
-                                </div>
-                            </div>
-
-                            <CustomizedSelectInputWithLabel
-                                label="Select Font Type"
-                                list={[{ label: "Actual", value: "Actual" }, { label: "Italic", value: "Italic" }]}
-                                {...register(`colorLogicEntries.${index}.fontType`)}
-                                value={logic.fontType}
-                            />
-
-                            <div className="space-y-2">
-                                <label className="block text-sm font-medium text-gray-700">Select Font Color</label>
-                                <div className="flex items-center space-x-2">
-                                    {/* <input
+                        <div className="space-y-2">
+                            <label className="block text-sm font-medium text-gray-700">Select Background Color</label>
+                            <div className="flex items-center space-x-2">
+                                <div className="w-full">
+                                    <CustomizedInputWithLabel
                                         type="text"
-                                        value={logic.fontColor}
+                                        value={watch(`colorCodings.${index}.colorCode`)}
                                         readOnly
-                                        className="w-full h-10 text-gray-600 bg-gray-100 border rounded cursor-pointer"
-                                    /> */}
-                                    <div className="w-full">
-                                        <CustomizedInputWithLabel type="text"
-                                            value={logic.fontColor}
-                                            readOnly />
-                                    </div>
-                                    <input
-                                        type="color"
-                                        value={logic.fontColor}
-                                        onChange={(e) => handleFontColorChange(index, e.target.value)}
-                                        className="w-10 h-10 border rounded-full cursor-pointer"
+                                        errors={errors.colorCodings?.[index]?.colorCode}
                                     />
                                 </div>
+                                <input
+                                    type="color"
+                                    value={watch(`colorCodings.${index}.colorCode`)}
+                                    onChange={(e) => handleBackgroundColorChange(index, e.target.value)}
+                                    className="w-10 h-10 border rounded-full cursor-pointer self-start"
+                                />
                             </div>
+                        </div>
+
+                        <div className="mt-2 flex justify-end space-x-2">
+                            <Button variant="outline" type="button" onClick={() => remove(index)}>
+                                Remove
+                            </Button>
                         </div>
                     </div>
                 ))}
 
-                <div className="mt-6 text-end space-x-4">
-                    <Button variant="outline" type="button" onClick={addMoreLogic}>
+                <div className="mt-6 flex justify-end space-x-4">
+                    <Button variant="outline" type="button" onClick={() => append({ value1Type: '', value1: '', value2Type: '', value2: '', colorCode: '' })}>
                         + Add More
                     </Button>
-                    <Button variant="outline" type="button" onClick={handleCancel}>
+                    <Button variant="outline" type="button" onClick={() => router.back()}>
                         Cancel
                     </Button>
                     <Button type="submit" variant="default" disabled={isSubmitting}>
                         {isSubmitting ? (
                             <>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...
                             </>
                         ) : (
-                            "Save"
+                            'Save'
                         )}
                     </Button>
                 </div>
@@ -184,4 +206,4 @@ const ColorCodingLogic = () => {
     );
 };
 
-export default ColorCodingLogic;
+export default ColorCodingForm;

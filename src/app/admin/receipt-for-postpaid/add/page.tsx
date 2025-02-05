@@ -217,7 +217,7 @@ const AddReceiptsForPostpaid = () => {
                     label="Config Rule"
                     list={[
                         { label: 'Levelwise', value: 'Levelwise' },
-                        { label: 'Discom Wise', value: 'DiscomWise' },
+                        { label: 'Discom Wise', value: 'Discomwise' },
                     ]}
                     {...register('configRule')}
                     errors={errors.configRule}
@@ -311,7 +311,7 @@ const AddReceiptsForPostpaid = () => {
                     </div>
                 )}
 
-                {configRule === 'DiscomWise' && (
+                {configRule === 'Discomwise' && (
                     <div className="space-y-4">
                         {/* DiscomWise form fields */}
                         {receipts.map((_, index) => (
@@ -338,9 +338,11 @@ const AddReceiptsForPostpaid = () => {
                 )}
 
                 <div className="mt-6 text-end space-x-4">
-                    <Button variant="outline" type="button" onClick={addMoreReceipts}>
-                        + Add More
-                    </Button>
+                    {configRule !== 'Discomwise' &&
+                        <Button variant="outline" type="button" onClick={addMoreReceipts}>
+                            + Add More
+                        </Button>
+                    }
                     <Button variant="outline" type="button" onClick={handleCancel}>
                         Cancel
                     </Button>

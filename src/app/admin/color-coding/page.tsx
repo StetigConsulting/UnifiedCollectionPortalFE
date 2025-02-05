@@ -57,6 +57,9 @@ const ColorCodingLogicTable = () => {
                 <Button variant="default" size="lg" className="w-full" onClick={() => router.push('/admin/color-coding/add-logic')}>
                     Color Coding Logic
                 </Button>
+                <Button variant="default" size="lg" className="w-full" onClick={() => router.push('/admin/color-coding/bill-basis')}>
+                    Bill basis
+                </Button>
                 <Button variant="default" size="lg" className="w-full" onClick={() => router.push('/admin/color-coding/ecl-flag-customer')}>
                     ECL Flagged Customer
                 </Button>

@@ -1,5 +1,5 @@
 import api from "@/lib/axios";
-import { ReceiptForPostpaid } from "@/lib/interface";
+import { CreateColorCodingLogic, ReceiptForPostpaid } from "@/lib/interface";
 
 const createReceiptForPostpaid = async (data: ReceiptForPostpaid) => {
     try {
@@ -51,7 +51,17 @@ const deleteReceiptForPostpaidById = async (id: number) => {
     }
 };
 
+const createColorCodingLogic = async (data: CreateColorCodingLogic) => {
+    try {
+        const response = await api.post('/v1/business-rules/', data);
+        return response.data;
+    } catch (error: any) {
+        console.log(error);
+        throw error?.response?.data
+    }
+};
+
 export {
     createReceiptForPostpaid, getListOfReceiptForPostpaid, deleteReceiptForPostpaidById, getReceiptForPostpaidById,
-    editReceiptForPostpaid
+    editReceiptForPostpaid, createColorCodingLogic
 }
