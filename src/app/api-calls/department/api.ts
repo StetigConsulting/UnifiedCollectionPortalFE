@@ -1,5 +1,5 @@
 import api from "@/lib/axios";
-import { AgencyDataInterface, editAgencyInterface, extendValidityInterface, rechargeAgencyInterface } from "@/lib/interface";
+import { AgencyDataInterface, ChangeCounterCollector, editAgencyInterface, extendValidityInterface, rechargeAgencyInterface } from "@/lib/interface";
 
 
 const getAllPaymentModes = async () => {
@@ -128,6 +128,25 @@ const extendValidity = async (agencyData: extendValidityInterface) => {
   }
 };
 
+const getAgentDetailsById = async (data: number) => {
+  try {
+    const response = await api.get(`/v1/agents/${data}`);
+    return response.data;
+  } catch (error: any) {
+    console.log(error);
+    throw error?.response?.data
+  }
+};
+
+const changeAgentRole = async (data: ChangeCounterCollector) => {
+  try {
+    const response = await api.put(`/v1/agents/`, data)
+    return response.data;
+  } catch (error: any) {
+    throw error?.response?.data
+  }
+}
+
 export {
   getAllPaymentModes,
   getAllNonEnergyTypes,
@@ -136,5 +155,5 @@ export {
   getLevels,
   getAgenciesWithDiscom,
   rechargeAgency,
-  editAgency, activateAgencyAccount, deactivateAgencyAccountAPI, getAgencyById, extendValidity
+  editAgency, activateAgencyAccount, deactivateAgencyAccountAPI, getAgencyById, extendValidity, getAgentDetailsById, changeAgentRole
 };

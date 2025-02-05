@@ -289,13 +289,18 @@ export const resetDeviceSchema = z.object({
 
 export const changeCollectorRoleSchema = z.object({
   collectorMobileNumber: z
-    .string()
-    .min(10, "Mobile number must be at least 10 digits"),
+    .string(),
+  // .min(10, "Mobile number must be at least 10 digits"),
   collectorName: z.string().nonempty("Collector name is required"),
-  currentType: z.string().nonempty("Current type is required"),
+  currentType: z.string().optional(),
   division: z.string().nonempty("Division is required"),
-  collectionType: z.string().nonempty("Collection type is required"),
-  nonEnergy: z.string().optional(),
+  collectionType: z
+    .array(z.string())
+    .refine(
+      (collectionType) => collectionType.length > 0,
+      "At least one Collection Type is required"
+    ),
+  nonEnergy: z.array(z.number()).optional().default([]),
   allowRecovery: z.enum(["Yes", "No"]),
   energy: z.boolean().optional(),
   nonEnergyCheckbox: z.boolean().optional(),
@@ -368,13 +373,15 @@ export type AddCollectorFormData = z.infer<typeof addCollectorSchema>;
 
 export const addCounterCollectorSchema = z.object({
   name: z.string().min(1, 'Name is required'),
-  phoneNumber: z.string().min(1, 'Phone Number is required').regex(/^\d{10}$/, 'Phone number must be 10 digits'),
+  officePhoneNumber: z.string().min(1, 'Phone Number is required').regex(/^\d{10}$/, 'Phone number must be 10 digits'),
+  personalPhoneNumber: z.string().min(1, 'Phone Number is required').regex(/^\d{10}$/, 'Phone number must be 10 digits'),
   maximumLimit: z.number().min(1, 'Maximum Limit should be a positive number'),
   initialBalance: z.number().min(0, 'Initial Balance cannot be negative'),
-  validity: z.string().min(1, 'Validity is required'),
-  permission: z.array(z.string()).min(1, "At least one permission is required"),
+  fromValidity: z.string().min(1, 'Validity is required'),
+  toValidity: z.string().min(1, 'Validity is required'),
+  permission: z.array(z.number()),
   collectionType: z.array(z.string()).min(1, "At least one collection type is required"),
-  nonEnergy: z.array(z.string()).optional(),
+  nonEnergy: z.array(z.number()).optional(),
 });
 
 export type AddCounterCollectorFormData = z.infer<typeof addCounterCollectorSchema>;
