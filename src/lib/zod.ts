@@ -474,17 +474,34 @@ export const addCollectorTypeSchema = z.object({
 });
 
 export const colorCodingLogicSchema = z.object({
-  colorLogicEntries: z.array(
+  colorCodings: z.array(
     z.object({
-      value1Type: z.string().min(1, "Value 1 Type is required"),
-      days: z.number().min(1, "Days must be at least 1").optional(),
-      value2Type: z.string().min(1, "Value 2 Type is required"),
-      date: z.string().min(1, "Date is required").optional(),
-      backgroundColor: z.string().min(1, "Background Color is required"),
-      fontColor: z.string().min(1, "Font Color is required"),
-      fontType: z.string().min(1, "Font Type is required"),
+      value1Type: z.string().nonempty('Value 1 Type is required'),
+      value1: z.union([z.string().nonempty('Value 1 is required'), z.number()]),
+      value2Type: z.string().nonempty('Value 2 Type is required'),
+      value2: z.union([z.string().nonempty('Value 2 is required'), z.number()]),
+      colorCode: z
+        .string()
+        .nonempty('Color code is required')
+        .regex(/^#[0-9A-Fa-f]{6}$/, 'Invalid hex color code format'),
     })
-  ).nonempty("At least one logic must be added"),
+  ).nonempty('At least one color coding rule is required'),
+});
+
+export const colorCodingBillBasisSchema = z.object({
+  fonts: z.array(
+    z.object({
+      fontType: z.string().nonempty('Font type is required'),
+      fontColor: z.string().nonempty('Font color is required'),
+    })
+  ),
+});
+
+export const colorCodingEclSchema = z.object({
+  backgroundColor: z
+    .string()
+    .min(1, { message: 'Please select a background color.' })
+    .regex(/^#[0-9A-Fa-f]{6}$/, { message: 'Invalid color format.' }),
 });
 
 export const addIncentiveSchema = z.object({

@@ -1,5 +1,5 @@
 import api from "@/lib/axios";
-import { ReceiptForPostpaid } from "@/lib/interface";
+import { CreateColorCodingBillBasis, CreateColorCodingLogic, ECLFlaggedCustomerRule, ReceiptForPostpaid } from "@/lib/interface";
 
 const createReceiptForPostpaid = async (data: ReceiptForPostpaid) => {
     try {
@@ -51,7 +51,69 @@ const deleteReceiptForPostpaidById = async (id: number) => {
     }
 };
 
+const createColorCodingLogic = async (data: CreateColorCodingLogic) => {
+    try {
+        const response = await api.post('/v1/business-rules/', data);
+        return response.data;
+    } catch (error: any) {
+        console.log(error);
+        throw error?.response?.data
+    }
+};
+
+const getColorCodingLogic = async (id: string) => {
+    try {
+        const response = await api.get(`/v1/business-rules/discom/${id}/rule-name/PAYMENT_STATUS_COLOR_CODING`);
+        return response.data;
+    } catch (error: any) {
+        console.log(error);
+        throw error?.response?.data
+    }
+};
+
+const getColorCodingBillBasis = async (id: string) => {
+    try {
+        const response = await api.get(`/v1/business-rules/discom/${id}/rule-name/BILL_BASIS_COLOR_CODING`);
+        return response.data;
+    } catch (error: any) {
+        console.log(error);
+        throw error?.response?.data
+    }
+};
+
+const getColorCodingEclFlag = async (id: string) => {
+    try {
+        const response = await api.get(`/v1/business-rules/discom/${id}/rule-name/ECL_FLAGGED_CUSTOMER_COLOR_CODING`);
+        return response.data;
+    } catch (error: any) {
+        console.log(error);
+        throw error?.response?.data
+    }
+};
+
+
+const createColorCodingBillBasis = async (data: CreateColorCodingBillBasis) => {
+    try {
+        const response = await api.post(`/v1/business-rules/`, data);
+        return response.data;
+    } catch (error: any) {
+        console.log(error);
+        throw error?.response?.data
+    }
+};
+
+const createColorCodingEcl = async (data: ECLFlaggedCustomerRule) => {
+    try {
+        const response = await api.post(`/v1/business-rules/`, data);
+        return response.data;
+    } catch (error: any) {
+        console.log(error);
+        throw error?.response?.data
+    }
+};
+
 export {
     createReceiptForPostpaid, getListOfReceiptForPostpaid, deleteReceiptForPostpaidById, getReceiptForPostpaidById,
-    editReceiptForPostpaid
+    editReceiptForPostpaid, createColorCodingLogic, getColorCodingBillBasis, createColorCodingBillBasis, getColorCodingLogic,
+    createColorCodingEcl, getColorCodingEclFlag
 }
