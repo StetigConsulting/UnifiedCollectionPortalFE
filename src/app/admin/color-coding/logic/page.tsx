@@ -1,14 +1,14 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Loader2, Pencil, Trash2 } from 'lucide-react';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import ReactTable from '@/components/ReactTable'; // Referencing your reusable table component
 import { toast } from 'sonner';
 import TabForRouting from '@/components/ColorCoding/TabForRouting';
-import { deleteBusinessRule, getColorCodingBillBasis, getColorCodingLogic } from '@/app/api-calls/admin/api';
+import { deleteBusinessRule, getBusinessRuleDateById, getColorCodingBillBasis, getColorCodingLogic } from '@/app/api-calls/admin/api';
 import { testDiscom } from '@/lib/utils';
 
 const ColorCodingLogic = () => {
@@ -71,6 +71,8 @@ const ColorCodingLogic = () => {
             setIsLoading(false);
         }
     }
+
+
 
     return (
         <AuthUserReusableCode pageTitle="Color Coding Logic" isLoading={isLoading}>

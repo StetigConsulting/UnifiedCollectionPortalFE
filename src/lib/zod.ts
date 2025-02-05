@@ -498,6 +498,7 @@ export const colorCodingBillBasisSchema = z.object({
 });
 
 export const colorCodingEclSchema = z.object({
+  id: z.any().optional(),
   backgroundColor: z
     .string()
     .min(1, { message: 'Please select a background color.' })

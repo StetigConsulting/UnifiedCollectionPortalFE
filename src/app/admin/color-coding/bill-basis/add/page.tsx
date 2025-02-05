@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -8,11 +8,11 @@ import { Button } from '@/components/ui/button';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
 import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { colorCodingBillBasisSchema } from '@/lib/zod';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
-import { createColorCodingBillBasis } from '@/app/api-calls/admin/api';
+import { createColorCodingBillBasis, getBusinessRuleDateById, updateColorCodingBillBasis } from '@/app/api-calls/admin/api';
 
 type FormData = z.infer<typeof colorCodingBillBasisSchema>;
 
@@ -46,12 +46,20 @@ const AddBillBasis = () => {
         setIsSubmitting(true);
         try {
             let payload = {
+                id: null,
                 discom_id: 1001,
                 office_structure_id: 1001,
                 rule_level: "Discomwise",
                 rule_name: "BILL_BASIS_COLOR_CODING",
                 json_rule: {
                     bill_basis: []
+                }
+            }
+
+            if (idFromUrl) {
+                payload = {
+                    ...payload,
+                    id: parseInt(idFromUrl),
                 }
             }
 
@@ -71,8 +79,12 @@ const AddBillBasis = () => {
                     bill_basis: billBasisData,
                 },
             }
-
-            const response = await createColorCodingBillBasis(payload);
+            let response: any;
+            if (idFromUrl) {
+                response = await updateColorCodingBillBasis(payload);
+            } else {
+                response = await createColorCodingBillBasis(payload);
+            }
             console.log('Submitting Data:', response.data);
             toast.success('Color coding rules saved successfully!');
             router.replace('/admin/color-coding/bill-basis');
@@ -87,6 +99,35 @@ const AddBillBasis = () => {
     const handleBackgroundColorChange = (index: number, color: string) => {
         setValue(`fonts.${index}.fontColor`, color);
     };
+
+    const searchParams = useSearchParams();
+    const idFromUrl = searchParams.get('id');
+
+    useEffect(() => {
+        if (idFromUrl) {
+            getLogicDetails(idFromUrl);
+        }
+    }, [idFromUrl]);
+
+    const getLogicDetails = async (id: string) => {
+        setIsLoading(true);
+        try {
+            const response = await getBusinessRuleDateById(id);
+            console.log("API Response:", response.data.json_rule.bill_basis);
+            let fetchedData = response.data.json_rule.bill_basis.map((data, index) => {
+                return {
+                    fontType: data.bill_type,
+                    fontColor: data.color_code,
+                }
+            })
+            setValue('fonts', fetchedData);
+        } catch (error) {
+            console.error("Failed to create agency:", error.data[Object.keys(error.data)[0]]);
+        } finally {
+            setIsLoading(false);
+        }
+
+    }
 
     return (
         <AuthUserReusableCode pageTitle="Add Bill Basis" isLoading={isLoading}>

@@ -76,6 +76,7 @@ export interface Range {
 }
 
 export interface CreateColorCodingLogic {
+    id?: number;
     discom_id: number;
     office_structure_id: number;
     rule_level: string;
@@ -90,6 +91,7 @@ export interface BillBasis {
     color_code: string;
 }
 export interface CreateColorCodingBillBasis {
+    id?: number;
     discom_id: number;
     office_structure_id: number;
     rule_level: string;
@@ -100,6 +102,7 @@ export interface CreateColorCodingBillBasis {
 }
 
 export interface ECLFlaggedCustomerRule {
+    id?: number;
     discom_id: number;
     office_structure_id: number;
     rule_level: string;

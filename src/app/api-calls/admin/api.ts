@@ -61,6 +61,16 @@ const createColorCodingLogic = async (data: CreateColorCodingLogic) => {
     }
 };
 
+const updateColorCodingLogic = async (data: CreateColorCodingLogic) => {
+    try {
+        const response = await api.put('/v1/business-rules/', data);
+        return response.data;
+    } catch (error: any) {
+        console.log(error);
+        throw error?.response?.data
+    }
+};
+
 const getColorCodingLogic = async (id: string) => {
     try {
         const response = await api.get(`/v1/business-rules/discom/${id}/rule-name/PAYMENT_STATUS_COLOR_CODING`);
@@ -102,6 +112,16 @@ const createColorCodingBillBasis = async (data: CreateColorCodingBillBasis) => {
     }
 };
 
+const updateColorCodingBillBasis = async (data: CreateColorCodingBillBasis) => {
+    try {
+        const response = await api.put(`/v1/business-rules/`, data);
+        return response.data;
+    } catch (error: any) {
+        console.log(error);
+        throw error?.response?.data
+    }
+};
+
 const createColorCodingEcl = async (data: ECLFlaggedCustomerRule) => {
     try {
         const response = await api.post(`/v1/business-rules/`, data);
@@ -112,8 +132,28 @@ const createColorCodingEcl = async (data: ECLFlaggedCustomerRule) => {
     }
 };
 
+const updateColorCodingEcl = async (data: ECLFlaggedCustomerRule) => {
+    try {
+        const response = await api.put(`/v1/business-rules/`, data);
+        return response.data;
+    } catch (error: any) {
+        console.log(error);
+        throw error?.response?.data
+    }
+};
+
+const getBusinessRuleDateById = async (id: string) => {
+    try {
+        const response = await api.get(`/v1/business-rules/${id}`);
+        return response.data;
+    } catch (error: any) {
+        console.log(error);
+        throw error?.response?.data
+    }
+}
+
 export {
     createReceiptForPostpaid, getListOfReceiptForPostpaid, deleteBusinessRule, getReceiptForPostpaidById,
     editReceiptForPostpaid, createColorCodingLogic, getColorCodingBillBasis, createColorCodingBillBasis, getColorCodingLogic,
-    createColorCodingEcl, getColorCodingEclFlag
+    createColorCodingEcl, getColorCodingEclFlag, getBusinessRuleDateById, updateColorCodingEcl, updateColorCodingBillBasis, updateColorCodingLogic
 }

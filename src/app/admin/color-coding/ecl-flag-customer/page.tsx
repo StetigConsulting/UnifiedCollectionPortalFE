@@ -10,7 +10,7 @@ import { colorCodingEclSchema } from '@/lib/zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
-import { createColorCodingEcl, getColorCodingEclFlag } from '@/app/api-calls/admin/api';
+import { createColorCodingEcl, getColorCodingEclFlag, updateColorCodingEcl } from '@/app/api-calls/admin/api';
 import { testDiscom } from '@/lib/utils';
 
 type BackgroundColorFormType = z.infer<typeof colorCodingEclSchema>;
@@ -29,6 +29,7 @@ const ECLFlaggedCustomer = () => {
     } = useForm<BackgroundColorFormType>({
         resolver: zodResolver(colorCodingEclSchema),
         defaultValues: {
+            id: null,
             backgroundColor: '',
         },
     });
@@ -38,6 +39,7 @@ const ECLFlaggedCustomer = () => {
     const onSubmit = async (data: BackgroundColorFormType) => {
         try {
             let payload = {
+                id: data.id,
                 discom_id: 1001,
                 office_structure_id: 1001,
                 rule_level: "Discomwise",
@@ -47,7 +49,12 @@ const ECLFlaggedCustomer = () => {
                 }
 
             }
-            const response = await createColorCodingEcl(payload);
+            let response: any;
+            if (data.id) {
+                response = await updateColorCodingEcl(payload);
+            } else {
+                response = await createColorCodingEcl(payload);
+            }
             console.log('Submitting Data:', response.data);
             toast.success('ECL flag customer saved successfully!');
             router.push('/admin/color-coding');
@@ -74,6 +81,7 @@ const ECLFlaggedCustomer = () => {
         try {
             const response = await getColorCodingEclFlag(testDiscom);
             setValue('backgroundColor', response?.data?.[0]?.json_rule?.bg_color_code || '');
+            setValue('id', response?.data?.[0]?.id || null)
             console.log(response);
         } catch (error) {
             console.error('Failed to get agency:', error);
