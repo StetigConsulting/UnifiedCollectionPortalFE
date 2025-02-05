@@ -488,6 +488,22 @@ export const colorCodingLogicSchema = z.object({
   ).nonempty('At least one color coding rule is required'),
 });
 
+export const colorCodingBillBasisSchema = z.object({
+  fonts: z.array(
+    z.object({
+      fontType: z.string().nonempty('Font type is required'),
+      fontColor: z.string().nonempty('Font color is required'),
+    })
+  ),
+});
+
+export const colorCodingEclSchema = z.object({
+  backgroundColor: z
+    .string()
+    .min(1, { message: 'Please select a background color.' })
+    .regex(/^#[0-9A-Fa-f]{6}$/, { message: 'Invalid color format.' }),
+});
+
 export const addIncentiveSchema = z.object({
   applicableLevel: z.string().min(1, 'Applicable level is required'),
   circle: z.string().min(1, 'Circle is required'),

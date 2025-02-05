@@ -66,6 +66,9 @@ const AddReceiptsForPostpaid = () => {
                                     ? receipt.subDivision.map(Number)?.[0]
                                     : receipt.applicableLevel === levelWIthId.SECTION ? receipt.section.map(Number)?.[0] : null,
                     },
+                    ...data.configRule == 'Discomwise' && {
+                        office_structure_id: parseInt(testDiscom)
+                    },
                     rule_name: "RECEIPT_FOR_POSTPAID",
                     json_rule: {
                         receipt_per_month_per_bill: receipt.receiptsPerMonth || 0,

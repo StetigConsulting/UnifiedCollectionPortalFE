@@ -84,3 +84,27 @@ export interface CreateColorCodingLogic {
         ranges: Range[];
     };
 }
+
+export interface BillBasis {
+    bill_type: string;
+    color_code: string;
+}
+export interface CreateColorCodingBillBasis {
+    discom_id: number;
+    office_structure_id: number;
+    rule_level: string;
+    rule_name: string;
+    json_rule: {
+        bill_basis: BillBasis[];
+    };
+}
+
+export interface ECLFlaggedCustomerRule {
+    discom_id: number;
+    office_structure_id: number;
+    rule_level: string;
+    rule_name: string;
+    json_rule: {
+        bg_color_code: string;
+    };
+}

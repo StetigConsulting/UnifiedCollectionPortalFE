@@ -7,11 +7,11 @@ import { Loader2 } from 'lucide-react';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import ReactTable from '@/components/ReactTable'; // Referencing your reusable table component
 import { toast } from 'sonner';
+import TabForRouting from '@/components/ColorCoding/TabForRouting';
 
 const ColorCodingLogicTable = () => {
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [colorLogicEntries, setColorLogicEntries] = useState([]);
 
     const columns = [
         { label: 'CC ID', key: 'ccId', sortable: true },
@@ -27,63 +27,10 @@ const ColorCodingLogicTable = () => {
         },
     ];
 
-    const handleEdit = (index: number) => {
-        toast.success('Edit functionality is not implemented yet.');
-    };
-
-    const handleDelete = (index: number) => {
-        const updatedEntries = colorLogicEntries.filter((_, i) => i !== index);
-        setColorLogicEntries(updatedEntries);
-        toast.success('Row deleted successfully!');
-    };
-
-    const handleAdd = () => {
-        setColorLogicEntries([
-            ...colorLogicEntries,
-            {
-                ccId: 'INC000000',
-                value1: '100 days',
-                value2: '01-01-2026',
-                backgroundColor: 'Green',
-                fontType: 'Actual',
-                fontColor: '#000000',
-            },
-        ]);
-    };
-
     return (
-        <AuthUserReusableCode pageTitle="Color Coding Logic">
-            <div className="grid grid-cols-2 gap-4 mb-4">
-                <Button variant="default" size="lg" className="w-full" onClick={() => router.push('/admin/color-coding/add-logic')}>
-                    Color Coding Logic
-                </Button>
-                <Button variant="default" size="lg" className="w-full" onClick={() => router.push('/admin/color-coding/bill-basis')}>
-                    Bill basis
-                </Button>
-                <Button variant="default" size="lg" className="w-full" onClick={() => router.push('/admin/color-coding/ecl-flag-customer')}>
-                    ECL Flagged Customer
-                </Button>
-            </div>
-
-            <ReactTable
-                data={colorLogicEntries}
-                columns={columns}
-                hideSearchAndOtherButtons
-            />
-
-            <div className="mt-6 text-end space-x-4">
-                <Button variant="outline" type="button" onClick={() => router.back()}>
-                    Cancel
-                </Button>
-                <Button type="submit" variant="default" disabled={isSubmitting}>
-                    {isSubmitting ? (
-                        <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
-                        </>
-                    ) : (
-                        'Save'
-                    )}
-                </Button>
+        <AuthUserReusableCode pageTitle="Color Coding">
+            <div className='p-4'>
+                <TabForRouting router={router} />
             </div>
         </AuthUserReusableCode>
     );

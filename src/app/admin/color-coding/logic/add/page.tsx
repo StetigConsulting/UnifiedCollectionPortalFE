@@ -14,10 +14,11 @@ import { colorCodingLogicSchema } from '@/lib/zod';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import { createColorCodingLogic } from '@/app/api-calls/admin/api';
 import { testDiscom } from '@/lib/utils';
+import moment from 'moment';
 
 type FormData = z.infer<typeof colorCodingLogicSchema>;
 
-const ColorCodingForm = () => {
+const AddColorCodingLogic = () => {
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -40,7 +41,7 @@ const ColorCodingForm = () => {
             colorCodings: [
                 {
                     value1Type: '',
-                    value1: null,
+                    value1: '',
                     value2Type: '',
                     value2: '',
                     colorCode: '',
@@ -69,14 +70,14 @@ const ColorCodingForm = () => {
                 let currentData = {
                     R1: {
                         type: current.value1Type,
-                        value: current.value1,
+                        value: current.value1Type === 'DATE' ? moment(current.value1).format('DD-MM-YYYY') : current.value1,
                     },
                     R2: {
                         type: current.value2Type,
-                        value: current.value2,
+                        value: current.value2Type === 'DATE' ? moment(current.value2).format('DD-MM-YYYY') : current.value2,
                     },
                     order: rangeData.length + 1,
-                    color: current.colorCode,
+                    color_code: current.colorCode,
                 };
                 rangeData.push(currentData);
             }
@@ -93,7 +94,8 @@ const ColorCodingForm = () => {
             toast.success('Color coding rules saved successfully!');
             router.push('/admin/color-coding');
         } catch (error) {
-            toast.error('Failed to save color coding rules.');
+            console.log('Error:', error?.error)
+            toast.error('Error: ' + error?.error);
         } finally {
             setIsSubmitting(false);
         }
@@ -104,10 +106,15 @@ const ColorCodingForm = () => {
     };
 
     return (
-        <AuthUserReusableCode pageTitle="Receipts for Postpaid" isLoading={isLoading}>
+        <AuthUserReusableCode pageTitle="Add Color Coding Logic" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 {fields.map((field, index) => (
-                    <div key={field.id} className="p-4 space-y-4">
+                    <div key={field.id} className="space-y-4">
+                        <h2 className="text-xl font-bold mb-4">Last Payment Date Logic {index + 1}</h2>
+                        <p className="text-gray-600 mb-4 bg-lightThemeColor py-2 px-4 rounded-md">[ {watch(`colorCodings.${index}.value1`)} {watch(`colorCodings.${index}.value1Type`)} ]
+                            &lt; Last Payment Date &lt; [  {watch(`colorCodings.${index}.value2`)} {watch(`colorCodings.${index}.value2Type`)}]
+                            - Color Code &nbsp;<span style={{ backgroundColor: watch('colorCodings.0.colorCode'), borderRadius: '4px', padding: '4px 12px' }}>
+                            </span></p>
                         <div className="grid grid-cols-2 gap-4">
                             <CustomizedSelectInputWithLabel
                                 label="Value 1 Type"
@@ -176,11 +183,11 @@ const ColorCodingForm = () => {
                             </div>
                         </div>
 
-                        <div className="mt-2 flex justify-end space-x-2">
+                        {fields.length > 1 && <div className="mt-2 flex justify-end space-x-2">
                             <Button variant="outline" type="button" onClick={() => remove(index)}>
                                 Remove
                             </Button>
-                        </div>
+                        </div>}
                     </div>
                 ))}
 
@@ -202,8 +209,8 @@ const ColorCodingForm = () => {
                     </Button>
                 </div>
             </form>
-        </AuthUserReusableCode>
+        </AuthUserReusableCode >
     );
 };
 
-export default ColorCodingForm;
+export default AddColorCodingLogic;
