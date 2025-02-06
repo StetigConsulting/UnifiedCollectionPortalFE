@@ -42,6 +42,8 @@ export const levelWIthId = {
 
 export const testDiscom = '1001';
 
+export const testAgencyId = 30;
+
 export function numberToWords(num: number): string {
   if (num === 0) return "zero";
 
@@ -99,3 +101,7 @@ export const PROTECTED_SUB_ROUTES = [
 ]
 
 export const ADMIN_ONLY_ROUTES = ["/users", "/settings"];
+
+export const listOfUrls = {
+  agencyRecharge: '/department/recharge',
+}

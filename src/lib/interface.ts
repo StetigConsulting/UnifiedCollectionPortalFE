@@ -138,3 +138,15 @@ export interface ChangeCounterCollector {
     collection_type_non_energy: boolean;
     non_energy_types?: number[];
 }
+
+export interface RechargeAgent {
+    agent_id: number;
+    recharge_amount: number;
+    remarks: string;
+}
+
+export interface ExtendAgentValidity {
+    agent_id: number;
+    validity_from_date: string;
+    validity_to_date: string;
+}

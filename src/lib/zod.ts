@@ -423,12 +423,12 @@ export type BinderMappingFormData = z.infer<typeof binderMappingSchema>;
 
 export const rechargeSchemaCollector = z.object({
   collectorMobile: z.string().min(1, "Collector Mobile is required"),
-  agencyId: z.string().min(1, "Agency ID is required"),
+  agencyId: z.number(),
   agencyName: z.string().min(1, "Agency Name is required"),
   phoneNumber: z.string().min(10, "Phone Number should be 10 digits"),
   amount: z.number().positive("Amount must be greater than 0"),
-  transactionType: z.enum(["Recharge", "Refund"]),
-  currentBalance: z.number().positive("Current Balance must be greater than 0"),
+  transactionType: z.string(),
+  currentBalance: z.number(),
   remark: z.string().optional(),
 });
 
@@ -436,9 +436,16 @@ export type RechargeCollectorFormData = z.infer<typeof rechargeSchemaCollector>;
 
 export const extendValiditySchemaCollector = z.object({
   collectorName: z.string().min(1, "Collector Name is required"),
-  collectorId: z.string().min(1, "Collector ID is required"),
-  currentValidity: z.string().min(1, "Current Validity is required"),
-  validityDate: z
+  collectorId: z.number(),
+  currentValidityFrom: z.string().min(1, "Current Validity is required"),
+  currentValidityTo: z.string().min(1, "Current Validity is required"),
+  validityDateFrom: z
+    .string()
+    .min(1, "Validity Date is required")
+    .refine((val) => !isNaN(Date.parse(val)), {
+      message: "Invalid date format",
+    }),
+  validityDateTo: z
     .string()
     .min(1, "Validity Date is required")
     .refine((val) => !isNaN(Date.parse(val)), {

@@ -10,53 +10,84 @@ import CustomizedInputWithLabel from "@/components/CustomizedInputWithLabel";
 import { Button } from "@/components/ui/button";
 import AuthUserReusableCode from "@/components/AuthUserReusableCode";
 import { Loader2 } from "lucide-react";
-
-interface SelectOption {
-    value: string;
-    label: string;
-}
+import { extendAgentValidityById, getAllAgentByAgencyId } from "@/app/api-calls/agency/api";
+import { testAgencyId } from "@/lib/utils";
 
 const ExtendValidity = () => {
     const {
         register,
         handleSubmit,
         formState: { errors },
+        setValue,
+        watch,
+        reset
     } = useForm<ExtendValidityCollectorFormData>({
         resolver: zodResolver(extendValiditySchemaCollector),
     });
 
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [agencies, setAgencies] = useState<SelectOption[]>([]);
+    const [agencies, setAgencies] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        // Fetch agencies data
-        // Example: getAgencies().then(setAgencies);
+        getAgentList()
     }, []);
 
     const onSubmit = async (data: ExtendValidityCollectorFormData) => {
-        setIsSubmitting(true);
+        let payload = {
+            "agent_id": data.collectorId,
+            "validity_from_date": data.validityDateFrom,
+            "validity_to_date": data.validityDateTo
+        }
         try {
-            const response = await fetch("/api/extend-validity", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(data),
-            });
-
-            if (response.ok) {
-                toast.success("Validity extended successfully");
-            } else {
-                toast.error("Failed to extend validity");
-            }
+            setIsSubmitting(true);
+            const response = await extendAgentValidityById(payload, testAgencyId);
+            toast.success("Agenct recharge successfully");
+            console.log("API Response:", response);
+            reset();
         } catch (error) {
-            toast.error("An error occurred while extending validity");
-            console.error("Error:", error);
+            // console.error("Failed to edit agency:", error.data[Object.keys(error.data)[0]]);
+            let errorMessage = error?.data && error?.data[Object.keys(error?.data)[0]] || error?.error
+            console.log(errorMessage)
+            toast.error('Error: ' + errorMessage || error?.error)
         } finally {
             setIsSubmitting(false);
         }
     };
+
+    const getAgentList = async () => {
+        setIsLoading(true);
+        try {
+            const response = await getAllAgentByAgencyId(testAgencyId);
+            console.log("API Response:", response);
+            setAgencies(
+                response?.data?.map((item) => ({
+                    ...item,
+                    label: item.agent_name,
+                    value: item.id,
+                }))
+            );
+
+        } catch (error) {
+            console.error("Failed to get agent:", error?.data[Object.keys(error?.data)[0]]);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    const selectedAgency = watch('collectorName');
+    const formData = watch();
+
+    useEffect(() => {
+        if (selectedAgency) {
+            const agency = agencies.find((item) => item.id === Number(selectedAgency));
+            if (agency) {
+                setValue('collectorId', agency.id || null);
+                setValue('currentValidityFrom', agency.validity_from_date || '');
+                setValue('currentValidityTo', agency.validity_to_date || '');
+            }
+        }
+    }, [selectedAgency, agencies, setValue]);
 
     return (
         <AuthUserReusableCode pageTitle="Extend Validity" isLoading={isLoading}>
@@ -79,19 +110,34 @@ const ExtendValidity = () => {
                         {...register("collectorId")}
                     />
                     <CustomizedInputWithLabel
-                        label="Current Validity"
+                        label="Current Validity From"
                         required={true}
-                        errors={errors.currentValidity}
-                        placeholder="Current Validity"
+                        errors={errors.currentValidityFrom}
+                        placeholder="Current Validity From"
                         disabled
-                        {...register("currentValidity")}
+                        {...register("currentValidityFrom")}
+                    />
+                    <CustomizedInputWithLabel
+                        label="Current Validity To"
+                        required={true}
+                        errors={errors.currentValidityTo}
+                        placeholder="Current Validity From"
+                        disabled
+                        {...register("currentValidityTo")}
                     />
                     <CustomizedInputWithLabel
                         label="Validity Date"
                         required={true}
-                        errors={errors.validityDate}
+                        errors={errors.validityDateFrom}
                         type="date"
-                        {...register("validityDate")}
+                        {...register("validityDateFrom")}
+                    />
+                    <CustomizedInputWithLabel
+                        label="Validity Date"
+                        required={true}
+                        errors={errors.validityDateTo}
+                        type="date"
+                        {...register("validityDateTo")}
                     />
                 </div>
 
