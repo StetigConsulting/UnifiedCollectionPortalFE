@@ -69,7 +69,7 @@ export const rechargeAgentById = async (data: RechargeAgent, user_id: number) =>
 
 export const getRechargeableBalance = async (id: number) => {
     try {
-        const response = await api.get(`/v1/agents/display-price/${id}`);
+        const response = await api.get(`/v1/agents/display-balance/${id}`);
         return response.data;
     } catch (error) {
         console.log(error);
@@ -84,6 +84,16 @@ export const extendAgentValidityById = async (data: ExtendAgentValidity, user_id
                 "user-id": user_id,
             },
         });
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        throw error?.response?.data
+    }
+}
+
+export const getCollectorTypes = async () => {
+    try {
+        const response = await api.get(`/v1/collector-types/`);
         return response.data;
     } catch (error) {
         console.log(error);

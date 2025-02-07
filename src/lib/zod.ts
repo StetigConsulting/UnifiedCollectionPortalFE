@@ -372,15 +372,47 @@ export const addCollectorSchema = z.object({
 export type AddCollectorFormData = z.infer<typeof addCollectorSchema>;
 
 export const addCounterCollectorSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  officePhoneNumber: z.string().min(1, 'Phone Number is required').regex(/^\d{10}$/, 'Phone number must be 10 digits'),
-  personalPhoneNumber: z.string().min(1, 'Phone Number is required').regex(/^\d{10}$/, 'Phone number must be 10 digits'),
-  maximumLimit: z.number().min(1, 'Maximum Limit should be a positive number'),
-  initialBalance: z.number().min(0, 'Initial Balance cannot be negative'),
-  fromValidity: z.string().min(1, 'Validity is required'),
-  toValidity: z.string().min(1, 'Validity is required'),
-  permission: z.array(z.number()),
-  collectionType: z.array(z.string()).min(1, "At least one collection type is required"),
+  name: z.string().min(1, { message: "Name is required" }),
+
+  officePhoneNumber: z
+    .string()
+    .min(1, { message: "Office phone number is required" })
+    .regex(/^\d{10}$/, { message: "Office phone number must be exactly 10 digits" }),
+
+  personalPhoneNumber: z
+    .string()
+    .min(1, { message: "Personal phone number is required" })
+    .regex(/^\d{10}$/, { message: "Personal phone number must be exactly 10 digits" }),
+
+  collectorType: z.string().min(1, { message: "Collector type is required" }),
+  collectorRole: z.string().min(1, { message: "Collector role is required" }),
+  workingType: z.string().min(1, { message: "Working type is required" }),
+  workingLevel: z.string().min(1, { message: "Working level is required" }),
+
+  maximumLimit: z
+    .number({ invalid_type_error: "Maximum limit must be a number" })
+    .min(1, { message: "Maximum limit must be at least 1" }),
+
+  binder: z.string().min(1, { message: "Binder is required" }),
+
+  initialBalance: z
+    .number({ invalid_type_error: "Initial balance must be a number" })
+    .min(0, { message: "Initial balance cannot be negative" }),
+
+  subDivision: z.array(z.number()).optional(),
+  section: z.array(z.number()).optional(),
+
+  fromValidity: z.string().min(1, { message: "From validity date is required" }),
+  toValidity: z.string().min(1, { message: "To validity date is required" }),
+
+  permission: z
+    .array(z.number(), { message: "Permission must be an array of numbers" })
+    .min(1, { message: "At least one permission is required" }),
+
+  collectionType: z
+    .array(z.string(), { message: "Collection type must be an array of strings" })
+    .min(1, { message: "At least one collection type is required" }),
+
   nonEnergy: z.array(z.number()).optional(),
 });
 

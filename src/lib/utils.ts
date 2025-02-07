@@ -105,3 +105,19 @@ export const ADMIN_ONLY_ROUTES = ["/users", "/settings"];
 export const listOfUrls = {
   agencyRecharge: '/department/recharge',
 }
+
+export const collectorRole = [
+  {
+    label: 'Door to Door',
+    value: 'Door to Door'
+  },
+  {
+    label: 'Counter Collector',
+    value: 'Counter Collector'
+  },
+]
+
+export const agentWorkingType = [
+  { label: 'Online', value: 'Online' },
+  { label: 'Offline', value: 'Offline' }
+]

@@ -60,7 +60,7 @@ const RechargeEntry = () => {
         setIsLoading(true);
         try {
             const response = await getRechargeableBalance(testAgencyId);
-            console.log("API Response:", response);
+            console.log("API recharge:", response);
             setRechargeableBalance(
                 response?.data?.map((item) => ({
                     ...item,

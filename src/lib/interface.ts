@@ -117,7 +117,7 @@ export interface AddCounterCollector {
     agent_name: string;
     primary_phone: string;
     secondary_phone: string;
-    maximum_limit: number;
+    maximum_limit: number,
     validity_from_date: string;
     validity_to_date: string;
     collection_payment_modes: number[];
