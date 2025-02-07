@@ -85,11 +85,6 @@ const data = {
           url: "/agency/add-collector",
         },
         {
-          title: "Add Counter Collector",
-          icon: UserPlus2,
-          url: "/agency/add-counter-collector",
-        },
-        {
           title: "View Collector",
           icon: UserPlus2,
           url: "/agency/view-collector",

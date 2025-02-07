@@ -88,7 +88,7 @@ const ViewBalance = () => {
         ...item,
         action: (
             <div className="flex gap-2">
-                <Button variant="default" size="sm">
+                <Button variant="default" size="sm" onClick={() => router.push(`${listOfUrls.agencyBalanceHistory}?id=${item.id}`)}>
                     View History
                 </Button>
                 <Button variant="success" size="sm" onClick={() => router.push(`${listOfUrls.agencyRecharge}?id=${item.id}`)}>

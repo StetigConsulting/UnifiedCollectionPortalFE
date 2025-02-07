@@ -1,5 +1,5 @@
 import api from "@/lib/axios";
-import { AgencyDataInterface, ChangeCounterCollector, editAgencyInterface, extendValidityInterface, rechargeAgencyInterface } from "@/lib/interface";
+import { AgencyDataInterface, ChangeCounterCollector, editAgencyInterface, extendValidityInterface, rechargeAgencyInterface, ViewHistoryPayload } from "@/lib/interface";
 
 
 const getAllPaymentModes = async () => {
@@ -141,6 +141,15 @@ const getAgentDetailsById = async (data: number) => {
 const changeAgentRole = async (data: ChangeCounterCollector) => {
   try {
     const response = await api.put(`/v1/agents/`, data)
+    return response.data;
+  } catch (error: any) {
+    throw error?.response?.data
+  }
+}
+
+export const getBalanceHistoryAgencyById = async (data: ViewHistoryPayload) => {
+  try {
+    const response = await api.post(`/v1/wallet-change-log`, data)
     return response.data;
   } catch (error: any) {
     throw error?.response?.data
