@@ -9,12 +9,12 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import CustomizedMultipleSelectInputWithLabelString from '@/components/CustomizedMultipleSelectInputWithLabelString';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
-import { getAgencyById, getAllNonEnergyTypes, getAllPaymentModes } from '@/app/api-calls/department/api';
+import { getAgencyById, getAllNonEnergyTypes, getAllPaymentModes, getLevels, getLevelsDiscomId } from '@/app/api-calls/department/api';
 import { createCounterCollector, getCollectorTypes } from '@/app/api-calls/agency/api';
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
 import { Loader2 } from 'lucide-react';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
-import { agentWorkingType, collectorRole, testAgencyId } from '@/lib/utils';
+import { agentWorkingType, collectorRole, levelWIthId, testAgencyId, testDiscom } from '@/lib/utils';
 
 const AddCounterCollector = () => {
     const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm<AddCounterCollectorFormData>({
@@ -29,8 +29,14 @@ const AddCounterCollector = () => {
     const [permissions, setPermissions] = useState([]);
     const [nonEnergyTypes, setNonEnergyTypes] = useState([]);
     const [collectorTypes, setCollectorTypes] = useState([]);
+    const [workingLevel, setWorkingLevel] = useState([]);
 
-    const [agencyData, setAgencyData] = useState([])
+    const [circles, setCircles] = useState([]);
+    const [divisions, setDivisions] = useState([]);
+    const [subDivisions, setSubDivisions] = useState([]);
+    const [sections, setSections] = useState([]);
+
+    const [agencyData, setAgencyData] = useState({ working_level: null })
 
     useEffect(() => {
         getAgencyData()
@@ -77,10 +83,78 @@ const AddCounterCollector = () => {
     }, []);
 
     const getAgencyData = async () => {
-        getAgencyById(String(testAgencyId)).then((data) => {
-            setAgencyData(data.data);
-        })
-    }
+        try {
+            const agencyResponse = await getAgencyById(String(testAgencyId));
+            const agencyData = agencyResponse.data;
+            console.log("agencyData", agencyData);
+            setAgencyData(agencyData);
+
+            // Get levels
+            const levelsResponse = await getLevels(testDiscom);
+            let levels = levelsResponse?.data
+                ?.filter((ite) => ite.levelType === "MAIN")
+                ?.map((ite) => ({
+                    value: ite.id,
+                    label: ite.levelName,
+                }));
+
+            const agencyWorkingLevel = agencyData?.working_level;
+
+            console.log(levels)
+
+            const agencyLevel = levels.find((lvl) => lvl.value === agencyWorkingLevel);
+
+            if (agencyLevel) {
+                levels = levels.filter((lvl) => lvl.value >= agencyLevel.value);
+            }
+
+            console.log(levels, agencyLevel)
+
+            setWorkingLevel(levels);
+
+            let levelData = agencyData?.working_level_offices.map((ite) => {
+                return {
+                    value: ite.id,
+                    label: ite.office_description,
+                };
+            })
+
+            console.log(agencyLevel.value, levelData)
+
+            if (agencyLevel.value == levelWIthId.CIRCLE) {
+                setCircles(levelData)
+            } else if (agencyLevel.value == levelWIthId.DIVISION) {
+                setDivisions(levelData)
+            } else if (agencyLevel.value == levelWIthId.SUB_DIVISION) {
+                setSubDivisions(levelData)
+            } else if (agencyLevel.value == levelWIthId.CIRCLE) {
+                setSections(levelData)
+            }
+
+            // setValue('workingLevel', agencyData?.working_level)
+
+            setPermissions(agencyData?.collection_payment_modes
+                ?.map((ite) => {
+                    return {
+                        label: ite.mode_name,
+                        value: ite.id,
+                    };
+                }))
+
+            setNonEnergyTypes(
+                agencyData?.non_energy_types?.map((ite) => {
+                    return {
+                        label: ite.type_name,
+                        value: ite.id,
+                    };
+                })
+            );
+
+        } catch (error) {
+            console.error("Error fetching agency data:", error);
+        }
+    };
+
 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -117,6 +191,52 @@ const AddCounterCollector = () => {
             setIsSubmitting(false)
         }
     };
+
+    const getDivisions = (id) => {
+        setIsLoading(true)
+        getLevelsDiscomId(id).then((data) => {
+            setDivisions(
+                data?.data?.officeStructure?.map((ite) => {
+                    return {
+                        value: ite.id,
+                        label: ite.office_description,
+                    };
+                })
+            );
+        }).finally(() => { setIsLoading(false); });
+    };
+
+    const getSubDivisions = (id) => {
+        setIsLoading(true)
+        getLevelsDiscomId(id).then((data) => {
+            setSubDivisions(
+                data?.data?.officeStructure?.map((ite) => {
+                    return {
+                        value: ite.id,
+                        label: ite.office_description,
+                    };
+                })
+            );
+        }).finally(() => { setIsLoading(false); })
+    };
+
+    const getSections = (id) => {
+        setIsLoading(true)
+        getLevelsDiscomId(id).then((data) => {
+            setSections(
+                data?.data?.officeStructure?.map((ite) => {
+                    return {
+                        value: ite.id,
+                        label: ite.office_description,
+                    };
+                })
+            );
+        }).finally(() => { setIsLoading(false); });
+    };
+
+    const formData = watch()
+
+    console.log(formData);
 
     return (
         <AuthUserReusableCode pageTitle="Add Counter Collector" isLoading={isLoading}>
@@ -188,12 +308,6 @@ const AddCounterCollector = () => {
                     />
 
                     <CustomizedInputWithLabel
-                        label="Binder"
-                        placeholder="Enter Binder"
-                        {...register('binder')}
-                        errors={errors.binder}
-                    />
-                    <CustomizedInputWithLabel
                         label="Initial balance"
                         type="number"
                         placeholder="Enter Initial Balance"
@@ -204,31 +318,86 @@ const AddCounterCollector = () => {
                     <CustomizedSelectInputWithLabel
                         label='Working Level'
                         required
-                        list={collectorTypes}
+                        list={workingLevel}
                         {...register('workingLevel')}
                         errors={errors.workingLevel}
                     />
-                    <CustomizedMultipleSelectInputWithLabelNumber
-                        label="Sub Division"
-                        errors={errors.subDivision}
-                        placeholder="Select Sub Division"
-                        list={[]}
-                        required={true}
-                        value={watch('subDivision') || []}
-                        multi={true}
-                        onChange={(selectedValues) => setValue('subDivision', selectedValues)}
-                    />
+                    {
+                        formData.workingLevel &&
+                        agencyData.working_level == parseInt(levelWIthId.CIRCLE) &&
+                        <CustomizedMultipleSelectInputWithLabelNumber
+                            label="Circle"
+                            errors={errors.circle}
+                            placeholder="Select Circle"
+                            list={circles}
+                            required={true}
+                            value={watch('circle') || []}
+                            multi={formData.workingLevel === (levelWIthId.CIRCLE)}
+                            onChange={(selectedValues) => {
+                                setValue('circle', selectedValues)
+                                if (selectedValues.length > 0) {
+                                    getDivisions(selectedValues[0]);
+                                }
 
-                    <CustomizedMultipleSelectInputWithLabelNumber
-                        label="Section"
-                        errors={errors.section}
-                        placeholder="Select Section"
-                        list={[]}
-                        required={true}
-                        value={watch('section') || []}
-                        multi={true}
-                        onChange={(selectedValues) => setValue('section', selectedValues)}
-                    />
+                            }}
+                        />
+                    }
+                    {
+                        formData.workingLevel &&
+                        agencyData.working_level != parseInt(levelWIthId.CIRCLE) &&
+                        agencyData.working_level == parseInt(levelWIthId.DIVISION) &&
+                        <CustomizedMultipleSelectInputWithLabelNumber
+                            label="Division"
+                            errors={errors.division}
+                            placeholder="Select Division"
+                            list={divisions}
+                            required={true}
+                            value={watch('division') || []}
+                            multi={formData.workingLevel === (levelWIthId.DIVISION)}
+                            onChange={(selectedValues) => {
+                                setValue('division', selectedValues)
+                                if (selectedValues.length > 0) {
+                                    getSubDivisions(selectedValues[0]);
+                                }
+
+                            }}
+                        />
+                    }
+
+                    {
+                        formData.workingLevel && (agencyData.working_level == parseInt(levelWIthId.SUB_DIVISION)
+                            || agencyData.working_level == parseInt(levelWIthId.SECTION))
+                        && (formData.workingLevel == levelWIthId.SECTION
+                            || formData.workingLevel == levelWIthId.SUB_DIVISION) && (
+                            <CustomizedMultipleSelectInputWithLabelNumber
+                                label="Sub Division"
+                                errors={errors.subDivision}
+                                placeholder="Select Sub Division"
+                                list={subDivisions}
+                                required={true}
+                                value={watch('subDivision') || []}
+                                multi={formData.workingLevel === levelWIthId.SUB_DIVISION}
+                                onChange={(selectedValues) => {
+                                    setValue('subDivision', selectedValues)
+                                    if (selectedValues.length > 0) {
+                                        getSections(selectedValues[0]);
+                                    }
+                                }}
+                            />)
+                    }
+                    {
+                        formData.workingLevel == levelWIthId.SECTION && (
+                            <CustomizedMultipleSelectInputWithLabelNumber
+                                label="Section"
+                                errors={errors.section}
+                                placeholder="Select Section"
+                                list={sections}
+                                required={true}
+                                value={watch('section') || []}
+                                multi={formData.workingLevel === levelWIthId.SECTION}
+                                onChange={(selectedValues) => setValue('section', selectedValues)}
+                            />)
+                    }
                     <CustomizedMultipleSelectInputWithLabelNumber
                         label="Permission"
                         list={permissions}
