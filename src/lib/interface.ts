@@ -28,7 +28,8 @@ export interface AgencyDataInterface {
 
 export interface rechargeAgencyInterface {
     id: number,
-    recharge_amount: number,
+    recharge_amount?: number,
+    reverse_amount?: number,
     remarks: string
 }
 

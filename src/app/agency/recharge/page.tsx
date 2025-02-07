@@ -12,6 +12,7 @@ import AuthUserReusableCode from "@/components/AuthUserReusableCode";
 import { Loader2 } from "lucide-react";
 import { getAllAgentByAgencyId, getRechargeableBalance, rechargeAgentById } from "@/app/api-calls/agency/api";
 import { numberToWords, testAgencyId } from "@/lib/utils";
+import { getAgencyById } from "@/app/api-calls/department/api";
 
 const RechargeEntry = () => {
     const {
@@ -59,14 +60,10 @@ const RechargeEntry = () => {
     const getAgencyBalance = async () => {
         setIsLoading(true);
         try {
-            const response = await getRechargeableBalance(testAgencyId);
+            const response = await getAgencyById(String(testAgencyId));
             console.log("API recharge:", response);
             setRechargeableBalance(
-                response?.data?.map((item) => ({
-                    ...item,
-                    label: item.agent_name,
-                    value: item.id,
-                }))
+                response?.data?.current_balance
             );
 
         } catch (error) {
@@ -118,7 +115,7 @@ const RechargeEntry = () => {
         <AuthUserReusableCode pageTitle="Recharge Entry" isLoading={isLoading}>
             <div className="mb-4 p-2 bg-lightThemeColor rounded-md">
                 <span className="text-lg">
-                    Available Balance For Recharge : ₹ 1400
+                    Available Balance For Recharge : ₹ {rechargeAbleBalance}
                 </span>
             </div>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

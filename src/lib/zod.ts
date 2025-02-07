@@ -181,7 +181,9 @@ export const addAgencySchema = z
   });
 
 export const rechargeSchema = z.object({
-  agency: z.string().nonempty("Agency is required"),
+  agency: z.union([z.string(), z.number()])
+    .transform((val) => Number(val))
+    .refine((val) => !isNaN(val), { message: "Agency must be a valid number" }),
   agencyName: z.string().optional(),
   agencyId: z.number().optional(),
   phoneNumber: z.string().optional(),
