@@ -43,7 +43,7 @@ const data = {
       path: '/dashboard'
     },
     {
-      title: "Agency",
+      title: "Department",
       icon: Folder,
       url: "#",
       path: '/department/',
@@ -74,7 +74,7 @@ const data = {
       ],
     },
     {
-      title: "Entry",
+      title: "Agency",
       icon: Folder,
       url: "#",
       path: '/agency/',
