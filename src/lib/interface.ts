@@ -150,3 +150,16 @@ export interface ExtendAgentValidity {
     validity_from_date: string;
     validity_to_date: string;
 }
+
+interface ViewHistoryFilter {
+    entity_type: string;
+    from_date: string;
+    to_date: string;
+    entity_id: string | number;
+}
+
+export interface ViewHistoryPayload {
+    page: number;
+    page_size: number;
+    filter: ViewHistoryFilter;
+}

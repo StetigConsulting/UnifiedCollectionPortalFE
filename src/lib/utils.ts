@@ -104,6 +104,7 @@ export const ADMIN_ONLY_ROUTES = ["/users", "/settings"];
 
 export const listOfUrls = {
   agencyRecharge: '/department/recharge',
+  agencyBalanceHistory: '/department/view-balance/history',
 }
 
 export const collectorRole = [

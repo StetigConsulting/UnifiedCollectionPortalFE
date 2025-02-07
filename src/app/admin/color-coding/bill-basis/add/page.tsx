@@ -13,6 +13,7 @@ import { Loader2 } from 'lucide-react';
 import { colorCodingBillBasisSchema } from '@/lib/zod';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import { createColorCodingBillBasis, getBusinessRuleDateById, updateColorCodingBillBasis } from '@/app/api-calls/admin/api';
+import { testDiscom } from '@/lib/utils';
 
 type FormData = z.infer<typeof colorCodingBillBasisSchema>;
 
@@ -47,7 +48,7 @@ const AddBillBasis = () => {
         try {
             let payload = {
                 id: null,
-                discom_id: 1001,
+                discom_id: parseInt(testDiscom),
                 office_structure_id: 1001,
                 rule_level: "Discomwise",
                 rule_name: "BILL_BASIS_COLOR_CODING",
