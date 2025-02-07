@@ -17,9 +17,10 @@ const ColorCodingLogic = () => {
     const [colorLogicEntries, setColorLogicEntries] = useState([]);
 
     const columns = [
-        { label: 'CC ID', key: 'id', sortable: true },
-        { label: 'Value 1', key: 'value1', sortable: true },
-        { label: 'Value 2', key: 'bill_type', sortable: true },
+        { label: 'Color Coding ID', key: 'id', sortable: true },
+        { label: 'Order ID', key: 'order', sortable: true },
+        { label: 'Value 1', key: 'R1_value', sortable: true },
+        { label: 'Value 2', key: 'R2_value', sortable: true },
         { label: 'BG Color', key: 'color_code', sortable: true },
         {
             label: 'Action',
@@ -63,7 +64,35 @@ const ColorCodingLogic = () => {
         setIsLoading(true);
         try {
             const response = await getColorCodingLogic(testDiscom);
-            setColorLogicEntries(response?.data);
+            // setColorLogicEntries(response?.data);
+            const transformRules = (rules) => {
+                return rules.flatMap(rule =>
+                    rule.json_rule.ranges.map((range, index) => ({
+                        id: rule.id,
+                        rule_name: rule.rule_name,
+                        rule_label: rule.rule_label,
+                        rule_level: rule.rule_level,
+                        discom_id: rule.discom.id,
+                        discom_name: rule.discom.office_description,
+                        office_id: rule.office_structure.id,
+                        office_name: rule.office_structure.office_description,
+                        order: range.order,
+                        R1_type: range.R1.type,
+                        R1_value: range.R1.value,
+                        R2_type: range.R2.type,
+                        R2_value: range.R2.value,
+                        color_code: range.color_code,
+                        created_on: rule.created_on,
+                        modified_on: rule.modified_on,
+                        is_active: rule.is_active,
+                        is_manual_rule: rule.is_manual_rule
+                    }))
+                );
+            };
+
+            const transformedData = transformRules(response?.data);
+            setColorLogicEntries(transformedData);
+
             console.log(response);
         } catch (error) {
             console.error('Failed to get data:', error);
@@ -81,6 +110,7 @@ const ColorCodingLogic = () => {
                 data={tableData}
                 columns={columns}
                 hideSearchAndOtherButtons
+                avoidSrNo
             />
 
             <div className="mt-6 text-end space-x-4">

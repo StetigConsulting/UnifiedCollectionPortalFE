@@ -151,7 +151,7 @@ const AddColorCodingLogic = () => {
     }
 
     return (
-        <AuthUserReusableCode pageTitle="Add Color Coding Logic" isLoading={isLoading}>
+        <AuthUserReusableCode pageTitle={idFromUrl ? 'Edit Color Coding Logic' : "Add Color Coding Logic"} isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 {fields.map((field, index) => (
                     <div key={field.id} className="space-y-4">
