@@ -9,14 +9,9 @@ import CustomizedInputWithLabel from "@/components/CustomizedInputWithLabel";
 import CustomizedSelectInputWithLabel from "@/components/CustomizedSelectInputWithLabel";
 import { Button } from "@/components/ui/button";
 import AuthUserReusableCode from "@/components/AuthUserReusableCode";
-// import { getAgencyList } from "@/app/api-calls/department/api";  // Assuming you have the API call for fetching data
 import { Loader2 } from "lucide-react";
-
-// Define the types for the state data
-interface SelectOption {
-    value: string;
-    label: string;
-}
+import { getAllAgentByAgencyId, getRechargeableBalance, rechargeAgentById } from "@/app/api-calls/agency/api";
+import { numberToWords, testAgencyId } from "@/lib/utils";
 
 const RechargeEntry = () => {
     const {
@@ -25,47 +20,99 @@ const RechargeEntry = () => {
         formState: { errors },
         setValue,
         watch,
+        reset
     } = useForm<RechargeCollectorFormData>({
         resolver: zodResolver(rechargeSchemaCollector),
     });
 
     const [isLoading, setIsLoading] = useState(false);
-    const [agencies, setAgencies] = useState<SelectOption[]>([]);
+    const [agencies, setAgencies] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    const [rechargeAbleBalance, setRechargeableBalance] = useState('');
+
+    const getAgentList = async () => {
+        setIsLoading(true);
+        try {
+            const response = await getAllAgentByAgencyId(testAgencyId);
+            console.log("API Response:", response);
+            setAgencies(
+                response?.data?.map((item) => ({
+                    ...item,
+                    label: item.agent_name,
+                    value: item.id,
+                }))
+            );
+
+        } catch (error) {
+            console.error("Failed to get agent:", error?.data[Object.keys(error?.data)[0]]);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
     useEffect(() => {
-        // getAgencyList().then((data) => {
-        //     setAgencies(
-        //         data?.map((agency) => ({
-        //             value: agency.id.toString(),
-        //             label: agency.name,
-        //         }))
-        //     );
-        // });
+        getAgentList()
+        getAgencyBalance()
     }, []);
 
-    const onSubmit = async (data: any) => {
-        setIsSubmitting(true);
+    const getAgencyBalance = async () => {
+        setIsLoading(true);
         try {
-            const response = await fetch("/api/recharge-entry", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(data),
-            });
-            if (response.ok) {
-                toast.success("Recharge successful");
-            } else {
-                toast.error("Failed to recharge");
-            }
+            const response = await getRechargeableBalance(testAgencyId);
+            console.log("API recharge:", response);
+            setRechargeableBalance(
+                response?.data?.map((item) => ({
+                    ...item,
+                    label: item.agent_name,
+                    value: item.id,
+                }))
+            );
+
         } catch (error) {
-            toast.error("An error occurred while recharging");
-            console.error("Error:", error);
+            console.error("Failed to get agent:", error?.data[Object.keys(error?.data)[0]]);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    const onSubmit = async (data: RechargeCollectorFormData) => {
+        let payload = {
+            "agent_id": data.agencyId,
+            "recharge_amount": data.amount,
+            "remarks": data.remark
+        }
+        try {
+            setIsSubmitting(true);
+            const response = await rechargeAgentById(payload, testAgencyId);
+            toast.success("Agenct recharge successfully");
+            console.log("API Response:", response);
+            reset();
+        } catch (error) {
+            // console.error("Failed to edit agency:", error.data[Object.keys(error.data)[0]]);
+            let errorMessage = error?.data && error?.data[Object.keys(error?.data)[0]] || error?.error
+            console.log(errorMessage)
+            toast.error('Error: ' + errorMessage || error?.error)
         } finally {
             setIsSubmitting(false);
         }
     };
+
+    const selectedAgency = watch('collectorMobile');
+    const formData = watch();
+
+    useEffect(() => {
+        if (selectedAgency) {
+            const agency = agencies.find((item) => item.id === Number(selectedAgency));
+            if (agency) {
+                setValue('agencyId', agency.id || null);
+                setValue('agencyName', agency.agent_name || '');
+                setValue('phoneNumber', agency.primary_phone || '');
+                setValue('transactionType', 'Reacharge')
+                setValue('currentBalance', agency.current_balance);
+            }
+        }
+    }, [selectedAgency, agencies, setValue]);
 
     return (
         <AuthUserReusableCode pageTitle="Recharge Entry" isLoading={isLoading}>
@@ -88,20 +135,18 @@ const RechargeEntry = () => {
                         label="Agency ID"
                         required={true}
                         errors={errors.agencyId}
-                        placeholder="Enter Agency ID"
+                        disabled
                         {...register("agencyId")}
                     />
                     <CustomizedInputWithLabel
                         label="Phone Number"
                         required={true}
                         errors={errors.phoneNumber}
-                        placeholder="Enter Phone Number"
                         disabled
                         {...register("phoneNumber")}
                     />
-                    <CustomizedSelectInputWithLabel
+                    <CustomizedInputWithLabel
                         label="Agency Name"
-                        list={agencies}
                         required={true}
                         errors={errors.agencyName}
                         disabled
@@ -109,7 +154,6 @@ const RechargeEntry = () => {
                     />
                     <CustomizedInputWithLabel
                         label="Transaction Type"
-                        placeholder="Enter Transaction"
                         required={true}
                         errors={errors.transactionType}
                         disabled
@@ -121,7 +165,7 @@ const RechargeEntry = () => {
                         errors={errors.amount}
                         placeholder="Enter Amount"
                         type="number"
-                        {...register("amount")}
+                        {...register("amount", { valueAsNumber: true })}
                     />
 
                     <CustomizedInputWithLabel
@@ -130,6 +174,7 @@ const RechargeEntry = () => {
                         errors={errors.currentBalance}
                         placeholder="Current Balance"
                         type="number"
+                        disabled
                         {...register("currentBalance")}
                     />
                     <CustomizedInputWithLabel
@@ -143,8 +188,8 @@ const RechargeEntry = () => {
 
                 <div className="mt-4 p-4 border rounded-md flex bg-white">
                     <div className='flex-1 capitalize'>
-                        <p>Recharge Amount: 500</p>
-                        <p>Current Balance: 500</p>
+                        <p>Recharge Amount: <span className='text-green-800'>{numberToWords(formData.amount)}</span></p>
+                        <p>Current Balance: {numberToWords(formData.currentBalance)}</p>
                     </div>
                     <div className='self-center'>
                         <Button type="submit" variant="default" disabled={isSubmitting}>

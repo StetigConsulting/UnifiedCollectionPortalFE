@@ -6,13 +6,14 @@ import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWi
 import { Button } from '@/components/ui/button';
 import { useForm } from 'react-hook-form';
 import React, { useEffect, useState } from 'react';
-import { getAgenciesWithDiscom, rechargeAgency } from '@/app/api-calls/department/api';
+import { getAgenciesWithDiscom, getAgencyById, rechargeAgency } from '@/app/api-calls/department/api';
 import { numberToWords, testDiscom } from '@/lib/utils';
 import { rechargeSchema } from '@/lib/zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
 
 
 type FormData = z.infer<typeof rechargeSchema>;
@@ -60,10 +61,6 @@ const Recharge = () => {
 
     const [isLoading, setIsLoading] = useState(false);
 
-    useEffect(() => {
-        getAgencyList()
-    }, [])
-
     const getAgencyList = async () => {
         setIsLoading(true);
         try {
@@ -100,6 +97,40 @@ const Recharge = () => {
             }
         }
     }, [selectedAgency, agencyList, setValue]);
+
+    const searchParams = useSearchParams();
+    const idFromUrl = searchParams.get('id');
+
+    useEffect(() => {
+        if (idFromUrl) {
+            fetchAgencyById(idFromUrl)
+        } else {
+            getAgencyList()
+        }
+    }, [idFromUrl]);
+
+    const fetchAgencyById = async (id: string) => {
+        setIsLoading(true);
+        try {
+            const response = await getAgencyById(id);
+            const agency = response.data;
+            console.log("Agency Data:", agency);
+            setValue('agency', agency.id);
+            setValue('agencyId', agency.id || null);
+            setValue('agencyName', agency.agency_name || '');
+            setValue('phoneNumber', agency.phone || '');
+            setAgencyList([{
+                ...response.data,
+                label: response.data.agency_name,
+                value: response.data.id,
+            }]);
+            setValue('agency', response.data.id)
+        } catch (error) {
+            console.error("Failed to fetch agency by ID:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
         <AuthUserReusableCode pageTitle="Recharge" isLoading={isLoading}>

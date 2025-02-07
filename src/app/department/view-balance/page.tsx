@@ -4,29 +4,17 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { getAgenciesWithDiscom, getLevels } from '@/app/api-calls/department/api';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
-import { testDiscom } from '@/lib/utils';
+import { listOfUrls, testDiscom } from '@/lib/utils';
 import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
-
-const mockData = [
-    {
-        agencyId: "21100100229012",
-        agencyName: "MBC Pace Computer BED-1",
-        division: "Berhampur-1",
-        currentBalance: "₹18,990.00",
-    },
-    {
-        agencyId: "21100100229013",
-        agencyName: "MBC Pace Computer BED-2",
-        division: "Berhampur-2",
-        currentBalance: "₹10,500.00",
-    },
-];
+import { useRouter } from 'next/navigation';
 
 const ViewBalance = () => {
     const [agencyList, setAgencyList] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [workingLevelList, setWorkingLevelList] = useState([])
+
+    const router = useRouter()
 
     useEffect(() => {
         getAgencyList();
@@ -103,7 +91,7 @@ const ViewBalance = () => {
                 <Button variant="default" size="sm">
                     View History
                 </Button>
-                <Button variant="success" size="sm">
+                <Button variant="success" size="sm" onClick={() => router.push(`${listOfUrls.agencyRecharge}?id=${item.id}`)}>
                     Recharge
                 </Button>
                 <Button variant="destructive" size="sm">

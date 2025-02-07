@@ -9,10 +9,12 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import CustomizedMultipleSelectInputWithLabelString from '@/components/CustomizedMultipleSelectInputWithLabelString';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
-import { getAllNonEnergyTypes, getAllPaymentModes } from '@/app/api-calls/department/api';
-import { createCounterCollector } from '@/app/api-calls/agency/api';
+import { getAgencyById, getAllNonEnergyTypes, getAllPaymentModes } from '@/app/api-calls/department/api';
+import { createCounterCollector, getCollectorTypes } from '@/app/api-calls/agency/api';
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
 import { Loader2 } from 'lucide-react';
+import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
+import { agentWorkingType, collectorRole, testAgencyId } from '@/lib/utils';
 
 const AddCounterCollector = () => {
     const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm<AddCounterCollectorFormData>({
@@ -26,8 +28,12 @@ const AddCounterCollector = () => {
 
     const [permissions, setPermissions] = useState([]);
     const [nonEnergyTypes, setNonEnergyTypes] = useState([]);
+    const [collectorTypes, setCollectorTypes] = useState([]);
+
+    const [agencyData, setAgencyData] = useState([])
 
     useEffect(() => {
+        getAgencyData()
         setIsLoading(true)
         getAllPaymentModes()
             .then((data) => {
@@ -55,8 +61,26 @@ const AddCounterCollector = () => {
             );
             setIsLoading(false)
         })
+        getCollectorTypes().then((data) => {
+            setCollectorTypes(
+                data?.data
+                    ?.map((ite) => {
+                        return {
+                            label: ite.name,
+                            value: ite.id,
+                        };
+                    })
+            );
+            setIsLoading(false)
+        })
         setValue('initialBalance', 0);
     }, []);
+
+    const getAgencyData = async () => {
+        getAgencyById(String(testAgencyId)).then((data) => {
+            setAgencyData(data.data);
+        })
+    }
 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -64,10 +88,10 @@ const AddCounterCollector = () => {
         setIsSubmitting(true)
         try {
             let payload = {
-                "agency_id": 30, //hardcoded
+                "agency_id": testAgencyId, //hardcoded
                 "agent_name": data.name,
-                "primary_phone": data.personalPhoneNumber,
-                "secondary_phone": data.officePhoneNumber,
+                "primary_phone": data.officePhoneNumber,
+                "secondary_phone": data.personalPhoneNumber,
                 "maximum_limit": data.maximumLimit,
                 "validity_from_date": data.fromValidity,
                 "validity_to_date": data.toValidity,
@@ -78,9 +102,9 @@ const AddCounterCollector = () => {
                 "is_active": true,
                 "non_energy_types": data.nonEnergy,
                 "working_level_office": 1325,//hardcoded
-                "collector_type": 1,//hardcoded
-                "work_type": "Offline",
-                "collector_role": "Counter Collector"
+                "collector_type": parseInt(data.collectorType),
+                "work_type": data.workingType,
+                "collector_role": data.collectorRole
             }
             await createCounterCollector(payload, 6);
             toast.success('Counter Collector added successfully!');
@@ -121,34 +145,89 @@ const AddCounterCollector = () => {
                         errors={errors.personalPhoneNumber}
                     />
                     <CustomizedInputWithLabel
-                        label="Maximum Limit"
-                        type="number"
-                        placeholder="Enter Maximum Limit"
-                        required
-                        {...register('maximumLimit', { valueAsNumber: true })}
-                        errors={errors.maximumLimit}
-                    />
-                    <CustomizedInputWithLabel
-                        label="Validity"
+                        label="Validity Start Date"
                         required
                         type='date'
                         {...register('fromValidity')}
                         errors={errors.fromValidity}
                     />
                     <CustomizedInputWithLabel
-                        label="Validity"
+                        label="Validity End Date"
                         required
                         type='date'
                         {...register('toValidity')}
                         errors={errors.toValidity}
                     />
                     <CustomizedInputWithLabel
-                        label="Initial Balance"
+                        label='Maximum limit'
+                        placeholder="Enter Maximum limit"
+                        required
+                        {...register('maximumLimit', { valueAsNumber: true })}
+                        errors={errors.maximumLimit}
+                    />
+                    <CustomizedSelectInputWithLabel
+                        label='Collector type'
+                        required
+                        list={collectorTypes}
+                        {...register('collectorType')}
+                        errors={errors.collectorType}
+                    />
+                    <CustomizedSelectInputWithLabel
+                        label='Collector role'
+                        required
+                        list={collectorRole}
+                        {...register('collectorRole')}
+                        errors={errors.collectorRole}
+                    />
+                    <CustomizedSelectInputWithLabel
+                        label='Working Type'
+                        required
+                        list={agentWorkingType}
+                        {...register('workingType')}
+                        errors={errors.workingType}
+                    />
+
+                    <CustomizedInputWithLabel
+                        label="Binder"
+                        placeholder="Enter Binder"
+                        {...register('binder')}
+                        errors={errors.binder}
+                    />
+                    <CustomizedInputWithLabel
+                        label="Initial balance"
                         type="number"
                         placeholder="Enter Initial Balance"
                         disabled
                         {...register('initialBalance')}
                         errors={errors.initialBalance}
+                    />
+                    <CustomizedSelectInputWithLabel
+                        label='Working Level'
+                        required
+                        list={collectorTypes}
+                        {...register('workingLevel')}
+                        errors={errors.workingLevel}
+                    />
+                    <CustomizedMultipleSelectInputWithLabelNumber
+                        label="Sub Division"
+                        errors={errors.subDivision}
+                        placeholder="Select Sub Division"
+                        list={[]}
+                        required={true}
+                        value={watch('subDivision') || []}
+                        multi={true}
+                        onChange={(selectedValues) => setValue('subDivision', selectedValues)}
+                    />
+
+                    <CustomizedMultipleSelectInputWithLabelNumber
+                        label="Section"
+                        errors={errors.section}
+                        placeholder="Select Section"
+                        list={[]}
+                        required={true}
+                        value={watch('section') || []}
+                        multi={true}
+                        onChange={(selectedValues) => setValue('section', selectedValues)}
                     />
                     <CustomizedMultipleSelectInputWithLabelNumber
                         label="Permission"

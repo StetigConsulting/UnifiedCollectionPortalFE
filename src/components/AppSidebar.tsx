@@ -64,6 +64,7 @@ const data = {
           url: "/department/collector-type",
         },
         { title: "Edit Agency", icon: Edit, url: "/department/edit-agency" },
+        { title: "Edit Agency Area", icon: Edit, url: "/department/edit-agency-area" },
         { title: "Extend Validity", icon: Calendar, url: "/department/extend-validity" },
         { title: "View Agency", icon: Eye, url: '/department/view-agency' },
         { title: "View Balance", icon: Wallet, url: '/department/view-balance' },
