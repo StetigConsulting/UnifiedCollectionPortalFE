@@ -247,7 +247,7 @@ const AddReceiptsForPostpaid = () => {
                                         value={watch(`receipts.${index}.circle`) || []}
                                         // onChange={(selectedValues) => setValue(`receipts.${index}.circle`, selectedValues)}
                                         onChange={(selectedValues) => handleCircleChange(index, selectedValues, receipts[index].applicableLevel)}
-                                        multi={receipts[index].applicableLevel == levelWIthId.CIRCLE}
+
                                     />
                                 }
                                 {receipts[index].applicableLevel && receipts[index].applicableLevel != levelWIthId.CIRCLE && (
@@ -259,7 +259,7 @@ const AddReceiptsForPostpaid = () => {
                                         value={watch(`receipts.${index}.division`) || []}
                                         // onChange={(selectedValues) => setValue(`receipts.${index}.division`, selectedValues)}
                                         onChange={(selectedValues) => handleDivisionChange(index, selectedValues, receipts[index].applicableLevel)}
-                                        multi={receipts[index].applicableLevel == levelWIthId.DIVISION}
+
                                         errors={errors?.receipts?.[index]?.division}
                                     />
                                 )}
@@ -273,7 +273,7 @@ const AddReceiptsForPostpaid = () => {
                                             value={watch(`receipts.${index}.subDivision`) || []}
                                             onChange={(selectedValues) => handleSubDivisionChange(index, selectedValues, receipts[index].applicableLevel)}
                                             // onChange={(selectedValues) => setValue(`receipts.${index}.subDivision`, selectedValues)}
-                                            multi={receipts[index].applicableLevel == levelWIthId.DIVISION}
+
                                             errors={errors?.receipts?.[index]?.subDivision}
                                         />
                                     )}
@@ -288,7 +288,7 @@ const AddReceiptsForPostpaid = () => {
                                             required={true}
                                             disabled={receipts[index]?.subDivision?.length == 0}
                                             value={watch(`receipts.${index}.section`) || []}
-                                            multi={receipts[index]?.applicableLevel == levelWIthId.SECTION}
+
                                             onChange={(selectedValues) => setValue(`receipts.${index}.section`, selectedValues)}
                                         />
                                     )
@@ -306,7 +306,9 @@ const AddReceiptsForPostpaid = () => {
                                     errors={errors?.receipts?.[index]?.receiptsPerDay}
                                 />
                                 <div className="col-span-2 flex items-center space-x-2">
-                                    <input type="checkbox" {...register(`receipts.${index}.allowSecondReceipt`)} />
+                                    <input type="checkbox"
+                                        {...register(`receipts.${index}.allowSecondReceipt`)}
+                                        disabled={watch(`receipts.${index}.receiptsPerDay`) != 1} />
                                     <label>Second receipt is allowed with different payment mode</label>
                                 </div>
                             </div>
@@ -332,7 +334,9 @@ const AddReceiptsForPostpaid = () => {
                                     errors={errors?.receipts?.[index]?.receiptsPerDay}
                                 />
                                 <div className="flex items-center space-x-2 col-span-2">
-                                    <input type="checkbox" {...register(`receipts.${index}.allowSecondReceipt`)} />
+                                    <input type="checkbox"
+                                        {...register(`receipts.${index}.allowSecondReceipt`)}
+                                        disabled={watch(`receipts.${index}.receiptsPerDay`) != 1} />
                                     <label>Second receipt is allowed with different payment mode</label>
                                 </div>
                             </div>
@@ -341,7 +345,7 @@ const AddReceiptsForPostpaid = () => {
                 )}
 
                 <div className="mt-6 text-end space-x-4">
-                    {configRule !== 'Discomwise' &&
+                    {configRule !== 'Discomwise' && configRule &&
                         <Button variant="outline" type="button" onClick={addMoreReceipts}>
                             + Add More
                         </Button>

@@ -58,20 +58,12 @@ const ReceiptsForPostpaid = () => {
             key: 'applicableLabel',
         },
         {
-            label: 'Circle',
-            key: 'circle',
+            label: 'Number of Receipts Possbile Per Month Per Consumer',
+            key: 'receipt_per_month_per_bill',
         },
         {
-            label: 'Division',
-            key: 'division',
-        },
-        {
-            label: 'Sub Division',
-            key: 'subDivision',
-        },
-        {
-            label: 'Section',
-            key: 'section',
+            label: 'Number of Recipts Possible Per Day Per Consumer',
+            key: 'receipt_per_day_per_bill',
         },
         {
             label: 'Action',
@@ -146,6 +138,7 @@ const ReceiptsForPostpaid = () => {
                             columns={levelWiseColumns}
                             data={levelWiseTableData}
                             hideSearchAndOtherButtons
+                            avoidSrNo
                         />
                     </div>
                     <div className="mt-6 text-right space-x-4">
@@ -163,13 +156,18 @@ const ReceiptsForPostpaid = () => {
                             columns={discomWiseColumns}
                             data={discomWiseTableData}
                             hideSearchAndOtherButtons
+                            noPagination
+                            avoidSrNo
                         />
                     </div>
-                    <div className="mt-6 text-right space-x-4">
-                        <Button variant="default" onClick={() => router.push('/admin/receipt-for-postpaid/add')}>
-                            Add
-                        </Button>
-                    </div>
+                    {
+                        discomWiseTableData.length == 0 &&
+                        <div className="mt-6 text-right space-x-4">
+                            <Button variant="default" onClick={() => router.push('/admin/receipt-for-postpaid/add')}>
+                                Add
+                            </Button>
+                        </div>
+                    }
                 </>
             );
         }

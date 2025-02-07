@@ -402,18 +402,18 @@ export const addCounterCollectorSchema = z.object({
   collectorType: z.string().min(1, { message: "Collector type is required" }),
   collectorRole: z.string().min(1, { message: "Collector role is required" }),
   workingType: z.string().min(1, { message: "Working type is required" }),
-  workingLevel: z.string().min(1, { message: "Working level is required" }),
+  workingLevel: z.string().min(1, { message: "Working type is required" }),
 
   maximumLimit: z
     .number({ invalid_type_error: "Maximum limit must be a number" })
     .min(1, { message: "Maximum limit must be at least 1" }),
 
-  binder: z.string().min(1, { message: "Binder is required" }),
-
   initialBalance: z
     .number({ invalid_type_error: "Initial balance must be a number" })
     .min(0, { message: "Initial balance cannot be negative" }),
 
+  circle: z.array(z.number()).optional(),
+  division: z.array(z.number()).optional(),
   subDivision: z.array(z.number()).optional(),
   section: z.array(z.number()).optional(),
 

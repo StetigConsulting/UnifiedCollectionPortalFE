@@ -72,7 +72,7 @@ const CustomizedMultipleSelectInputWithLabelNumber: React.FC<SelectProps> = ({
 
     return (
         <div className={`relative ${containerClass}`} ref={dropdownRef}>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1 text-capitalize">
                 {label} {required && <span className="text-red-500">*</span>}
             </label>
             <div
