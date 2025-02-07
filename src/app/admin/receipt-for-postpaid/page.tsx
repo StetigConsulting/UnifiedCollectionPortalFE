@@ -87,12 +87,12 @@ const ReceiptsForPostpaid = () => {
             key: 'id',
         },
         {
-            label: 'Bills per Month',
-            key: 'receipt_per_day_per_bill',
+            label: 'Number of Receipts Possbile Per Month Per Consumer',
+            key: 'receipt_per_month_per_bill',
         },
         {
-            label: 'Bills per Day',
-            key: 'receipt_per_month_per_bill',
+            label: 'Number of Recipts Possible Per Day Per Consumer',
+            key: 'receipt_per_day_per_bill',
         },
         {
             label: 'Action',

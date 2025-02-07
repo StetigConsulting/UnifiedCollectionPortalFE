@@ -13,7 +13,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { editReceiptsSchema } from '@/lib/zod';
 import { getLevels, getLevelsDiscomId } from '@/app/api-calls/department/api';
-import { levelWIthId, testDiscom } from '@/lib/utils';
+import { getErrorMessage, levelWIthId, testDiscom } from '@/lib/utils';
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
 import { ReceiptForPostpaid } from '@/lib/interface';
 import { editReceiptForPostpaid, getReceiptForPostpaidById } from '@/app/api-calls/admin/api';
@@ -82,10 +82,10 @@ const EditReceiptsForPostpaid = () => {
                 setIsLoading(true)
                 router.push('/admin/receipt-for-postpaid')
             }
-            toast.success('Receipt edited successfully!');
+            toast.success('Number of Receipts Rule Updated Successfully');
         } catch (error) {
             console.log(error)
-            toast.error('Failed to edit the form.');
+            toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsSubmitting(false);
         }

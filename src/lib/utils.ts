@@ -122,3 +122,8 @@ export const agentWorkingType = [
   { label: 'Online', value: 'Online' },
   { label: 'Offline', value: 'Offline' }
 ]
+
+export const getErrorMessage = (error: any) => {
+  let errorMessage = error?.data ? error?.data[Object.keys(error?.data)[0]] : error?.error;
+  return errorMessage
+}

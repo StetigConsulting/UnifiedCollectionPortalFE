@@ -172,7 +172,7 @@ const data = {
           path: '/admin/import',
         },
         {
-          title: 'Receipt for postpaid',
+          title: 'Receipt for Postpaid',
           url: '/admin/receipt-for-postpaid',
           icon: Gauge,
           path: '/admin/receipt-for-postpaid',
