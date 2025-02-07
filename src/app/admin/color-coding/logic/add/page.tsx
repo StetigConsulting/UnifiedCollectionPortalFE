@@ -25,7 +25,7 @@ const AddColorCodingLogic = () => {
 
     const [valueTypePicklist, setValueTypePicklist] = useState([
         { label: 'Date', value: 'DATE' },
-        { label: 'Day', value: 'DAYS' },
+        { label: 'Days', value: 'DAYS' },
     ]);
 
     const {
