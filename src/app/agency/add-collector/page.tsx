@@ -162,7 +162,7 @@ const AddCounterCollector = () => {
         setIsSubmitting(true)
         try {
             let payload = {
-                "agency_id": testAgencyId, //hardcoded
+                "agency_id": testAgencyId,
                 "agent_name": data.name,
                 "primary_phone": data.officePhoneNumber,
                 "secondary_phone": data.personalPhoneNumber,
@@ -170,12 +170,18 @@ const AddCounterCollector = () => {
                 "validity_from_date": data.fromValidity,
                 "validity_to_date": data.toValidity,
                 "collection_payment_modes": data.permission,
-                "working_level": 68,//hardcoded
+                "working_level": parseInt(data.workingLevel),
                 "collection_type_energy": data.collectionType.includes('Energy'),
                 "collection_type_non_energy": data.collectionType.includes('Non-Energy'),
                 "is_active": true,
                 "non_energy_types": data.nonEnergy,
-                "working_level_office": 1325,//hardcoded
+                "working_level_office": data.workingLevel === levelWIthId.CIRCLE
+                    ? data?.circle?.[0]
+                    : data.workingLevel === levelWIthId.DIVISION
+                        ? data.division?.[0]
+                        : data.workingLevel === levelWIthId.SUB_DIVISION
+                            ? data.subDivision?.[0]
+                            : data.workingLevel === levelWIthId.SECTION ? data.section?.[0] : null,
                 "collector_type": parseInt(data.collectorType),
                 "work_type": data.workingType,
                 "collector_role": data.collectorRole
@@ -254,7 +260,7 @@ const AddCounterCollector = () => {
                         label="Office Phone Number"
                         placeholder="Enter Phone Number"
                         required
-                        requiredText='(Otp will be sent to phone number)'
+                        requiredText='(OTP will be sent on this phone number)'
                         {...register('officePhoneNumber')}
                         errors={errors.officePhoneNumber}
                     />
@@ -333,7 +339,7 @@ const AddCounterCollector = () => {
                             list={circles}
                             required={true}
                             value={watch('circle') || []}
-                            multi={formData.workingLevel === (levelWIthId.CIRCLE)}
+                            // multi={formData.workingLevel === (levelWIthId.CIRCLE)}
                             onChange={(selectedValues) => {
                                 setValue('circle', selectedValues)
                                 if (selectedValues.length > 0) {
@@ -354,7 +360,7 @@ const AddCounterCollector = () => {
                             list={divisions}
                             required={true}
                             value={watch('division') || []}
-                            multi={formData.workingLevel === (levelWIthId.DIVISION)}
+                            // multi={formData.workingLevel === (levelWIthId.DIVISION)}
                             onChange={(selectedValues) => {
                                 setValue('division', selectedValues)
                                 if (selectedValues.length > 0) {
@@ -377,7 +383,7 @@ const AddCounterCollector = () => {
                                 list={subDivisions}
                                 required={true}
                                 value={watch('subDivision') || []}
-                                multi={formData.workingLevel === levelWIthId.SUB_DIVISION}
+                                // multi={formData.workingLevel === levelWIthId.SUB_DIVISION}
                                 onChange={(selectedValues) => {
                                     setValue('subDivision', selectedValues)
                                     if (selectedValues.length > 0) {
@@ -395,7 +401,7 @@ const AddCounterCollector = () => {
                                 list={sections}
                                 required={true}
                                 value={watch('section') || []}
-                                multi={formData.workingLevel === levelWIthId.SECTION}
+                                // multi={formData.workingLevel === levelWIthId.SECTION}
                                 onChange={(selectedValues) => setValue('section', selectedValues)}
                             />)
                     }
