@@ -13,7 +13,7 @@ import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { addReceiptsSchema } from '@/lib/zod';
 import { getLevels, getLevelsDiscomId } from '@/app/api-calls/department/api';
-import { levelWIthId, testDiscom } from '@/lib/utils';
+import { getErrorMessage, levelWIthId, testDiscom } from '@/lib/utils';
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
 import { ReceiptForPostpaid } from '@/lib/interface';
 import { createReceiptForPostpaid } from '@/app/api-calls/admin/api';
@@ -82,9 +82,9 @@ const AddReceiptsForPostpaid = () => {
                 setIsLoading(true)
                 router.push('/admin/receipt-for-postpaid')
             }
-            toast.success('Receipts submitted successfully!');
+            toast.success('Number of Receipts Rule added Successfully');
         } catch (error) {
-            toast.error('Failed to submit the form.');
+            toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsSubmitting(false);
         }
