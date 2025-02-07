@@ -222,7 +222,12 @@ const EditAgencyArea = () => {
                             multi={formData.workingLevel == levelWIthId.CIRCLE}
                             errors={errors.circle}
                             value={watch('circle') || []}
-                            onChange={(selectedValues) => setValue('circle', selectedValues)}
+                            onChange={(selectedValues) => {
+                                setValue('circle', selectedValues)
+                                if (selectedValues.length > 0) {
+                                    getDivisions(selectedValues[0]);
+                                }
+                            }}
                         />
                     }
 
@@ -235,7 +240,12 @@ const EditAgencyArea = () => {
                             disabled={formData?.circle?.length == 0}
                             errors={errors.division}
                             value={watch('division') || []}
-                            onChange={(selectedValues) => setValue('division', selectedValues)}
+                            onChange={(selectedValues) => {
+                                setValue('division', selectedValues)
+                                if (selectedValues.length > 0) {
+                                    getSubDivisions(selectedValues[0]);
+                                }
+                            }}
                         />
                     )}
 
@@ -246,11 +256,16 @@ const EditAgencyArea = () => {
                                 label="Select Sub Division"
                                 list={subDivisions}
                                 required
-                                multi={formData.workingLevel == levelWIthId.DIVISION}
+                                multi={formData.workingLevel == levelWIthId.SUB_DIVISION}
                                 disabled={formData?.division?.length == 0}
                                 errors={errors.subDivision}
                                 value={watch('subDivision') || []}
-                                onChange={(selectedValues) => setValue('subDivision', selectedValues)}
+                                onChange={(selectedValues) => {
+                                    setValue('subDivision', selectedValues)
+                                    if (selectedValues.length > 0) {
+                                        getSections(selectedValues[0]);
+                                    }
+                                }}
                             />
                         )
                     }
