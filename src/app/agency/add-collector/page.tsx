@@ -239,7 +239,7 @@ const AddCounterCollector = () => {
     console.log(formData);
 
     return (
-        <AuthUserReusableCode pageTitle="Add Counter Collector" isLoading={isLoading}>
+        <AuthUserReusableCode pageTitle="Add Collector" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                     <CustomizedInputWithLabel
@@ -254,6 +254,7 @@ const AddCounterCollector = () => {
                         label="Office Phone Number"
                         placeholder="Enter Phone Number"
                         required
+                        requiredText='(Otp will be sent to phone number)'
                         {...register('officePhoneNumber')}
                         errors={errors.officePhoneNumber}
                     />
@@ -279,21 +280,21 @@ const AddCounterCollector = () => {
                         errors={errors.toValidity}
                     />
                     <CustomizedInputWithLabel
-                        label='Maximum limit'
-                        placeholder="Enter Maximum limit"
+                        label='Maximum Limit'
+                        placeholder="Enter Maximum Limit"
                         required
                         {...register('maximumLimit', { valueAsNumber: true })}
                         errors={errors.maximumLimit}
                     />
                     <CustomizedSelectInputWithLabel
-                        label='Collector type'
+                        label='Collector Type'
                         required
                         list={collectorTypes}
                         {...register('collectorType')}
                         errors={errors.collectorType}
                     />
                     <CustomizedSelectInputWithLabel
-                        label='Collector role'
+                        label='Collector Role'
                         required
                         list={collectorRole}
                         {...register('collectorRole')}
@@ -308,7 +309,7 @@ const AddCounterCollector = () => {
                     />
 
                     <CustomizedInputWithLabel
-                        label="Initial balance"
+                        label="Initial Balance"
                         type="number"
                         placeholder="Enter Initial Balance"
                         disabled
