@@ -88,6 +88,16 @@ const rechargeAgency = async (agencyData: rechargeAgencyInterface) => {
   }
 };
 
+export const reverseRechargeAgency = async (agencyData: rechargeAgencyInterface) => {
+  try {
+    const response = await api.put('/agencies/reverse-wallet-balance', agencyData);
+    return response.data;
+  } catch (error: any) {
+    console.log(error);
+    throw error?.response?.data
+  }
+};
+
 const editAgency = async (agencyData: editAgencyInterface) => {
   try {
     const response = await api.put('/agencies/', agencyData);

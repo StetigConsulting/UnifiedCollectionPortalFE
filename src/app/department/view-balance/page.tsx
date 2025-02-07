@@ -94,7 +94,7 @@ const ViewBalance = () => {
                 <Button variant="success" size="sm" onClick={() => router.push(`${listOfUrls.agencyRecharge}?id=${item.id}`)}>
                     Recharge
                 </Button>
-                <Button variant="destructive" size="sm">
+                <Button variant="destructive" size="sm" onClick={() => router.push(`${listOfUrls.agencyRecharge}?id=${item.id}&type=${'reverse'}`)}>
                     Reverse
                 </Button>
             </div>

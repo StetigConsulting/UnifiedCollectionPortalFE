@@ -6,7 +6,7 @@ import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWi
 import { Button } from '@/components/ui/button';
 import { useForm } from 'react-hook-form';
 import React, { useEffect, useState } from 'react';
-import { getAgenciesWithDiscom, getAgencyById, rechargeAgency } from '@/app/api-calls/department/api';
+import { getAgenciesWithDiscom, getAgencyById, rechargeAgency, reverseRechargeAgency } from '@/app/api-calls/department/api';
 import { numberToWords, testDiscom } from '@/lib/utils';
 import { rechargeSchema } from '@/lib/zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -27,18 +27,30 @@ const Recharge = () => {
     const onSubmit = async (data: FormData) => {
 
         let payload = {
-            id: formData.agencyId,
-            recharge_amount: formData.amount,
-            remarks: formData.remark
+            id: data.agencyId,
+            [typeFromUrl === "reverse" ? "reverse_amount" : "recharge_amount"]: data.amount,
+            remarks: data.remark
         }
 
         try {
             setIsSubmitting(true);
-            const response = await rechargeAgency(payload);
-            toast.success("Agency recharged successfully");
+            let response;
+            if (typeFromUrl === "reverse") {
+                response = await reverseRechargeAgency(payload)
+                toast.success("Agency balance reversed successfully");
+                const url = new URL(window.location.href);
+                url.search = '';
+                window.history.pushState({}, '', url.href);
+            } else {
+                response = await rechargeAgency(payload)
+                toast.success("Agency recharged successfully");
+                const url = new URL(window.location.href);
+                url.search = '';
+                window.history.pushState({}, '', url.href);
+            }
             console.log("API Response:", response);
             reset({
-                agency: "",
+                agency: null,
                 agencyName: "",
                 agencyId: null,
                 phoneNumber: "",
@@ -100,6 +112,7 @@ const Recharge = () => {
 
     const searchParams = useSearchParams();
     const idFromUrl = searchParams.get('id');
+    const typeFromUrl = searchParams.get('type');
 
     useEffect(() => {
         if (idFromUrl) {
@@ -133,9 +146,10 @@ const Recharge = () => {
     };
 
     return (
-        <AuthUserReusableCode pageTitle="Recharge" isLoading={isLoading}>
+        <AuthUserReusableCode pageTitle={typeFromUrl == 'reverse' ? 'Reverse Agency Balance' : "Recharge"} isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
+
                     <CustomizedSelectInputWithLabel
                         label="Select Agency"
                         errors={errors.agency}
@@ -143,6 +157,7 @@ const Recharge = () => {
                         placeholder="Select Agency"
                         list={agencyList}
                         required
+                        // disabled={idFromUrl != null}
                         {...register("agency")}
                     />
                     <CustomizedInputWithLabel
