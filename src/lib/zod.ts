@@ -237,6 +237,19 @@ export const editAgencySchema = z.object({
     .regex(/^\d{10}$/, "Phone number must be exactly 10 digits"),
 });
 
+export const editAgencyAreaSchema = z.object({
+  agency: z.string().min(1, { message: "Agency is required" }),
+  agencyName: z.string().min(1, { message: "Agency Name is required" }),
+  agencyId: z.string().min(1, { message: "Agency ID is required" }),
+  workingLevel: z.string().min(1, { message: "Working Level is required" }),
+  circle: z.array(z.number()).optional(),
+  division: z.array(z.number()).optional(),
+  subDivision: z.array(z.number()).optional(),
+  section: z.array(z.number()).optional(),
+});
+
+export type EditAgencyAreaFormData = z.infer<typeof editAgencyAreaSchema>;
+
 export const extendValiditySchema = z.object({
   // circle: z.string().nonempty("Circle type is required"),
   // division: z.string().nonempty("Division is required"),
