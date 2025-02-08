@@ -58,13 +58,18 @@ const OfficeStructurePage = () => {
         <AuthUserReusableCode pageTitle="Office Structure" isLoading={loading}>
             <div className="space-y-6">
                 <ReactTable data={officeStructureData} columns={columns} avoidSrNo={true}
+                    additionalDataBetweenTableAndAction={<div className='px-4 py-2 mb-4 rounded-md bg-lightThemeColor' style={{
+                        background: 'rgba(197, 211, 233, 0.2)'
+                    }}>
+                        At least one pseudo level must be defined
+                    </div>}
                     customActionButton={<div className="flex space-x-4">
                         <CreateNewLevelPopup fetchData={fetchOfficeStructureData} currentLevel={maxLevel} />
                         <CreateNewLevelUploadPopup fetchData={fetchOfficeStructureData} />
                     </div>}
                     noPagination />
             </div>
-        </AuthUserReusableCode>
+        </AuthUserReusableCode >
     );
 };
 

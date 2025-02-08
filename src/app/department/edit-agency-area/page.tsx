@@ -9,18 +9,22 @@ import CustomizedSelectInputWithLabel from "@/components/CustomizedSelectInputWi
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import AuthUserReusableCode from "@/components/AuthUserReusableCode";
-import { getAgenciesWithDiscom, getLevels, getLevelsDiscomId } from "@/app/api-calls/department/api";
-import { levelWIthId, testDiscom } from "@/lib/utils";
+import { editAgencyAreaById, getAgenciesWithDiscom, getLevels, getLevelsDiscomId } from "@/app/api-calls/department/api";
+import { levelWIthId, testAgencyId, testDiscom } from "@/lib/utils";
 import CustomizedMultipleSelectInputWithLabelNumber from "@/components/CustomizedMultipleSelectInputWithLabelNumber";
+import { Loader2 } from "lucide-react";
 
 const EditAgencyArea = () => {
-    const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<EditAgencyAreaFormData>({
+    const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm<EditAgencyAreaFormData>({
         resolver: zodResolver(editAgencyAreaSchema),
+        defaultValues: {
+            workingLevel: null,
+        },
     });
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    // State for select dropdowns
     const [agencies, setAgencies] = useState([]);
     const [workingLevels, setWorkingLevels] = useState([]);
     const [circles, setCircles] = useState([]);
@@ -29,7 +33,6 @@ const EditAgencyArea = () => {
     const [sections, setSections] = useState([]);
 
     useEffect(() => {
-        // Fetch dropdown data from APIs
         getAgencyList()
         getLevelsDiscomId(testDiscom).then((data) => {
             setCircles(
@@ -120,19 +123,33 @@ const EditAgencyArea = () => {
 
     const onSubmit = async (data: EditAgencyAreaFormData) => {
         try {
-            setIsLoading(true);
-            // await updateAgency(data);
+            setIsSubmitting(true);
+            let payload = {
+                "agency_id": data.agencyId,
+                "working_office_structures": data.workingLevel === levelWIthId.CIRCLE
+                    ? data.circle.map(Number)
+                    : data.workingLevel === levelWIthId.DIVISION
+                        ? data.division.map(Number)
+                        : data.workingLevel === levelWIthId.SUB_DIVISION
+                            ? data.subDivision.map(Number)
+                            : data.workingLevel === levelWIthId.SECTION ? data.section.map(Number) : [],
+                "working_level": parseInt(data.workingLevel)
+            }
+            const response = await editAgencyAreaById(payload);
             toast.success("Agency details updated successfully!");
+            reset()
         } catch (error) {
             toast.error("Failed to update agency details.");
             console.error("Error:", error);
         } finally {
-            setIsLoading(false);
+            setIsSubmitting(false);
         }
     };
 
     const formData = watch()
     const selectedAgency = watch('agency')
+
+    console.log(formData);
 
     useEffect(() => {
         if (selectedAgency) {
@@ -140,7 +157,7 @@ const EditAgencyArea = () => {
             if (agency) {
                 setValue("agencyId", agency.id);
                 setValue("agencyName", agency.agency_name);
-                setValue('workingLevel', agency.working_level);
+                setValue('workingLevel', String(agency.working_level));
                 setValue('circle', [])
                 setValue('division', [])
                 setValue('subDivision', [])
@@ -176,6 +193,13 @@ const EditAgencyArea = () => {
         }
     }, [selectedAgency, agencies, setValue]);
 
+    const handleWorkingLevelChange = (e) => {
+        setValue("circle", []);
+        setValue("division", []);
+        setValue("subDivision", []);
+        setValue("section", []);
+    }
+
     return (
         <AuthUserReusableCode pageTitle="Edit Agency Area" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -210,11 +234,12 @@ const EditAgencyArea = () => {
                         label="Working Level"
                         list={workingLevels}
                         required
-                        {...register("workingLevel")}
+                        {...register("workingLevel", { onChange: handleWorkingLevelChange })}
                         errors={errors.workingLevel}
                     />
+                    {formData.workingLevel != null && <>
 
-                    {formData.workingLevel &&
+
                         <CustomizedMultipleSelectInputWithLabelNumber
                             label="Select Circle"
                             list={circles}
@@ -224,70 +249,79 @@ const EditAgencyArea = () => {
                             value={watch('circle') || []}
                             onChange={(selectedValues) => {
                                 setValue('circle', selectedValues)
-                                if (selectedValues.length > 0) {
+                                if (selectedValues.length > 0 && formData.workingLevel != (levelWIthId.CIRCLE)) {
                                     getDivisions(selectedValues[0]);
+                                    setValue('division', [])
                                 }
                             }}
                         />
-                    }
 
-                    {formData.workingLevel && formData.workingLevel != levelWIthId.CIRCLE && (
-                        <CustomizedMultipleSelectInputWithLabelNumber
-                            label="Select Division"
-                            list={divisions}
-                            required
-                            multi={formData.workingLevel == levelWIthId.DIVISION}
-                            disabled={formData?.circle?.length == 0}
-                            errors={errors.division}
-                            value={watch('division') || []}
-                            onChange={(selectedValues) => {
-                                setValue('division', selectedValues)
-                                if (selectedValues.length > 0) {
-                                    getSubDivisions(selectedValues[0]);
-                                }
-                            }}
-                        />
-                    )}
 
-                    {
-                        formData.workingLevel && (formData.workingLevel == levelWIthId.SECTION
-                            || formData.workingLevel == levelWIthId.SUB_DIVISION) && (
+                        {formData.workingLevel != (levelWIthId.CIRCLE) && (
                             <CustomizedMultipleSelectInputWithLabelNumber
-                                label="Select Sub Division"
-                                list={subDivisions}
+                                label="Select Division"
+                                list={divisions}
                                 required
-                                multi={formData.workingLevel == levelWIthId.SUB_DIVISION}
-                                disabled={formData?.division?.length == 0}
-                                errors={errors.subDivision}
-                                value={watch('subDivision') || []}
+                                multi={formData.workingLevel == (levelWIthId.DIVISION)}
+                                disabled={formData?.circle?.length == 0}
+                                errors={errors.division}
+                                value={watch('division') || []}
                                 onChange={(selectedValues) => {
-                                    setValue('subDivision', selectedValues)
-                                    if (selectedValues.length > 0) {
-                                        getSections(selectedValues[0]);
+                                    setValue('division', selectedValues)
+                                    if (selectedValues.length > 0 && formData.workingLevel != (levelWIthId.DIVISION)) {
+                                        getSubDivisions(selectedValues[0]);
+                                        setValue('subDivision', [])
                                     }
                                 }}
                             />
-                        )
-                    }
+                        )}
 
-                    {
-                        formData.workingLevel && formData.workingLevel == levelWIthId.SECTION && (
-                            <CustomizedMultipleSelectInputWithLabelNumber
-                                label="Select Section"
-                                list={sections}
-                                required
-                                multi={formData.workingLevel == levelWIthId.SECTION}
-                                disabled={formData?.subDivision?.length == 0}
-                                errors={errors.section}
-                                value={watch('section') || []}
-                                onChange={(selectedValues) => setValue('section', selectedValues)}
-                            />
-                        )
-                    }
+                        {
+                            (formData.workingLevel == (levelWIthId.SECTION)
+                                || formData.workingLevel == (levelWIthId.SUB_DIVISION)) && (
+                                <CustomizedMultipleSelectInputWithLabelNumber
+                                    label="Select Sub Division"
+                                    list={subDivisions}
+                                    required
+                                    multi={formData.workingLevel == (levelWIthId.SUB_DIVISION)}
+                                    disabled={formData?.division?.length == 0}
+                                    errors={errors.subDivision}
+                                    value={watch('subDivision') || []}
+                                    onChange={(selectedValues) => {
+                                        setValue('subDivision', selectedValues)
+                                        if (selectedValues.length > 0 && formData.workingLevel == (levelWIthId.SECTION)) {
+                                            getSections(selectedValues[0]);
+                                            setValue('section', [])
+                                        }
+                                    }}
+                                />
+                            )
+                        }
+
+                        {
+                            formData.workingLevel == (levelWIthId.SECTION) && (
+                                <CustomizedMultipleSelectInputWithLabelNumber
+                                    label="Select Section"
+                                    list={sections}
+                                    required
+                                    multi={formData.workingLevel == (levelWIthId.SECTION)}
+                                    disabled={formData?.subDivision?.length == 0}
+                                    errors={errors.section}
+                                    value={watch('section') || []}
+                                    onChange={(selectedValues) => setValue('section', selectedValues)}
+                                />
+                            )
+                        }
+                    </>}
+
                 </div>
 
                 <div className="flex justify-end mt-4">
-                    <Button type="submit">Submit</Button>
+                    <Button type="submit" variant="default" disabled={isSubmitting}>
+                        {isSubmitting ? <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
+                        </> : "Submit"}
+                    </Button>
                 </div>
             </form>
         </AuthUserReusableCode>

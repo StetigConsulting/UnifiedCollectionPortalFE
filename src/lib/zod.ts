@@ -242,7 +242,7 @@ export const editAgencySchema = z.object({
 export const editAgencyAreaSchema = z.object({
   agency: z.string().min(1, { message: "Agency is required" }),
   agencyName: z.string().min(1, { message: "Agency Name is required" }),
-  agencyId: z.string().min(1, { message: "Agency ID is required" }),
+  agencyId: z.number(),
   workingLevel: z.string().min(1, { message: "Working Level is required" }),
   circle: z.array(z.number()).optional(),
   division: z.array(z.number()).optional(),

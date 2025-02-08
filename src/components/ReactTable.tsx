@@ -24,6 +24,7 @@ interface TableProps<T> {
     additionalData?: React.ReactNode;
     noPagination?: boolean;
     onRowSelectButtons?: React.ReactNode;
+    additionalDataBetweenTableAndAction?: React.ReactNode;
     selectedRow?: any;
     isSelectable?: boolean;
     hideSearchAndOtherButtons?: boolean;
@@ -43,7 +44,8 @@ const ReactTable = <T extends Record<string, any>>({
     selectedRow,
     isSelectable = false,
     additionalData,
-    hideSearchAndOtherButtons = false
+    hideSearchAndOtherButtons = false,
+    additionalDataBetweenTableAndAction
 }: TableProps<T>) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [sortField, setSortField] = useState<keyof T | null>(null);
@@ -181,6 +183,7 @@ const ReactTable = <T extends Record<string, any>>({
                             {onRowSelectButtons}
                         </div>
                     )}
+                    {additionalDataBetweenTableAndAction && additionalDataBetweenTableAndAction}
                 </div>
             }
             <div className='overflow-x-auto w-full'>
