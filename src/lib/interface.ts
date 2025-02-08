@@ -170,3 +170,10 @@ export interface EditAgencyArea {
     working_level: number;
     working_office_structures: number[];
 }
+
+export interface EditAgentRoleArea {
+    agent_id: number;
+    collector_role: string;
+    working_office_structure: number;
+    working_level: number;
+}

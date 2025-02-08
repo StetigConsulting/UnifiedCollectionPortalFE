@@ -9,7 +9,7 @@ import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWi
 import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import { editAgentAreaFormData, editAgentAreaSchema } from '@/lib/zod';
-import { getAgentByPhoneNumber, getLevels, getLevelsDiscomId } from '@/app/api-calls/department/api';
+import { getAgentByPhoneNumber, getLevels, getLevelsDiscomId, updateAgentAreaRole } from '@/app/api-calls/department/api';
 import { collectorRolePicklist, getErrorMessage, levelWIthId, testDiscom } from '@/lib/utils';
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
 import { toast } from 'sonner';
@@ -35,9 +35,25 @@ const EditAgentAreaRoleForm = () => {
     const formData = watch();
 
     const onSubmit = async (data: editAgentAreaFormData) => {
+        if (!showRestFields) {
+            return
+        }
         try {
             setIsSubmitting(true);
-            // const response = await createAgency(agencyData);
+            let payload = {
+                "agent_id": data.agentId,
+                "collector_role": data.agentRole,
+                "working_office_structure": data.workingLevel === levelWIthId.CIRCLE
+                    ? data.circle.map(Number)[0]
+                    : data.workingLevel === levelWIthId.DIVISION
+                        ? data.division.map(Number)[0]
+                        : data.workingLevel === levelWIthId.SUB_DIVISION
+                            ? data.subDivision.map(Number)[0]
+                            : data.workingLevel === levelWIthId.SECTION ? data.section.map(Number)[0] : null,
+                "working_level": Number(data.workingLevel)
+            }
+
+            const response = await updateAgentAreaRole(payload);
             toast.success("Agency created successfully");
         } catch (error) {
             let errorMessage = getErrorMessage(error);
@@ -54,8 +70,12 @@ const EditAgentAreaRoleForm = () => {
                 setIsLoading(true);
                 const response = await getAgentByPhoneNumber(mobileNumber);
                 setValue('agentName', response.data.agent_name)
+                setValue('agentId', response.data.id)
+                setShowRestFields(true)
             } catch (error) {
-                console.error('Error: ', getErrorMessage(error));
+                let errorMessage = getErrorMessage(error);
+                toast.error('Error: ' + errorMessage)
+                setShowRestFields(false)
             } finally {
                 setIsLoading(false);
             }
@@ -68,6 +88,8 @@ const EditAgentAreaRoleForm = () => {
     const [divisions, setDivisions] = useState([]);
     const [subDivisions, setSubDivisions] = useState([]);
     const [sections, setSections] = useState([]);
+
+    const [showRestFields, setShowRestFields] = useState(false);
 
     const getCircles = (id) => {
         setIsLoading(true)
@@ -148,6 +170,9 @@ const EditAgentAreaRoleForm = () => {
         setValue("section", []);
     }
 
+    console.log(formData)
+
+
     return (
         <AuthUserReusableCode pageTitle="Edit Agent Area & Role" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -157,118 +182,120 @@ const EditAgentAreaRoleForm = () => {
                             label="Agent Mobile Number"
                             type="text"
                             {...register('agentMobileNumber', { valueAsNumber: true })}
+                            onChange={() => {
+                                setShowRestFields(false)
+                            }}
                             errors={errors.agentMobileNumber}
                         />
                     </div>
                     <div className='text-end'>
-                        <Button type="button" onClick={handleGetAgentData} disabled={!/^\d{10}$/.test(watch('agentMobileNumber')) || isLoading}>
+                        <Button type="button" onClick={handleGetAgentData} disabled={isLoading}>
                             {isLoading ? 'Loading...' : 'Search'}
                         </Button>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                    <CustomizedInputWithLabel
-                        label="Agent Name"
-                        disabled
-                        {...register('agentName')}
-                    />
-                    <CustomizedSelectInputWithLabel
-                        label='Agent Role'
-                        required
-                        list={collectorRolePicklist}
-                        {...register('agentRole')}
-                        errors={errors.agentRole}
-                    />
-                    <CustomizedSelectInputWithLabel
-                        label="Working Level"
-                        errors={errors.workingLevel}
-                        containerClass=""
-                        required={true}
-                        placeholder="Select Working level"
-                        list={workingLevel}
-                        {...register("workingLevel", { onChange: handleWorkingLevelChange })}
-                    />
-                    {formData.workingLevel &&
-                        <CustomizedMultipleSelectInputWithLabelNumber
-                            label="Circle"
-                            errors={errors.circle}
-                            required={true}
-                            list={circles}
-                            placeholder="Select Circle Type"
-                            value={watch('circle') || []}
-                            onChange={(selectedValues) => {
-                                setValue('circle', selectedValues)
-                                if (selectedValues.length > 0 && formData.workingLevel != (levelWIthId.CIRCLE)) {
-                                    getDivisions(selectedValues[0]);
-                                    setValue('division', [])
-                                }
-                            }}
-                            multi={formData.workingLevel == levelWIthId.CIRCLE}
+                {
+                    showRestFields &&
+                    <div className="grid grid-cols-2 gap-4">
+                        <CustomizedInputWithLabel
+                            label="Agent Name"
+                            disabled
+                            errors={errors.agentName}
+                            {...register('agentName')}
                         />
-                    }
-                    {formData.workingLevel && formData.workingLevel != levelWIthId.CIRCLE && (
-                        <CustomizedMultipleSelectInputWithLabelNumber
-                            label="Division"
-                            required={true}
-                            list={divisions}
-                            disabled={formData?.circle?.length == 0}
-                            value={watch('division') || []}
-                            onChange={(selectedValues) => {
-                                setValue('division', selectedValues)
-                                if (selectedValues.length > 0 && formData.workingLevel != (levelWIthId.DIVISION)) {
-                                    getSubDivisions(selectedValues[0]);
-                                    setValue('subDivision', [])
-                                }
-                            }}
-                            multi={formData.workingLevel == levelWIthId.DIVISION}
-                            errors={errors.division}
+                        <CustomizedSelectInputWithLabel
+                            label='Agent Role'
+                            required
+                            list={collectorRolePicklist}
+                            {...register('agentRole')}
+                            errors={errors.agentRole}
                         />
-                    )}
-                    {
-                        formData.workingLevel && (formData.workingLevel == levelWIthId.SECTION
-                            || formData.workingLevel == levelWIthId.SUB_DIVISION) && (
+                        <CustomizedSelectInputWithLabel
+                            label="Working Level"
+                            errors={errors.workingLevel}
+                            containerClass=""
+                            required={true}
+                            placeholder="Select Working level"
+                            list={workingLevel}
+                            {...register("workingLevel", { onChange: handleWorkingLevelChange })}
+                        />
+                        {formData.workingLevel &&
                             <CustomizedMultipleSelectInputWithLabelNumber
-                                label="Sub Division"
-                                errors={errors.subDivision}
-                                placeholder="Select Sub Division"
-                                list={subDivisions}
+                                label="Circle"
+                                errors={errors.circle}
                                 required={true}
-                                disabled={formData?.division?.length == 0}
-                                value={watch('subDivision') || []}
-                                multi={formData.workingLevel == levelWIthId.SUB_DIVISION}
+                                list={circles}
+                                placeholder="Select Circle Type"
+                                value={watch('circle') || []}
                                 onChange={(selectedValues) => {
-                                    setValue('subDivision', selectedValues)
-                                    if (selectedValues.length > 0 && formData.workingLevel == (levelWIthId.SECTION)) {
-                                        getSections(selectedValues[0]);
-                                        setValue('section', [])
+                                    setValue('circle', selectedValues)
+                                    if (selectedValues.length > 0 && formData.workingLevel != (levelWIthId.CIRCLE)) {
+                                        getDivisions(selectedValues[0]);
+                                        setValue('division', [])
                                     }
                                 }}
                             />
-                        )
-                    }
-                    {
-                        formData.workingLevel && formData.workingLevel == levelWIthId.SECTION && (
+                        }
+                        {formData.workingLevel && formData.workingLevel != levelWIthId.CIRCLE && (
                             <CustomizedMultipleSelectInputWithLabelNumber
-                                label="Section"
-                                errors={errors.section}
-                                placeholder="Select Section"
-                                list={sections}
+                                label="Division"
                                 required={true}
-                                disabled={formData?.subDivision?.length == 0}
-                                value={watch('section') || []}
-                                multi={formData.workingLevel == levelWIthId.SECTION}
-                                onChange={(selectedValues) => setValue('section', selectedValues)}
+                                list={divisions}
+                                disabled={formData?.circle?.length == 0}
+                                value={watch('division') || []}
+                                onChange={(selectedValues) => {
+                                    setValue('division', selectedValues)
+                                    if (selectedValues.length > 0 && formData.workingLevel != (levelWIthId.DIVISION)) {
+                                        getSubDivisions(selectedValues[0]);
+                                        setValue('subDivision', [])
+                                    }
+                                }}
+                                errors={errors.division}
                             />
-                        )
-                    }
-                </div>
-
-                <div className="flex justify-end">
-                    <Button type="submit" disabled={isSubmitting}>
-                        {isSubmitting ? 'Submitting...' : 'Submit'}
-                    </Button>
-                </div>
+                        )}
+                        {
+                            formData.workingLevel && (formData.workingLevel == levelWIthId.SECTION
+                                || formData.workingLevel == levelWIthId.SUB_DIVISION) && (
+                                <CustomizedMultipleSelectInputWithLabelNumber
+                                    label="Sub Division"
+                                    errors={errors.subDivision}
+                                    placeholder="Select Sub Division"
+                                    list={subDivisions}
+                                    required={true}
+                                    disabled={formData?.division?.length == 0}
+                                    value={watch('subDivision') || []}
+                                    onChange={(selectedValues) => {
+                                        setValue('subDivision', selectedValues)
+                                        if (selectedValues.length > 0 && formData.workingLevel == (levelWIthId.SECTION)) {
+                                            getSections(selectedValues[0]);
+                                            setValue('section', [])
+                                        }
+                                    }}
+                                />
+                            )
+                        }
+                        {
+                            formData.workingLevel && formData.workingLevel == levelWIthId.SECTION && (
+                                <CustomizedMultipleSelectInputWithLabelNumber
+                                    label="Section"
+                                    errors={errors.section}
+                                    placeholder="Select Section"
+                                    list={sections}
+                                    required={true}
+                                    disabled={formData?.subDivision?.length == 0}
+                                    value={watch('section') || []}
+                                    onChange={(selectedValues) => setValue('section', selectedValues)}
+                                />
+                            )
+                        }
+                        <div className="flex justify-end col-span-2">
+                            <Button type="submit" disabled={isSubmitting}>
+                                {isSubmitting ? 'Submitting...' : 'Submit'}
+                            </Button>
+                        </div>
+                    </div>
+                }
             </form>
         </AuthUserReusableCode >
     );

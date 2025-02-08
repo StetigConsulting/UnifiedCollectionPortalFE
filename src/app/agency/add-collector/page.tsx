@@ -38,6 +38,9 @@ const AddCounterCollector = () => {
 
     const [agencyData, setAgencyData] = useState({ working_level: null })
 
+    const [agencyWorkingLevel, setAgencyWorkingLevel] = useState() // maintains the working level of agency
+    const [workingLevelActualLists, setWorkingLevelActualLists] = useState([]) //this is total list of working level
+
     useEffect(() => {
         getAgencyData()
         setIsLoading(true)
@@ -89,7 +92,6 @@ const AddCounterCollector = () => {
             console.log("agencyData", agencyData);
             setAgencyData(agencyData);
 
-            // Get levels
             const levelsResponse = await getLevels(testDiscom);
             let levels = levelsResponse?.data
                 ?.filter((ite) => ite.levelType === "MAIN")
@@ -98,19 +100,15 @@ const AddCounterCollector = () => {
                     label: ite.levelName,
                 }));
 
+            setWorkingLevelActualLists(levels);
+            setAgencyWorkingLevel(agencyData?.working_level);
+
             const agencyWorkingLevel = agencyData?.working_level;
 
             console.log(levels)
 
+            handleDisplayWorkingLevel(levels, agencyWorkingLevel)
             const agencyLevel = levels.find((lvl) => lvl.value === agencyWorkingLevel);
-
-            if (agencyLevel) {
-                levels = levels.filter((lvl) => lvl.value >= agencyLevel.value);
-            }
-
-            console.log(levels, agencyLevel)
-
-            setWorkingLevel(levels);
 
             let levelData = agencyData?.working_level_offices.map((ite) => {
                 return {
@@ -154,7 +152,6 @@ const AddCounterCollector = () => {
             console.error("Error fetching agency data:", error);
         }
     };
-
 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -244,6 +241,29 @@ const AddCounterCollector = () => {
 
     console.log(formData);
 
+    const handleDisplayWorkingLevel = (levels, agencyWorkingLevel) => {
+        console.log('door to door', formData.collectorRole)
+        const agencyLevel = levels.find((lvl) => lvl.value === agencyWorkingLevel);
+
+        if (agencyLevel) {
+            if (formData.collectorRole === 'Door To Door') {
+                console.log('door to door')
+                levels = levels.filter((lvl) => lvl.value > agencyLevel.value);
+            } else {
+                levels = levels.filter((lvl) => lvl.value >= agencyLevel.value);
+            }
+        }
+
+        setWorkingLevel(levels);
+    }
+
+    useEffect(() => {
+        if (formData.collectorRole) {
+            console.log('Updated collectorRole:', formData.collectorRole);
+            handleDisplayWorkingLevel(workingLevelActualLists, agencyWorkingLevel);
+        }
+    }, [formData.collectorRole]);
+
     return (
         <AuthUserReusableCode pageTitle="Add Collector" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -304,6 +324,7 @@ const AddCounterCollector = () => {
                         required
                         list={collectorRolePicklist}
                         {...register('collectorRole')}
+                        // onChange={() => handleDisplayWorkingLevel(workingLevelActualLists, agencyWorkingLevel)}
                         errors={errors.collectorRole}
                     />
                     <CustomizedSelectInputWithLabel
