@@ -14,7 +14,7 @@ import { createCounterCollector, getCollectorTypes } from '@/app/api-calls/agenc
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
 import { Loader2 } from 'lucide-react';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
-import { agentWorkingType, collectorRole, levelWIthId, testAgencyId, testDiscom } from '@/lib/utils';
+import { agentWorkingType, collectorRolePicklist, levelWIthId, testAgencyId, testDiscom } from '@/lib/utils';
 
 const AddCounterCollector = () => {
     const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm<AddCounterCollectorFormData>({
@@ -302,7 +302,7 @@ const AddCounterCollector = () => {
                     <CustomizedSelectInputWithLabel
                         label='Collector Role'
                         required
-                        list={collectorRole}
+                        list={collectorRolePicklist}
                         {...register('collectorRole')}
                         errors={errors.collectorRole}
                     />

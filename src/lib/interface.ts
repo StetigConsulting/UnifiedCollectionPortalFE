@@ -164,3 +164,9 @@ export interface ViewHistoryPayload {
     page_size: number;
     filter: ViewHistoryFilter;
 }
+
+export interface EditAgencyArea {
+    agency_id: number;
+    working_level: number;
+    working_office_structures: number[];
+}

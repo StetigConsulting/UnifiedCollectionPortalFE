@@ -161,6 +161,11 @@ const Recharge = () => {
                         {...register("agency")}
                     />
                     <CustomizedInputWithLabel
+                        label="Maximum Possible Recharge"
+                        placeholder="Maximum Possible Recharge"
+                        disabled
+                    />
+                    <CustomizedInputWithLabel
                         label="Agency Name"
                         errors={errors.agencyName}
                         containerClass=""
