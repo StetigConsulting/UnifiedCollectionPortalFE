@@ -259,8 +259,12 @@ const AddCounterCollector = () => {
 
     useEffect(() => {
         if (formData.collectorRole) {
-            console.log('Updated collectorRole:', formData.collectorRole);
             handleDisplayWorkingLevel(workingLevelActualLists, agencyWorkingLevel);
+            setValue('workingLevel', null)
+            setValue('circle', [])
+            setValue('division', [])
+            setValue('subDivision', [])
+            setValue('section', [])
         }
     }, [formData.collectorRole]);
 
