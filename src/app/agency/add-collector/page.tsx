@@ -184,7 +184,7 @@ const AddCounterCollector = () => {
                 "collector_role": data.collectorRole
             }
             await createCounterCollector(payload, 6);
-            toast.success('Counter Collector added successfully!');
+            toast.success('Agent added successfully!');
             reset()
         } catch (error) {
             let errorMessage = error?.data ? error?.data[Object.keys(error?.data)[0]] : error?.error;
@@ -291,7 +291,6 @@ const AddCounterCollector = () => {
                     <CustomizedInputWithLabel
                         label="Personal Phone Number"
                         placeholder="Enter Phone Number"
-                        required
                         {...register('personalPhoneNumber')}
                         errors={errors.personalPhoneNumber}
                     />

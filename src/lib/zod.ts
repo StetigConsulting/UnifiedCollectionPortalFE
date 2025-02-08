@@ -393,12 +393,12 @@ export const addCounterCollectorSchema = z.object({
     .string()
     .min(1, { message: "Office phone number is required" })
     .regex(/^\d{10}$/, { message: "Office phone number must be exactly 10 digits" }),
-
   personalPhoneNumber: z
     .string()
-    .min(1, { message: "Personal phone number is required" })
-    .regex(/^\d{10}$/, { message: "Personal phone number must be exactly 10 digits" }),
-
+    .optional()
+    .refine(value => !value || /^\d{10}$/.test(value), {
+      message: "Personal phone number must be exactly 10 digits",
+    }),
   collectorType: z.string().min(1, { message: "Collector type is required" }),
   collectorRole: z.string().min(1, { message: "Collector role is required" }),
   workingType: z.string().min(1, { message: "Working type is required" }),
