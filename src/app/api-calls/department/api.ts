@@ -175,6 +175,24 @@ export const editAgencyAreaById = async (data: EditAgencyArea) => {
   }
 }
 
+export const getAgentByPhoneNumber = async (phone: number) => {
+  try {
+    const response = await api.get(`/v1/agents/primary-phone/${phone}`)
+    return response.data;
+  } catch (error: any) {
+    throw error?.response?.data
+  }
+}
+
+export const updateAgentAreaRole = async (phone: number) => {
+  try {
+    const response = await api.post(`/v1/agents/`)
+    return response.data;
+  } catch (error: any) {
+    throw error?.response?.data
+  }
+}
+
 export {
   getAllPaymentModes,
   getAllNonEnergyTypes,

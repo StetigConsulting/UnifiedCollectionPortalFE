@@ -107,7 +107,7 @@ export const listOfUrls = {
   agencyBalanceHistory: '/department/view-balance/history',
 }
 
-export const collectorRole = [
+export const collectorRolePicklist = [
   {
     label: 'Door to Door',
     value: 'Door to Door'
