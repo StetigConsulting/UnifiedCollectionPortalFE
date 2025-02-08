@@ -31,7 +31,6 @@ const CreateNewLevelUploadPopup: React.FC<CreateNewLevelUploadPopupProps> = ({ f
     });
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(event.target)
         const file = event.target.files?.[0];
         if (file) {
             setValue('file', file);

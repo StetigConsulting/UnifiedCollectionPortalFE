@@ -393,12 +393,12 @@ export const addCounterCollectorSchema = z.object({
     .string()
     .min(1, { message: "Office phone number is required" })
     .regex(/^\d{10}$/, { message: "Office phone number must be exactly 10 digits" }),
-
   personalPhoneNumber: z
     .string()
-    .min(1, { message: "Personal phone number is required" })
-    .regex(/^\d{10}$/, { message: "Personal phone number must be exactly 10 digits" }),
-
+    .optional()
+    .refine(value => !value || /^\d{10}$/.test(value), {
+      message: "Personal phone number must be exactly 10 digits",
+    }),
   collectorType: z.string().min(1, { message: "Collector type is required" }),
   collectorRole: z.string().min(1, { message: "Collector role is required" }),
   workingType: z.string().min(1, { message: "Working type is required" }),
@@ -837,7 +837,8 @@ export const editReceiptsSchema = z.object({
 });
 
 export const editAgentAreaSchema = z.object({
-  agentMobileNumber: z.string().min(10, 'Mobile number must be at least 10 digits'),
+  agentId: z.number(),
+  agentMobileNumber: z.number().min(10, 'Mobile number must be at least 10 digits'),
   agentName: z.string().nonempty('Agent Name is required'),
   agentRole: z.string().nonempty('Agent Role is required'),
   workingLevel: z.string().nonempty("Working Level is required"),

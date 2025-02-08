@@ -1,5 +1,5 @@
 import api from "@/lib/axios";
-import { AgencyDataInterface, ChangeCounterCollector, EditAgencyArea, editAgencyInterface, extendValidityInterface, rechargeAgencyInterface, ViewHistoryPayload } from "@/lib/interface";
+import { AgencyDataInterface, ChangeCounterCollector, EditAgencyArea, editAgencyInterface, EditAgentRoleArea, extendValidityInterface, rechargeAgencyInterface, ViewHistoryPayload } from "@/lib/interface";
 
 
 const getAllPaymentModes = async () => {
@@ -53,7 +53,7 @@ const createAgency = async (agencyData: AgencyDataInterface) => {
     const response = await api.post('/agencies/', agencyData);
     return response.data;
   } catch (error: any) {
-    console.log(error);
+
     throw error?.response?.data
   }
 };
@@ -63,7 +63,7 @@ const getAgenciesWithDiscom = async (Id: string) => {
     const response = await api.get(`/agencies/discom/${Id}`);
     return response.data;
   } catch (error: any) {
-    console.log(error);
+
     throw error?.response?.data
   }
 };
@@ -73,7 +73,7 @@ const getAgencyById = async (Id: string) => {
     const response = await api.get(`/agencies/${Id}`);
     return response.data;
   } catch (error: any) {
-    console.log(error);
+
     throw error?.response?.data
   }
 };
@@ -83,7 +83,7 @@ const rechargeAgency = async (agencyData: rechargeAgencyInterface) => {
     const response = await api.put('/agencies/recharge-wallet', agencyData);
     return response.data;
   } catch (error: any) {
-    console.log(error);
+
     throw error?.response?.data
   }
 };
@@ -93,7 +93,7 @@ export const reverseRechargeAgency = async (agencyData: rechargeAgencyInterface)
     const response = await api.put('/agencies/reverse-wallet-balance', agencyData);
     return response.data;
   } catch (error: any) {
-    console.log(error);
+
     throw error?.response?.data
   }
 };
@@ -103,7 +103,7 @@ const editAgency = async (agencyData: editAgencyInterface) => {
     const response = await api.put('/agencies/', agencyData);
     return response.data;
   } catch (error: any) {
-    console.log(error);
+
     throw error?.response?.data
   }
 };
@@ -113,7 +113,7 @@ const activateAgencyAccount = async (agencyData: number) => {
     const response = await api.put('/agencies/activate', { id: agencyData });
     return response.data;
   } catch (error: any) {
-    console.log(error);
+
     throw error?.response?.data
   }
 };
@@ -123,7 +123,7 @@ const deactivateAgencyAccountAPI = async (agencyData: number) => {
     const response = await api.put('/agencies/deactivate', { id: agencyData });
     return response.data;
   } catch (error: any) {
-    console.log(error);
+
     throw error?.response?.data
   }
 };
@@ -133,7 +133,7 @@ const extendValidity = async (agencyData: extendValidityInterface) => {
     const response = await api.put('/agencies/extend-validity', agencyData);
     return response.data;
   } catch (error: any) {
-    console.log(error);
+
     throw error?.response?.data
   }
 };
@@ -143,7 +143,7 @@ const getAgentDetailsById = async (data: number) => {
     const response = await api.get(`/v1/agents/${data}`);
     return response.data;
   } catch (error: any) {
-    console.log(error);
+
     throw error?.response?.data
   }
 };
@@ -184,9 +184,9 @@ export const getAgentByPhoneNumber = async (phone: number) => {
   }
 }
 
-export const updateAgentAreaRole = async (phone: number) => {
+export const updateAgentAreaRole = async (data: EditAgentRoleArea) => {
   try {
-    const response = await api.post(`/v1/agents/`)
+    const response = await api.put(`/v1/agents/change-role`, data)
     return response.data;
   } catch (error: any) {
     throw error?.response?.data

@@ -19,7 +19,6 @@ export const generateCaptcha = () => {
 };
 
 export const formatDate = (dateString: string): string => {
-  console.log(dateString)
   const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: 'long',
@@ -110,7 +109,7 @@ export const listOfUrls = {
 export const collectorRolePicklist = [
   {
     label: 'Door to Door',
-    value: 'Door to Door'
+    value: 'Door To Door'
   },
   {
     label: 'Counter Collector',

@@ -10,7 +10,7 @@ export const createCounterCollector = async (data: AddCounterCollector, user_id:
         });
         return response.data;
     } catch (error: any) {
-        console.log(error);
+
         throw error?.response?.data
     }
 };
@@ -20,7 +20,7 @@ export const getAllAgentByAgencyId = async (id: number) => {
         const response = await api.get(`/v1/agents/agency/${id}`);
         return response.data;
     } catch (error) {
-        console.log(error);
+
         throw error?.response?.data
     }
 }
@@ -34,7 +34,7 @@ export const activateAgentById = async (id: number, user_id: number) => {
         });
         return response.data;
     } catch (error) {
-        console.log(error);
+
         throw error?.response?.data
     }
 }
@@ -48,7 +48,7 @@ export const deactivateAgentById = async (id: number, user_id: number) => {
         });
         return response.data;
     } catch (error) {
-        console.log(error);
+
         throw error?.response?.data
     }
 }
@@ -62,7 +62,7 @@ export const rechargeAgentById = async (data: RechargeAgent, user_id: number) =>
         });
         return response.data;
     } catch (error) {
-        console.log(error);
+
         throw error?.response?.data
     }
 }
@@ -72,7 +72,7 @@ export const getRechargeableBalance = async (id: number) => {
         const response = await api.get(`/v1/agents/display-balance/${id}`);
         return response.data;
     } catch (error) {
-        console.log(error);
+
         throw error?.response?.data
     }
 }
@@ -86,7 +86,7 @@ export const extendAgentValidityById = async (data: ExtendAgentValidity, user_id
         });
         return response.data;
     } catch (error) {
-        console.log(error);
+
         throw error?.response?.data
     }
 }
@@ -96,7 +96,7 @@ export const getCollectorTypes = async () => {
         const response = await api.get(`/v1/collector-types/`);
         return response.data;
     } catch (error) {
-        console.log(error);
+
         throw error?.response?.data
     }
 }

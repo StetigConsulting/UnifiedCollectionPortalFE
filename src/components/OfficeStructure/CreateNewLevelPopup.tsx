@@ -60,7 +60,6 @@ const CreateNewLevelPopup: React.FC<CreateNewLevelPopupProps> = ({ fetchData, cu
 
             if (!response.ok) {
                 const errorData = await response.json();
-                console.log(errorData);
                 const errorMessage =
                     errorData?.error || errorData?.message || 'Failed to create level.';
                 throw new Error(errorMessage);
