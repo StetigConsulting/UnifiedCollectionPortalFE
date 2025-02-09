@@ -184,6 +184,7 @@ export const rechargeSchema = z.object({
   agency: z.union([z.string(), z.number()])
     .transform((val) => Number(val))
     .refine((val) => !isNaN(val), { message: "Agency must be a valid number" }),
+  maxRecharge: z.number(),
   agencyName: z.string().optional(),
   agencyId: z.number().optional(),
   phoneNumber: z.string().optional(),
