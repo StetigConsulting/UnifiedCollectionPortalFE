@@ -62,8 +62,15 @@ const BillBasis = () => {
         setIsLoading(true);
         try {
             const response = await getColorCodingBillBasis(testDiscom);
-            setColorLogicEntries(response?.data);
-            console.log(response);
+
+            let data = response?.data.flatMap(item =>
+                item.json_rule.bill_basis.map(bill => ({
+                    ...item,
+                    ...bill,
+                    json_rule: undefined
+                }))
+            );
+            setColorLogicEntries(data);
         } catch (error) {
             console.error('Failed to get agency:', error);
         } finally {
