@@ -104,6 +104,7 @@ const Recharge = () => {
             if (agency) {
                 setValue('agencyName', agency.agency_name || '');
                 setValue('agencyId', agency.id || '');
+                setValue('maxRecharge', agency.maximum_limit || null);
                 setValue('phoneNumber', agency.phone || '');
                 setValue('currentBalance', agency.current_balance || 0);
             }
@@ -163,6 +164,7 @@ const Recharge = () => {
                     <CustomizedInputWithLabel
                         label="Maximum Possible Recharge"
                         placeholder="Maximum Possible Recharge"
+                        {...register("maxRecharge")}
                         disabled
                     />
                     <CustomizedInputWithLabel
