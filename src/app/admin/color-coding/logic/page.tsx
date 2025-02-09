@@ -5,9 +5,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Loader2, Pencil, Trash2 } from 'lucide-react';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
-import ReactTable from '@/components/ReactTable'; // Referencing your reusable table component
+import ReactTable from '@/components/ReactTable';
 import { toast } from 'sonner';
-import TabForRouting from '@/components/ColorCoding/TabForRouting';
 import { deleteBusinessRule, getBusinessRuleDateById, getColorCodingBillBasis, getColorCodingLogic } from '@/app/api-calls/admin/api';
 import { testDiscom } from '@/lib/utils';
 

@@ -268,6 +268,10 @@ const AddCounterCollector = () => {
         }
     }, [formData.collectorRole]);
 
+    const handlePersonalPhoneSameAsOffice = () => {
+        setValue('personalPhoneNumber', formData.officePhoneNumber)
+    }
+
     return (
         <AuthUserReusableCode pageTitle="Add Collector" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -293,6 +297,10 @@ const AddCounterCollector = () => {
                         placeholder="Enter Phone Number"
                         {...register('personalPhoneNumber')}
                         errors={errors.personalPhoneNumber}
+                        additionAction={<div className='flex gap-2 text-end'>
+                            <label className='text-themeColor flex-1' onClick={handlePersonalPhoneSameAsOffice}>Same as Office Phone Number</label>
+                            <input type="checkbox" className='self-center' onClick={handlePersonalPhoneSameAsOffice} />
+                        </div>}
                     />
                     <CustomizedInputWithLabel
                         label="Validity Start Date"
