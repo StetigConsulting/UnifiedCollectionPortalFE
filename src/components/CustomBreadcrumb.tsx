@@ -5,6 +5,7 @@ import { SidebarTrigger } from './ui/sidebar'
 import { LogOut } from 'lucide-react';
 import { handleSignOut } from '@/app/actions/authActions';
 import { Button } from './ui/button';
+import { Card } from './ui/card';
 
 interface CustomBreadcrumbProps {
     pageTitle: string;
@@ -19,8 +20,8 @@ const CustomBreadcrumb: React.FC<CustomBreadcrumbProps> = ({ pageTitle, children
     };
 
     return (
-        <div className='flex flex-col h-screen'>
-            <header className="flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 border-b px-4">
+        <div className='flex flex-col h-screen bg-lightThemeColor p-2'>
+            <Card className="flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 border-b px-4">
                 <SidebarTrigger className="-ml-1" />
                 <Button
                     data-sidebar="trigger"
@@ -45,17 +46,15 @@ const CustomBreadcrumb: React.FC<CustomBreadcrumbProps> = ({ pageTitle, children
                         </BreadcrumbItem>
                     </BreadcrumbList>
                 </Breadcrumb>
-            </header>
-            <header className="p-4">
+            </Card>
+            <header className="p-4 bg-lightThemeColor">
                 <h1 className="text-2xl font-bold">{pageTitle}</h1>
             </header>
-            <div className="flex-1 overflow-auto p-4" style={{ backgroundColor: '#80808021' }}>
-                <div
-                // style={{ padding: '15px' }}
-                >
-                    {children}
-                </div>
-            </div>
+            <Card className="flex-1 overflow-auto p-4"
+            // style={{ backgroundColor: '#80808021' }}
+            >
+                {children}
+            </Card>
         </div >
     )
 }
