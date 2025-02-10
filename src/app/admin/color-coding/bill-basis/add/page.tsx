@@ -137,13 +137,13 @@ const AddBillBasis = () => {
                     <div key={field.id} className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
                             <CustomizedSelectInputWithLabel
-                                label="Select Font type"
+                                label="Select Bill Type"
                                 list={fontType}
                                 {...register(`fonts.${index}.fontType`)}
                                 errors={errors.fonts?.[index]?.fontType}
                             />
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Select Background Color</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Select Bill Font Color</label>
                                 <div className="flex items-center space-x-2">
                                     <div className="w-full">
                                         <CustomizedInputWithLabel
