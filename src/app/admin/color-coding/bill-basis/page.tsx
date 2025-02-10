@@ -17,9 +17,9 @@ const BillBasis = () => {
     const [colorLogicEntries, setColorLogicEntries] = useState([]);
 
     const columns = [
-        { label: 'Font ID', key: 'id', sortable: true },
+        // { label: 'Font ID', key: 'id', sortable: true },
         { label: 'Font', key: 'bill_type', sortable: true },
-        { label: 'BG Color', key: 'color_code', sortable: true },
+        { label: 'BG Color', key: 'bg_color_code', sortable: true },
         {
             label: 'Action',
             key: 'action',
@@ -29,6 +29,7 @@ const BillBasis = () => {
 
     const tableData = colorLogicEntries.map((item, index) => ({
         ...item,
+        bg_color_code: <div style={{ backgroundColor: item.color_code, width: '100%', height: '20px' }}></div>,
         action: <div className='flex gap-2'>
             <Trash2 className='cursor-pointer h-5 w-5' onClick={() => handleDelete(item.id)} />
             <Pencil className='cursor-pointer h-5 w-5' onClick={() => handleEdit(item.id)} />
@@ -79,7 +80,7 @@ const BillBasis = () => {
     }
 
     return (
-        <AuthUserReusableCode pageTitle="Bill basis" isLoading={isLoading}>
+        <AuthUserReusableCode pageTitle="Bill Basis" isLoading={isLoading}>
             {/* <TabForRouting router={router} /> */}
             <ReactTable
                 data={tableData}
@@ -87,14 +88,17 @@ const BillBasis = () => {
                 hideSearchAndOtherButtons
             />
 
-            <div className="mt-6 text-end space-x-4">
-                <Button variant="outline" type="button" onClick={() => router.back()}>
-                    Cancel
-                </Button>
-                <Button variant="default" onClick={() => router.push('/admin/color-coding/bill-basis/add')}>
-                    Add
-                </Button>
-            </div>
+            {
+                tableData.length == 0 && <div className="mt-6 text-end space-x-4">
+                    <Button variant="outline" type="button" onClick={() => router.back()}>
+                        Cancel
+                    </Button>
+                    <Button variant="default" onClick={() => router.push('/admin/color-coding/bill-basis/add')}>
+                        Add
+                    </Button>
+                </div>
+            }
+
         </AuthUserReusableCode>
     );
 };

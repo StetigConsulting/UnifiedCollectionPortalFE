@@ -9,6 +9,7 @@ import ReactTable from '@/components/ReactTable';
 import { toast } from 'sonner';
 import { deleteBusinessRule, getBusinessRuleDateById, getColorCodingBillBasis, getColorCodingLogic } from '@/app/api-calls/admin/api';
 import { testDiscom } from '@/lib/utils';
+import moment from 'moment';
 
 const ColorCodingLogic = () => {
     const router = useRouter();
@@ -17,7 +18,7 @@ const ColorCodingLogic = () => {
 
     const columns = [
         { label: 'Color Coding ID', key: 'id', sortable: true },
-        { label: 'Order ID', key: 'order', sortable: true },
+        { label: 'Order', key: 'order', sortable: true },
         { label: 'Value 1', key: 'R1_value', sortable: true },
         { label: 'Value 2', key: 'R2_value', sortable: true },
         { label: 'BG Color', key: 'color_code', sortable: true },
@@ -77,10 +78,10 @@ const ColorCodingLogic = () => {
                         office_name: rule.office_structure.office_description,
                         order: range.order,
                         R1_type: range.R1.type,
-                        R1_value: range.R1.value,
+                        R1_value: range.R1.type === 'DATE' ? moment(range.R1.value, "DD-MM-YYYY", true).format('DD/MM/YYYY') : range.R1.value,
                         R2_type: range.R2.type,
-                        R2_value: range.R2.value,
-                        color_code: range.color_code,
+                        R2_value: range.R2.type === 'DATE' ? moment(range.R2.value, "DD-MM-YYYY", true).format('DD/MM/YYYY') : range.R2.value,
+                        color_code: <div style={{ backgroundColor: range.color_code, width: '100%', height: '20px' }}></div>,
                         created_on: rule.created_on,
                         modified_on: rule.modified_on,
                         is_active: rule.is_active,

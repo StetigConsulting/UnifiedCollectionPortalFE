@@ -298,7 +298,7 @@ const AddCounterCollector = () => {
                         {...register('personalPhoneNumber')}
                         errors={errors.personalPhoneNumber}
                         additionAction={<div className='flex gap-2 text-end'>
-                            <label className='text-themeColor flex-1' onClick={handlePersonalPhoneSameAsOffice}>Same as Office Phone Number</label>
+                            <label className='text-themeColor flex-1 text-sm font-medium mt-1' onClick={handlePersonalPhoneSameAsOffice}>Same as Office Phone Number</label>
                             <input type="checkbox" className='self-center' onClick={handlePersonalPhoneSameAsOffice} />
                         </div>}
                     />
