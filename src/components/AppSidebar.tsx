@@ -271,7 +271,7 @@ const data = {
 export function AppSidebar() {
   return (
     <Sidebar>
-      <SidebarHeader>
+      <SidebarHeader className="bg-lightThemeColor">
         <Image
           alt=""
           width={150}
@@ -288,7 +288,7 @@ export function AppSidebar() {
       <SidebarFooter>
         {/* <NavUser user={data.user} /> */}
       </SidebarFooter>
-      <SidebarRail />
+      {/* <SidebarRail /> */}
     </Sidebar>
   );
 }
