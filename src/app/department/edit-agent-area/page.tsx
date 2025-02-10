@@ -21,6 +21,8 @@ const EditAgentAreaRoleForm = () => {
         setValue,
         watch,
         formState: { errors },
+        setError,
+        clearErrors
     } = useForm<editAgentAreaFormData>({
         resolver: zodResolver(editAgentAreaSchema)
     });
@@ -80,6 +82,12 @@ const EditAgentAreaRoleForm = () => {
             } finally {
                 setIsLoading(false);
             }
+        } else {
+            setError("agentMobileNumber", {
+                type: "manual",
+                message: "Please enter a valid 10-digit mobile number.",
+            });
+            return;
         }
     }
 
@@ -252,6 +260,7 @@ const EditAgentAreaRoleForm = () => {
                             type="text"
                             {...register('agentMobileNumber', { valueAsNumber: true })}
                             onChange={() => {
+                                clearErrors("agentMobileNumber")
                                 setShowRestFields(false)
                             }}
                             errors={errors.agentMobileNumber}

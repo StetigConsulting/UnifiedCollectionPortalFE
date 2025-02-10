@@ -11,8 +11,8 @@ import { Button } from "@/components/ui/button";
 import AuthUserReusableCode from "@/components/AuthUserReusableCode";
 import { Loader2 } from "lucide-react";
 import { getAllAgentByAgencyId, getRechargeableBalance, rechargeAgentById } from "@/app/api-calls/agency/api";
-import { numberToWords, testAgencyId } from "@/lib/utils";
-import { getAgencyById } from "@/app/api-calls/department/api";
+import { getErrorMessage, numberToWords, testAgencyId } from "@/lib/utils";
+import { getAgencyById, getAgentByPhoneNumber } from "@/app/api-calls/department/api";
 
 const RechargeEntry = () => {
     const {
@@ -21,6 +21,8 @@ const RechargeEntry = () => {
         formState: { errors },
         setValue,
         watch,
+        setError,
+        clearErrors,
         reset
     } = useForm<RechargeCollectorFormData>({
         resolver: zodResolver(rechargeSchemaCollector),
@@ -111,91 +113,135 @@ const RechargeEntry = () => {
         }
     }, [selectedAgency, agencies, setValue]);
 
+    const [showRestFields, setShowRestFields] = useState(false);
+
+    const handleGetAgentData = async () => {
+        const mobileNumber = Number(watch('collectorMobile'));
+        if (!isNaN(mobileNumber) && mobileNumber.toString().length === 10) {
+            try {
+                setIsLoading(true);
+                const response = await getAgentByPhoneNumber(mobileNumber);
+                setValue('agencyName', response.data.agent_name)
+                setValue('agencyId', response.data.id)
+                setValue('phoneNumber', response.data.primary_phone || '');
+                setValue('transactionType', 'Recharge')
+                setValue('currentBalance', response.data.current_balance);
+                setShowRestFields(true)
+            } catch (error) {
+                let errorMessage = getErrorMessage(error);
+                toast.error('Error: ' + errorMessage)
+                setShowRestFields(false)
+            } finally {
+                setIsLoading(false);
+            }
+        } else {
+            setError("collectorMobile", {
+                type: "manual",
+                message: "Please enter a valid 10-digit mobile number.",
+            });
+            return;
+        }
+    }
+
     return (
-        <AuthUserReusableCode pageTitle="Recharge Entry" isLoading={isLoading}>
+        <AuthUserReusableCode pageTitle="Recharge Agent" isLoading={isLoading}>
             <div className="mb-4 p-2 bg-lightThemeColor rounded-md">
-                <span className="text-lg">
+                <span className="text-sm">
                     Available Balance For Recharge : ₹ {rechargeAbleBalance}
                 </span>
             </div>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                    <CustomizedSelectInputWithLabel
-                        label="Collector Mobile"
-                        list={agencies}
-                        required={true}
-                        errors={errors.collectorMobile}
-                        containerClass="col-span-2"
-                        {...register("collectorMobile")}
-                    />
-                    <CustomizedInputWithLabel
-                        label="Agency ID"
-                        required={true}
-                        errors={errors.agencyId}
-                        disabled
-                        {...register("agencyId")}
-                    />
-                    <CustomizedInputWithLabel
-                        label="Phone Number"
-                        required={true}
-                        errors={errors.phoneNumber}
-                        disabled
-                        {...register("phoneNumber")}
-                    />
-                    <CustomizedInputWithLabel
-                        label="Agency Name"
-                        required={true}
-                        errors={errors.agencyName}
-                        disabled
-                        {...register("agencyName")}
-                    />
-                    <CustomizedInputWithLabel
-                        label="Transaction Type"
-                        required={true}
-                        errors={errors.transactionType}
-                        disabled
-                        {...register("transactionType")}
-                    />
-                    <CustomizedInputWithLabel
-                        label="Amount"
-                        required={true}
-                        errors={errors.amount}
-                        placeholder="Enter Amount"
-                        type="number"
-                        {...register("amount", { valueAsNumber: true })}
-                    />
-
-                    <CustomizedInputWithLabel
-                        label="Current Balance"
-                        required={true}
-                        errors={errors.currentBalance}
-                        placeholder="Current Balance"
-                        type="number"
-                        disabled
-                        {...register("currentBalance")}
-                    />
-                    <CustomizedInputWithLabel
-                        label="Remark"
-                        containerClass="col-span-2"
-                        errors={errors.remark}
-                        placeholder="Any Remark"
-                        {...register("remark")}
-                    />
-                </div>
-
-                <div className="mt-4 p-4 border rounded-md flex bg-white">
-                    <div className='flex-1 capitalize'>
-                        <p>Recharge Amount: <span className='text-green-800'>{numberToWords(formData.amount)}</span></p>
-                        <p>Current Balance: {numberToWords(formData.currentBalance)}</p>
+                <div className='space-y-2'>
+                    <div className="col-span-2">
+                        <CustomizedInputWithLabel
+                            label="Collector Mobile"
+                            type="text"
+                            {...register('collectorMobile', { valueAsNumber: true })}
+                            onChange={() => {
+                                clearErrors("collectorMobile")
+                                setShowRestFields(false)
+                            }}
+                            errors={errors.collectorMobile}
+                        />
                     </div>
-                    <div className='self-center'>
-                        <Button type="submit" variant="default" disabled={isSubmitting}>
-                            {isSubmitting ? <>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
-                            </> : "Submit"}
+                    <div className='text-end'>
+                        <Button type="button" onClick={handleGetAgentData} disabled={isLoading}>
+                            {isLoading ? 'Loading...' : 'Search'}
                         </Button>
                     </div>
                 </div>
+                {showRestFields && <>
+                    <div className="grid grid-cols-2 gap-4">
+                        <CustomizedInputWithLabel
+                            label="Agency ID"
+                            required={true}
+                            errors={errors.agencyId}
+                            disabled
+                            {...register("agencyId")}
+                        />
+                        <CustomizedInputWithLabel
+                            label="Phone Number"
+                            required={true}
+                            errors={errors.phoneNumber}
+                            disabled
+                            {...register("phoneNumber")}
+                        />
+                        <CustomizedInputWithLabel
+                            label="Agency Name"
+                            required={true}
+                            errors={errors.agencyName}
+                            disabled
+                            {...register("agencyName")}
+                        />
+                        <CustomizedInputWithLabel
+                            label="Transaction Type"
+                            required={true}
+                            errors={errors.transactionType}
+                            disabled
+                            {...register("transactionType")}
+                        />
+                        <CustomizedInputWithLabel
+                            label="Amount"
+                            required={true}
+                            errors={errors.amount}
+                            placeholder="Enter Amount"
+                            type="number"
+                            {...register("amount", { valueAsNumber: true })}
+                        />
+
+                        <CustomizedInputWithLabel
+                            label="Current Balance"
+                            required={true}
+                            errors={errors.currentBalance}
+                            placeholder="Current Balance"
+                            type="number"
+                            disabled
+                            {...register("currentBalance")}
+                        />
+                        <CustomizedInputWithLabel
+                            label="Remark"
+                            containerClass="col-span-2"
+                            errors={errors.remark}
+                            placeholder="Any Remark"
+                            {...register("remark")}
+                        />
+                    </div>
+
+                    <div className="mt-4 p-4 border rounded-md flex bg-white">
+                        <div className='flex-1 capitalize'>
+                            <p>Recharge Amount: <span className='text-green-800'>{numberToWords(formData.amount)}</span></p>
+                            <p>Current Balance: {numberToWords(formData.currentBalance)}</p>
+                        </div>
+                        <div className='self-center'>
+                            <Button type="submit" variant="default" disabled={isSubmitting}>
+                                {isSubmitting ? <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
+                                </> : "Submit"}
+                            </Button>
+                        </div>
+                    </div>
+                </>
+                }
             </form>
         </AuthUserReusableCode>
     );
