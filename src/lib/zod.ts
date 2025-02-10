@@ -389,7 +389,7 @@ export type AddCollectorFormData = z.infer<typeof addCollectorSchema>;
 
 export const addCounterCollectorSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
-
+  isPersonalNumberSameAsOffice: z.boolean().optional(),
   officePhoneNumber: z
     .string()
     .min(1, { message: "Office phone number is required" })

@@ -20,7 +20,8 @@ const AddCounterCollector = () => {
     const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm<AddCounterCollectorFormData>({
         resolver: zodResolver(addCounterCollectorSchema),
         defaultValues: {
-            initialBalance: 0
+            initialBalance: 0,
+            isPersonalNumberSameAsOffice: false
         },
     });
 
@@ -269,7 +270,14 @@ const AddCounterCollector = () => {
     }, [formData.collectorRole]);
 
     const handlePersonalPhoneSameAsOffice = () => {
-        setValue('personalPhoneNumber', formData.officePhoneNumber)
+        console.log(formData)
+        if (formData.isPersonalNumberSameAsOffice === false) {
+            setValue('isPersonalNumberSameAsOffice', true)
+            setValue('personalPhoneNumber', formData.officePhoneNumber)
+        } else {
+            setValue('isPersonalNumberSameAsOffice', false)
+            setValue('personalPhoneNumber', '')
+        }
     }
 
     return (
@@ -298,8 +306,11 @@ const AddCounterCollector = () => {
                         {...register('personalPhoneNumber')}
                         errors={errors.personalPhoneNumber}
                         additionAction={<div className='flex gap-2 text-end'>
-                            <label className='text-themeColor flex-1 text-sm font-medium mt-1' onClick={handlePersonalPhoneSameAsOffice}>Same as Office Phone Number</label>
-                            <input type="checkbox" className='self-center' onClick={handlePersonalPhoneSameAsOffice} />
+                            <label className='text-themeColor flex-1 text-sm font-medium mt-1'
+                            // onClick={handlePersonalPhoneSameAsOffice}
+                            >Same as Office Phone Number</label>
+                            <input type="checkbox"
+                                className='self-center' onClick={handlePersonalPhoneSameAsOffice} />
                         </div>}
                     />
                     <CustomizedInputWithLabel
