@@ -2,16 +2,22 @@
 
 import * as React from "react";
 import {
+  Ban,
   Calendar,
   CreditCard,
   Edit,
   Eye,
   Folder,
+  FolderClosed,
   FolderSync,
   Gauge,
+  Import,
   LogOut,
+  Merge,
   MonitorCog,
   NotepadText,
+  PiggyBank,
+  ReceiptText,
   UserCogIcon,
   UserPlus2,
   Volume2Icon,
@@ -87,7 +93,7 @@ const data = {
         },
         {
           title: "View Collector",
-          icon: UserPlus2,
+          icon: Eye,
           url: "/agency/view-collector",
         },
         {
@@ -121,13 +127,13 @@ const data = {
         {
           title: 'Department User',
           url: '/admin/department-user',
-          icon: Gauge,
+          icon: UserPlus2,
           path: '/admin/department-user'
         },
         {
           title: 'Office Structure',
           url: '/admin/office-structure',
-          icon: Gauge,
+          icon: FolderClosed,
           path: '/admin/office-stucture'
         },
         {
@@ -139,19 +145,19 @@ const data = {
         {
           title: 'Denied to pay',
           url: '/admin/denied-to-pay',
-          icon: Gauge,
+          icon: Ban,
           path: '/admin/denied-to-pay',
         },
         {
           title: 'Non energy type',
           url: '/admin/non-energy-type',
-          icon: Gauge,
+          icon: Merge,
           path: '/admin/non-energy-type',
         },
         {
           title: 'Add Collector type',
           url: '/admin/add-collector-type',
-          icon: Gauge,
+          icon: Merge,
           path: '/admin/add-collector-type',
         },
         {
@@ -163,19 +169,19 @@ const data = {
         {
           title: 'Incentive',
           url: '/admin/incentive',
-          icon: Gauge,
+          icon: PiggyBank,
           path: '/admin/incentive',
         },
         {
           title: 'Import',
           url: '/admin/import',
-          icon: Gauge,
+          icon: Import,
           path: '/admin/import',
         },
         {
           title: 'Receipt for Postpaid',
           url: '/admin/receipt-for-postpaid',
-          icon: Gauge,
+          icon: ReceiptText,
           path: '/admin/receipt-for-postpaid',
         },
       ],

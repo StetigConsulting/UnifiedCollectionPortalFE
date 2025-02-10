@@ -12,6 +12,7 @@ export default {
 			colors: {
 				themeColor: '#6183C3',
 				lightThemeColor: '#E6EDF6',
+				themeShade3: '#C5D3E9',
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				card: {
