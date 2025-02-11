@@ -73,6 +73,8 @@ const EditAgentAreaRoleForm = () => {
                 const response = await getAgentByPhoneNumber(mobileNumber);
                 setValue('agentName', response.data.agent_name)
                 setValue('agentId', response.data.id)
+                setValue('agentRole', response.data.collector_role)
+                setValue('workingLevel', response.data.working_level)
                 getAgencyData(response?.data?.agency?.id)
                 setShowRestFields(true)
             } catch (error) {
