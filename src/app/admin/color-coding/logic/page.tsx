@@ -21,7 +21,7 @@ const ColorCodingLogic = () => {
         { label: 'Order', key: 'order', sortable: true },
         { label: 'Value 1', key: 'R1_value', sortable: true },
         { label: 'Value 2', key: 'R2_value', sortable: true },
-        { label: 'BG Color', key: 'color_code', sortable: true },
+        { label: 'Bill Background Color', key: 'color_code', sortable: true },
         {
             label: 'Action',
             key: 'action',

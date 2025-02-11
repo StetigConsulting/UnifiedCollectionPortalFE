@@ -13,6 +13,8 @@ import { editAgencyAreaById, getAgenciesWithDiscom, getLevels, getLevelsDiscomId
 import { levelWIthId, testAgencyId, testDiscom } from "@/lib/utils";
 import CustomizedMultipleSelectInputWithLabelNumber from "@/components/CustomizedMultipleSelectInputWithLabelNumber";
 import { Loader2 } from "lucide-react";
+import AlertPopup from "@/components/Agency/ViewAgency/AlertPopup";
+import AlertPopupWithState from "@/components/Agency/ViewAgency/AlertPopupWithState";
 
 const EditAgencyArea = () => {
     const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm<EditAgencyAreaFormData>({
@@ -121,19 +123,19 @@ const EditAgencyArea = () => {
 
     }
 
-    const onSubmit = async (data: EditAgencyAreaFormData) => {
+    const onSubmit = async () => {
         try {
             setIsSubmitting(true);
             let payload = {
-                "agency_id": data.agencyId,
-                "working_office_structures": data.workingLevel === levelWIthId.CIRCLE
-                    ? data.circle.map(Number)
-                    : data.workingLevel === levelWIthId.DIVISION
-                        ? data.division.map(Number)
-                        : data.workingLevel === levelWIthId.SUB_DIVISION
-                            ? data.subDivision.map(Number)
-                            : data.workingLevel === levelWIthId.SECTION ? data.section.map(Number) : [],
-                "working_level": parseInt(data.workingLevel)
+                "agency_id": formData.agencyId,
+                "working_office_structures": formData.workingLevel === levelWIthId.CIRCLE
+                    ? formData.circle.map(Number)
+                    : formData.workingLevel === levelWIthId.DIVISION
+                        ? formData.division.map(Number)
+                        : formData.workingLevel === levelWIthId.SUB_DIVISION
+                            ? formData.subDivision.map(Number)
+                            : formData.workingLevel === levelWIthId.SECTION ? formData.section.map(Number) : [],
+                "working_level": parseInt(formData.workingLevel)
             }
             const response = await editAgencyAreaById(payload);
             toast.success("Agency details updated successfully!");
@@ -199,6 +201,8 @@ const EditAgencyArea = () => {
         setValue("subDivision", []);
         setValue("section", []);
     }
+
+    const [stateForConfirmationPopup, setStateForConfirmationPopup] = useState(false);
 
     return (
         <AuthUserReusableCode pageTitle="Edit Agency Area" isLoading={isLoading}>
@@ -317,11 +321,34 @@ const EditAgencyArea = () => {
                 </div>
 
                 <div className="flex justify-end mt-4">
-                    <Button type="submit" variant="default" disabled={isSubmitting}>
+                    <AlertPopupWithState
+                        triggerCode={
+                            <Button
+                                variant="default"
+                                disabled={isSubmitting}
+                                onClick={handleSubmit((e) => { setStateForConfirmationPopup(true); })}
+                            >
+                                {isSubmitting ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
+                                    </>
+                                ) : (
+                                    "Submit"
+                                )}
+                            </Button>
+                        }
+                        handleContinue={handleSubmit(onSubmit)}
+                        title="Update Agency"
+                        description="Are you sure you want to update the Agency Working Area?"
+                        continueButtonText="Yes"
+                        isOpen={stateForConfirmationPopup}
+                        setIsOpen={setStateForConfirmationPopup}
+                    />
+                    {/* <Button type="submit" variant="default" disabled={isSubmitting}>
                         {isSubmitting ? <>
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
                         </> : "Submit"}
-                    </Button>
+                    </Button> */}
                 </div>
             </form>
         </AuthUserReusableCode>

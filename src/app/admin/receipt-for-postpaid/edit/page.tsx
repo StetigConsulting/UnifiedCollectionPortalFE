@@ -207,6 +207,7 @@ const EditReceiptsForPostpaid = () => {
                 receiptsPerDay: response?.data?.json_rule?.receipt_per_day_per_bill,
                 allowSecondReceipt: response?.data?.json_rule?.second_receipt_different_payment_mode,
             }
+            setValue('configRule', response?.data?.rule_level);
             setValue('receipts', [payload]);
         } catch (error) {
             console.error("Failed to create agency:", error.data[Object.keys(error.data)[0]]);
@@ -223,68 +224,72 @@ const EditReceiptsForPostpaid = () => {
                 <div className="space-y-4">
                     {receipts.map((_, index) => (
                         <div key={index} className="grid grid-cols-2 gap-4 p-4 rounded-lg">
-                            <CustomizedSelectInputWithLabel
-                                label="Applicable Level"
-                                list={listOfApplicableLevel}
-                                {...register(`receipts.${index}.applicableLevel`)}
-                                errors={errors?.receipts?.[index]?.applicableLevel}
-                                onChange={(e) => handleLevelChange(index, e.target.value)}
-                            />
-                            {receipts[index].applicableLevel &&
-                                <CustomizedMultipleSelectInputWithLabelNumber
-                                    label="Circle"
-                                    errors={errors?.receipts?.[index]?.circle}
-                                    required={true}
-                                    list={listOfPicklist[index]?.circle}
-                                    placeholder="Select Circle Type"
-                                    value={watch(`receipts.${index}.circle`) || []}
-                                    // onChange={(selectedValues) => setValue(`receipts.${index}.circle`, selectedValues)}
-                                    onChange={(selectedValues) => handleCircleChange(index, selectedValues, receipts[index].applicableLevel)}
-                                // multi={receipts[index].applicableLevel == levelWIthId.CIRCLE}
-                                />
-                            }
-                            {receipts[index].applicableLevel && receipts[index].applicableLevel != levelWIthId.CIRCLE && (
-                                <CustomizedMultipleSelectInputWithLabelNumber
-                                    label="Division"
-                                    required={true}
-                                    list={listOfPicklist[index]?.division}
-                                    disabled={receipts[index]?.circle?.length == 0}
-                                    value={watch(`receipts.${index}.division`) || []}
-                                    // onChange={(selectedValues) => setValue(`receipts.${index}.division`, selectedValues)}
-                                    onChange={(selectedValues) => handleDivisionChange(index, selectedValues, receipts[index].applicableLevel)}
-                                    // multi={receipts[index].applicableLevel == levelWIthId.DIVISION}
-                                    errors={errors?.receipts?.[index]?.division}
-                                />
-                            )}
-                            {receipts[index].applicableLevel && (receipts[index].applicableLevel == levelWIthId.SECTION
-                                || receipts[index].applicableLevel == levelWIthId.SUB_DIVISION) && (
-                                    <CustomizedMultipleSelectInputWithLabelNumber
-                                        label="Sub Division"
-                                        required={true}
-                                        list={listOfPicklist[index]?.subDivision}
-                                        disabled={receipts[index]?.division?.length == 0}
-                                        value={watch(`receipts.${index}.subDivision`) || []}
-                                        onChange={(selectedValues) => handleSubDivisionChange(index, selectedValues, receipts[index].applicableLevel)}
-                                        // onChange={(selectedValues) => setValue(`receipts.${index}.subDivision`, selectedValues)}
-                                        // multi={receipts[index].applicableLevel == levelWIthId.DIVISION}
-                                        errors={errors?.receipts?.[index]?.subDivision}
+                            {configRule === 'Levelwise' &&
+                                <>
+                                    <CustomizedSelectInputWithLabel
+                                        label="Applicable Level"
+                                        list={listOfApplicableLevel}
+                                        {...register(`receipts.${index}.applicableLevel`)}
+                                        errors={errors?.receipts?.[index]?.applicableLevel}
+                                        onChange={(e) => handleLevelChange(index, e.target.value)}
                                     />
-                                )}
-                            {
-                                receipts[index].applicableLevel && receipts[index].applicableLevel == levelWIthId.SECTION && (
-                                    <CustomizedMultipleSelectInputWithLabelNumber
-                                        label="Section"
-                                        containerClass='col-span-2'
-                                        errors={errors?.receipts?.[index]?.section}
-                                        placeholder="Select Section"
-                                        list={listOfPicklist[index]?.section}
-                                        required={true}
-                                        disabled={receipts[index]?.subDivision?.length == 0}
-                                        value={watch(`receipts.${index}.section`) || []}
-                                        // multi={receipts[index]?.applicableLevel == levelWIthId.SECTION}
-                                        onChange={(selectedValues) => setValue(`receipts.${index}.section`, selectedValues)}
-                                    />
-                                )
+                                    {receipts[index].applicableLevel &&
+                                        <CustomizedMultipleSelectInputWithLabelNumber
+                                            label="Circle"
+                                            errors={errors?.receipts?.[index]?.circle}
+                                            required={true}
+                                            list={listOfPicklist[index]?.circle}
+                                            placeholder="Select Circle Type"
+                                            value={watch(`receipts.${index}.circle`) || []}
+                                            // onChange={(selectedValues) => setValue(`receipts.${index}.circle`, selectedValues)}
+                                            onChange={(selectedValues) => handleCircleChange(index, selectedValues, receipts[index].applicableLevel)}
+                                        // multi={receipts[index].applicableLevel == levelWIthId.CIRCLE}
+                                        />
+                                    }
+                                    {receipts[index].applicableLevel && receipts[index].applicableLevel != levelWIthId.CIRCLE && (
+                                        <CustomizedMultipleSelectInputWithLabelNumber
+                                            label="Division"
+                                            required={true}
+                                            list={listOfPicklist[index]?.division}
+                                            disabled={receipts[index]?.circle?.length == 0}
+                                            value={watch(`receipts.${index}.division`) || []}
+                                            // onChange={(selectedValues) => setValue(`receipts.${index}.division`, selectedValues)}
+                                            onChange={(selectedValues) => handleDivisionChange(index, selectedValues, receipts[index].applicableLevel)}
+                                            // multi={receipts[index].applicableLevel == levelWIthId.DIVISION}
+                                            errors={errors?.receipts?.[index]?.division}
+                                        />
+                                    )}
+                                    {receipts[index].applicableLevel && (receipts[index].applicableLevel == levelWIthId.SECTION
+                                        || receipts[index].applicableLevel == levelWIthId.SUB_DIVISION) && (
+                                            <CustomizedMultipleSelectInputWithLabelNumber
+                                                label="Sub Division"
+                                                required={true}
+                                                list={listOfPicklist[index]?.subDivision}
+                                                disabled={receipts[index]?.division?.length == 0}
+                                                value={watch(`receipts.${index}.subDivision`) || []}
+                                                onChange={(selectedValues) => handleSubDivisionChange(index, selectedValues, receipts[index].applicableLevel)}
+                                                // onChange={(selectedValues) => setValue(`receipts.${index}.subDivision`, selectedValues)}
+                                                // multi={receipts[index].applicableLevel == levelWIthId.DIVISION}
+                                                errors={errors?.receipts?.[index]?.subDivision}
+                                            />
+                                        )}
+                                    {
+                                        receipts[index].applicableLevel && receipts[index].applicableLevel == levelWIthId.SECTION && (
+                                            <CustomizedMultipleSelectInputWithLabelNumber
+                                                label="Section"
+                                                containerClass='col-span-2'
+                                                errors={errors?.receipts?.[index]?.section}
+                                                placeholder="Select Section"
+                                                list={listOfPicklist[index]?.section}
+                                                required={true}
+                                                disabled={receipts[index]?.subDivision?.length == 0}
+                                                value={watch(`receipts.${index}.section`) || []}
+                                                // multi={receipts[index]?.applicableLevel == levelWIthId.SECTION}
+                                                onChange={(selectedValues) => setValue(`receipts.${index}.section`, selectedValues)}
+                                            />
+                                        )
+                                    }
+                                </>
                             }
                             <CustomizedInputWithLabel
                                 label="Receipts per month against one bill"

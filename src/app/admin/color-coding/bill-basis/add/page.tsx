@@ -172,9 +172,12 @@ const AddBillBasis = () => {
                 ))}
 
                 <div className="mt-6 flex justify-end space-x-4">
-                    <Button variant="outline" type="button" onClick={() => append({ fontType: '', fontColor: '' })}>
-                        + Add More
-                    </Button>
+                    {
+                        fields.length < 2 &&
+                        <Button variant="outline" type="button" onClick={() => append({ fontType: '', fontColor: '' })}>
+                            + Add More
+                        </Button>
+                    }
                     <Button variant="outline" type="button" onClick={() => router.back()}>
                         Cancel
                     </Button>
