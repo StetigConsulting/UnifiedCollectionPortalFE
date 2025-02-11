@@ -107,8 +107,9 @@ const RechargeEntry = () => {
                 setValue('agencyId', agency.id || null);
                 setValue('agencyName', agency.agent_name || '');
                 setValue('phoneNumber', agency.primary_phone || '');
-                setValue('transactionType', 'Reacharge')
+                setValue('transactionType', 'Recharge')
                 setValue('currentBalance', agency.current_balance);
+                setValue('maximumRecharge', agency.maximum_limit)
             }
         }
     }, [selectedAgency, agencies, setValue]);
@@ -126,6 +127,7 @@ const RechargeEntry = () => {
                 setValue('phoneNumber', response.data.primary_phone || '');
                 setValue('transactionType', 'Recharge')
                 setValue('currentBalance', response.data.current_balance);
+                setValue('maximumRecharge', response?.data?.maximum_limit)
                 setShowRestFields(true)
             } catch (error) {
                 let errorMessage = getErrorMessage(error);
@@ -147,7 +149,7 @@ const RechargeEntry = () => {
         <AuthUserReusableCode pageTitle="Recharge Agent" isLoading={isLoading}>
             <div className="mb-4 p-2 bg-lightThemeColor rounded-md">
                 <span className="text-sm">
-                    Available Balance For Recharge : ₹ {rechargeAbleBalance}
+                    Available Agency Balance For Recharge : ₹ {rechargeAbleBalance}
                 </span>
             </div>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -159,6 +161,11 @@ const RechargeEntry = () => {
                             {...register('collectorMobile', { valueAsNumber: true })}
                             onChange={() => {
                                 clearErrors("collectorMobile")
+                                setValue('agencyId', null)
+                                setValue('agencyName', '')
+                                setValue('phoneNumber', null)
+                                setValue('transactionType', null)
+                                setValue('currentBalance', null)
                                 setShowRestFields(false)
                             }}
                             errors={errors.collectorMobile}
@@ -170,77 +177,88 @@ const RechargeEntry = () => {
                         </Button>
                     </div>
                 </div>
-                {showRestFields && <>
-                    <div className="grid grid-cols-2 gap-4">
-                        <CustomizedInputWithLabel
-                            label="Agency ID"
-                            required={true}
-                            errors={errors.agencyId}
-                            disabled
-                            {...register("agencyId")}
-                        />
-                        <CustomizedInputWithLabel
-                            label="Phone Number"
-                            required={true}
-                            errors={errors.phoneNumber}
-                            disabled
-                            {...register("phoneNumber")}
-                        />
-                        <CustomizedInputWithLabel
-                            label="Agency Name"
-                            required={true}
-                            errors={errors.agencyName}
-                            disabled
-                            {...register("agencyName")}
-                        />
-                        <CustomizedInputWithLabel
-                            label="Transaction Type"
-                            required={true}
-                            errors={errors.transactionType}
-                            disabled
-                            {...register("transactionType")}
-                        />
-                        <CustomizedInputWithLabel
-                            label="Amount"
-                            required={true}
-                            errors={errors.amount}
-                            placeholder="Enter Amount"
-                            type="number"
-                            {...register("amount", { valueAsNumber: true })}
-                        />
+                {
+                    // showRestFields &&
+                    <>
+                        <div className="grid grid-cols-2 gap-4">
+                            <CustomizedInputWithLabel
+                                label="Agency ID"
+                                required={true}
+                                errors={errors.agencyId}
+                                disabled
+                                {...register("agencyId")}
+                            />
+                            <CustomizedInputWithLabel
+                                label="Phone Number"
+                                required={true}
+                                errors={errors.phoneNumber}
+                                disabled
+                                {...register("phoneNumber")}
+                            />
+                            <CustomizedInputWithLabel
+                                label="Agency Name"
+                                required={true}
+                                errors={errors.agencyName}
+                                disabled
+                                {...register("agencyName")}
+                            />
+                            <CustomizedInputWithLabel
+                                label="Transaction Type"
+                                required={true}
+                                errors={errors.transactionType}
+                                disabled
+                                {...register("transactionType")}
+                            />
+                            <CustomizedInputWithLabel
+                                label="Maximum Recharge Possible"
+                                required={true}
+                                errors={errors.maximumRecharge}
+                                type="number"
+                                {...register("maximumRecharge", { valueAsNumber: true })}
+                            />
+                            <CustomizedInputWithLabel
+                                label="Amount"
+                                required={true}
+                                errors={errors.amount}
+                                placeholder="Enter Amount"
+                                disabled={!showRestFields}
+                                type="number"
+                                {...register("amount", { valueAsNumber: true })}
+                            />
 
-                        <CustomizedInputWithLabel
-                            label="Current Balance"
-                            required={true}
-                            errors={errors.currentBalance}
-                            placeholder="Current Balance"
-                            type="number"
-                            disabled
-                            {...register("currentBalance")}
-                        />
-                        <CustomizedInputWithLabel
-                            label="Remark"
-                            containerClass="col-span-2"
-                            errors={errors.remark}
-                            placeholder="Any Remark"
-                            {...register("remark")}
-                        />
-                    </div>
+                            <CustomizedInputWithLabel
+                                label="Current Balance"
+                                required={true}
+                                errors={errors.currentBalance}
+                                placeholder="Current Balance"
+                                type="number"
+                                disabled
+                                {...register("currentBalance")}
+                            />
+                            <CustomizedInputWithLabel
+                                label="Remark"
+                                containerClass="col-span-2"
+                                errors={errors.remark}
+                                disabled={!showRestFields}
+                                placeholder="Any Remark"
+                                {...register("remark")}
+                            />
+                        </div>
 
-                    <div className="mt-4 p-4 border rounded-md flex bg-white">
-                        <div className='flex-1 capitalize'>
-                            <p>Recharge Amount: <span className='text-green-800'>{numberToWords(formData.amount)}</span></p>
-                            <p>Current Balance: {numberToWords(formData.currentBalance)}</p>
+                        <div className="mt-4 p-4 border rounded-md flex bg-white">
+                            <div className='flex-1 capitalize'>
+                                <p>Recharge Amount: <span className='text-green-800'>{numberToWords(formData.amount)}</span></p>
+                                <p>Current Balance: {numberToWords(formData.currentBalance)}</p>
+                            </div>
+                            <div className='self-center'>
+                                <Button type="submit" variant="default" disabled={isSubmitting || !showRestFields}>
+                                    {isSubmitting ? <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
+                                    </> : "Submit"}
+                                </Button>
+                            </div>
                         </div>
-                        <div className='self-center'>
-                            <Button type="submit" variant="default" disabled={isSubmitting}>
-                                {isSubmitting ? <>
-                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
-                                </> : "Submit"}
-                            </Button>
-                        </div>
-                    </div>
-                </>
+                    </>
                 }
             </form>
         </AuthUserReusableCode>

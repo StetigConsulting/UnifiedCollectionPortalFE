@@ -389,7 +389,7 @@ export type AddCollectorFormData = z.infer<typeof addCollectorSchema>;
 
 export const addCounterCollectorSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
-
+  isPersonalNumberSameAsOffice: z.boolean().optional(),
   officePhoneNumber: z
     .string()
     .min(1, { message: "Office phone number is required" })
@@ -474,6 +474,7 @@ export const rechargeSchemaCollector = z.object({
   agencyId: z.number(),
   agencyName: z.string().min(1, "Agency Name is required"),
   phoneNumber: z.string().min(10, "Phone Number should be 10 digits"),
+  maximumRecharge: z.number().positive("Maximum recharge must be greater than 0"),
   amount: z.number().positive("Amount must be greater than 0"),
   transactionType: z.string(),
   currentBalance: z.number(),
@@ -840,9 +841,9 @@ export const editReceiptsSchema = z.object({
 export const editAgentAreaSchema = z.object({
   agentId: z.number(),
   agentMobileNumber: z.number().min(10, 'Mobile number must be at least 10 digits'),
-  agentName: z.string().nonempty('Agent Name is required'),
+  agentName: z.string().optional(),
   agentRole: z.string().nonempty('Agent Role is required'),
-  workingLevel: z.string().nonempty("Working Level is required"),
+  workingLevel: z.number().min(1, "Working Level is required"),
   circle: z.array(z.number()).optional(),
   division: z.array(z.number()).optional(),
   subDivision: z.array(z.number()).optional(),

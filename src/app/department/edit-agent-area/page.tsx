@@ -10,9 +10,11 @@ import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import { editAgentAreaFormData, editAgentAreaSchema } from '@/lib/zod';
 import { getAgencyById, getAgentByPhoneNumber, getLevels, getLevelsDiscomId, updateAgentAreaRole } from '@/app/api-calls/department/api';
-import { collectorRolePicklist, getErrorMessage, levelWIthId, testDiscom } from '@/lib/utils';
+import { collectorRolePicklist, getErrorMessage, levelWIthIdInt, testDiscom } from '@/lib/utils';
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
 import { toast } from 'sonner';
+import AlertPopupWithState from '@/components/Agency/ViewAgency/AlertPopupWithState';
+import { Loader2 } from 'lucide-react';
 
 const EditAgentAreaRoleForm = () => {
     const {
@@ -22,6 +24,7 @@ const EditAgentAreaRoleForm = () => {
         watch,
         formState: { errors },
         setError,
+        reset,
         clearErrors
     } = useForm<editAgentAreaFormData>({
         resolver: zodResolver(editAgentAreaSchema)
@@ -45,19 +48,21 @@ const EditAgentAreaRoleForm = () => {
             let payload = {
                 "agent_id": data.agentId,
                 "collector_role": data.agentRole,
-                "working_office_structure": data.workingLevel === levelWIthId.CIRCLE
-                    ? data.circle.map(Number)[0]
-                    : data.workingLevel === levelWIthId.DIVISION
-                        ? data.division.map(Number)[0]
-                        : data.workingLevel === levelWIthId.SUB_DIVISION
-                            ? data.subDivision.map(Number)[0]
-                            : data.workingLevel === levelWIthId.SECTION ? data.section.map(Number)[0] : null,
-                "working_level": Number(data.workingLevel)
+                "working_office_structure": data.workingLevel === levelWIthIdInt.CIRCLE
+                    ? data?.circle?.map(Number)[0]
+                    : data?.workingLevel === levelWIthIdInt.DIVISION
+                        ? data?.division?.map(Number)[0]
+                        : data?.workingLevel === levelWIthIdInt.SUB_DIVISION
+                            ? data?.subDivision?.map(Number)[0]
+                            : data?.workingLevel === levelWIthIdInt.SECTION ? data?.section?.map(Number)[0] : null,
+                "working_level": Number(data?.workingLevel)
             }
 
             const response = await updateAgentAreaRole(payload);
-            toast.success("Agency created successfully");
+            reset()
+            toast.success("Agent updated successfully");
         } catch (error) {
+            console.log(error);
             let errorMessage = getErrorMessage(error);
             toast.error('Error: ' + errorMessage)
         } finally {
@@ -73,9 +78,42 @@ const EditAgentAreaRoleForm = () => {
                 const response = await getAgentByPhoneNumber(mobileNumber);
                 setValue('agentName', response.data.agent_name)
                 setValue('agentId', response.data.id)
+                setValue('agentRole', response.data.collector_role)
+                setValue('workingLevel', (response.data.working_level))
+                setValue('circle', [])
+                setValue('division', [])
+                setValue('subDivision', [])
+                setValue('section', [])
+                let workingLevel = response.data.working_level
+                let workingLevelOffices = response.data.working_level_office
+                console.log(workingLevel, workingLevelOffices)
+                if (workingLevel == levelWIthIdInt.CIRCLE) {
+                    const level = [workingLevelOffices?.id];
+                    getCircles(testDiscom)
+                    setValue("circle", level.length > 0 ? level : []);
+                }
+                if (workingLevel == levelWIthIdInt.DIVISION) {
+                    const level = [workingLevelOffices?.id];
+                    let parentId = workingLevelOffices?.parent_office_id;
+                    getDivisions(parentId)
+                    setValue("division", level.length > 0 ? level : []);
+                }
+                if (workingLevel == levelWIthIdInt.SUB_DIVISION) {
+                    const level = [workingLevelOffices?.id];
+                    let parentId = workingLevelOffices?.parent_office_id;
+                    getSubDivisions(parentId)
+                    setValue("subDivision", level.length > 0 ? level : []);
+                }
+                if (workingLevel == levelWIthIdInt.SECTION) {
+                    const level = [workingLevelOffices?.id];
+                    let parentId = workingLevelOffices?.parent_office_id;
+                    getSections(parentId)
+                    setValue("section", level.length > 0 ? level : []);
+                }
                 getAgencyData(response?.data?.agency?.id)
                 setShowRestFields(true)
             } catch (error) {
+                console.log(error);
                 let errorMessage = getErrorMessage(error);
                 toast.error('Error: ' + errorMessage)
                 setShowRestFields(false)
@@ -184,13 +222,13 @@ const EditAgentAreaRoleForm = () => {
             };
         })
 
-        if (agencyWorkingLevel == levelWIthId.CIRCLE) {
+        if (agencyWorkingLevel == levelWIthIdInt.CIRCLE) {
             setCircles(levelData)
-        } else if (agencyWorkingLevel == levelWIthId.DIVISION) {
+        } else if (agencyWorkingLevel == levelWIthIdInt.DIVISION) {
             setDivisions(levelData)
-        } else if (agencyWorkingLevel == levelWIthId.SUB_DIVISION) {
+        } else if (agencyWorkingLevel == levelWIthIdInt.SUB_DIVISION) {
             setSubDivisions(levelData)
-        } else if (agencyWorkingLevel == levelWIthId.CIRCLE) {
+        } else if (agencyWorkingLevel == levelWIthIdInt.CIRCLE) {
             setSections(levelData)
         }
     }
@@ -204,7 +242,6 @@ const EditAgentAreaRoleForm = () => {
         try {
             const agencyResponse = await getAgencyById(String(id));
             const agencyData = agencyResponse.data;
-            console.log("agencyData", agencyData);
             setAgencyData(agencyData);
 
             const levelsResponse = await getLevels(testDiscom);
@@ -234,7 +271,6 @@ const EditAgentAreaRoleForm = () => {
 
         if (agencyLevel) {
             if (formData.agentRole === 'Door To Door') {
-                console.log('door to door')
                 levels = levels.filter((lvl) => lvl.value > agencyLevel.value);
             } else {
                 levels = levels.filter((lvl) => lvl.value >= agencyLevel.value);
@@ -250,6 +286,10 @@ const EditAgentAreaRoleForm = () => {
         }
     }, [formData.agentRole]);
 
+    console.log(formData, workingLevel)
+
+    const [stateForConfirmationPopup, setStateForConfirmationPopup] = useState(false);
+
     return (
         <AuthUserReusableCode pageTitle="Edit Agent Area & Role" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -261,6 +301,9 @@ const EditAgentAreaRoleForm = () => {
                             {...register('agentMobileNumber', { valueAsNumber: true })}
                             onChange={() => {
                                 clearErrors("agentMobileNumber")
+                                setValue('agentName', '')
+                                setValue('workingLevel', null)
+                                setValue('agentRole', '')
                                 setShowRestFields(false)
                             }}
                             errors={errors.agentMobileNumber}
@@ -274,7 +317,7 @@ const EditAgentAreaRoleForm = () => {
                 </div>
 
                 {
-                    showRestFields &&
+                    // showRestFields &&
                     <div className="grid grid-cols-2 gap-4">
                         <CustomizedInputWithLabel
                             label="Agent Name"
@@ -285,6 +328,7 @@ const EditAgentAreaRoleForm = () => {
                         <CustomizedSelectInputWithLabel
                             label='Agent Role'
                             required
+                            disabled={!showRestFields}
                             list={collectorRolePicklist}
                             {...register('agentRole')}
                             errors={errors.agentRole}
@@ -292,13 +336,13 @@ const EditAgentAreaRoleForm = () => {
                         <CustomizedSelectInputWithLabel
                             label="Working Level"
                             errors={errors.workingLevel}
-                            containerClass=""
+                            disabled={!showRestFields}
                             required={true}
                             placeholder="Select Working level"
                             list={workingLevel}
-                            {...register("workingLevel", { onChange: handleWorkingLevelChange })}
+                            {...register("workingLevel", { valueAsNumber: true, onChange: handleWorkingLevelChange })}
                         />
-                        {formData.workingLevel && agencyData.working_level == parseInt(levelWIthId.CIRCLE) &&
+                        {formData.workingLevel != null && agencyData.working_level == (levelWIthIdInt.CIRCLE) &&
                             <CustomizedMultipleSelectInputWithLabelNumber
                                 label="Circle"
                                 errors={errors.circle}
@@ -308,15 +352,15 @@ const EditAgentAreaRoleForm = () => {
                                 value={watch('circle') || []}
                                 onChange={(selectedValues) => {
                                     setValue('circle', selectedValues)
-                                    if (selectedValues.length > 0 && formData.workingLevel != (levelWIthId.CIRCLE)) {
+                                    if (selectedValues.length > 0 && formData.workingLevel != (levelWIthIdInt.CIRCLE)) {
                                         getDivisions(selectedValues[0]);
                                         setValue('division', [])
                                     }
                                 }}
                             />
                         }
-                        {formData.workingLevel && agencyData.working_level != parseInt(levelWIthId.CIRCLE) &&
-                            agencyData.working_level == parseInt(levelWIthId.DIVISION) && (
+                        {formData.workingLevel != null && agencyData.working_level != (levelWIthIdInt.CIRCLE) &&
+                            agencyData.working_level == (levelWIthIdInt.DIVISION) && (
                                 <CustomizedMultipleSelectInputWithLabelNumber
                                     label="Division"
                                     required={true}
@@ -324,7 +368,7 @@ const EditAgentAreaRoleForm = () => {
                                     value={watch('division') || []}
                                     onChange={(selectedValues) => {
                                         setValue('division', selectedValues)
-                                        if (selectedValues.length > 0 && formData.workingLevel != (levelWIthId.DIVISION)) {
+                                        if (selectedValues.length > 0 && formData.workingLevel != (levelWIthIdInt.DIVISION)) {
                                             getSubDivisions(selectedValues[0]);
                                             setValue('subDivision', [])
                                         }
@@ -333,10 +377,8 @@ const EditAgentAreaRoleForm = () => {
                                 />
                             )}
                         {
-                            formData.workingLevel && (agencyData.working_level == parseInt(levelWIthId.SUB_DIVISION)
-                                || agencyData.working_level == parseInt(levelWIthId.SECTION))
-                            && (formData.workingLevel == levelWIthId.SECTION
-                                || formData.workingLevel == levelWIthId.SUB_DIVISION) && (
+                            formData.workingLevel != null && (agencyData.working_level == (levelWIthIdInt.SUB_DIVISION))
+                            && (formData.workingLevel == levelWIthIdInt.SUB_DIVISION) && (
                                 <CustomizedMultipleSelectInputWithLabelNumber
                                     label="Sub Division"
                                     errors={errors.subDivision}
@@ -346,7 +388,7 @@ const EditAgentAreaRoleForm = () => {
                                     value={watch('subDivision') || []}
                                     onChange={(selectedValues) => {
                                         setValue('subDivision', selectedValues)
-                                        if (selectedValues.length > 0 && formData.workingLevel == (levelWIthId.SECTION)) {
+                                        if (selectedValues.length > 0 && formData.workingLevel == (levelWIthIdInt.SECTION)) {
                                             getSections(selectedValues[0]);
                                             setValue('section', [])
                                         }
@@ -355,7 +397,7 @@ const EditAgentAreaRoleForm = () => {
                             )
                         }
                         {
-                            formData.workingLevel && formData.workingLevel == levelWIthId.SECTION && (
+                            formData.workingLevel != null && formData.workingLevel == levelWIthIdInt.SECTION && (
                                 <CustomizedMultipleSelectInputWithLabelNumber
                                     label="Section"
                                     errors={errors.section}
@@ -368,9 +410,32 @@ const EditAgentAreaRoleForm = () => {
                             )
                         }
                         <div className="flex justify-end col-span-2">
-                            <Button type="submit" disabled={isSubmitting}>
+                            <AlertPopupWithState
+                                triggerCode={
+                                    <Button
+                                        variant="default"
+                                        disabled={isSubmitting || !showRestFields}
+                                        onClick={handleSubmit((e) => { setStateForConfirmationPopup(true); })}
+                                    >
+                                        {isSubmitting ? (
+                                            <>
+                                                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
+                                            </>
+                                        ) : (
+                                            "Submit"
+                                        )}
+                                    </Button>
+                                }
+                                handleContinue={handleSubmit(onSubmit)}
+                                title="Update Agent"
+                                description="Are you sure you want to update the Agent Working Area/Role?"
+                                continueButtonText="Yes"
+                                isOpen={stateForConfirmationPopup}
+                                setIsOpen={setStateForConfirmationPopup}
+                            />
+                            {/* <Button type="submit" disabled={isSubmitting || !showRestFields}>
                                 {isSubmitting ? 'Submitting...' : 'Submit'}
-                            </Button>
+                            </Button> */}
                         </div>
                     </div>
                 }

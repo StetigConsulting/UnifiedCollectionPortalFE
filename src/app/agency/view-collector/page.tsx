@@ -7,13 +7,14 @@ import ReactTable from "@/components/ReactTable";
 import AuthUserReusableCode from "@/components/AuthUserReusableCode";
 import { UserRoundMinus, UserRoundPlus } from "lucide-react";
 import { activateAgentById, deactivateAgentById, getAllAgentByAgencyId } from "@/app/api-calls/agency/api";
-
-// API calls (commented out for now)
-// import { activateCollector, deactivateCollector, fetchCollectors } from "@/app/api-calls/collector/api"; 
+import { getLevels } from "@/app/api-calls/department/api";
+import { testDiscom } from "@/lib/utils";
+import AlertPopup from "@/components/Agency/ViewAgency/AlertPopup";
 
 const ViewCollector = () => {
     const [collectors, setCollectors] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [workingLevelList, setWorkingLevelList] = useState([])
 
     useEffect(() => {
         loadCollectors();
@@ -25,10 +26,27 @@ const ViewCollector = () => {
             const response = await getAllAgentByAgencyId(30)//hardcoded
             const updatedCollectors = response.data.map((item) => ({
                 ...item,
-                workingLevelOffcie: item.working_level_office.office_description
+                workingLevelOffice: item.working_level_office.office_description
             }));
 
-            setCollectors(updatedCollectors);
+            const discomList = await getLevels(testDiscom);
+            const listOfLevel = discomList.data.reduce((acc, item) => {
+                acc[item.id] = item.levelName;
+                return acc;
+            }, {});
+            const levelOptions = discomList.data.map((item) => ({
+                label: item.levelName,
+                value: item.levelName,
+            }));
+            let data = [{ label: 'All', value: 'all' }, ...levelOptions];
+            setWorkingLevelList(data)
+
+            setCollectors(updatedCollectors?.map((item) => {
+                return {
+                    ...item,
+                    workingOffice: listOfLevel[item.working_level] || 'N/A',
+                }
+            }));
         } catch (error) {
             toast.error("Failed to load collectors.");
             console.error("Error fetching collectors:", error);
@@ -55,10 +73,10 @@ const ViewCollector = () => {
         setIsLoading(true);
         try {
             await deactivateAgentById(id, 6);//harcoded
-            toast.success("Collector deactivated successfully.");
+            toast.success("Agent deactivated successfully.");
             loadCollectors();
         } catch (error) {
-            toast.error("Failed to deactivate the collector.");
+            toast.error("Failed to deactivate the Agent.");
             console.error("Error deactivating collector:", error);
         } finally {
             setIsLoading(false);
@@ -69,7 +87,8 @@ const ViewCollector = () => {
         { label: "Action", key: "action", sortable: false, ignored: true },
         { label: "Mobile Number", key: "primary_phone", sortable: true },
         { label: "Name", key: "agent_name", sortable: true },
-        { label: "Working level office", key: "workingLevelOffcie", sortable: true },
+        { label: "Working Office", key: "workingOffice", sortable: true },
+        { label: "Working level office", key: "workingLevelOffice", sortable: true },
         { label: "Maximum Limit", key: "maximum_limit", sortable: true },
         { label: "Balance", key: "current_balance", sortable: true },
         { label: "From Validity", key: "validity_from_date", sortable: true },
@@ -80,11 +99,18 @@ const ViewCollector = () => {
         ...item,
         action: item.is_active ? (
             <div className="flex gap-2">
-                <UserRoundMinus className="text-red-500 cursor-pointer" onClick={() => deactivateAgent(item.id)} />
+                <AlertPopup triggerCode={<UserRoundMinus className="text-red-500 cursor-pointer" />} handleContinue={() => deactivateAgent(item.id)}
+                    title='Confirm Deactivating' description={`Are you sure you want to deactivate ${item?.agent_name}?`}
+                    continueButtonText='Confirm'
+                />
             </div>
         ) : (
             <div className="flex gap-2">
-                <UserRoundPlus className="text-themeColor cursor-pointer" onClick={() => activateAgent(item.id)} />
+                <AlertPopup triggerCode={<UserRoundPlus className="text-themeColor cursor-pointer" />} handleContinue={() => activateAgent(item.id)}
+                    title='Confirm Activating' description={`Are you sure you want to activate ${item?.agent_name}?`}
+                    continueButtonText='Confirm'
+                />
+
             </div>
         ),
     }));

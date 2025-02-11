@@ -84,7 +84,7 @@ const ViewHistory = () => {
                 {item.newBalance - item.previousBalance > 0 ? `+${item.newBalance - item.previousBalance}` : item.newBalance - item.previousBalance}
             </p>,
         payDate: moment(item.createdOn).format('DD-MM-YYYY'),
-        entryDate: moment(item.createdOn).format('DD-MM-YYYY'),
+        entryDate: moment(item.createdOn).format('DD-MM-YYYY, HH:mm A'),
     }));
 
 
@@ -117,6 +117,7 @@ const ViewHistory = () => {
                 </div>}
                 data={tableData}
                 columns={columns}
+                fileName='ViewAgencyHistory'
             />
 
         </AuthUserReusableCode >

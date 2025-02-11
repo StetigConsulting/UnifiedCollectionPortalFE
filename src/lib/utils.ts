@@ -39,6 +39,14 @@ export const levelWIthId = {
   "Pratik Test": '50'
 }
 
+export const levelWIthIdInt = {
+  "CIRCLE": 65,
+  "DIVISION": 66,
+  "SUB_DIVISION": 67,
+  "SECTION": 68,
+  "BINDER": 21,
+}
+
 export const testDiscom = '1001';
 
 export const testAgencyId = 30;

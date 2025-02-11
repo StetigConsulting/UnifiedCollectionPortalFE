@@ -111,6 +111,7 @@ const ExtendValidity = () => {
                     />
                     <CustomizedInputWithLabel
                         label="Current Validity From"
+                        type='date'
                         required={true}
                         errors={errors.currentValidityFrom}
                         placeholder="Current Validity From"
@@ -119,6 +120,7 @@ const ExtendValidity = () => {
                     />
                     <CustomizedInputWithLabel
                         label="Current Validity To"
+                        type='date'
                         required={true}
                         errors={errors.currentValidityTo}
                         placeholder="Current Validity From"
@@ -126,14 +128,14 @@ const ExtendValidity = () => {
                         {...register("currentValidityTo")}
                     />
                     <CustomizedInputWithLabel
-                        label="Validity Date"
+                        label="Validity From"
                         required={true}
                         errors={errors.validityDateFrom}
                         type="date"
                         {...register("validityDateFrom")}
                     />
                     <CustomizedInputWithLabel
-                        label="Validity Date"
+                        label="Validity To"
                         required={true}
                         errors={errors.validityDateTo}
                         type="date"

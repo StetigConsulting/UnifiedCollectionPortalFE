@@ -47,12 +47,13 @@ const BinderMapping = () => {
     };
 
     return (
-        <AuthUserReusableCode pageTitle="Binder Mapping" isLoading={isLoading}>
+        <AuthUserReusableCode pageTitle="Pseudo Level Mapping" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                     <CustomizedInputWithLabel
                         label="Collector Mobile"
                         placeholder="Enter Collector Mobile"
+                        containerClass="col-span-2"
                         required
                         {...register('collectorMobile')}
                         errors={errors.collectorMobile}
@@ -60,28 +61,28 @@ const BinderMapping = () => {
                     <CustomizedInputWithLabel
                         label="Agent ID"
                         placeholder="Enter Agent ID"
-                        required
+                        disabled
                         {...register('agentId')}
                         errors={errors.agentId}
                     />
                     <CustomizedInputWithLabel
-                        label="Agent Mobile Number"
-                        placeholder="Enter Agent Mobile Number"
-                        required
-                        {...register('agentMobileNumber')}
-                        errors={errors.agentMobileNumber}
-                    />
-                    <CustomizedSelectInputWithLabel
                         label="Agency Name"
-                        list={divisions}
-                        required
+                        disabled
                         {...register('agencyName')}
                         errors={errors.agencyName}
                     />
+                    <CustomizedInputWithLabel
+                        label="Agent Mobile Number"
+                        placeholder="Enter Agent Mobile Number"
+                        disabled
+                        {...register('agentMobileNumber')}
+                        errors={errors.agentMobileNumber}
+                    />
+
                     <CustomizedSelectInputWithLabel
                         label="Division"
                         list={divisions}
-                        required
+                        disabled
                         {...register('division')}
                         errors={errors.division}
                     />

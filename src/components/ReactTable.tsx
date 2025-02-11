@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { toast } from 'sonner';
@@ -28,6 +28,10 @@ interface TableProps<T> {
     selectedRow?: any;
     isSelectable?: boolean;
     hideSearchAndOtherButtons?: boolean;
+    fileName?: string;
+    noDataFoundMessage?: string;
+    defaultSortField?: keyof T;
+    defaultSortOrder?: 'asc' | 'desc';
 }
 
 const ReactTable = <T extends Record<string, any>>({
@@ -45,10 +49,14 @@ const ReactTable = <T extends Record<string, any>>({
     isSelectable = false,
     additionalData,
     hideSearchAndOtherButtons = false,
-    additionalDataBetweenTableAndAction
+    additionalDataBetweenTableAndAction,
+    fileName = 'Agency',
+    noDataFoundMessage = 'No Records Available',
+    defaultSortField = '',
+    defaultSortOrder = 'asc'
 }: TableProps<T>) => {
     const [searchTerm, setSearchTerm] = useState('');
-    const [sortField, setSortField] = useState<keyof T | null>(null);
+    const [sortField, setSortField] = useState<keyof T | null>(defaultSortField || null);
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
     const [currentPage, setCurrentPage] = useState(1);
 
@@ -58,13 +66,26 @@ const ReactTable = <T extends Record<string, any>>({
         )
     );
 
-    const sortedData = sortField
-        ? [...filteredData].sort((a, b) => {
-            if (a[sortField] < b[sortField]) return sortOrder === 'asc' ? -1 : 1;
-            if (a[sortField] > b[sortField]) return sortOrder === 'asc' ? 1 : -1;
+    const sortedData = useMemo(() => {
+        if (!sortField) return filteredData;
+
+        return [...filteredData].sort((a, b) => {
+            const valueA = a[sortField];
+            const valueB = b[sortField];
+
+            if (typeof valueA === "string" && typeof valueB === "string") {
+                return sortOrder === "asc"
+                    ? valueA.localeCompare(valueB, undefined, { sensitivity: "base" })
+                    : valueB.localeCompare(valueA, undefined, { sensitivity: "base" });
+            }
+
+            if (typeof valueA === "number" && typeof valueB === "number") {
+                return sortOrder === "asc" ? valueA - valueB : valueB - valueA;
+            }
             return 0;
-        })
-        : filteredData;
+        });
+    }, [filteredData, sortField, sortOrder]);
+
 
     const totalPages = Math.ceil(sortedData.length / itemsPerPage);
     const paginatedData = sortedData.slice(
@@ -99,9 +120,10 @@ const ReactTable = <T extends Record<string, any>>({
         const text = data
             .map(row => {
                 const rowData = visibleColumns
-                    .map(column =>
-                        row[column.key]
-                    );
+                    .map(column => {
+                        const value = row[column.key];
+                        return typeof value === "object" && value !== null ? value?.props?.children : value;
+                    });
 
                 const isRowEmpty = rowData.every(value => value === '');
                 return isRowEmpty ? null : rowData.join('\t');
@@ -120,7 +142,7 @@ const ReactTable = <T extends Record<string, any>>({
             .toLocaleTimeString('en-GB', { hour12: false })
             .replace(/:/g, '_');
 
-        const filename = `Agency_${formattedDate}_${formattedTime}.xlsx`;
+        const filename = `${fileName}_${formattedDate}_${formattedTime}.xlsx`;
 
         const worksheet = XLSX.utils.json_to_sheet(data);
         const workbook = XLSX.utils.book_new();
@@ -135,7 +157,7 @@ const ReactTable = <T extends Record<string, any>>({
             .toLocaleTimeString('en-GB', { hour12: false })
             .replace(/:/g, '_');
 
-        const filename = `Agency_${formattedDate}_${formattedTime}.csv`;
+        const filename = `${fileName}_${formattedDate}_${formattedTime}.csv`;
 
         const csvData = data.map((row) =>
             visibleColumns.map((col) => row[col.key]).join(',')
@@ -196,7 +218,7 @@ const ReactTable = <T extends Record<string, any>>({
                                 <th
                                     key={column.key as string}
                                     onClick={() => column.sortable && handleSort(column.key)}
-                                    className='h-10 px-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] whitespace-nowrap'
+                                    className='h-10 px-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] whitespace-nowrap capitalize'
                                     style={{ cursor: column.sortable ? 'pointer' : 'default' }}
                                 >
                                     {column.label} {sortField === column.key ? (sortOrder === 'asc' ? '↑' : '↓') : ''}
@@ -231,7 +253,7 @@ const ReactTable = <T extends Record<string, any>>({
                             ))
                         ) : (
                             <tr>
-                                <td colSpan={columns.length}>No data found</td>
+                                <td className='text-center' colSpan={avoidSrNo ? columns.length : columns.length + 1}>{noDataFoundMessage}</td>
                             </tr>
                         )}
                     </tbody>

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { dashboardSchema } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -19,6 +20,8 @@ const dashboard = () => {
   } = useForm<FormData>({
     resolver: zodResolver(dashboardSchema),
   });
+
+  const { data: session } = useSession();
 
   const onSubmit = (data: FormData) => {
     console.log("i m called");
@@ -47,6 +50,13 @@ const dashboard = () => {
             Search
           </Button>
         </div>
+        <div>
+          <h1>Welcome, {session?.user?.name}</h1>
+          <p>Role ID: {session?.user?.roleId}</p>
+          <p>Discom ID: {session?.user?.discomId}</p>
+          <p>Access Token: {session?.user?.accessToken}</p>
+        </div>
+
       </form>
     </AuthUserReusableCode>
   );
