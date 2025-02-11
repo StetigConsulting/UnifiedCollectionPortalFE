@@ -13,6 +13,7 @@ const ViewBalance = () => {
     const [agencyList, setAgencyList] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [workingLevelList, setWorkingLevelList] = useState([])
+    const [selectedRow, setSelectedRow] = useState<any | null>(null);
 
     const router = useRouter()
 
@@ -79,35 +80,62 @@ const ViewBalance = () => {
             { label: 'Working level', key: 'workingOffice', sortable: true },
             { label: 'Working office', key: 'workingLevelOffice', sortable: true },
             { label: 'Current Balance', key: 'current_balance', sortable: true },
-            { label: 'Action', key: 'action', sortable: false, ignored: true },
+            // { label: 'Action', key: 'action', sortable: false, ignored: true },
         ],
         []
     );
 
     const tableData = agencyList.map((item, index) => ({
         ...item,
-        action: (
-            <div className="flex gap-2">
-                <Button variant="default" size="sm" onClick={() => router.push(`${listOfUrls.agencyBalanceHistory}?id=${item.id}`)}>
-                    View History
-                </Button>
-                <Button variant="success" size="sm" onClick={() => router.push(`${listOfUrls.agencyRecharge}?id=${item.id}`)}>
-                    Recharge
-                </Button>
-                <Button variant="destructive" size="sm" onClick={() => router.push(`${listOfUrls.agencyRecharge}?id=${item.id}&type=${'reverse'}`)}>
-                    Reverse
-                </Button>
-            </div>
-        ),
+        // action: (
+        //     <div className="flex gap-2">
+        //         <Button variant="default" size="sm" onClick={() => router.push(`${listOfUrls.agencyBalanceHistory}?id=${item.id}`)}>
+        //             View History
+        //         </Button>
+        //         <Button variant="success" size="sm" onClick={() => router.push(`${listOfUrls.agencyRecharge}?id=${item.id}`)}>
+        //             Recharge
+        //         </Button>
+        //         <Button variant="destructive" size="sm" onClick={() => router.push(`${listOfUrls.agencyRecharge}?id=${item.id}&type=${'reverse'}`)}>
+        //             Reverse
+        //         </Button>
+        //     </div>
+        // ),
     }));
 
     console.log(tableData)
+
+    const handleRowSelection = (row: any) => {
+        console.log(row)
+        setSelectedRow(row)
+    }
+
+    const getSelectedRowButton = () => {
+        return <div className="space-x-2">
+            <Button variant="default" onClick={() => router.push(`${listOfUrls.agencyBalanceHistory}?id=${selectedRow.id}`)}>
+                View History
+            </Button>
+            <Button variant="success" onClick={() => router.push(`${listOfUrls.agencyRecharge}?id=${selectedRow.id}`)}>
+                Recharge
+            </Button>
+            <Button variant="destructive" onClick={() => router.push(`${listOfUrls.agencyRecharge}?id=${selectedRow.id}&type=${'reverse'}`)}>
+                Reverse
+            </Button>
+        </div>
+    }
 
     return (
         <AuthUserReusableCode pageTitle="View Balance" isLoading={isLoading}>
             <ReactTable
                 data={tableData}
                 columns={columns}
+                defaultSortField="agencyName"
+                defaultSortOrder="asc"
+                isSelectable={true}
+                onRowSelect={handleRowSelection}
+                onRowSelectButtons={
+                    getSelectedRowButton()
+                }
+                selectedRow={selectedRow}
             />
 
         </AuthUserReusableCode>

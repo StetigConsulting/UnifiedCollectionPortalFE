@@ -145,27 +145,6 @@ const ViewAgency = () => {
 
     const tableData = filteredAgencies.map((item, index) => ({
         ...item,
-        // action: item.isActive ? (
-        //     <div className='flex gap-2'>
-        //         <AlertPopup triggerCode={<UserX
-        //             className="cursor-pointer text-red-500"
-        //         />} handleContinue={() => deactivateAgencyUser(item.id)}
-        //             title='Confirm Deactivating' description='Are you sure you want to save the deactivate Agency? Please review the details carefully before confirming.' continueButtonText='Confirm'
-        //         />
-        //         <Pencil className='cursor-pointer h-5 w-5' onClick={() => handleEditAgency(item.id)} />
-        //         <CalendarArrowUp className='cursor-pointer h-5 w-5' onClick={() => handleExtendValidity(item.id)} />
-        //     </div>
-        // ) : (
-        //     <div className='flex gap-2'>
-        //         <AlertPopup triggerCode={<UserCheck
-        //             className="cursor-pointer text-green-500"
-        //         />} handleContinue={() => activateAgencyUser(item.id)}
-        //             title='Confirm Activating' description='Are you sure you want to save the activate Agency? Please review the details carefully before confirming.' continueButtonText='Confirm'
-        //         />
-        //         <Pencil className='cursor-pointer h-5 w-5' onClick={() => handleEditAgency(item.id)} />
-        //         <CalendarArrowUp className='cursor-pointer h-5 w-5' onClick={() => handleExtendValidity(item.id)} />
-        //     </div>
-        // ),
     }));
 
     const listOfAgencyStatus = [{

@@ -46,18 +46,19 @@ const EditAgentAreaRoleForm = () => {
                 "agent_id": data.agentId,
                 "collector_role": data.agentRole,
                 "working_office_structure": data.workingLevel === levelWIthId.CIRCLE
-                    ? data.circle.map(Number)[0]
-                    : data.workingLevel === levelWIthId.DIVISION
-                        ? data.division.map(Number)[0]
-                        : data.workingLevel === levelWIthId.SUB_DIVISION
-                            ? data.subDivision.map(Number)[0]
-                            : data.workingLevel === levelWIthId.SECTION ? data.section.map(Number)[0] : null,
-                "working_level": Number(data.workingLevel)
+                    ? data?.circle?.map(Number)[0]
+                    : data?.workingLevel === levelWIthId.DIVISION
+                        ? data?.division?.map(Number)[0]
+                        : data?.workingLevel === levelWIthId.SUB_DIVISION
+                            ? data?.subDivision?.map(Number)[0]
+                            : data?.workingLevel === levelWIthId.SECTION ? data?.section?.map(Number)[0] : null,
+                "working_level": Number(data?.workingLevel)
             }
 
             const response = await updateAgentAreaRole(payload);
-            toast.success("Agency created successfully");
+            toast.success("Agent updated successfully");
         } catch (error) {
+            console.log(error);
             let errorMessage = getErrorMessage(error);
             toast.error('Error: ' + errorMessage)
         } finally {
@@ -74,7 +75,7 @@ const EditAgentAreaRoleForm = () => {
                 setValue('agentName', response.data.agent_name)
                 setValue('agentId', response.data.id)
                 setValue('agentRole', response.data.collector_role)
-                setValue('workingLevel', response.data.working_level)
+                setValue('workingLevel', (response.data.working_level).toString())
                 getAgencyData(response?.data?.agency?.id)
                 setShowRestFields(true)
             } catch (error) {

@@ -840,7 +840,7 @@ export const editReceiptsSchema = z.object({
 export const editAgentAreaSchema = z.object({
   agentId: z.number(),
   agentMobileNumber: z.number().min(10, 'Mobile number must be at least 10 digits'),
-  agentName: z.string().nonempty('Agent Name is required'),
+  agentName: z.string().optional(),
   agentRole: z.string().nonempty('Agent Role is required'),
   workingLevel: z.string().nonempty("Working Level is required"),
   circle: z.array(z.number()).optional(),

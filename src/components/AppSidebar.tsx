@@ -76,8 +76,8 @@ const data = {
         { title: "View Agency", icon: Eye, url: '/department/view-agency' },
         { title: "View Balance", icon: Wallet, url: '/department/view-balance' },
         { title: "Reset Device (Collector)", icon: MonitorCog, url: '/department/reset-device' },
-        { title: "Change Collector Role", icon: FolderSync, url: '/department/change-collector-role' },
-        { title: "Change Section", icon: FolderSync, url: '/department/change-section' },
+        // { title: "Change Collector Role", icon: FolderSync, url: '/department/change-collector-role' },
+        // { title: "Change Section", icon: FolderSync, url: '/department/change-section' },
       ],
     },
     {
