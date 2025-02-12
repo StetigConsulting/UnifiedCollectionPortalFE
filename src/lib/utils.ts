@@ -99,15 +99,66 @@ export const SIGNIN = '/auth/signin';
 export const ROOT = '/';
 
 export const PUBLIC_ROUTES = [
-  '/auth/signin',
-  '/auth/signup'
+  '/auth/signin'
 ]
 
 export const PROTECTED_SUB_ROUTES = [
 
 ]
 
-export const ADMIN_ONLY_ROUTES = ["/users", "/settings"];
+export const ADMIN_ONLY_ROUTES = [
+  "/dashboard",
+  "/department/add-agency",
+  "/department/recharge",
+  "/department/collector-type",
+  "/department/edit-agency",
+  "/department/edit-agency-area",
+  "/department/edit-agent-area",
+  "/department/extend-validity",
+  "/department/view-agency",
+  "/department/view-balance",
+  "/department/reset-device",
+  "/department/add-news",
+]
+
+export const SUPER_ADMIN_ONLY_ROUTES = [
+  "/dashboard",
+  "/admin/department-user",
+  "/admin/office-structure",
+  "/admin/payment-configuration",
+  "/admin/denied-to-pay",
+  "/admin/non-energy-type",
+  "/admin/add-collector-type",
+  "/admin/color-coding",
+  "/admin/incentive",
+  "/admin/import",
+  "/admin/receipt-for-postpaid"
+];
+
+export const AGENCY_ONLY_ROUTES = [
+  "/dashboard",
+  "/agency/add-collector",
+  "/agency/view-collector",
+  "/agency/binder-mapping",
+  "/agency/recharge",
+  "/agency/extend-validity",
+  "/agency/reset-collector",
+  "/agency/report/top-up-history",
+  "/agency/report/collector-top-up-history",
+  "/agency/report/transaction-record",
+  "/agency/report/login-history",
+  "/agency/report/daily-agent-collection",
+  "/agency/report/agency-wise-collection",
+  "/agency/report/collector-wise",
+  "/agency/report/cancel-wise-receipt",
+  "/agency/report/denied-consumer",
+  "/agency/report/counter-collector",
+  "/agency/report/collector-activity",
+  "/agency/report/wallet-history",
+  "/agency/report/cc-wallet-history",
+];
+
+
 
 export const listOfUrls = {
   agencyRecharge: '/department/recharge',
