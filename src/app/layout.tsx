@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { Suspense } from "react";
 import Loading from "./loading";
+import { SessionProvider } from "next-auth/react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,15 +28,17 @@ export default function RootLayout({
 }>) {
 
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <Suspense fallback={<Loading />}>
-          {children}
-          <Toaster position="top-right" richColors visibleToasts={1} />
-        </Suspense>
-      </body>
-    </html>
+    <SessionProvider>
+      <html lang="en">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          <Suspense fallback={<Loading />}>
+            {children}
+            <Toaster position="top-right" richColors visibleToasts={1} />
+          </Suspense>
+        </body>
+      </html>
+    </SessionProvider>
   );
 }
