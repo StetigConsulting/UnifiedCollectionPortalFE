@@ -33,7 +33,6 @@ import {
 } from "@/components/ui/sidebar";
 import Image from "next/image";
 import { NavMain } from "./nav-main";
-import { useSession } from "next-auth/react";
 
 const navData = {
   user: {
@@ -279,11 +278,7 @@ const navData = {
   ],
 };
 
-export function AppSidebar() {
-
-  const { data: session } = useSession()
-
-  const userRole = session?.user?.userRole;
+export function AppSidebar({ userRole }) {
 
   const filteredNavMain = navData.navMain
     .filter((nav) => !nav.roles || nav.roles.includes(userRole))

@@ -4,6 +4,7 @@ import { AppSidebar } from './AppSidebar'
 import CustomBreadcrumb from './CustomBreadcrumb'
 import { InfinitySpin } from 'react-loader-spinner'
 import Image from 'next/image'
+import { useSession } from 'next-auth/react'
 
 interface AuthUserReusableCodeProps {
     children: React.ReactNode;
@@ -12,12 +13,17 @@ interface AuthUserReusableCodeProps {
 }
 
 function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUserReusableCodeProps) {
+
+    const { data: session } = useSession()
+
+    const userRole = session?.user?.userRole;
+
     return (
         <SidebarProvider style={{
             display: '-webkit-box',
             boxSizing: 'border-box'
         }}>
-            <AppSidebar />
+            <AppSidebar userRole={userRole} />
             {
                 isLoading &&
                 <div className="absolute inset-0 flex items-center justify-center z-50"
