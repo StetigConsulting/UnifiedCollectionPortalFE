@@ -117,9 +117,13 @@ const ColorCodingLogic = () => {
                 <Button variant="outline" type="button" onClick={() => router.back()}>
                     Cancel
                 </Button>
-                <Button variant="default" onClick={() => router.push('/admin/color-coding/logic/add')}>
-                    Add
-                </Button>
+                {
+                    tableData.length > 0 ? <Button variant="default" onClick={() => router.push(`/admin/color-coding/logic/add?id=${tableData[0].id}`)}>
+                        Edit
+                    </Button> : <Button variant="default" onClick={() => router.push('/admin/color-coding/logic/add')}>
+                        Add
+                    </Button>
+                }
             </div>
         </AuthUserReusableCode>
     );

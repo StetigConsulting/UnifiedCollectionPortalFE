@@ -135,9 +135,9 @@ const AddColorCodingLogic = () => {
             let fetchedData = response.data.json_rule.ranges.map((data, index) => {
                 return {
                     value1Type: data.R1.type,
-                    value1: data.R1.type === 'DATE' ? moment(data.R1.value).format('YYYY-MM-DD') : data.R1.value,
+                    value1: data.R1.type === 'DATE' ? moment(data.R1.value, 'DD-MM-YYYY').format('YYYY-MM-DD') : data.R1.value,
                     value2Type: data.R2.type,
-                    value2: data.R2.type === 'DATE' ? moment(data.R2.value).format('YYYY-MM-DD') : data.R2.value,
+                    value2: data.R2.type === 'DATE' ? moment(data.R2.value, 'DD-MM-YYYY').format('YYYY-MM-DD') : data.R2.value,
                     colorCode: data.color_code,
                 }
             })
