@@ -10,13 +10,15 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import AuthUserReusableCode from "@/components/AuthUserReusableCode";
 import { editAgencyAreaById, getAgenciesWithDiscom, getLevels, getLevelsDiscomId } from "@/app/api-calls/department/api";
-import { levelWIthId, testAgencyId, testDiscom } from "@/lib/utils";
+import { levelWIthId } from "@/lib/utils";
 import CustomizedMultipleSelectInputWithLabelNumber from "@/components/CustomizedMultipleSelectInputWithLabelNumber";
 import { Loader2 } from "lucide-react";
 import AlertPopup from "@/components/Agency/ViewAgency/AlertPopup";
 import AlertPopupWithState from "@/components/Agency/ViewAgency/AlertPopupWithState";
+import { useSession } from "next-auth/react";
 
 const EditAgencyArea = () => {
+    const { data: session } = useSession()
     const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm<EditAgencyAreaFormData>({
         resolver: zodResolver(editAgencyAreaSchema),
         defaultValues: {
@@ -34,9 +36,17 @@ const EditAgencyArea = () => {
     const [subDivisions, setSubDivisions] = useState([]);
     const [sections, setSections] = useState([]);
 
+    const [levelIdMapWithLevelName, setLevelIdMapWithLevelName] = useState({
+        CIRCLE: null,
+        DIVISION: null,
+        SUB_DIVISION: null,
+        SECTION: null,
+    })
+
+
     useEffect(() => {
         getAgencyList()
-        getLevelsDiscomId(testDiscom).then((data) => {
+        getLevelsDiscomId(session?.user?.discomId).then((data) => {
             setCircles(
                 data?.data?.officeStructure?.map((ite) => {
                     return {
@@ -46,7 +56,15 @@ const EditAgencyArea = () => {
                 })
             );
         })
-        getLevels(testDiscom).then((data) => {
+        getLevels(session?.user?.discomId).then((data) => {
+            let levelIdMap = data?.data
+                ?.filter((item) => item.levelType === "MAIN")
+                .reduce((acc, item) => {
+                    acc[item.levelName] = item.id;
+                    return acc;
+                }, {});
+
+            setLevelIdMapWithLevelName(levelIdMap)
             setWorkingLevels(
                 data?.data
                     ?.filter((ite) => ite.levelType == "MAIN")
@@ -105,7 +123,7 @@ const EditAgencyArea = () => {
     const getAgencyList = async () => {
         setIsLoading(true);
         try {
-            const response = await getAgenciesWithDiscom(testDiscom);
+            const response = await getAgenciesWithDiscom(session?.user?.discomId);
             console.log("API Response:", response);
             setAgencies(
                 response?.data?.map((item) => ({
