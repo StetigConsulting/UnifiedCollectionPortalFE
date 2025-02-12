@@ -5,6 +5,7 @@ import CustomizedInputWithLabel from "@/components/CustomizedInputWithLabel";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { dashboardSchema } from "@/lib/zod";
+import { useUserStore } from "@/store/store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
@@ -22,6 +23,10 @@ const dashboard = () => {
   });
 
   const { data: session } = useSession();
+
+  const store = useUserStore((store) => store.userData)
+
+  console.log(store, session)
 
   const onSubmit = (data: FormData) => {
     console.log("i m called");
