@@ -115,7 +115,7 @@ const ViewBalance = () => {
 
     const getSelectedRowButton = () => {
         return <div className="space-x-2">
-            <Button variant="default" onClick={() => router.push(`${listOfUrls.agencyBalanceHistory}?id=${selectedRow.id}`)}>
+            <Button variant="default" onClick={() => router.push(`${listOfUrls.agencyBalanceHistory}?id=${selectedRow.id}&name=${selectedRow?.agencyName}`)}>
                 View History
             </Button>
             <Button variant="success" onClick={() => router.push(`${listOfUrls.agencyRecharge}?id=${selectedRow.id}`)}>

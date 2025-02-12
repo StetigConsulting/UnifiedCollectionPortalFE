@@ -90,10 +90,16 @@ const ViewHistory = () => {
 
     const searchParams = useSearchParams();
     const idFromUrl = searchParams.get('id');
+    const nameFromUrl = searchParams.get('name');
 
     return (
         <AuthUserReusableCode pageTitle="View History" isLoading={isLoading}>
             <ReactTable
+                additionalDataBetweenTableAndAction={<div className='px-4 py-2 mb-4 text-sm rounded-md bg-lightThemeColor' style={{
+                    background: 'rgba(197, 211, 233, 0.2)'
+                }}>
+                    Viewing History of Agency ID {idFromUrl} - {nameFromUrl}
+                </div>}
                 additionalData={<div className="grid grid-cols-7 gap-4">
                     <CustomizedInputWithLabel
                         label="From Date"
