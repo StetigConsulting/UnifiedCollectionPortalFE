@@ -18,11 +18,11 @@ export async function middleware(request: any) {
     console.log("Session User Role:", userRole);
     console.log("Is Authenticated:", isAuthenticated);
 
-    if (!isAuthenticated && nextUrl.pathname !== SIGNIN) {
-        return NextResponse.redirect(new URL(SIGNIN, nextUrl));
-    }
+    // if (!isAuthenticated && nextUrl.pathname !== SIGNIN) {
+    //     return NextResponse.redirect(new URL(SIGNIN, nextUrl));
+    // }
 
-    if (nextUrl.pathname === '/dashboard') {
+    if (isAuthenticated && nextUrl.pathname === '/dashboard') {
         return NextResponse.next();
     }
 
@@ -38,6 +38,13 @@ export async function middleware(request: any) {
         if (SUPER_ADMIN_ONLY_ROUTES.includes(nextUrl.pathname) || ADMIN_ONLY_ROUTES.includes(nextUrl.pathname)) {
             return NextResponse.redirect(new URL("/dashboard", nextUrl));
         }
+    }
+
+    if (!isAuthenticated &&
+        (SUPER_ADMIN_ONLY_ROUTES.includes(nextUrl.pathname) ||
+            AGENCY_ONLY_ROUTES.includes(nextUrl.pathname) ||
+            SUPER_ADMIN_ONLY_ROUTES.includes(nextUrl.pathname))) {
+        return NextResponse.redirect(new URL(SIGNIN, nextUrl));
     }
 
     return NextResponse.next();

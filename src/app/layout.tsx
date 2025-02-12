@@ -28,17 +28,18 @@ export default function RootLayout({
 }>) {
 
   return (
-    <SessionProvider>
-      <html lang="en">
+    <html lang="en">
+      <SessionProvider>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
+          {/* <HydrateAuth /> */}
           <Suspense fallback={<Loading />}>
             {children}
             <Toaster position="top-right" richColors visibleToasts={1} />
           </Suspense>
         </body>
-      </html>
-    </SessionProvider>
+      </SessionProvider>
+    </html >
   );
 }
