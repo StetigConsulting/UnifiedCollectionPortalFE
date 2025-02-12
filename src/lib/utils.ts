@@ -191,3 +191,19 @@ export const getErrorMessage = (error: any) => {
   let errorMessage = error?.data ? error?.data[Object.keys(error?.data)[0]] : error?.error;
   return errorMessage
 }
+
+export const getLevelIdWithLevelName = async (list: any) => {
+  return list.reduce((acc, item) => {
+    acc[item.id] = item.levelName;
+    return acc;
+  }, {});
+}
+
+export const getLevelFormattedForPicklist = (list) => {
+  return list
+    .filter((item) => item.levelType === "MAIN")
+    .map((item) => ({
+      label: item.levelName,
+      value: item.levelName,
+    }));
+}

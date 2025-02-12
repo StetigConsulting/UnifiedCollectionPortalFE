@@ -10,7 +10,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { extendValiditySchema } from '@/lib/zod';
 import { z } from 'zod';
 import { extendValidity, getAgenciesWithDiscom, getAgencyById } from '@/app/api-calls/department/api';
-import { testDiscom } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';

@@ -53,11 +53,11 @@ const navData = {
       roles: ["ADMIN", "SUPER ADMIN", "AGENCY"],
     },
     {
-      title: "Department",
+      title: "Admin",
       icon: Folder,
       url: "#",
       path: '/department/',
-      roles: ["ADMIN"],
+      roles: ["SUPER ADMIN", "ADMIN"],
       items: [
         {
           title: "Add Agency",
@@ -125,7 +125,7 @@ const navData = {
       ]
     },
     {
-      title: "Admin",
+      title: "Super Admin",
       icon: Folder,
       url: "#",
       path: '/admin/',

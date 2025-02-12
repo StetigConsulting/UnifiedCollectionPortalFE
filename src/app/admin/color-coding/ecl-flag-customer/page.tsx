@@ -57,7 +57,7 @@ const ECLFlaggedCustomer = () => {
                 response = await createColorCodingEcl(payload);
             }
             console.log('Submitting Data:', response.data);
-            toast.success("'ECL Flagged Customer's Bill Background Updated Successfully");
+            toast.success("ECL Flagged Customer's Bill Background Updated Successfully");
             router.push('/admin/color-coding');
         } catch (error) {
             console.error('Error:', error);

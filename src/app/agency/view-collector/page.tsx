@@ -8,7 +8,6 @@ import AuthUserReusableCode from "@/components/AuthUserReusableCode";
 import { UserRoundMinus, UserRoundPlus } from "lucide-react";
 import { activateAgentById, deactivateAgentById, getAllAgentByAgencyId } from "@/app/api-calls/agency/api";
 import { getLevels } from "@/app/api-calls/department/api";
-import { testDiscom } from "@/lib/utils";
 import AlertPopup from "@/components/Agency/ViewAgency/AlertPopup";
 import { useSession } from "next-auth/react";
 

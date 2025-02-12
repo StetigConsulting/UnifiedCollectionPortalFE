@@ -11,7 +11,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { createNewLevelSchema } from '@/lib/zod';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
-import { testDiscom } from '@/lib/utils';
 import { User } from 'next-auth';
 
 interface CreateNewLevelPopupProps {

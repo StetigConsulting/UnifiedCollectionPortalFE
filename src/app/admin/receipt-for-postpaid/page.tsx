@@ -28,10 +28,12 @@ const ReceiptsForPostpaid = () => {
         setIsLoading(true);
         try {
             const response = await getListOfReceiptForPostpaid(session?.user?.discomId);
-            const transformedData = response.data.map(({ json_rule, ...rest }) => ({
-                ...rest,
-                ...json_rule
-            }));
+            const transformedData = response.data
+                .filter(({ rule_level }) => rule_level === selectedConfig)
+                .map(({ json_rule, ...rest }) => ({
+                    ...rest,
+                    ...json_rule
+                }));
 
             if (selectedConfig === 'Levelwise') {
                 setLevelWiseData(transformedData);
@@ -56,7 +58,7 @@ const ReceiptsForPostpaid = () => {
             key: 'id',
         },
         {
-            label: 'Applicable Label',
+            label: 'Applicable Level',
             key: 'applicableLabel',
         },
         {
@@ -116,7 +118,7 @@ const ReceiptsForPostpaid = () => {
         setIsLoading(true);
         try {
             await deleteBusinessRule(id);
-            toast.success('Receipt deleted successfully');
+            toast.success('Number of Receipts rule deleted successfully');
             getListOfAllReceipt()
         } catch (error) {
             let msg = error?.error

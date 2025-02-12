@@ -13,7 +13,7 @@ import { Loader2 } from 'lucide-react';
 import { colorCodingBillBasisSchema } from '@/lib/zod';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import { createColorCodingBillBasis, getBusinessRuleDateById, updateColorCodingBillBasis } from '@/app/api-calls/admin/api';
-import { listOfUrls, testDiscom } from '@/lib/utils';
+import { listOfUrls } from '@/lib/utils';
 import { useSession } from 'next-auth/react';
 
 type FormData = z.infer<typeof colorCodingBillBasisSchema>;
@@ -25,8 +25,9 @@ const AddBillBasis = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const [fontType, setFontType] = useState([
-        { label: 'Actual', value: 'Actual' },
-        { label: 'Average', value: 'Average' },
+        { label: 'Actual Bill', value: 'Actual' },
+        { label: 'Provisional Bill', value: 'Provisional' },
+        { label: 'Average of 3 Months Bill', value: 'Average of 3 Months' },
     ]);
 
     const {

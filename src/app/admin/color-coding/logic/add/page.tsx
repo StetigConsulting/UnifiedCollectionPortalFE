@@ -160,7 +160,7 @@ const AddColorCodingLogic = () => {
                         <h2 className="text-xl font-bold mb-4">Last Payment Date Logic {index + 1}</h2>
                         <p className="text-gray-600 mb-4 bg-lightThemeColor py-2 px-4 rounded-md">[ {watch(`colorCodings.${index}.value1`)} {watch(`colorCodings.${index}.value1Type`)} ]
                             &lt; Last Payment Date &lt; [  {watch(`colorCodings.${index}.value2`)} {watch(`colorCodings.${index}.value2Type`)}]
-                            - Color Code &nbsp;<span style={{ backgroundColor: watch('colorCodings.0.colorCode'), borderRadius: '4px', padding: '4px 12px' }}>
+                            - Color Code &nbsp;<span style={{ backgroundColor: watch(`colorCodings.${index}.colorCode`), borderRadius: '4px', padding: '4px 12px' }}>
                             </span></p>
                         <div className="grid grid-cols-2 gap-4">
                             <CustomizedSelectInputWithLabel
