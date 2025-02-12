@@ -8,6 +8,8 @@ import { toast } from "sonner";
 import Spinner from './Spinner';
 import { handleCredentialsSignin } from '@/app/actions/authActions';
 import { getSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { listOfUrls } from '@/lib/utils';
 
 interface OTPPopupProps {
     isOpen: boolean;
@@ -26,6 +28,8 @@ const OTPPopup: React.FC<OTPPopupProps> = ({ sendOTP, setResendTimer, isOpen, se
     const [isValidating, setIsValidating] = useState(false);
 
     const initialOTPSent = useRef(false);
+
+    const router = useRouter()
 
     useEffect(() => {
         if (resendTimer > 0) {
@@ -63,6 +67,7 @@ const OTPPopup: React.FC<OTPPopupProps> = ({ sendOTP, setResendTimer, isOpen, se
             } else {
                 const session = await getSession();
                 console.log("Sign-in successful:", session?.user);
+                router.push(listOfUrls.dashboard);
             }
         } catch (error) {
             console.log("An unexpected error occurred. Please try again.");

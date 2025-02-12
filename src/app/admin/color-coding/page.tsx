@@ -10,21 +10,6 @@ import TabForRouting from '@/components/ColorCoding/TabForRouting';
 
 const ColorCodingLogicTable = () => {
     const router = useRouter();
-    const [isSubmitting, setIsSubmitting] = useState(false);
-
-    const columns = [
-        { label: 'CC ID', key: 'ccId', sortable: true },
-        { label: 'Value 1', key: 'value1', sortable: true },
-        { label: 'Value 2', key: 'value2', sortable: true },
-        { label: 'BG Color', key: 'backgroundColor', sortable: true },
-        { label: 'Font-type', key: 'fontType', sortable: true },
-        { label: 'Font Color', key: 'fontColor', sortable: true },
-        {
-            label: 'Action',
-            key: 'action',
-            sortable: false,
-        },
-    ];
 
     return (
         <AuthUserReusableCode pageTitle="Color Coding">

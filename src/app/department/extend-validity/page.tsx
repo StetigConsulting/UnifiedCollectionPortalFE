@@ -10,14 +10,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { extendValiditySchema } from '@/lib/zod';
 import { z } from 'zod';
 import { extendValidity, getAgenciesWithDiscom, getAgencyById } from '@/app/api-calls/department/api';
-import { testDiscom } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 
 type FormData = z.infer<typeof extendValiditySchema>;
 
 const ExtendValidity = () => {
+    const { data: session } = useSession()
     const { register, handleSubmit, watch, reset, setValue, formState: { errors } } = useForm<FormData>({
         resolver: zodResolver(extendValiditySchema),
     });
@@ -104,7 +105,7 @@ const ExtendValidity = () => {
     const getAgencyList = async () => {
         setIsLoading(true);
         try {
-            const response = await getAgenciesWithDiscom(testDiscom);
+            const response = await getAgenciesWithDiscom(session?.user?.discomId);
             console.log("API Response:", response);
             setAgencyList(
                 response?.data?.map((item) => ({

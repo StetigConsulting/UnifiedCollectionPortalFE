@@ -13,18 +13,21 @@ import { Loader2 } from 'lucide-react';
 import { colorCodingBillBasisSchema } from '@/lib/zod';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import { createColorCodingBillBasis, getBusinessRuleDateById, updateColorCodingBillBasis } from '@/app/api-calls/admin/api';
-import { testDiscom } from '@/lib/utils';
+import { listOfUrls } from '@/lib/utils';
+import { useSession } from 'next-auth/react';
 
 type FormData = z.infer<typeof colorCodingBillBasisSchema>;
 
 const AddBillBasis = () => {
+    const { data: session } = useSession()
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
     const [fontType, setFontType] = useState([
-        { label: 'Actual', value: 'Actual' },
-        { label: 'Average', value: 'Average' },
+        { label: 'Actual Bill', value: 'Actual' },
+        { label: 'Provisional Bill', value: 'Provisional' },
+        { label: 'Average of 3 Months Bill', value: 'Average of 3 Months' },
     ]);
 
     const {
@@ -48,8 +51,8 @@ const AddBillBasis = () => {
         try {
             let payload = {
                 id: null,
-                discom_id: parseInt(testDiscom),
-                office_structure_id: 1001,
+                discom_id: session?.user?.discomId,
+                office_structure_id: session?.user?.discomId,
                 rule_level: "Discomwise",
                 rule_name: "BILL_BASIS_COLOR_CODING",
                 json_rule: {
@@ -88,7 +91,7 @@ const AddBillBasis = () => {
             }
             console.log('Submitting Data:', response.data);
             toast.success('Color coding rules saved successfully!');
-            router.replace('/admin/color-coding/bill-basis');
+            router.replace(listOfUrls.billBasis);
         } catch (error) {
             console.log('Error:', error?.error)
             toast.error('Error: ' + error?.error);

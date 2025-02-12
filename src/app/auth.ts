@@ -1,4 +1,3 @@
-import { useUserStore } from "@/store/store";
 import NextAuth, { User } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 
@@ -30,6 +29,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 const mobileNumber = credentials?.mobileNumber as string;
                 const otp = credentials?.otp as string;
 
+
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/authenticate`, {
                     method: "POST",
                     headers: {
@@ -50,6 +50,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     return null;
                 }
 
+
                 const user: ExtendedUser = {
                     id: data.data.userId,
                     mobileNumber: mobileNumber,
@@ -64,6 +65,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 };
 
                 try {
+
                     const userRoleResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/v1/user-role-scopes/${user.roleId}`, {
                         method: "GET",
                         headers: {
@@ -83,7 +85,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 } catch (error) {
                     console.error("Error fetching user role", error);
                 }
-                // useUserStore.getState().setUserData(user);
 
                 return user;
             },
@@ -92,6 +93,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     callbacks: {
         async jwt({ token, user }) {
             if (user) {
+                console.log("JWT User:", user);
                 token.id = user.id;
                 token.mobileNumber = user.mobileNumber;
                 token.name = user.name;
@@ -116,10 +118,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             session.user.roleId = token.roleId as number;
             session.user.userRole = token.userRole as string;
             session.user.userScopes = token.userScopes as string[];
-            // useUserStore.getState().setUserData(session.user);
-
             return session;
         },
+    },
+    session: {
+        strategy: 'jwt'
     },
     pages: {
         signIn: "/auth/signin",

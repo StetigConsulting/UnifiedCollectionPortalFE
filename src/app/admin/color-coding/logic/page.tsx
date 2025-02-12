@@ -8,10 +8,11 @@ import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import ReactTable from '@/components/ReactTable';
 import { toast } from 'sonner';
 import { deleteBusinessRule, getBusinessRuleDateById, getColorCodingBillBasis, getColorCodingLogic } from '@/app/api-calls/admin/api';
-import { testDiscom } from '@/lib/utils';
 import moment from 'moment';
+import { useSession } from 'next-auth/react';
 
 const ColorCodingLogic = () => {
+    const { data: session } = useSession()
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [colorLogicEntries, setColorLogicEntries] = useState([]);
@@ -63,7 +64,7 @@ const ColorCodingLogic = () => {
     const getListOfData = async () => {
         setIsLoading(true);
         try {
-            const response = await getColorCodingLogic(testDiscom);
+            const response = await getColorCodingLogic(session?.user?.discomId);
             // setColorLogicEntries(response?.data);
             const transformRules = (rules) => {
                 return rules.flatMap(rule =>

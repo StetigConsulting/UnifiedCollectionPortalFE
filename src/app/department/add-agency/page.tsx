@@ -14,10 +14,11 @@ import CustomizedMultipleSelectInputWithLabelString from "@/components/Customize
 import CustomizedSelectInputWithLabel from "@/components/CustomizedSelectInputWithLabel";
 import { Button } from "@/components/ui/button";
 import { AgencyDataInterface } from "@/lib/interface";
-import { levelWIthId, testDiscom } from "@/lib/utils";
+import { getErrorMessage, levelWIthId } from "@/lib/utils";
 import { addAgencySchema } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
+import { useSession } from "next-auth/react";
 import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -26,6 +27,7 @@ import { z } from "zod";
 type FormData = z.infer<typeof addAgencySchema>;
 
 const AddAgency = () => {
+  const { data: session } = useSession()
   const {
     register,
     handleSubmit,
@@ -45,8 +47,8 @@ const AddAgency = () => {
   const onSubmit = async (data: FormData) => {
     console.log("Form Data:", data);
     const agencyData: AgencyDataInterface = {
-      user_id: 6,
-      discom_id: Number(testDiscom),
+      user_id: 6,//hardcoded
+      discom_id: session?.user?.discomId,
       agency_name: data.agencyName,
       agency_address: data.registeredAddress,
       wo_number: data.woNumber || "",
@@ -89,15 +91,12 @@ const AddAgency = () => {
       console.error("Failed to create agency:", Object.keys(error.data)
         .map((key) => error.data[key])
         .join(', '));
-      let errorMessage = Object.keys(error.data)
-        .map((key) => error.data[key])
-        .join(', ');
-      toast.error(errorMessage || error.error)
+      let errorMessage = getErrorMessage(error);
+      toast.error(errorMessage)
     } finally {
       setIsSubmitting(false);
     }
   };
-
 
   const [paymentModes, setPaymentMethods] = useState([]);
   const [nonEnergyTypes, setNonEnergyTypes] = useState([]);
@@ -211,7 +210,7 @@ const AddAgency = () => {
         })
       );
     })
-    getLevelsDiscomId(testDiscom).then((data) => {
+    getLevelsDiscomId(session?.user?.discomId).then((data) => {
       setCircles(
         data?.data?.officeStructure?.map((ite) => {
           return {
@@ -222,7 +221,7 @@ const AddAgency = () => {
       );
     })
 
-    getLevels(testDiscom).then((data) => {
+    getLevels(session?.user?.discomId).then((data) => {
       setWorkingLevel(
         data?.data
           ?.filter((ite) => ite.levelType == "MAIN")

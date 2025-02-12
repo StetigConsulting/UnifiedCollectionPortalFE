@@ -2,10 +2,8 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
-import { activateAgencyAccount, deactivateAgencyAccountAPI, getAgenciesWithDiscom, getBalanceHistoryAgencyById, getLevels } from '@/app/api-calls/department/api';
+import { getBalanceHistoryAgencyById } from '@/app/api-calls/department/api';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
-import { CalendarArrowUp, CreditCard, Pencil, Power, PowerOff, UserCheck, UserX } from 'lucide-react';
-import { testDiscom } from '@/lib/utils';
 import ReactTable from '@/components/ReactTable';
 import AlertPopup from '@/components/Agency/ViewAgency/AlertPopup';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -119,7 +117,7 @@ const ViewHistory = () => {
                 columns={columns}
                 fileName='ViewAgencyHistory'
             />
-
+            {/* pagination to be added */}
         </AuthUserReusableCode >
     );
 };

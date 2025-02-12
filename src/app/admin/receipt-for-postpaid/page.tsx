@@ -7,11 +7,13 @@ import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWi
 import ReactTable from '@/components/ReactTable';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import { deleteBusinessRule, getListOfReceiptForPostpaid } from '@/app/api-calls/admin/api';
-import { testDiscom } from '@/lib/utils';
+import { listOfUrls } from '@/lib/utils';
 import { Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useSession } from 'next-auth/react';
 
 const ReceiptsForPostpaid = () => {
+    const { data: session } = useSession()
     const router = useRouter();
     const [selectedConfig, setSelectedConfig] = useState('Levelwise');
     const [levelWiseData, setLevelWiseData] = useState([]);
@@ -25,11 +27,13 @@ const ReceiptsForPostpaid = () => {
     const getListOfAllReceipt = async () => {
         setIsLoading(true);
         try {
-            const response = await getListOfReceiptForPostpaid(testDiscom);
-            const transformedData = response.data.map(({ json_rule, ...rest }) => ({
-                ...rest,
-                ...json_rule
-            }));
+            const response = await getListOfReceiptForPostpaid(session?.user?.discomId);
+            const transformedData = response.data
+                .filter(({ rule_level }) => rule_level === selectedConfig)
+                .map(({ json_rule, ...rest }) => ({
+                    ...rest,
+                    ...json_rule
+                }));
 
             if (selectedConfig === 'Levelwise') {
                 setLevelWiseData(transformedData);
@@ -54,7 +58,7 @@ const ReceiptsForPostpaid = () => {
             key: 'id',
         },
         {
-            label: 'Applicable Label',
+            label: 'Applicable Level',
             key: 'applicableLabel',
         },
         {
@@ -114,7 +118,7 @@ const ReceiptsForPostpaid = () => {
         setIsLoading(true);
         try {
             await deleteBusinessRule(id);
-            toast.success('Receipt deleted successfully');
+            toast.success('Number of Receipts rule deleted successfully');
             getListOfAllReceipt()
         } catch (error) {
             let msg = error?.error
@@ -126,7 +130,7 @@ const ReceiptsForPostpaid = () => {
 
     const handleEdit = (id: number) => {
         setIsLoading(true)
-        router.push(`/admin/receipt-for-postpaid/edit?id=${id}`)
+        router.push(`${listOfUrls.receiptForPostpaidEdit}?id=${id}`)
     }
 
     const renderTable = () => {
@@ -142,7 +146,7 @@ const ReceiptsForPostpaid = () => {
                         />
                     </div>
                     <div className="mt-6 text-right space-x-4">
-                        <Button variant="default" onClick={() => router.push('/admin/receipt-for-postpaid/add')}>
+                        <Button variant="default" onClick={() => router.push(listOfUrls?.receiptForPostpaidAdd)}>
                             Add
                         </Button>
                     </div>
@@ -163,7 +167,7 @@ const ReceiptsForPostpaid = () => {
                     {
                         discomWiseTableData.length == 0 &&
                         <div className="mt-6 text-right space-x-4">
-                            <Button variant="default" onClick={() => router.push('/admin/receipt-for-postpaid/add')}>
+                            <Button variant="default" onClick={() => router.push(listOfUrls?.receiptForPostpaidAdd)}>
                                 Add
                             </Button>
                         </div>

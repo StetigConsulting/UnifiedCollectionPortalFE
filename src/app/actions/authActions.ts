@@ -8,7 +8,7 @@ export async function handleCredentialsSignin({ mobileNumber, otp }: {
     mobileNumber: string
 }) {
     try {
-        await signIn("credentials", { mobileNumber, otp, redirectTo: "/dashboard" });
+        await signIn("credentials", { mobileNumber, otp, redirect: false });
     } catch (error) {
         if (error instanceof AuthError) {
             switch (error.type) {

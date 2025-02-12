@@ -21,7 +21,7 @@ const editReceiptForPostpaid = async (data: ReceiptForPostpaid) => {
     }
 };
 
-const getListOfReceiptForPostpaid = async (id: string) => {
+const getListOfReceiptForPostpaid = async (id: number) => {
     try {
         const response = await api.get(`/v1/business-rules/discom/${id}/rule-name/RECEIPT_FOR_POSTPAID`);
         return response.data;
@@ -71,7 +71,7 @@ const updateColorCodingLogic = async (data: CreateColorCodingLogic) => {
     }
 };
 
-const getColorCodingLogic = async (id: string) => {
+const getColorCodingLogic = async (id: number) => {
     try {
         const response = await api.get(`/v1/business-rules/discom/${id}/rule-name/PAYMENT_STATUS_COLOR_CODING`);
         return response.data;
@@ -81,7 +81,7 @@ const getColorCodingLogic = async (id: string) => {
     }
 };
 
-const getColorCodingBillBasis = async (id: string) => {
+const getColorCodingBillBasis = async (id: number) => {
     try {
         const response = await api.get(`/v1/business-rules/discom/${id}/rule-name/BILL_BASIS_COLOR_CODING`);
         return response.data;
@@ -91,7 +91,7 @@ const getColorCodingBillBasis = async (id: string) => {
     }
 };
 
-const getColorCodingEclFlag = async (id: string) => {
+const getColorCodingEclFlag = async (id: number) => {
     try {
         const response = await api.get(`/v1/business-rules/discom/${id}/rule-name/ECL_FLAGGED_CUSTOMER_COLOR_CODING`);
         return response.data;

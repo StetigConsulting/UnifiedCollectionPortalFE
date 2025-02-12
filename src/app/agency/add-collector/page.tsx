@@ -14,9 +14,11 @@ import { createCounterCollector, getCollectorTypes } from '@/app/api-calls/agenc
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
 import { Loader2 } from 'lucide-react';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
-import { agentWorkingType, collectorRolePicklist, levelWIthId, testAgencyId, testDiscom } from '@/lib/utils';
+import { agentWorkingType, collectorRolePicklist, levelWIthId, testAgencyId } from '@/lib/utils';
+import { useSession } from 'next-auth/react';
 
 const AddCounterCollector = () => {
+    const { data: session } = useSession()
     const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm<AddCounterCollectorFormData>({
         resolver: zodResolver(addCounterCollectorSchema),
         defaultValues: {
@@ -93,7 +95,7 @@ const AddCounterCollector = () => {
             console.log("agencyData", agencyData);
             setAgencyData(agencyData);
 
-            const levelsResponse = await getLevels(testDiscom);
+            const levelsResponse = await getLevels(session?.user?.discomId);
             let levels = levelsResponse?.data
                 ?.filter((ite) => ite.levelType === "MAIN")
                 ?.map((ite) => ({

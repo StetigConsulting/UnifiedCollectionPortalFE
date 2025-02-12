@@ -163,6 +163,12 @@ export const AGENCY_ONLY_ROUTES = [
 export const listOfUrls = {
   agencyRecharge: '/department/recharge',
   agencyBalanceHistory: '/department/view-balance/history',
+  dashboard: '/dashboard',
+  billBasis: '/admin/color-coding/bill-basis',
+  addBillBasis: '/admin/color-coding/bill-basis/add',
+  receiptForPostpaid: '/admin/receipt-for-postpaid',
+  receiptForPostpaidAdd: '/admin/receipt-for-postpaid/add',
+  receiptForPostpaidEdit: '/admin/receipt-for-postpaid/edit'
 }
 
 export const collectorRolePicklist = [
@@ -184,4 +190,20 @@ export const agentWorkingType = [
 export const getErrorMessage = (error: any) => {
   let errorMessage = error?.data ? error?.data[Object.keys(error?.data)[0]] : error?.error;
   return errorMessage
+}
+
+export const getLevelIdWithLevelName = async (list: any) => {
+  return list.reduce((acc, item) => {
+    acc[item.id] = item.levelName;
+    return acc;
+  }, {});
+}
+
+export const getLevelFormattedForPicklist = (list) => {
+  return list
+    .filter((item) => item.levelType === "MAIN")
+    .map((item) => ({
+      label: item.levelName,
+      value: item.levelName,
+    }));
 }

@@ -10,13 +10,16 @@ import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import { editAgentAreaFormData, editAgentAreaSchema } from '@/lib/zod';
 import { getAgencyById, getAgentByPhoneNumber, getLevels, getLevelsDiscomId, updateAgentAreaRole } from '@/app/api-calls/department/api';
-import { collectorRolePicklist, getErrorMessage, levelWIthIdInt, testDiscom } from '@/lib/utils';
+import { collectorRolePicklist, getErrorMessage, getLevelIdWithLevelName, levelWIthIdInt } from '@/lib/utils';
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
 import { toast } from 'sonner';
 import AlertPopupWithState from '@/components/Agency/ViewAgency/AlertPopupWithState';
 import { Loader2 } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 
 const EditAgentAreaRoleForm = () => {
+    const { data: session } = useSession()
+
     const {
         register,
         handleSubmit,
@@ -32,6 +35,8 @@ const EditAgentAreaRoleForm = () => {
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+
+    const [levelIdMapWithLevelName, setLevelIdMapWithLevelName] = useState({})
 
     useEffect(() => {
         getWorkingLevel()
@@ -89,7 +94,7 @@ const EditAgentAreaRoleForm = () => {
                 console.log(workingLevel, workingLevelOffices)
                 if (workingLevel == levelWIthIdInt.CIRCLE) {
                     const level = [workingLevelOffices?.id];
-                    getCircles(testDiscom)
+                    getCircles(session?.user?.discomId)
                     setValue("circle", level.length > 0 ? level : []);
                 }
                 if (workingLevel == levelWIthIdInt.DIVISION) {
@@ -195,7 +200,16 @@ const EditAgentAreaRoleForm = () => {
     };
 
     const getWorkingLevel = () => {
-        getLevels(testDiscom).then((data) => {
+        getLevels(session?.user?.discomId).then((data) => {
+            let levelIdMap = data?.data
+                ?.filter((item) => item.levelType === "MAIN") // ✅ Only include "MAIN" levelType
+                .reduce((acc, item) => {
+                    acc[item.levelName] = item.id;
+                    return acc;
+                }, {});
+
+            setLevelIdMapWithLevelName(levelIdMap)
+            console.log(levelIdMap)
             setWorkingLevel(
                 data?.data
                     ?.filter((ite) => ite.levelType == "MAIN")
@@ -244,7 +258,7 @@ const EditAgentAreaRoleForm = () => {
             const agencyData = agencyResponse.data;
             setAgencyData(agencyData);
 
-            const levelsResponse = await getLevels(testDiscom);
+            const levelsResponse = await getLevels(session?.user?.discomId);
             let levels = levelsResponse?.data
                 ?.filter((ite) => ite.levelType === "MAIN")
                 ?.map((ite) => ({

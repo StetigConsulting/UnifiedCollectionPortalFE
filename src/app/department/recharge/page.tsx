@@ -7,17 +7,19 @@ import { Button } from '@/components/ui/button';
 import { useForm } from 'react-hook-form';
 import React, { useEffect, useState } from 'react';
 import { getAgenciesWithDiscom, getAgencyById, rechargeAgency, reverseRechargeAgency } from '@/app/api-calls/department/api';
-import { numberToWords, testDiscom } from '@/lib/utils';
+import { getErrorMessage, numberToWords } from '@/lib/utils';
 import { rechargeSchema } from '@/lib/zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
 
 type FormData = z.infer<typeof rechargeSchema>;
 const Recharge = () => {
+    const { data: session } = useSession()
     const { register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<FormData>({
         resolver: zodResolver(rechargeSchema),
     });
@@ -38,16 +40,14 @@ const Recharge = () => {
             if (typeFromUrl === "reverse") {
                 response = await reverseRechargeAgency(payload)
                 toast.success("Agency balance reversed successfully");
-                const url = new URL(window.location.href);
-                url.search = '';
-                window.history.pushState({}, '', url.href);
+
             } else {
                 response = await rechargeAgency(payload)
                 toast.success("Agency recharged successfully");
-                const url = new URL(window.location.href);
-                url.search = '';
-                window.history.pushState({}, '', url.href);
             }
+            const url = new URL(window.location.href);
+            url.search = '';
+            window.history.pushState({}, '', url.href);
             console.log("API Response:", response);
             reset({
                 agency: null,
@@ -62,7 +62,7 @@ const Recharge = () => {
             getAgencyList()
         } catch (error) {
             console.error("Failed to recharge agency:", error.data[Object.keys(error.data)[0]]);
-            let errorMessage = error.data[Object.keys(error.data)[0]]
+            let errorMessage = getErrorMessage(error);
             toast.error(errorMessage)
         } finally {
             setIsSubmitting(false);
@@ -76,7 +76,7 @@ const Recharge = () => {
     const getAgencyList = async () => {
         setIsLoading(true);
         try {
-            const response = await getAgenciesWithDiscom(testDiscom);
+            const response = await getAgenciesWithDiscom(session?.user?.discomId);
             console.log("API Response:", response);
             setAgencyList(
                 response?.data?.map((item) => ({
