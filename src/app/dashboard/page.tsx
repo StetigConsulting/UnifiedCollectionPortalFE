@@ -56,6 +56,13 @@ const dashboard = () => {
           </Button>
         </div>
         <div>
+          <h1>Welcome, {store?.name}</h1>
+          <p>Role ID: {store?.roleId}</p>
+          <p>Discom ID: {store?.discomId}</p>
+          <p>Access Token: {store?.accessToken}</p>
+          <p>User Role: {store?.userRole}</p>
+        </div>
+        <div>
           <h1>Welcome, {session?.user?.name}</h1>
           <p>Role ID: {session?.user?.roleId}</p>
           <p>Discom ID: {session?.user?.discomId}</p>

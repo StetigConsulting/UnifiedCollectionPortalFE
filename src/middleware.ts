@@ -11,9 +11,14 @@ export async function middleware(request: any) {
     console.log("Middleware Running");
 
     const { nextUrl } = request;
-    const session = await auth();
-    const userRole = session?.user?.userRole;
-    const isAuthenticated = !!session?.user;
+    const tokenCookie = request.cookies.get('accessToken');
+    const userTypeCookie = request.cookies.get('userRole');
+
+    const isAuthenticated = tokenCookie ? true : false;
+    const userRole = userTypeCookie ? userTypeCookie.value : '';
+
+    // const userRole = session?.user?.userRole;
+    // const isAuthenticated = !!session?.user;
 
     console.log("Session User Role:", userRole);
     console.log("Is Authenticated:", isAuthenticated);

@@ -2,9 +2,8 @@ import React from 'react'
 import { SidebarInset, SidebarProvider } from './ui/sidebar'
 import { AppSidebar } from './AppSidebar'
 import CustomBreadcrumb from './CustomBreadcrumb'
-import { InfinitySpin } from 'react-loader-spinner'
 import Image from 'next/image'
-import { useSession } from 'next-auth/react'
+import { useUserStore } from '@/store/store'
 
 interface AuthUserReusableCodeProps {
     children: React.ReactNode;
@@ -14,9 +13,9 @@ interface AuthUserReusableCodeProps {
 
 function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUserReusableCodeProps) {
 
-    const { data: session } = useSession()
-
-    const userRole = session?.user?.userRole;
+    const userDataStore = useUserStore((store) => store);
+    console.log(userDataStore)
+    const userRole = userDataStore?.userData?.userRole;
 
     return (
         <SidebarProvider style={{

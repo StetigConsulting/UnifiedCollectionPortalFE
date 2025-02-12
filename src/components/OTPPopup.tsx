@@ -8,6 +8,10 @@ import { toast } from "sonner";
 import Spinner from './Spinner';
 import { handleCredentialsSignin } from '@/app/actions/authActions';
 import { getSession } from 'next-auth/react';
+import { UserData, useUserStore } from '@/store/store';
+import Cookies from 'js-cookie'
+import { useRouter } from 'next/navigation';
+import { signIn } from '@/app/auth';
 
 interface OTPPopupProps {
     isOpen: boolean;
@@ -20,12 +24,14 @@ interface OTPPopupProps {
 }
 
 const OTPPopup: React.FC<OTPPopupProps> = ({ sendOTP, setResendTimer, isOpen, setIsOpen, setIsValidatingNumberScreen, formData, resendTimer }) => {
-
+    const router = useRouter();
     const [resendAttempts, setResendAttempts] = useState(0);
     const [otp, setOtp] = useState('');
     const [isValidating, setIsValidating] = useState(false);
 
     const initialOTPSent = useRef(false);
+
+    const userDataStore = useUserStore((store) => store);
 
     useEffect(() => {
         if (resendTimer > 0) {
@@ -54,21 +60,77 @@ const OTPPopup: React.FC<OTPPopupProps> = ({ sendOTP, setResendTimer, isOpen, se
         }
     };
     const handleOTPSubmit = async () => {
-        setIsValidating(true); // Start loading state
+        setIsValidating(true)
         try {
-            const result = await handleCredentialsSignin({ mobileNumber: formData, otp });
+            const response = await fetch('/api/otp/validate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ mobileNumber: formData, otp }),
+            });
 
-            if (result?.message) {
-                console.log("Sign-in result:", result.message);
+            const result = await response.json();
+            console.log(result);
+            if (response.ok) {
+                toast.success(result.message || 'OTP sent successfully!');
+                const user: UserData = {
+                    id: result?.data?.data?.userId,
+                    name: result?.data?.data?.name,
+                    userId: result?.data?.data?.userId,
+                    accessToken: result?.data?.data?.accessToken,
+                    refreshToken: result?.data?.data?.refreshToken,
+                    discomId: result?.data?.data?.discomId,
+                    roleId: result?.data?.data?.roleId,
+                    userRole: "UNKNOWN",
+                    userScopes: [],
+                };
+
+                Cookies.set('accessToken', result?.data?.data?.accessToken, {
+                    expires: Infinity,
+                })
+
+                try {
+                    const userRoleResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/v1/user-role-scopes/${user.roleId}`, {
+                        method: "GET",
+                        headers: {
+                            "Authorization": `Bearer ${user.accessToken}`,
+                            "Content-Type": "application/json"
+                        }
+                    });
+
+                    if (userRoleResponse.ok) {
+                        const roleData = await userRoleResponse.json();
+                        console.log("User Role Response:", roleData);
+                        user.userRole = roleData?.data?.user_role?.role_name || "UNKNOWN";
+                        user.userScopes = roleData?.data?.user_scopes?.map((scope: { action: string }) => scope.action) || [];
+                    } else {
+                        console.error("Failed to fetch user role", userRoleResponse.statusText);
+                    }
+
+                } catch (error) {
+                    console.error("Error fetching user role", error);
+                }
+                Cookies.set('userRole', user?.userRole, {
+                    expires: Infinity,
+                })
+                useUserStore.getState().setUserData(user);
+                await signIn("credentials", {
+                    userData: JSON.stringify(user),
+                    redirect: false,
+                });
+                router.push('/dashboard')
+                console.log("User Data:", user);
             } else {
-                const session = await getSession();
-                console.log("Sign-in successful:", session?.user);
+                toast.error(result.message || 'Failed to send OTP.');
+
             }
         } catch (error) {
-            console.log("An unexpected error occurred. Please try again.");
-        } finally {
-            setIsValidating(false);
+            console.error('Error sending OTP:', error);
+            toast.error('Error sending OTP.');
+
         }
+        setIsValidating(false);
     };
 
     const handleChange = (value: string) => {

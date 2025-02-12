@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { Suspense } from "react";
 import Loading from "./loading";
 import { SessionProvider } from "next-auth/react";
+import HydrateAuth from "@/store/HydrateAuth";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,7 +34,7 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          {/* <HydrateAuth /> */}
+          <HydrateAuth />
           <Suspense fallback={<Loading />}>
             {children}
             <Toaster position="top-right" richColors visibleToasts={1} />
