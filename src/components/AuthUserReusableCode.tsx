@@ -2,7 +2,6 @@ import React from 'react'
 import { SidebarInset, SidebarProvider } from './ui/sidebar'
 import { AppSidebar } from './AppSidebar'
 import CustomBreadcrumb from './CustomBreadcrumb'
-import { InfinitySpin } from 'react-loader-spinner'
 import Image from 'next/image'
 
 interface AuthUserReusableCodeProps {

@@ -34,6 +34,8 @@ import {
 import Image from "next/image";
 import { NavMain } from "./nav-main";
 import { useSession } from "next-auth/react";
+import { Button } from "./ui/button";
+import { handleSignOut } from "@/app/actions/authActions";
 
 const navData = {
   user: {
@@ -48,7 +50,7 @@ const navData = {
       url: "/dashboard",
       icon: Gauge,
       path: '/dashboard',
-      roles: ["ADMIN", "SUPER ADMIN", "AGENT"],
+      roles: ["ADMIN", "SUPER ADMIN", "AGENCY"],
     },
     {
       title: "Department",
@@ -88,7 +90,7 @@ const navData = {
       icon: Folder,
       url: "#",
       path: '/agency/',
-      roles: ["AGENT"],
+      roles: ["AGENCY"],
       items: [
         {
           title: "Add Collector",
@@ -270,12 +272,12 @@ const navData = {
       url: "/department/add-news",
       path: "/department/add-news",
     },
-    {
-      title: "Logout",
-      icon: LogOut,
-      url: "#",
-      path: '#',
-    },
+    // {
+    //   title: "Logout",
+    //   icon: LogOut,
+    //   url: "#",
+    //   path: '#',
+    // },
   ],
 };
 
@@ -287,6 +289,11 @@ export function AppSidebar() {
 
   const filteredNavMain = navData.navMain
     .filter((nav) => !nav.roles || nav.roles.includes(userRole))
+
+  const onSignOut = async (event: React.MouseEvent) => {
+    event.preventDefault();
+    await handleSignOut();
+  };
 
   return (
     <Sidebar>
@@ -305,6 +312,7 @@ export function AppSidebar() {
         <NavMain items={filteredNavMain} />
       </SidebarContent>
       <SidebarFooter>
+        <Button onClick={onSignOut}><LogOut /> LogOut</Button>
         {/* <NavUser user={data.user} /> */}
       </SidebarFooter>
       {/* <SidebarRail /> */}

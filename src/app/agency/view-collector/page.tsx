@@ -10,8 +10,10 @@ import { activateAgentById, deactivateAgentById, getAllAgentByAgencyId } from "@
 import { getLevels } from "@/app/api-calls/department/api";
 import { testDiscom } from "@/lib/utils";
 import AlertPopup from "@/components/Agency/ViewAgency/AlertPopup";
+import { useSession } from "next-auth/react";
 
 const ViewCollector = () => {
+    const { data: session } = useSession();
     const [collectors, setCollectors] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [workingLevelList, setWorkingLevelList] = useState([])
@@ -29,7 +31,7 @@ const ViewCollector = () => {
                 workingLevelOffice: item.working_level_office.office_description
             }));
 
-            const discomList = await getLevels(testDiscom);
+            const discomList = await getLevels(session?.user?.discomId);
             const listOfLevel = discomList.data.reduce((acc, item) => {
                 acc[item.id] = item.levelName;
                 return acc;

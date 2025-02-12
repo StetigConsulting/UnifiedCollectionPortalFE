@@ -26,7 +26,7 @@ const getAllNonEnergyTypes = async () => {
   }
 };
 
-const getLevelsDiscomId = async (id: string) => {
+const getLevelsDiscomId = async (id: number) => {
   try {
     let response = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/office-structures/${id}/next-level`
@@ -58,7 +58,7 @@ const createAgency = async (agencyData: AgencyDataInterface) => {
   }
 };
 
-const getAgenciesWithDiscom = async (Id: string) => {
+const getAgenciesWithDiscom = async (Id: number) => {
   try {
     const response = await api.get(`/agencies/discom/${Id}`);
     return response.data;

@@ -10,14 +10,16 @@ import { editAgencySchema } from '@/lib/zod';
 import { z } from 'zod';
 import { useEffect, useState } from 'react';
 import { editAgency, getAgenciesWithDiscom, getAgencyById } from '@/app/api-calls/department/api';
-import { testDiscom } from '@/lib/utils';
+import { getErrorMessage, } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 
 type FormData = z.infer<typeof editAgencySchema>;
 
 const EditAgency = () => {
+    const { data: session } = useSession();
     const { register, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm<FormData>({
         resolver: zodResolver(editAgencySchema),
     });
@@ -28,7 +30,7 @@ const EditAgency = () => {
 
         let payload = {
             "id": data.agencyId,
-            "user_id": 6, //hardcode
+            "user_id": 6, //hardcoded
             "agency_name": data.agencyName,
             "agency_address": data.address,
             "wo_number": data.woNumber,
@@ -62,7 +64,7 @@ const EditAgency = () => {
             getAgencyList();
         } catch (error) {
             console.error("Failed to edit agency:", error.data[Object.keys(error.data)[0]]);
-            let errorMessage = error.data[Object.keys(error.data)[0]]
+            let errorMessage = getErrorMessage(error);
             toast.error(errorMessage)
         } finally {
             setIsSubmitting(false);
@@ -114,7 +116,7 @@ const EditAgency = () => {
     const getAgencyList = async () => {
         setIsLoading(true);
         try {
-            const response = await getAgenciesWithDiscom(testDiscom);
+            const response = await getAgenciesWithDiscom(session?.user?.discomId);
             console.log("API Response:", response);
             setAgencyList(
                 response?.data?.map((item) => ({

@@ -4,12 +4,14 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { getAgenciesWithDiscom, getLevels } from '@/app/api-calls/department/api';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
-import { listOfUrls, testDiscom } from '@/lib/utils';
+import { listOfUrls } from '@/lib/utils';
 import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
 const ViewBalance = () => {
+    const { data: session } = useSession()
     const [agencyList, setAgencyList] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [workingLevelList, setWorkingLevelList] = useState([])
@@ -24,16 +26,18 @@ const ViewBalance = () => {
     const getAgencyList = async () => {
         setIsLoading(true);
         try {
-            const response = await getAgenciesWithDiscom(testDiscom);
-            const discomList = await getLevels(testDiscom);
+            const response = await getAgenciesWithDiscom(session?.user?.discomId);
+            const discomList = await getLevels(session?.user?.discomId);
             const listOfLevel = discomList.data.reduce((acc, item) => {
                 acc[item.id] = item.levelName;
                 return acc;
             }, {});
-            const levelOptions = discomList.data.map((item) => ({
-                label: item.levelName,
-                value: item.levelName,
-            }));
+            const levelOptions = discomList.data
+                .filter((item) => item.levelType === "MAIN")
+                .map((item) => ({
+                    label: item.levelName,
+                    value: item.levelName,
+                }));
             let data = [{ label: 'All', value: 'all' }, ...levelOptions];
             setWorkingLevelList(data)
             setAgencyList(
