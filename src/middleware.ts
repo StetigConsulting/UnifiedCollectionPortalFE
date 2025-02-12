@@ -33,7 +33,7 @@ export async function middleware(request: any) {
         }
 
         if (userRole === "SUPER ADMIN") {
-            if (ADMIN_ONLY_ROUTES.includes(nextUrl.pathname) || AGENCY_ONLY_ROUTES.includes(nextUrl.pathname)) {
+            if (AGENCY_ONLY_ROUTES.includes(nextUrl.pathname)) {
                 return NextResponse.redirect(new URL("/dashboard", nextUrl));
             }
         } else if (userRole === "ADMIN") {
