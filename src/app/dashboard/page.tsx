@@ -21,7 +21,7 @@ const dashboard = () => {
     resolver: zodResolver(dashboardSchema),
   });
 
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
 
   const onSubmit = (data: FormData) => {
     console.log("i m called");
