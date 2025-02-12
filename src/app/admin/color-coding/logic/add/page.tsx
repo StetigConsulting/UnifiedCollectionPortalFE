@@ -13,12 +13,14 @@ import { Loader2 } from 'lucide-react';
 import { colorCodingLogicSchema } from '@/lib/zod';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import { createColorCodingLogic, getBusinessRuleDateById, updateColorCodingLogic } from '@/app/api-calls/admin/api';
-import { testDiscom } from '@/lib/utils';
 import moment from 'moment';
+import { useSession } from 'next-auth/react';
 
 type FormData = z.infer<typeof colorCodingLogicSchema>;
 
 const AddColorCodingLogic = () => {
+    const { data: session } = useSession()
+
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -57,8 +59,8 @@ const AddColorCodingLogic = () => {
         try {
             let payload = {
                 id: null,
-                discom_id: parseInt(testDiscom),
-                office_structure_id: parseInt(testDiscom),
+                discom_id: session?.user?.discomId,
+                office_structure_id: session?.user?.discomId,
                 rule_level: "Discomwise",
                 rule_name: "PAYMENT_STATUS_COLOR_CODING",
                 json_rule: {

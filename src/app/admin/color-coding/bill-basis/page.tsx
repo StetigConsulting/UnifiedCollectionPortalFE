@@ -7,11 +7,12 @@ import { Loader2, Pencil, Trash2 } from 'lucide-react';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import ReactTable from '@/components/ReactTable';
 import { toast } from 'sonner';
-import TabForRouting from '@/components/ColorCoding/TabForRouting';
 import { deleteBusinessRule, getColorCodingBillBasis } from '@/app/api-calls/admin/api';
-import { testDiscom } from '@/lib/utils';
+import { listOfUrls } from '@/lib/utils';
+import { useSession } from 'next-auth/react';
 
 const BillBasis = () => {
+    const { data: session } = useSession()
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [colorLogicEntries, setColorLogicEntries] = useState([]);
@@ -52,7 +53,7 @@ const BillBasis = () => {
 
     const handleEdit = (id: number) => {
         setIsLoading(true)
-        router.push(`/admin/color-coding/bill-basis/add?id=${id}`)
+        router.push(`${listOfUrls.addBillBasis}?id=${id}`)
     }
 
     useEffect(() => {
@@ -62,7 +63,7 @@ const BillBasis = () => {
     const getListOfData = async () => {
         setIsLoading(true);
         try {
-            const response = await getColorCodingBillBasis(testDiscom);
+            const response = await getColorCodingBillBasis(session?.user?.discomId);
 
             let data = response?.data.flatMap(item =>
                 item.json_rule.bill_basis.map(bill => ({
@@ -93,7 +94,7 @@ const BillBasis = () => {
                     <Button variant="outline" type="button" onClick={() => router.back()}>
                         Cancel
                     </Button>
-                    <Button variant="default" onClick={() => router.push('/admin/color-coding/bill-basis/add')}>
+                    <Button variant="default" onClick={() => router.push(listOfUrls.addBillBasis)}>
                         Add
                     </Button>
                 </div>

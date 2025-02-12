@@ -13,14 +13,16 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { editReceiptsSchema } from '@/lib/zod';
 import { getLevels, getLevelsDiscomId } from '@/app/api-calls/department/api';
-import { getErrorMessage, levelWIthId, testDiscom } from '@/lib/utils';
+import { getErrorMessage, levelWIthId } from '@/lib/utils';
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
 import { ReceiptForPostpaid } from '@/lib/interface';
 import { editReceiptForPostpaid, getReceiptForPostpaidById } from '@/app/api-calls/admin/api';
+import { useSession } from 'next-auth/react';
 
 type FormData = z.infer<typeof editReceiptsSchema>;
 
 const EditReceiptsForPostpaid = () => {
+    const { data: session } = useSession()
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isLoading, setIsLoading] = useState(false)
@@ -58,7 +60,7 @@ const EditReceiptsForPostpaid = () => {
             for (const receipt of data.receipts) {
                 let payload: ReceiptForPostpaid = {
                     id: parseInt(receiptIdFromUrl),
-                    discom_id: parseInt(testDiscom),
+                    discom_id: session?.user?.discomId,
                     rule_level: data.configRule,
                     ...data.configRule == 'Levelwise' && {
                         office_structure_id: receipt.applicableLevel === levelWIthId.CIRCLE
@@ -70,7 +72,7 @@ const EditReceiptsForPostpaid = () => {
                                     : receipt.applicableLevel === levelWIthId.SECTION ? receipt.section.map(Number)?.[0] : null,
                     },
                     ...data.configRule == 'Discomwise' && {
-                        office_structure_id: parseInt(testDiscom),
+                        office_structure_id: session?.user?.discomId,
                     },
                     rule_name: "RECEIPT_FOR_POSTPAID",
                     json_rule: {
@@ -101,7 +103,7 @@ const EditReceiptsForPostpaid = () => {
     const [listOfApplicableLevel, setListOfApplicableLevel] = useState([])
 
     useEffect(() => {
-        getLevels(testDiscom).then((res) => {
+        getLevels(session?.user?.discomId).then((res) => {
             setListOfApplicableLevel(
                 res?.data
                     ?.filter((ite) => ite.levelType == "MAIN")
@@ -158,7 +160,7 @@ const EditReceiptsForPostpaid = () => {
         setValue(`receipts.${index}.subDivision`, []);
         setValue(`receipts.${index}.section`, []);
         if (value) {
-            getPicklistFromList({ id: testDiscom, type: 'circle', index });
+            getPicklistFromList({ id: session?.user?.discomId, type: 'circle', index });
         }
     };
 
@@ -213,7 +215,7 @@ const EditReceiptsForPostpaid = () => {
             setValue('configRule', response?.data?.rule_level);
             setValue('receipts', [payload]);
         } catch (error) {
-            console.error("Failed to create agency:", error.data[Object.keys(error.data)[0]]);
+            console.error("Failed to get:", error.data[Object.keys(error.data)[0]]);
         } finally {
             setIsLoading(false);
         }

@@ -11,11 +11,12 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { createColorCodingEcl, getColorCodingEclFlag, updateColorCodingEcl } from '@/app/api-calls/admin/api';
-import { testDiscom } from '@/lib/utils';
+import { useSession } from 'next-auth/react';
 
 type BackgroundColorFormType = z.infer<typeof colorCodingEclSchema>;
 
 const ECLFlaggedCustomer = () => {
+    const { data: session } = useSession()
     const router = useRouter();
 
     const [isLoading, setIsLoading] = useState(false)
@@ -40,8 +41,8 @@ const ECLFlaggedCustomer = () => {
         try {
             let payload = {
                 id: data.id,
-                discom_id: 1001,
-                office_structure_id: 1001,
+                discom_id: session?.user?.discomId,
+                office_structure_id: session?.user?.discomId,
                 rule_level: "Discomwise",
                 rule_name: "ECL_FLAGGED_CUSTOMER_COLOR_CODING",
                 json_rule: {
@@ -79,7 +80,7 @@ const ECLFlaggedCustomer = () => {
     const getEclFlagCustomer = async () => {
         setIsLoading(true);
         try {
-            const response = await getColorCodingEclFlag(testDiscom);
+            const response = await getColorCodingEclFlag(session?.user?.discomId);
             setValue('backgroundColor', response?.data?.[0]?.json_rule?.bg_color_code || '');
             setValue('id', response?.data?.[0]?.id || null)
             console.log(response);

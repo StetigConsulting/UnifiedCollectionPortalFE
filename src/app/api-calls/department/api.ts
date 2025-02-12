@@ -37,7 +37,7 @@ const getLevelsDiscomId = async (id: string) => {
   }
 };
 
-const getLevels = async (id: string) => {
+const getLevels = async (id: number) => {
   try {
     let response = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/office-structure-levels/${id}`

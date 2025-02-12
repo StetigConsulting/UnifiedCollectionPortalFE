@@ -18,11 +18,14 @@ export async function middleware(request: any) {
     console.log("Session User Role:", userRole);
     console.log("Is Authenticated:", isAuthenticated);
 
-    if (!isAuthenticated && nextUrl.pathname !== SIGNIN) {
-        return NextResponse.redirect(new URL(SIGNIN, nextUrl));
+    if (!isAuthenticated) {
+        if (nextUrl.pathname !== SIGNIN) {
+            return NextResponse.redirect(new URL(SIGNIN, nextUrl));
+        }
+        return NextResponse.next();
     }
 
-    if (nextUrl.pathname === '/dashboard') {
+    if (nextUrl.pathname === "/dashboard") {
         return NextResponse.next();
     }
 
@@ -43,8 +46,9 @@ export async function middleware(request: any) {
     return NextResponse.next();
 }
 
+// Middleware configuration
 export const config = {
     matcher: [
-        "/((?!_next/static|_next/image|favicon.ico|icon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"
+        "/((?!api/|_next/static|_next/image|favicon.ico|icon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"
     ],
 };

@@ -163,6 +163,12 @@ export const AGENCY_ONLY_ROUTES = [
 export const listOfUrls = {
   agencyRecharge: '/department/recharge',
   agencyBalanceHistory: '/department/view-balance/history',
+  dashboard: '/dashboard',
+  billBasis: '/admin/color-coding/bill-basis',
+  addBillBasis: '/admin/color-coding/bill-basis/add',
+  receiptForPostpaid: '/admin/receipt-for-postpaid',
+  receiptForPostpaidAdd: '/admin/receipt-for-postpaid/add',
+  receiptForPostpaidEdit: '/admin/receipt-for-postpaid/edit'
 }
 
 export const collectorRolePicklist = [

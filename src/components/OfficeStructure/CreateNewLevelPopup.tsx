@@ -12,15 +12,17 @@ import { createNewLevelSchema } from '@/lib/zod';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 import { testDiscom } from '@/lib/utils';
+import { User } from 'next-auth';
 
 interface CreateNewLevelPopupProps {
     fetchData: () => void;
     currentLevel: number;
+    session: User
 }
 
 type FormData = z.infer<typeof createNewLevelSchema>;
 
-const CreateNewLevelPopup: React.FC<CreateNewLevelPopupProps> = ({ fetchData, currentLevel }) => {
+const CreateNewLevelPopup: React.FC<CreateNewLevelPopupProps> = ({ fetchData, currentLevel, session }) => {
     const [levelCount, setLevelCount] = useState<number>(1);
     const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
     const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -41,8 +43,8 @@ const CreateNewLevelPopup: React.FC<CreateNewLevelPopupProps> = ({ fetchData, cu
         const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/office-structure-levels/`;
 
         const payload = {
-            user_id: 6,
-            discom_id: testDiscom,
+            user_id: 6,//hardcoded
+            discom_id: session?.discomId,
             level: currentLevel,
             level_name: formData.levelName,
             level_type: formData.levelType,

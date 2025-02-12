@@ -7,8 +7,12 @@ import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import ReactTable from '@/components/ReactTable';
 import CreateNewLevelPopup from '@/components/OfficeStructure/CreateNewLevelPopup';
 import CreateNewLevelUploadPopup from '@/components/OfficeStructure/CreateNewLevelUploadPopup';
+import { useSession } from 'next-auth/react';
 
 const OfficeStructurePage = () => {
+
+    const { data: session } = useSession()
+
     const [officeStructureData, setOfficeStructureData] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(false);
@@ -17,7 +21,7 @@ const OfficeStructurePage = () => {
     const fetchOfficeStructureData = async () => {
         setLoading(true);
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/office-structure-levels/${testDiscom}`);
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/office-structure-levels/${session?.user?.discomId}`);
             if (!response.ok) throw new Error('Failed to fetch office structure data');
 
             const data = await response.json();
@@ -64,7 +68,7 @@ const OfficeStructurePage = () => {
                         At least one pseudo level must be defined
                     </div>}
                     customActionButton={<div className="flex space-x-4">
-                        <CreateNewLevelPopup fetchData={fetchOfficeStructureData} currentLevel={maxLevel} />
+                        <CreateNewLevelPopup fetchData={fetchOfficeStructureData} currentLevel={maxLevel} session={session?.user} />
                         <CreateNewLevelUploadPopup fetchData={fetchOfficeStructureData} />
                     </div>}
                     noPagination />
