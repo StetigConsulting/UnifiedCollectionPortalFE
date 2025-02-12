@@ -33,8 +33,9 @@ import {
 } from "@/components/ui/sidebar";
 import Image from "next/image";
 import { NavMain } from "./nav-main";
+import { useSession } from "next-auth/react";
 
-const data = {
+const navData = {
   user: {
     name: "shadcn",
     email: "m@example.com",
@@ -46,13 +47,15 @@ const data = {
       title: "Dashboard",
       url: "/dashboard",
       icon: Gauge,
-      path: '/dashboard'
+      path: '/dashboard',
+      roles: ["ADMIN", "SUPER ADMIN", "AGENT"],
     },
     {
       title: "Department",
       icon: Folder,
       url: "#",
       path: '/department/',
+      roles: ["ADMIN"],
       items: [
         {
           title: "Add Agency",
@@ -85,6 +88,7 @@ const data = {
       icon: Folder,
       url: "#",
       path: '/agency/',
+      roles: ["AGENT"],
       items: [
         {
           title: "Add Collector",
@@ -123,6 +127,7 @@ const data = {
       icon: Folder,
       url: "#",
       path: '/admin/',
+      roles: ["SUPER ADMIN"],
       items: [
         {
           title: 'Department User',
@@ -275,6 +280,14 @@ const data = {
 };
 
 export function AppSidebar() {
+
+  const { data: session } = useSession()
+
+  const userRole = session?.user?.userRole;
+
+  const filteredNavMain = navData.navMain
+    .filter((nav) => !nav.roles || nav.roles.includes(userRole))
+
   return (
     <Sidebar>
       <SidebarHeader className="bg-lightThemeColor">
@@ -289,7 +302,7 @@ export function AppSidebar() {
         />
       </SidebarHeader>
       <SidebarContent className="overflow-x-hidden">
-        <NavMain items={data.navMain} />
+        <NavMain items={filteredNavMain} />
       </SidebarContent>
       <SidebarFooter>
         {/* <NavUser user={data.user} /> */}

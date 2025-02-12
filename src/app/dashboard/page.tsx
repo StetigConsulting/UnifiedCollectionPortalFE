@@ -21,7 +21,7 @@ const dashboard = () => {
     resolver: zodResolver(dashboardSchema),
   });
 
-  // const { data: session } = useSession();
+  const { data: session } = useSession();
 
   const onSubmit = (data: FormData) => {
     console.log("i m called");
@@ -50,12 +50,9 @@ const dashboard = () => {
             Search
           </Button>
         </div>
-        {/* <div>
-          <h1>Welcome, {session?.user?.name}</h1>
-          <p>Role ID: {session?.user?.roleId}</p>
-          <p>Discom ID: {session?.user?.discomId}</p>
-          <p>Access Token: {session?.user?.accessToken}</p>
-        </div> */}
+        <div>
+          <p>User Role: {session?.user?.userRole}</p>
+        </div>
 
       </form>
     </AuthUserReusableCode>

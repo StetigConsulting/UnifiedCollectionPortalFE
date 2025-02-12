@@ -7,8 +7,13 @@ declare module "next-auth" {
             id: string;
             mobileNumber: string;
             name: string;
-            userId: number;
+            userId: string;
             accessToken: string;
+            refreshToken: string;
+            discomId: number;
+            roleId: number;
+            userRole?: string;
+            userScopes?: string[];
         };
     }
 
@@ -16,15 +21,25 @@ declare module "next-auth" {
         id: string;
         mobileNumber: string;
         name: string;
-        userId: number;
+        userId: string;
         accessToken: string;
+        refreshToken: string;
+        discomId: number;
+        roleId: number;
+        userRole?: string;
+        userScopes?: string[];
     }
 
     interface JWT {
         id: string;
         mobileNumber: string;
         name: string;
-        userId: number;
+        userId: string;
         accessToken: string;
+        refreshToken: string;
+        discomId: number;
+        roleId: number;
+        userRole?: string;
+        userScopes?: string[];
     }
 }

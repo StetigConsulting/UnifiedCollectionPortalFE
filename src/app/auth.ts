@@ -4,8 +4,14 @@ import Credentials from "next-auth/providers/credentials";
 interface ExtendedUser extends User {
     id: string;
     mobileNumber: string;
-    userId: number;
+    name: string;
+    userId: string;
     accessToken: string;
+    refreshToken: string;
+    discomId: number;
+    roleId: number;
+    userRole?: string;
+    userScopes?: string[];
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -16,61 +22,106 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 otp: { label: "OTP", type: "text", placeholder: "OTP" }
             },
             async authorize(credentials): Promise<ExtendedUser | null> {
-                const ipResponse = await fetch('https://api.ipify.org?format=json');
+                const ipResponse = await fetch("https://api.ipify.org?format=json");
                 const ipData = await ipResponse.json();
                 const publicIp = ipData.ip;
 
                 const mobileNumber = credentials?.mobileNumber as string;
                 const otp = credentials?.otp as string;
 
+
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/authenticate`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ 
-                        mobileNumber: mobileNumber, 
+                    body: JSON.stringify({
+                        mobileNumber: mobileNumber,
                         otp,
-                        "ipAddress": publicIp,
-                        "sourceType": "PORTAL"
+                        ipAddress: publicIp,
+                        sourceType: "PORTAL",
                     }),
                 });
 
                 const data = await response.json();
-                console.log("Authenticate Response", response);
-                if (response.ok && data?.data?.accessToken) {
-                    return {
-                        id: data.data.userId,
-                        mobileNumber: mobileNumber,
-                        userId: data.data.userId,
-                        accessToken: data.data.accessToken,
-                    };
+                console.log("Authenticate Response", response, data);
+
+                if (!response.ok || !data?.data?.accessToken) {
+                    return null;
                 }
-                return null;
-            }
-        })
+
+
+                const user: ExtendedUser = {
+                    id: data.data.userId,
+                    mobileNumber: mobileNumber,
+                    name: data.data.name,
+                    userId: data.data.userId,
+                    accessToken: data.data.accessToken,
+                    refreshToken: data.data.refreshToken,
+                    discomId: data.data.discomId,
+                    roleId: data.data.roleId,
+                    userRole: "UNKNOWN",
+                    userScopes: [],
+                };
+
+                try {
+
+                    const userRoleResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/v1/user-role-scopes/${user.roleId}`, {
+                        method: "GET",
+                        headers: {
+                            "Authorization": `Bearer ${user.accessToken}`,
+                            "Content-Type": "application/json"
+                        }
+                    });
+
+                    if (userRoleResponse.ok) {
+                        const roleData = await userRoleResponse.json();
+                        console.log("User Role Response:", roleData);
+                        user.userRole = roleData?.data?.user_role?.role_name || "UNKNOWN";
+                        user.userScopes = roleData?.data?.user_scopes?.map((scope: { action: string }) => scope.action) || [];
+                    } else {
+                        console.error("Failed to fetch user role", userRoleResponse.statusText);
+                    }
+                } catch (error) {
+                    console.error("Error fetching user role", error);
+                }
+
+                return user;
+            },
+        }),
     ],
     callbacks: {
-        jwt({ token, user }) {
+        async jwt({ token, user }) {
             if (user) {
-                console.log("JWT User:", user)
+                console.log("JWT User:", user);
                 token.id = user.id;
                 token.mobileNumber = user.mobileNumber;
+                token.name = user.name;
                 token.userId = user.userId;
                 token.accessToken = user.accessToken;
+                token.refreshToken = user.refreshToken;
+                token.discomId = user.discomId;
+                token.roleId = user.roleId;
+                token.userRole = user.userRole;
+                token.userScopes = user.userScopes;
             }
             return token;
         },
-        session({ session, token }) {
+        async session({ session, token }) {
             session.user.id = token.id as string;
             session.user.mobileNumber = token.mobileNumber as string;
-            session.user.userId = token.userId as number;
+            session.user.name = token.name as string;
+            session.user.userId = token.userId as string;
             session.user.accessToken = token.accessToken as string;
+            session.user.refreshToken = token.refreshToken as string;
+            session.user.discomId = token.discomId as number;
+            session.user.roleId = token.roleId as number;
+            session.user.userRole = token.userRole as string;
+            session.user.userScopes = token.userScopes as string[];
             return session;
-        }
-        
+        },
     },
     pages: {
-        signIn: "/auth/signin"
-    }
+        signIn: "/auth/signin",
+    },
 });
