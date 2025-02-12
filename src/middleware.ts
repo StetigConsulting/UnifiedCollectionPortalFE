@@ -23,23 +23,29 @@ export async function middleware(request: any) {
             return NextResponse.redirect(new URL(SIGNIN, nextUrl));
         }
         return NextResponse.next();
-    }
+    } else {
+        if (nextUrl.pathname === "/dashboard") {
+            return NextResponse.next();
+        }
 
-    if (nextUrl.pathname === "/dashboard") {
-        return NextResponse.next();
-    }
-
-    if (userRole === "SUPER ADMIN") {
-        if (ADMIN_ONLY_ROUTES.includes(nextUrl.pathname) || AGENCY_ONLY_ROUTES.includes(nextUrl.pathname)) {
+        if (nextUrl.pathname === "/") {
             return NextResponse.redirect(new URL("/dashboard", nextUrl));
         }
-    } else if (userRole === "ADMIN") {
-        if (SUPER_ADMIN_ONLY_ROUTES.includes(nextUrl.pathname) || AGENCY_ONLY_ROUTES.includes(nextUrl.pathname)) {
-            return NextResponse.redirect(new URL("/dashboard", nextUrl));
-        }
-    } else if (userRole === "AGENT") {
-        if (SUPER_ADMIN_ONLY_ROUTES.includes(nextUrl.pathname) || ADMIN_ONLY_ROUTES.includes(nextUrl.pathname)) {
-            return NextResponse.redirect(new URL("/dashboard", nextUrl));
+
+        if (userRole === "SUPER ADMIN") {
+            if (ADMIN_ONLY_ROUTES.includes(nextUrl.pathname) || AGENCY_ONLY_ROUTES.includes(nextUrl.pathname)) {
+                return NextResponse.redirect(new URL("/dashboard", nextUrl));
+            }
+        } else if (userRole === "ADMIN") {
+            if (SUPER_ADMIN_ONLY_ROUTES.includes(nextUrl.pathname) || AGENCY_ONLY_ROUTES.includes(nextUrl.pathname)) {
+                return NextResponse.redirect(new URL("/dashboard", nextUrl));
+            }
+        } else if (userRole === "AGENCY") {
+            if (SUPER_ADMIN_ONLY_ROUTES.includes(nextUrl.pathname) || ADMIN_ONLY_ROUTES.includes(nextUrl.pathname)) {
+                return NextResponse.redirect(new URL("/dashboard", nextUrl));
+            }
+        } else {
+            return NextResponse.redirect(new URL('/dashboard', nextUrl));
         }
     }
 
