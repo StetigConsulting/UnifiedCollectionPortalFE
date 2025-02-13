@@ -98,6 +98,11 @@ const navData = {
           url: "/agency/add-collector",
         },
         {
+          title: "Edit Collector",
+          icon: UserPlus2,
+          url: "/agency/edit-collector",
+        },
+        {
           title: "View Collector",
           icon: Eye,
           url: "/agency/view-collector",

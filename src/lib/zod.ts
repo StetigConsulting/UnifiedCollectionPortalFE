@@ -365,19 +365,12 @@ export const fileUploadSchema = z.object({
   //   }),
 });
 
-export const addCollectorSchema = z.object({
+export const editCollectorSchema = z.object({
+  collectorMobile: z.number().min(10, 'Mobile number must be at least 10 digits'),
   name: z.string().min(1, "Name is required"),
   phoneNumber: z.string().min(1, "Phone Number is required"),
-  validity: z.string().min(1, "Select Validity Date"),
-  maximumLimit: z
-    .number()
-    .min(0, "Maximum Limit must be greater than or equal to 0"),
-  initialBalance: z
-    .number()
-    .min(0, "Initial Balance must be greater than or equal to 0"),
-  binder: z.string().min(1, "Binder is required"),
-  subDivision: z.string().min(1, "Select Sub Division"),
-  section: z.number().min(0, "Section is required"),
+  collectorType: z.string().min(1, { message: "Collector type is required" }),
+  workingType: z.string().min(1, { message: "Working type is required" }),
   permission: z.array(z.string()).min(1, "At least one permission is required"),
   collectionType: z
     .array(z.string())
@@ -385,7 +378,7 @@ export const addCollectorSchema = z.object({
   nonEnergy: z.array(z.string()).optional(),
 });
 
-export type AddCollectorFormData = z.infer<typeof addCollectorSchema>;
+export type EditCollectorFormData = z.infer<typeof editCollectorSchema>;
 
 export const addCounterCollectorSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
@@ -403,7 +396,7 @@ export const addCounterCollectorSchema = z.object({
   collectorType: z.string().min(1, { message: "Collector type is required" }),
   collectorRole: z.string().min(1, { message: "Collector role is required" }),
   workingType: z.string().min(1, { message: "Working type is required" }),
-  workingLevel: z.string().min(1, { message: "Working type is required" }),
+  workingLevel: z.string().min(1, { message: "Working level is required" }),
 
   maximumLimit: z
     .number({ invalid_type_error: "Maximum limit must be a number" })
