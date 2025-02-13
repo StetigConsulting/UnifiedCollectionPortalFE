@@ -9,24 +9,20 @@ import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWi
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
-
-// Define the types for the state data
-interface SelectOption {
-    value: string;
-    label: string;
-}
+import { getAgentByPhoneNumber } from '@/app/api-calls/department/api';
+import { getErrorMessage } from '@/lib/utils';
 
 const BinderMapping = () => {
-    const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<BinderMappingFormData>({
+    const { register, handleSubmit, formState: { errors }, setValue, clearErrors, watch, setError } = useForm<BinderMappingFormData>({
         resolver: zodResolver(binderMappingSchema),
     });
 
     const [isLoading, setIsLoading] = useState(false);
 
-    const [binders, setBinders] = useState<SelectOption[]>([]);
-    const [subDivisions, setSubDivisions] = useState<SelectOption[]>([]);
-    const [sections, setSections] = useState<SelectOption[]>([]);
-    const [divisions, setDivisions] = useState<SelectOption[]>([]);
+    const [binders, setBinders] = useState([]);
+    const [subDivisions, setSubDivisions] = useState([]);
+    const [sections, setSections] = useState([]);
+    const [divisions, setDivisions] = useState([]);
 
     useEffect(() => {
         // API calls can be un-commented when required
@@ -46,18 +42,60 @@ const BinderMapping = () => {
         }
     };
 
+    const [showRestFields, setShowRestFields] = useState(false);
+
+    const handleGetAgentData = async () => {
+        const mobileNumber = Number(watch('collectorMobile'));
+        if (!isNaN(mobileNumber) && mobileNumber.toString().length === 10) {
+            try {
+                setIsLoading(true);
+                const response = await getAgentByPhoneNumber(mobileNumber);
+                // setValue('agencyName', response.data.agent_name)
+                // setValue('agencyId', response.data.id)
+                // setValue('phoneNumber', response.data.primary_phone || '');
+                // setValue('transactionType', 'Recharge')
+                // setValue('currentBalance', response.data.current_balance);
+                // setValue('maximumRecharge', response?.data?.maximum_limit)
+                setShowRestFields(true)
+            } catch (error) {
+                let errorMessage = getErrorMessage(error);
+                toast.error('Error: ' + errorMessage)
+                setShowRestFields(false)
+            } finally {
+                setIsLoading(false);
+            }
+        } else {
+            setError("collectorMobile", {
+                type: "manual",
+                message: "Please enter a valid 10-digit mobile number.",
+            });
+            return;
+        }
+    }
+
     return (
         <AuthUserReusableCode pageTitle="Pseudo Level Mapping" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
-                    <CustomizedInputWithLabel
-                        label="Collector Mobile"
-                        placeholder="Enter Collector Mobile"
-                        containerClass="col-span-2"
-                        required
-                        {...register('collectorMobile')}
-                        errors={errors.collectorMobile}
-                    />
+                    <div className='space-y-2 col-span-2'>
+                        <div className="col-span-2">
+                            <CustomizedInputWithLabel
+                                label="Collector Mobile"
+                                type="text"
+                                {...register('collectorMobile', { valueAsNumber: true })}
+                                onChange={() => {
+                                    clearErrors("collectorMobile")
+                                    setShowRestFields(false)
+                                }}
+                                errors={errors.collectorMobile}
+                            />
+                        </div>
+                        <div className='text-end'>
+                            <Button type="button" onClick={handleGetAgentData} disabled={isLoading}>
+                                {isLoading ? 'Loading...' : 'Search'}
+                            </Button>
+                        </div>
+                    </div>
                     <CustomizedInputWithLabel
                         label="Agent ID"
                         placeholder="Enter Agent ID"
