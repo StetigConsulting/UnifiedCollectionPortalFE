@@ -176,7 +176,7 @@ const AddBillBasis = () => {
 
                 <div className="mt-6 flex justify-end space-x-4">
                     {
-                        fields.length < 2 &&
+                        fields.length < 3 &&
                         <Button variant="outline" type="button" onClick={() => append({ fontType: '', fontColor: '' })}>
                             + Add More
                         </Button>
