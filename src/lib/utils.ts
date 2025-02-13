@@ -188,7 +188,7 @@ export const agentWorkingType = [
 ]
 
 export const getErrorMessage = (error: any) => {
-  let errorMessage = error?.data ? error?.data[Object.keys(error?.data)[0]] : error?.error;
+  let errorMessage = error?.data ? error?.data[Object.keys(error?.data)[0]] : error?.error ? error?.error : error?.message;
   return errorMessage
 }
 
