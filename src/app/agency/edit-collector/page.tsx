@@ -12,7 +12,7 @@ import { toast } from "sonner";
 // import { getBinders, getSubDivisions, getSections, getPermissions, getCollectionTypes, getNonEnergyTypes } from "@/app/api-calls/collector/api";
 import CustomizedMultipleSelectInputWithLabelString from "@/components/CustomizedMultipleSelectInputWithLabelString";
 import AuthUserReusableCode from "@/components/AuthUserReusableCode";
-import { getAgentByPhoneNumber } from "@/app/api-calls/department/api";
+import { getAgencyById, getAgentByPhoneNumber } from "@/app/api-calls/department/api";
 import { agentWorkingType, getErrorMessage } from "@/lib/utils";
 import { getCollectorTypes } from "@/app/api-calls/agency/api";
 
@@ -25,7 +25,11 @@ const AddCollector = () => {
 
     const [collectorTypes, setCollectorTypes] = useState([]);
     const [permissions, setPermissions] = useState([]);
-    const [collectionTypes, setCollectionTypes] = useState([]);
+    const [collectionTypes, setCollectionTypes] = useState(
+        [
+            { label: "Energy", value: "Energy" },
+            { label: "Non-Energy", value: "Non-Energy" },
+        ]);
     const [nonEnergyTypes, setNonEnergyTypes] = useState([]);
 
     useEffect(() => {
@@ -64,8 +68,17 @@ const AddCollector = () => {
                 setValue('phoneNumber', response.data.secondary_phone || '');
                 setValue('collectorType', response.data.collector_type.id)
                 setValue('workingType', response.data.work_type)
-                // setShowRestFields(true)
-                // getListOfAllBinders(response.data.id)
+                getAgencyData(response.data.agency.id)
+                setValue('permission', response.data.collection_payment_modes.map((ite) => ite.id))
+                let collectionType = []
+                if (response.data.collection_type_energy) {
+                    collectionType.push('Energy')
+                }
+                if (response.data.collection_type_non_energy) {
+                    collectionType.push('Non Energy')
+                }
+                setValue('collectionType', collectionType)
+                setValue('nonEnergy', response.data.non_energy_types.map((ite) => ite.id))
             } catch (error) {
                 console.log(error.message);
                 let errorMessage = getErrorMessage(error);
@@ -82,6 +95,37 @@ const AddCollector = () => {
             return;
         }
     }
+
+    const [agencyData, setAgencyData] = useState({})
+
+    const getAgencyData = async (id: number) => {
+        try {
+            const agencyResponse = await getAgencyById(String(id));
+            const agencyData = agencyResponse.data;
+            console.log("agencyData", agencyData);
+            setAgencyData(agencyData);
+
+            setPermissions(agencyData?.collection_payment_modes
+                ?.map((ite) => {
+                    return {
+                        label: ite.mode_name,
+                        value: ite.id,
+                    };
+                }))
+
+            setNonEnergyTypes(
+                agencyData?.non_energy_types?.map((ite) => {
+                    return {
+                        label: ite.type_name,
+                        value: ite.id,
+                    };
+                })
+            );
+
+        } catch (error) {
+            console.error("Error fetching agency data:", error);
+        }
+    };
 
     return (
         <AuthUserReusableCode pageTitle="Edit Collector" isLoading={isLoading}>

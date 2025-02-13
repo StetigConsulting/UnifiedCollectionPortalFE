@@ -11,6 +11,7 @@ import { listOfUrls } from '@/lib/utils';
 import { Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useSession } from 'next-auth/react';
+import { getLevels } from '@/app/api-calls/department/api';
 
 const ReceiptsForPostpaid = () => {
     const { data: session } = useSession()
@@ -28,11 +29,20 @@ const ReceiptsForPostpaid = () => {
         setIsLoading(true);
         try {
             const response = await getListOfReceiptForPostpaid(session?.user?.discomId);
+            const discomList = await getLevels(session?.user?.discomId);
+            const listOfLevel = discomList.data.reduce((acc, item) => {
+                acc[item.id] = item.levelName;
+                return acc;
+            }, {});
             const transformedData = response.data
                 .filter(({ rule_level }) => rule_level === selectedConfig)
-                .map(({ json_rule, ...rest }) => ({
+                .map(({ json_rule, office_structure, ...rest }) => ({
                     ...rest,
-                    ...json_rule
+                    ...json_rule,
+                    ...(selectedConfig === 'Levelwise' && office_structure && {
+                        applicableLevel: listOfLevel[office_structure.office_structure_level_id] || "Unknown Level",
+                        officeLevel: office_structure.office_description
+                    }),
                 }));
 
             if (selectedConfig === 'Levelwise') {
@@ -59,7 +69,11 @@ const ReceiptsForPostpaid = () => {
         },
         {
             label: 'Applicable Level',
-            key: 'applicableLabel',
+            key: 'applicableLevel',
+        },
+        {
+            label: 'Applicable Office Name',
+            key: 'officeLevel',
         },
         {
             label: 'Number of Receipts Possbile Per Month Per Consumer',

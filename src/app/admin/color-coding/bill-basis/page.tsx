@@ -89,16 +89,22 @@ const BillBasis = () => {
                 hideSearchAndOtherButtons
             />
 
-            {
-                tableData.length == 0 && <div className="mt-6 text-end space-x-4">
-                    <Button variant="outline" type="button" onClick={() => router.back()}>
-                        Cancel
-                    </Button>
-                    <Button variant="default" onClick={() => router.push(listOfUrls.addBillBasis)}>
-                        Add
-                    </Button>
-                </div>
-            }
+            <div className="mt-6 text-end space-x-4">
+                <Button variant="outline" type="button" onClick={() => router.back()}>
+                    Cancel
+                </Button>
+                {
+                    tableData.length == 0 ?
+                        <Button variant="default" onClick={() => router.push(listOfUrls.addBillBasis)}>
+                            Add
+                        </Button>
+                        :
+                        <Button variant="default" onClick={() => handleEdit(tableData[0].id)}>
+                            Edit
+                        </Button>
+                }
+            </div>
+
 
         </AuthUserReusableCode>
     );
