@@ -435,30 +435,20 @@ export const addCounterCollectorSchema = z.object({
 export type AddCounterCollectorFormData = z.infer<typeof addCounterCollectorSchema>;
 
 export const binderMappingSchema = z.object({
-  collectorMobile: z
-    .string()
-    .min(1, { message: 'Collector Mobile is required' })
-    .regex(/^\d{10}$/, { message: 'Invalid mobile number' }),
-
+  collectorMobile: z.number().min(10, 'Mobile number must be at least 10 digits'),
   agentId: z
-    .string()
-    .min(1, { message: 'Agent ID is required' }),
-
+    .number(),
   agentMobileNumber: z
     .string()
-    .min(1, { message: 'Agent Mobile Number is required' })
-    .regex(/^\d{10}$/, { message: 'Invalid agent mobile number' }),
-
+    .min(1, { message: 'Agent Mobile Number is required' }),
   agencyName: z
     .string()
     .min(1, { message: 'Agency Name is required' }),
 
   division: z
-    .string()
-    .min(1, { message: 'Division is required' }),
-
+    .number(),
   binder: z
-    .array(z.string())
+    .array(z.number())
     .min(1, { message: 'At least one binder must be selected' }),
 
   allocatedBinder: z

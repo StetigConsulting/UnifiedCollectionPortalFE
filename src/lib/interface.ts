@@ -177,3 +177,8 @@ export interface EditAgentRoleArea {
     working_office_structure: number;
     working_level: number;
 }
+
+export interface UpdateBinder {
+    agent_id: number;
+    pseudo_office_structure: number[];
+}
