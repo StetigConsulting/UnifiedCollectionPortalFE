@@ -192,7 +192,7 @@ const ReceiptsForPostpaid = () => {
     };
 
     return (
-        <AuthUserReusableCode pageTitle="Receipts for Postpaid" isLoading={isLoading}>
+        <AuthUserReusableCode pageTitle="Receipt for Postpaid" isLoading={isLoading}>
 
             <div className="space-y-4">
                 <CustomizedSelectInputWithLabel

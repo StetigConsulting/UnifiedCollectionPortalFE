@@ -14,21 +14,27 @@ import CustomizedMultipleSelectInputWithLabelString from "@/components/Customize
 import AuthUserReusableCode from "@/components/AuthUserReusableCode";
 import { getAgencyById, getAgentByPhoneNumber } from "@/app/api-calls/department/api";
 import { agentWorkingType, getErrorMessage } from "@/lib/utils";
-import { getCollectorTypes } from "@/app/api-calls/agency/api";
+import { editCollectorData, getCollectorTypes } from "@/app/api-calls/agency/api";
+import CustomizedMultipleSelectInputWithLabelNumber from "@/components/CustomizedMultipleSelectInputWithLabelNumber";
+import { useSession } from "next-auth/react";
+import { Loader2 } from "lucide-react";
 
-const AddCollector = () => {
-    const { register, handleSubmit, formState: { errors }, setValue, watch, setError } = useForm<EditCollectorFormData>({
+const EditCollector = () => {
+    const { register, handleSubmit, formState: { errors }, setValue, watch, setError, reset } = useForm<EditCollectorFormData>({
         resolver: zodResolver(editCollectorSchema),
     });
 
+    const { data: session } = useSession()
+
     const [isLoading, setIsLoading] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const [collectorTypes, setCollectorTypes] = useState([]);
     const [permissions, setPermissions] = useState([]);
     const [collectionTypes, setCollectionTypes] = useState(
         [
             { label: "Energy", value: "Energy" },
-            { label: "Non-Energy", value: "Non-Energy" },
+            { label: "Non Energy", value: "Non Energy" },
         ]);
     const [nonEnergyTypes, setNonEnergyTypes] = useState([]);
 
@@ -48,11 +54,26 @@ const AddCollector = () => {
     }, []);
 
     const onSubmit = async (data: EditCollectorFormData) => {
+        setIsSubmitting(true)
         try {
-            toast.success("Collector added successfully!");
+            let payload = {
+                "agent_id": data.agentId,
+                "collection_payment_modes": data.permission,
+                "collection_type_energy": data.collectionType.includes("Energy") ? true : false,
+                "collection_type_non_energy": data.collectionType.includes("Non Energy") ? true : false,
+                "non_energy_types": data.collectionType.includes("Non Energy") ? data.nonEnergy : [],
+                "collector_type": data.collectorType,
+                "work_type": data.workingType
+            }
+            await editCollectorData(payload, 6);//hardcoded
+            toast.success('Agent edited successfully!');
+            reset()
         } catch (error) {
-            toast.error("Failed to add collector.");
-            console.error("Error:", error);
+            let errorMessage = getErrorMessage(error);
+            toast.error('Error: ' + errorMessage);
+            console.error('Error:', error);
+        } finally {
+            setIsSubmitting(false)
         }
     };
 
@@ -68,6 +89,7 @@ const AddCollector = () => {
                 setValue('phoneNumber', response.data.secondary_phone || '');
                 setValue('collectorType', response.data.collector_type.id)
                 setValue('workingType', response.data.work_type)
+                setValue('agentId', response.data.id)
                 getAgencyData(response.data.agency.id)
                 setValue('permission', response.data.collection_payment_modes.map((ite) => ite.id))
                 let collectionType = []
@@ -127,6 +149,8 @@ const AddCollector = () => {
         }
     };
 
+    console.log(errors, watch())
+
     return (
         <AuthUserReusableCode pageTitle="Edit Collector" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -173,13 +197,15 @@ const AddCollector = () => {
                         label="Collector Type"
                         list={collectorTypes}
                         {...register("collectorType")}
+                        errors={errors.collectorType}
                     />
                     <CustomizedSelectInputWithLabel
                         label="Working Type"
                         list={agentWorkingType}
                         {...register("workingType")}
+                        errors={errors.workingType}
                     />
-                    <CustomizedMultipleSelectInputWithLabelString
+                    <CustomizedMultipleSelectInputWithLabelNumber
                         label="Permission"
                         list={permissions}
                         multi={true}
@@ -201,7 +227,7 @@ const AddCollector = () => {
                     />
 
                     {watch("collectionType")?.includes("Non Energy") && (
-                        <CustomizedMultipleSelectInputWithLabelString
+                        <CustomizedMultipleSelectInputWithLabelNumber
                             label="Non Energy"
                             list={nonEnergyTypes}
                             multi={true}
@@ -214,11 +240,19 @@ const AddCollector = () => {
                     )}
                 </div>
                 <div className="flex justify-end mt-4">
-                    <Button type="submit">Submit</Button>
+                    <Button type="submit" variant="default" disabled={isSubmitting}>
+                        {isSubmitting ? (
+                            <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
+                            </>
+                        ) : (
+                            'Submit'
+                        )}
+                    </Button>
                 </div>
             </form>
         </AuthUserReusableCode>
     );
 };
 
-export default AddCollector;
+export default EditCollector;

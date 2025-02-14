@@ -368,14 +368,17 @@ export const fileUploadSchema = z.object({
 export const editCollectorSchema = z.object({
   collectorMobile: z.number().min(10, 'Mobile number must be at least 10 digits'),
   name: z.string().min(1, "Name is required"),
+  agentId: z.number(),
   phoneNumber: z.string().min(1, "Phone Number is required"),
-  collectorType: z.string().min(1, { message: "Collector type is required" }),
+  collectorType: z.number().min(1, { message: "Collector type is required" }),
   workingType: z.string().min(1, { message: "Working type is required" }),
-  permission: z.array(z.string()).min(1, "At least one permission is required"),
+  permission: z
+    .array(z.number(), { message: "Permission must be an array of numbers" })
+    .min(1, { message: "At least one permission is required" }),
   collectionType: z
     .array(z.string())
     .min(1, "At least one collection type is required"),
-  nonEnergy: z.array(z.string()).optional(),
+  nonEnergy: z.array(z.number()).optional(),
 });
 
 export type EditCollectorFormData = z.infer<typeof editCollectorSchema>;

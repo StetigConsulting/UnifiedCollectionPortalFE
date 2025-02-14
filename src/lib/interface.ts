@@ -182,3 +182,13 @@ export interface UpdateBinder {
     agent_id: number;
     pseudo_office_structure: number[];
 }
+
+export interface EditCollector {
+    agent_id: number;
+    collection_payment_modes: number[];
+    collection_type_energy: boolean;
+    collection_type_non_energy: boolean;
+    non_energy_types: number[];
+    collector_type: number;
+    work_type: string;
+}

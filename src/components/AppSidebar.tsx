@@ -108,7 +108,7 @@ const navData = {
           url: "/agency/view-collector",
         },
         {
-          title: "Binder Mapping",
+          title: "Pseudo Level Mapping",
           icon: UserPlus2,
           url: "/agency/binder-mapping",
         },

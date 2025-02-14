@@ -86,12 +86,13 @@ const RechargeEntry = () => {
             const response = await rechargeAgentById(payload, testAgencyId);
             toast.success("Agenct recharge successfully");
             console.log("API Response:", response);
+            getAgencyBalance()
             reset();
         } catch (error) {
             // console.error("Failed to edit agency:", error.data[Object.keys(error.data)[0]]);
-            let errorMessage = error?.data && error?.data[Object.keys(error?.data)[0]] || error?.error
+            let errorMessage = getErrorMessage(error);
             console.log(errorMessage)
-            toast.error('Error: ' + errorMessage || error?.error)
+            toast.error('Error: ' + errorMessage)
         } finally {
             setIsSubmitting(false);
         }
@@ -213,6 +214,7 @@ const RechargeEntry = () => {
                                 label="Maximum Recharge Possible"
                                 required={true}
                                 errors={errors.maximumRecharge}
+                                disabled
                                 type="number"
                                 {...register("maximumRecharge", { valueAsNumber: true })}
                             />
