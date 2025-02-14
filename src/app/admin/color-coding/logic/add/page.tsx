@@ -107,7 +107,7 @@ const AddColorCodingLogic = () => {
             }
             console.log('Submitting Data:', response.data);
             toast.success('Color coding rules saved successfully!');
-            router.push('/admin/color-coding');
+            router.push('/admin/color-coding/logic');
         } catch (error) {
             console.log('Error:', error?.error)
             toast.error('Error: ' + error?.error);

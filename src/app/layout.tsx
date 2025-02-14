@@ -32,6 +32,7 @@ export default function RootLayout({
 
     <html lang="en">
       <body
+        cz-shortcut-listen="true"
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <SessionProvider>
@@ -43,7 +44,7 @@ export default function RootLayout({
           </SessionWrapper>
         </SessionProvider>
       </body>
-    </html>
+    </html >
 
   );
 }

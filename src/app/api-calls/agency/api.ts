@@ -1,5 +1,5 @@
 import api from "@/lib/axios";
-import { AddCounterCollector, ExtendAgentValidity, RechargeAgent, UpdateBinder } from "@/lib/interface";
+import { AddCounterCollector, EditCollector, ExtendAgentValidity, RechargeAgent, UpdateBinder } from "@/lib/interface";
 
 export const createCounterCollector = async (data: AddCounterCollector, user_id: number) => {
     try {
@@ -114,6 +114,20 @@ export const getListOfAvailableBindersByAgentId = async (id: number) => {
 export const updateListOfBinder = async (data: UpdateBinder) => {
     try {
         const response = await api.post(`/v1/agent-pseudo-office-structure-mapping/`, data);
+        return response.data;
+    } catch (error) {
+
+        throw error?.response?.data
+    }
+}
+
+export const editCollectorData = async (data: EditCollector, user_id: number) => {
+    try {
+        const response = await api.put(`/v1/agents/`, data, {
+            headers: {
+                "user-id": user_id,
+            },
+        });
         return response.data;
     } catch (error) {
 

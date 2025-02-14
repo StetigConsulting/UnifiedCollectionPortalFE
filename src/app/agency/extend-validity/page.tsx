@@ -42,7 +42,7 @@ const ExtendValidity = () => {
         try {
             setIsSubmitting(true);
             const response = await extendAgentValidityById(payload, testAgencyId);
-            toast.success("Agenct recharge successfully");
+            toast.success("Agent Validity udpated successfully");
             console.log("API Response:", response);
             reset();
         } catch (error) {
