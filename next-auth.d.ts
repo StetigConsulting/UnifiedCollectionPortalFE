@@ -8,6 +8,7 @@ declare module "next-auth" {
             mobileNumber: string;
             name: string;
             userId: string;
+            uniqueUserId: number;
             accessToken: string;
             refreshToken: string;
             discomId: number;
@@ -22,6 +23,7 @@ declare module "next-auth" {
         mobileNumber: string;
         name: string;
         userId: string;
+        uniqueUserId: number;
         accessToken: string;
         refreshToken: string;
         discomId: number;
@@ -35,6 +37,7 @@ declare module "next-auth" {
         mobileNumber: string;
         name: string;
         userId: string;
+        uniqueUserId: number;
         accessToken: string;
         refreshToken: string;
         discomId: number;

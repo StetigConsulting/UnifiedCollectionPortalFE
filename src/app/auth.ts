@@ -6,6 +6,7 @@ interface ExtendedUser extends User {
     mobileNumber: string;
     name: string;
     userId: string;
+    uniqueUserId: number;
     accessToken: string;
     refreshToken: string;
     discomId: number;
@@ -56,6 +57,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     mobileNumber: mobileNumber,
                     name: data.data.name,
                     userId: data.data.userId,
+                    uniqueUserId: data.data.id,
                     accessToken: data.data.accessToken,
                     refreshToken: data.data.refreshToken,
                     discomId: data.data.discomId,
@@ -98,6 +100,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 token.mobileNumber = user.mobileNumber;
                 token.name = user.name;
                 token.userId = user.userId;
+                token.uniqueUserId = user.uniqueUserId;
                 token.accessToken = user.accessToken;
                 token.refreshToken = user.refreshToken;
                 token.discomId = user.discomId;
@@ -112,6 +115,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             session.user.mobileNumber = token.mobileNumber as string;
             session.user.name = token.name as string;
             session.user.userId = token.userId as string;
+            session.user.uniqueUserId = token.uniqueUserId as number;
             session.user.accessToken = token.accessToken as string;
             session.user.refreshToken = token.refreshToken as string;
             session.user.discomId = token.discomId as number;
