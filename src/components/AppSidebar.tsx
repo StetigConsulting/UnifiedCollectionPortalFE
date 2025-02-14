@@ -36,6 +36,7 @@ import { NavMain } from "./nav-main";
 import { useSession } from "next-auth/react";
 import { Button } from "./ui/button";
 import { handleSignOut } from "@/app/actions/authActions";
+import { getRosourceByDiscomId } from "@/app/api-calls/other/api";
 
 const navData = {
   user: {
@@ -292,6 +293,8 @@ export function AppSidebar() {
 
   const userRole = session?.user?.userRole;
 
+  const [logoLink, setLogoLink] = React.useState('')
+
   const filteredNavMain = navData.navMain
     .filter((nav) => !nav.roles || nav.roles.includes(userRole))
 
@@ -300,18 +303,26 @@ export function AppSidebar() {
     await handleSignOut();
   };
 
+  React.useEffect(() => {
+    getRosourceByDiscomId(session?.user?.discomId).then((res) => {
+      const logoValue = res.data.find(item => item.name === "Logo")?.value;
+      setLogoLink(logoValue);
+    })
+  }, [])
+
   return (
     <Sidebar>
-      <SidebarHeader className="bg-lightThemeColor">
-        <Image
-          alt=""
-          width={150}
-          height={1000}
-          priority
-          unoptimized
-          src="/images/logo.png"
-          className="mx-auto object-contain"
-        />
+      <SidebarHeader className="bg-lightThemeColor min-h-[135px]">
+        {logoLink &&
+          <Image
+            alt=""
+            width={150}
+            height={1000}
+            priority
+            unoptimized
+            src={logoLink}
+            className="m-auto object-contain align-center"
+          />}
       </SidebarHeader>
       <SidebarContent className="overflow-x-hidden">
         <NavMain items={filteredNavMain} />
