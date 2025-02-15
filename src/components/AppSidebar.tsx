@@ -128,6 +128,11 @@ const navData = {
           icon: UserPlus2,
           url: "/agency/reset-collector",
         },
+        {
+          title: "Bank Deposit",
+          icon: UserPlus2,
+          url: "/agency/bank-deposit",
+        },
       ]
     },
     {
