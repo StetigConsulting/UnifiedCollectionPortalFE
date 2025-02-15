@@ -192,3 +192,22 @@ export interface EditCollector {
     collector_type: number;
     work_type: string;
 }
+
+export interface AddAgentBankDeposit {
+    discom_id: number;
+    agent_id: number;
+    bank_name: string;
+    deposit_date: string;
+    amount: number;
+    txn_ref_no: string;
+    deposit_slip_file_path: string;
+}
+
+export interface AddAgencyBankDeposit {
+    discom_id: number;
+    agency_id: number;
+    bank_name: string;
+    deposit_date: string;
+    amount: number;
+    deposit_document: string;
+}

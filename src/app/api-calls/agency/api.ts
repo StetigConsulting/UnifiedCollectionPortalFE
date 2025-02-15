@@ -1,5 +1,5 @@
 import api from "@/lib/axios";
-import { AddCounterCollector, EditCollector, ExtendAgentValidity, RechargeAgent, UpdateBinder } from "@/lib/interface";
+import { AddAgentBankDeposit, AddCounterCollector, EditCollector, ExtendAgentValidity, RechargeAgent, UpdateBinder } from "@/lib/interface";
 
 export const createCounterCollector = async (data: AddCounterCollector, user_id: number) => {
     try {
@@ -128,6 +128,30 @@ export const editCollectorData = async (data: EditCollector, user_id: number) =>
                 "user-id": user_id,
             },
         });
+        return response.data;
+    } catch (error) {
+
+        throw error?.response?.data
+    }
+}
+
+export const uploadAgentBankDepositSlip = async (file: FormData) => {
+    try {
+        const response = await api.post(`/v1/agent-bank-deposits/upload`, file, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        return response.data;
+    } catch (error) {
+
+        throw error?.response?.data
+    }
+}
+
+export const addAgentBankDeposit = async (data: AddAgentBankDeposit) => {
+    try {
+        const response = await api.post(`/v1/agent-bank-deposits/`, data);
         return response.data;
     } catch (error) {
 

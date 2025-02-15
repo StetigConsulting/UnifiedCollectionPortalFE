@@ -8,3 +8,12 @@ export const getRosourceByDiscomId = async (id: number) => {
         throw error?.response?.data
     }
 }
+
+export const getAllBankList = async () => {
+    try {
+        const response = await api.get(`/v1/banks/`);
+        return response.data;
+    } catch (error) {
+        throw error?.response?.data
+    }
+}

@@ -837,3 +837,46 @@ export const editAgentAreaSchema = z.object({
 });
 
 export type editAgentAreaFormData = z.infer<typeof editAgentAreaSchema>;
+
+export const agentBankDepositSchema = z.object({
+  collectorMobile: z.number().min(10, 'Mobile number must be at least 10 digits'),
+  agentName: z.string().optional(),
+  phoneNumber: z.string().optional(),
+  agentId: z.number().optional(),
+  depositAmount: z
+    .number()
+    .min(1, 'Deposit amount must be at least 1')
+    .positive('Deposit amount must be a positive number'),
+  depositDate: z
+    .string()
+    .nonempty('Deposit Date is required'),
+  txnRefNo: z
+    .string()
+    .nonempty('Transaction Ref No is required')
+    .min(1, 'Transaction Ref No cannot be empty'),
+  depositSlip: z
+    .any()
+    .refine((val) => val && val[0], 'Deposit slip is required')
+    .optional(),
+  bank: z.string().nonempty('Bank is required'),
+});
+
+export type AgentBankDepositFormData = z.infer<typeof agentBankDepositSchema>;
+
+export const agencyBankDepositSchema = z.object({
+  agencyId: z.number().optional(),
+  depositAmount: z
+    .number()
+    .min(1, 'Deposit amount must be at least 1')
+    .positive('Deposit amount must be a positive number'),
+  depositDate: z
+    .string()
+    .nonempty('Deposit Date is required'),
+  txnRefNo: z
+    .string()
+    .nonempty('Transaction Ref No is required')
+    .min(1, 'Transaction Ref No cannot be empty'),
+  bank: z.string().nonempty('Bank is required'),
+});
+
+export type AgencyBankDepositFormData = z.infer<typeof agencyBankDepositSchema>;
