@@ -10,12 +10,14 @@ import CustomizedSelectInputWithLabel from "@/components/CustomizedSelectInputWi
 import { Button } from "@/components/ui/button";
 import AuthUserReusableCode from "@/components/AuthUserReusableCode";
 import { Loader2 } from "lucide-react";
-import { addAgencyBankDeposit, getAllAgentByAgencyId, getRechargeableBalance, rechargeAgentById, uploadAgentBankDepositSlip } from "@/app/api-calls/agency/api";
+import { addAgentBankDeposit, uploadAgentBankDepositSlip } from "@/app/api-calls/agency/api";
 import { getErrorMessage, numberToWords, testAgencyId } from "@/lib/utils";
 import { getAgencyById, getAgentByPhoneNumber } from "@/app/api-calls/department/api";
 import { getAllBankList } from "@/app/api-calls/other/api";
+import { useSession } from "next-auth/react";
 
 const AgentBankDeposit = () => {
+    const { data: session } = useSession()
     const {
         register,
         handleSubmit,
@@ -74,17 +76,19 @@ const AgentBankDeposit = () => {
             console.log("API Response:", fileUploadResponse);
 
             let payload = {
-                "discom_id": 1001,
+                "discom_id": session?.user?.discomId,
                 "agent_id": data.agentId,
-                "bank_name": "Kotak Bank",
-                "deposit_date": "2025-01-30",
-                "amount": 10000,
-                "txn_ref_no": "Transaction abc",
+                "bank_name": data?.bank,
+                "deposit_date": data.depositDate,
+                "amount": data.depositAmount,
+                "txn_ref_no": data?.txnRefNo,
                 "deposit_slip_file_path": "eaa26fec-2d75-41ea-aa38-3d82df1bb4b2-AgencyBankDeposit.jpg"
             }
 
-            const response = await addAgencyBankDeposit(payload);
+            const response = await addAgentBankDeposit(payload);
 
+            toast.success('Agent Bank Deposit added successfully')
+            reset()
         } catch (error) {
             let errorMessage = getErrorMessage(error);
             console.log(errorMessage)

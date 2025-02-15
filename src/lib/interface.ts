@@ -202,3 +202,12 @@ export interface AddAgentBankDeposit {
     txn_ref_no: string;
     deposit_slip_file_path: string;
 }
+
+export interface AddAgencyBankDeposit {
+    discom_id: number;
+    agency_id: number;
+    bank_name: string;
+    deposit_date: string;
+    amount: number;
+    deposit_document: string;
+}

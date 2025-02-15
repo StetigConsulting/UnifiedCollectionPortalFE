@@ -149,7 +149,7 @@ export const uploadAgentBankDepositSlip = async (file: FormData) => {
     }
 }
 
-export const addAgencyBankDeposit = async (data: AddAgentBankDeposit) => {
+export const addAgentBankDeposit = async (data: AddAgentBankDeposit) => {
     try {
         const response = await api.post(`/v1/agent-bank-deposits/`, data);
         return response.data;

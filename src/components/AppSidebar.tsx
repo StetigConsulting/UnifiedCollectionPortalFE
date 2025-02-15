@@ -71,6 +71,11 @@ const navData = {
           url: "/department/recharge",
         },
         {
+          title: "Agency Bank Deposit",
+          icon: CreditCard,
+          url: "/department/bank-deposit",
+        },
+        {
           title: "Change Collector Type",
           icon: UserCogIcon,
           url: "/department/collector-type",
