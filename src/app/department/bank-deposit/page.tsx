@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -10,10 +10,11 @@ import CustomizedSelectInputWithLabel from "@/components/CustomizedSelectInputWi
 import { Button } from "@/components/ui/button";
 import AuthUserReusableCode from "@/components/AuthUserReusableCode";
 import { Loader2 } from "lucide-react";
-import { getErrorMessage, numberToWords, testAgencyId } from "@/lib/utils";
-import { addAgencyBankDeposit, getAgenciesWithDiscom, getAgencyById, getAgentByPhoneNumber } from "@/app/api-calls/department/api";
+import { getErrorMessage } from "@/lib/utils";
+import { addAgencyBankDeposit, getAgenciesWithDiscom } from "@/app/api-calls/department/api";
 import { getAllBankList } from "@/app/api-calls/other/api";
 import { useSession } from "next-auth/react";
+import ReactTable from "@/components/ReactTable";
 
 const AgentBankDeposit = () => {
 
@@ -83,7 +84,7 @@ const AgentBankDeposit = () => {
 
             const response = await addAgencyBankDeposit(payload);
 
-            toast.success("Bank deposit added successfully");
+            toast.success("Agency Bank deposit added successfully");
             console.log("API Response:", response);
             reset();
 
@@ -119,8 +120,23 @@ const AgentBankDeposit = () => {
 
     }
 
+    const columns = useMemo(
+        () => [
+            { label: 'Franchise Id', key: 'franchiseId', sortable: true },
+            { label: 'Deposit Date', key: 'depositDate', sortable: true },
+            { label: 'Amount', key: 'amount', sortable: true },
+            { label: 'Bank Name', key: 'bankName', sortable: true },
+            { label: 'UTR No.', key: 'utrNo', sortable: true },
+            { label: 'Entry Date', key: 'entryDate', sortable: true },
+        ],
+        []
+    );
+
+    const [transactionHistory, setTransactionHistory] = useState([])
+
+
     return (
-        <AuthUserReusableCode pageTitle="Agent Bank Deposit" isLoading={isLoading}>
+        <AuthUserReusableCode pageTitle="Agency Bank Deposit" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                     <CustomizedSelectInputWithLabel
@@ -175,6 +191,12 @@ const AgentBankDeposit = () => {
                     </Button>
                 </div>
             </form>
+            <ReactTable
+                className="mt-4"
+                data={transactionHistory}
+                columns={columns}
+                hideSearchAndOtherButtons
+            />
         </AuthUserReusableCode>
     );
 };
