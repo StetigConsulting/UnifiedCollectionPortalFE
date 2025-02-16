@@ -164,6 +164,9 @@ const AgentBankDeposit = () => {
         }
     }
 
+    const handlePageChange = (page: number) => {
+        getDepositHistory({}, page)
+    }
 
     return (
         <AuthUserReusableCode pageTitle="Agency Bank Deposit" isLoading={isLoading}>
@@ -226,6 +229,10 @@ const AgentBankDeposit = () => {
                 data={transactionHistory}
                 columns={columns}
                 hideSearchAndOtherButtons
+                dynamicPagination
+                itemsPerPage={tableDataPerPage}
+                pageNumber={currentPage}
+                onPageChange={handlePageChange}
             />
         </AuthUserReusableCode>
     );
