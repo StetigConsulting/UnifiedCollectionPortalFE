@@ -11,6 +11,7 @@ import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWi
 import { Button } from '@/components/ui/button';
 import moment from 'moment';
 import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
+import { getErrorMessage, tableDataPerPage } from '@/lib/utils';
 
 const ViewHistory = () => {
     const [balanceList, setBalanceList] = useState([]);
@@ -19,6 +20,7 @@ const ViewHistory = () => {
         fromDate: '',
         toDate: ''
     });
+    const [currentPage, setCurrentPage] = useState(1)
 
     useEffect(() => {
         let date = getDefaultDates()
@@ -32,9 +34,10 @@ const ViewHistory = () => {
     });
 
     const getBalanceHistory = async (applyFilter = {}, page = 1) => {
+        console.log(page)
         let payload = {
-            page: 1,
-            page_size: 50,
+            page: currentPage,
+            page_size: tableDataPerPage,
             filter: {
                 entity_type: "Agency",
                 from_date: dateRange.fromDate,
@@ -48,17 +51,23 @@ const ViewHistory = () => {
             filter: {
                 ...payload.filter,
                 ...applyFilter
-            }
+            },
+            page
         }
 
         try {
             setIsLoading(true);
             const response = await getBalanceHistoryAgencyById(payload);
             setBalanceList(response.data.logs);
+            setCurrentPage(page);
             setIsLoading(false);
         } catch (error) {
-
+            console.log(getErrorMessage(error))
         }
+    }
+
+    const handlePageChange = (page: number) => {
+        getBalanceHistory({}, page)
     }
 
     const columns = useMemo(
@@ -122,6 +131,10 @@ const ViewHistory = () => {
                 data={tableData}
                 columns={columns}
                 fileName='ViewAgencyHistory'
+                dynamicPagination
+                itemsPerPage={tableDataPerPage}
+                pageNumber={currentPage}
+                onPageChange={handlePageChange}
             />
             {/* pagination to be added */}
         </AuthUserReusableCode >

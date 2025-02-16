@@ -32,12 +32,9 @@ interface TableProps<T> {
     noDataFoundMessage?: string;
     defaultSortField?: keyof T;
     defaultSortOrder?: 'asc' | 'desc';
-    dynamicPagination?: boolean;
-    pageNumber?: number;
-    onPageChange?: (newPage: number) => void;
 }
 
-const ReactTable = <T extends Record<string, any>>({
+const ReactTableWithDynamicPagination = <T extends Record<string, any>>({
     data,
     columns,
     itemsPerPage = 50,
@@ -56,14 +53,11 @@ const ReactTable = <T extends Record<string, any>>({
     fileName = 'Agency',
     noDataFoundMessage = 'No Records Available',
     defaultSortField = '',
-    defaultSortOrder = 'asc',
-    dynamicPagination = false,
-    pageNumber = 1,
-    onPageChange
+    defaultSortOrder = 'asc'
 }: TableProps<T>) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [sortField, setSortField] = useState<keyof T | null>(defaultSortField || null);
-    const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>(defaultSortOrder);
+    const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
     const [currentPage, setCurrentPage] = useState(1);
 
     const filteredData = data.filter(item =>
@@ -275,17 +269,8 @@ const ReactTable = <T extends Record<string, any>>({
                         Next
                     </button>
                 </div>}
-            {dynamicPagination && <div style={{ marginTop: '10px', textAlign: 'center' }}>
-                <button onClick={() => onPageChange(pageNumber - 1)} disabled={pageNumber === 1}>
-                    Previous
-                </button>
-                <span style={{ margin: '0 10px' }}>{pageNumber}</span>
-                <button onClick={() => onPageChange(pageNumber + 1)} disabled={data.length < itemsPerPage}>
-                    Next
-                </button>
-            </div>}
         </div>
     );
 };
 
-export default ReactTable;
+export default ReactTableWithDynamicPagination;
