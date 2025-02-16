@@ -213,72 +213,72 @@ const navData = {
       title: "Report",
       icon: NotepadText,
       url: "#",
-      path: '/agency/report/',
+      path: '/report/',
       items: [
         {
           title: "Top up history",
           icon: UserPlus2,
-          url: "/agency/report/top-up-history",
+          url: "/report/top-up-history",
         },
         {
           title: "Collector Top up history",
           icon: UserPlus2,
-          url: "/agency/report/collector-top-up-history",
+          url: "/report/collector-top-up-history",
         },
         {
           title: "Transaction record",
           icon: UserPlus2,
-          url: "/agency/report/transaction-record",
+          url: "/report/transaction-record",
         },
         {
           title: "Login history",
           icon: UserPlus2,
-          url: "/agency/report/login-history",
+          url: "/report/login-history",
         },
         {
           title: "Daily Agent Collection",
           icon: UserPlus2,
-          url: "/agency/report/daily-agent-collection",
+          url: "/report/daily-agent-collection",
         },
         {
           title: "Agent wise Collection",
           icon: UserPlus2,
-          url: "/agency/report/agency-wise-collection",
+          url: "/report/agency-wise-collection",
         },
         {
           title: "Collector wise",
           icon: UserPlus2,
-          url: "/agency/report/collector-wise",
+          url: "/report/collector-wise",
         },
         {
           title: "Cancel wise receipt",
           icon: UserPlus2,
-          url: "/agency/report/cancel-wise-receipt",
+          url: "/report/cancel-wise-receipt",
         },
         {
           title: "Denied consumer report",
           icon: UserPlus2,
-          url: "/agency/report/denied-consumer",
+          url: "/report/denied-consumer",
         },
         {
           title: "Counter collector",
           icon: UserPlus2,
-          url: "/agency/report/counter-collector",
+          url: "/report/counter-collector",
         },
         {
           title: "Collector activity",
           icon: UserPlus2,
-          url: "/agency/report/collector-activity",
+          url: "/report/collector-activity",
         },
         {
           title: "Wallet history",
           icon: UserPlus2,
-          url: "/agency/report/wallet-history",
+          url: "/report/wallet-history",
         },
         {
           title: "CC wallet history",
           icon: UserPlus2,
-          url: "/agency/report/cc-wallet-history",
+          url: "/report/cc-wallet-history",
         }
       ]
     },

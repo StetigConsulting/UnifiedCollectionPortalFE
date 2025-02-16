@@ -1,5 +1,5 @@
 import api from "@/lib/axios";
-import { AddAgencyBankDeposit, AgencyDataInterface, ChangeCounterCollector, EditAgencyArea, editAgencyInterface, EditAgentRoleArea, extendValidityInterface, rechargeAgencyInterface, ViewHistoryPayload } from "@/lib/interface";
+import { AddAgencyBankDeposit, AgencyBankHistoryPagination, AgencyDataInterface, ChangeCounterCollector, EditAgencyArea, editAgencyInterface, EditAgentRoleArea, extendValidityInterface, rechargeAgencyInterface, ViewHistoryPayload } from "@/lib/interface";
 
 
 const getAllPaymentModes = async () => {
@@ -199,6 +199,15 @@ export const addAgencyBankDeposit = async (data: AddAgencyBankDeposit) => {
     return response.data;
   } catch (error) {
 
+    throw error?.response?.data
+  }
+}
+
+export const getAgencyBankDepositHistory = async (data: AgencyBankHistoryPagination) => {
+  try {
+    const response = await api.post(`/v1/agency-bank-deposits/fetch`, data);
+    return response.data;
+  } catch (error) {
     throw error?.response?.data
   }
 }

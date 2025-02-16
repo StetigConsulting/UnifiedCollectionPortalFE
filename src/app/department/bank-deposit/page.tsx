@@ -10,8 +10,8 @@ import CustomizedSelectInputWithLabel from "@/components/CustomizedSelectInputWi
 import { Button } from "@/components/ui/button";
 import AuthUserReusableCode from "@/components/AuthUserReusableCode";
 import { Loader2 } from "lucide-react";
-import { getErrorMessage } from "@/lib/utils";
-import { addAgencyBankDeposit, getAgenciesWithDiscom } from "@/app/api-calls/department/api";
+import { getErrorMessage, tableDataPerPage } from "@/lib/utils";
+import { addAgencyBankDeposit, getAgenciesWithDiscom, getAgencyBankDepositHistory } from "@/app/api-calls/department/api";
 import { getAllBankList } from "@/app/api-calls/other/api";
 import { useSession } from "next-auth/react";
 import ReactTable from "@/components/ReactTable";
@@ -47,6 +47,7 @@ const AgentBankDeposit = () => {
     useEffect(() => {
         getBankList()
         getAgencyList()
+        getDepositHistory()
     }, []);
 
     const getBankList = async () => {
@@ -122,18 +123,50 @@ const AgentBankDeposit = () => {
 
     const columns = useMemo(
         () => [
-            { label: 'Franchise Id', key: 'franchiseId', sortable: true },
-            { label: 'Deposit Date', key: 'depositDate', sortable: true },
+            { label: 'Franchise Id', key: 'agency_id', sortable: true },
+            { label: 'Deposit Date', key: 'deposit_date', sortable: true },
             { label: 'Amount', key: 'amount', sortable: true },
-            { label: 'Bank Name', key: 'bankName', sortable: true },
+            { label: 'Bank Name', key: 'bank_name', sortable: true },
             { label: 'UTR No.', key: 'utrNo', sortable: true },
             { label: 'Entry Date', key: 'entryDate', sortable: true },
         ],
         []
     );
 
+    const [currentPage, setCurrentPage] = useState(1)
     const [transactionHistory, setTransactionHistory] = useState([])
 
+    const getDepositHistory = async (applyFilter = {}, page = 1) => {
+        let payload = {
+            page: currentPage,
+            page_size: tableDataPerPage,
+            filter: {
+                discom_id: session.user.discomId
+            }
+        }
+        payload = {
+            ...payload,
+            filter: {
+                ...payload.filter,
+                ...applyFilter
+            },
+            page
+        }
+
+        try {
+            setIsLoading(true);
+            const response = await getAgencyBankDepositHistory(payload);
+            setTransactionHistory(response.data.data);
+            setCurrentPage(page);
+            setIsLoading(false);
+        } catch (error) {
+            console.log(getErrorMessage(error))
+        }
+    }
+
+    const handlePageChange = (page: number) => {
+        getDepositHistory({}, page)
+    }
 
     return (
         <AuthUserReusableCode pageTitle="Agency Bank Deposit" isLoading={isLoading}>
@@ -196,6 +229,10 @@ const AgentBankDeposit = () => {
                 data={transactionHistory}
                 columns={columns}
                 hideSearchAndOtherButtons
+                dynamicPagination
+                itemsPerPage={tableDataPerPage}
+                pageNumber={currentPage}
+                onPageChange={handlePageChange}
             />
         </AuthUserReusableCode>
     );

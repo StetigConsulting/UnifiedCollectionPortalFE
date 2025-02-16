@@ -211,3 +211,23 @@ export interface AddAgencyBankDeposit {
     amount: number;
     deposit_document: string;
 }
+
+export interface AgencyBankHistoryFilter {
+    discom_id: number;
+    agency_name?: string;
+    created_on_date_range?: {
+        from_date: string;
+        to_date: string;
+    };
+    deposit_date_range?: {
+        from_date: string;
+        to_date: string;
+    };
+    transaction_code?: string;
+}
+
+export interface AgencyBankHistoryPagination {
+    page: number;
+    page_size: number;
+    filter: AgencyBankHistoryFilter;
+}
