@@ -143,19 +143,19 @@ export const AGENCY_ONLY_ROUTES = [
   "/agency/recharge",
   "/agency/extend-validity",
   "/agency/reset-collector",
-  "/agency/report/top-up-history",
-  "/agency/report/collector-top-up-history",
-  "/agency/report/transaction-record",
-  "/agency/report/login-history",
-  "/agency/report/daily-agent-collection",
-  "/agency/report/agency-wise-collection",
-  "/agency/report/collector-wise",
-  "/agency/report/cancel-wise-receipt",
-  "/agency/report/denied-consumer",
-  "/agency/report/counter-collector",
-  "/agency/report/collector-activity",
-  "/agency/report/wallet-history",
-  "/agency/report/cc-wallet-history",
+  "/report/top-up-history",
+  "/report/collector-top-up-history",
+  "/report/transaction-record",
+  "/report/login-history",
+  "/report/daily-agent-collection",
+  "/report/agency-wise-collection",
+  "/report/collector-wise",
+  "/report/cancel-wise-receipt",
+  "/report/denied-consumer",
+  "/report/counter-collector",
+  "/report/collector-activity",
+  "/report/wallet-history",
+  "/report/cc-wallet-history",
 ];
 
 
@@ -207,3 +207,5 @@ export const getLevelFormattedForPicklist = (list) => {
       value: item.levelName,
     }));
 }
+
+export const pagePerPage = 50;
