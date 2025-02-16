@@ -208,4 +208,4 @@ export const getLevelFormattedForPicklist = (list) => {
     }));
 }
 
-export const tableDataPerPage = 2;
+export const tableDataPerPage = 50;
