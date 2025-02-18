@@ -158,9 +158,10 @@ const AgentBankDeposit = () => {
             const response = await getAgencyBankDepositHistory(payload);
             setTransactionHistory(response.data.data);
             setCurrentPage(page);
-            setIsLoading(false);
         } catch (error) {
             console.log(getErrorMessage(error))
+        } finally {
+            setIsLoading(false);
         }
     }
 

@@ -2,22 +2,18 @@ import React from 'react'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from './ui/breadcrumb'
 import { Separator } from './ui/separator'
 import { SidebarTrigger } from './ui/sidebar'
-import { LogOut } from 'lucide-react';
-import { handleSignOut } from '@/app/actions/authActions';
+import { LogOut, Wallet } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 
 interface CustomBreadcrumbProps {
     pageTitle: string;
-    children: React.ReactNode
+    children: React.ReactNode,
+    onSignOut: (event: React.MouseEvent) => Promise<void>;
+    agencyBalanceDetail: any;
 }
 
-const CustomBreadcrumb: React.FC<CustomBreadcrumbProps> = ({ pageTitle, children }) => {
-
-    const onSignOut = async (event: React.MouseEvent) => {
-        event.preventDefault();
-        await handleSignOut();
-    };
+const CustomBreadcrumb: React.FC<CustomBreadcrumbProps> = ({ pageTitle, children, onSignOut, agencyBalanceDetail }) => {
 
     return (
         <div className='flex flex-col h-screen bg-lightThemeColor p-2'>
@@ -31,9 +27,30 @@ const CustomBreadcrumb: React.FC<CustomBreadcrumbProps> = ({ pageTitle, children
                     onClick={onSignOut}
                 >
                     <LogOut size={16} className='cursor-pointer' />
-                    <span className="sr-only">Toggle Sidebar</span>
+                    <span className="sr-only">Log Out</span>
                 </Button>
 
+                <Separator orientation="vertical" className="mr-2 h-4" />
+                <div className='flex gap-4'>
+                    <div className='flex gap-4'>
+                        <Wallet />
+                        <p className="text-lg font-bold text-red-500">
+                            {agencyBalanceDetail?.agencyBalance}
+                        </p>
+                    </div>
+                    <div className='flex gap-4'>
+                        <Wallet />
+                        <p className="text-lg font-bold text-red-500">
+                            {agencyBalanceDetail?.agentWalletBalance}
+                        </p>
+                    </div>
+                    <div className='flex gap-4'>
+                        <Wallet />
+                        <p className="text-lg font-bold text-green-500">
+                            {agencyBalanceDetail?.rechargeableAgentWalletBalance}
+                        </p>
+                    </div>
+                </div >
                 <Separator orientation="vertical" className="mr-2 h-4" />
                 <Breadcrumb className='ml-auto'>
                     <BreadcrumbList>
@@ -46,7 +63,7 @@ const CustomBreadcrumb: React.FC<CustomBreadcrumbProps> = ({ pageTitle, children
                         </BreadcrumbItem>
                     </BreadcrumbList>
                 </Breadcrumb>
-            </Card>
+            </Card >
             <header className="p-4 bg-lightThemeColor">
                 <h1 className="text-2xl font-bold">{pageTitle}</h1>
             </header>
