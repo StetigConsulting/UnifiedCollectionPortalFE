@@ -31,27 +31,31 @@ const CustomBreadcrumb: React.FC<CustomBreadcrumbProps> = ({ pageTitle, children
                 </Button>
 
                 <Separator orientation="vertical" className="mr-2 h-4" />
-                <div className='flex gap-4'>
-                    <div className='flex gap-4'>
-                        <Wallet />
-                        <p className="text-lg font-bold text-red-500">
-                            {agencyBalanceDetail?.agencyBalance}
-                        </p>
-                    </div>
-                    <div className='flex gap-4'>
-                        <Wallet />
-                        <p className="text-lg font-bold text-red-500">
-                            {agencyBalanceDetail?.agentWalletBalance}
-                        </p>
-                    </div>
-                    <div className='flex gap-4'>
-                        <Wallet />
-                        <p className="text-lg font-bold text-green-500">
-                            {agencyBalanceDetail?.rechargeableAgentWalletBalance}
-                        </p>
-                    </div>
-                </div >
-                <Separator orientation="vertical" className="mr-2 h-4" />
+                {agencyBalanceDetail?.agencyBalance &&
+                    <>
+                        <div className='flex gap-4'>
+                            <div className='flex gap-4'>
+                                <Wallet />
+                                <p className="text-lg font-bold text-red-500">
+                                    {agencyBalanceDetail?.agencyBalance}
+                                </p>
+                            </div>
+                            <div className='flex gap-4'>
+                                <Wallet />
+                                <p className="text-lg font-bold text-red-500">
+                                    {agencyBalanceDetail?.agentWalletBalance}
+                                </p>
+                            </div>
+                            <div className='flex gap-4'>
+                                <Wallet />
+                                <p className="text-lg font-bold text-green-500">
+                                    {agencyBalanceDetail?.rechargeableAgentWalletBalance}
+                                </p>
+                            </div>
+                        </div>
+                        <Separator orientation="vertical" className="mr-2 h-4" />
+                    </>
+                }
                 <Breadcrumb className='ml-auto'>
                     <BreadcrumbList>
                         <BreadcrumbItem className="hidden md:block">
