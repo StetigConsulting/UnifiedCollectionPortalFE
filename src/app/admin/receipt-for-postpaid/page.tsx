@@ -7,7 +7,7 @@ import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWi
 import ReactTable from '@/components/ReactTable';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import { deleteBusinessRule, getListOfReceiptForPostpaid } from '@/app/api-calls/admin/api';
-import { listOfUrls } from '@/lib/utils';
+import { urlsListWithTitle } from '@/lib/utils';
 import { Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useSession } from 'next-auth/react';
@@ -144,7 +144,7 @@ const ReceiptsForPostpaid = () => {
 
     const handleEdit = (id: number) => {
         setIsLoading(true)
-        router.push(`${listOfUrls.receiptForPostpaidEdit}?id=${id}`)
+        router.push(`${urlsListWithTitle.receiptForPostpaidEdit.url}?id=${id}`)
     }
 
     const renderTable = () => {
@@ -160,7 +160,7 @@ const ReceiptsForPostpaid = () => {
                         />
                     </div>
                     <div className="mt-6 text-right space-x-4">
-                        <Button variant="default" onClick={() => router.push(listOfUrls?.receiptForPostpaidAdd)}>
+                        <Button variant="default" onClick={() => router.push(urlsListWithTitle?.receiptForPostpaidAdd?.url)}>
                             Add
                         </Button>
                     </div>
@@ -181,7 +181,7 @@ const ReceiptsForPostpaid = () => {
                     {
                         discomWiseTableData.length == 0 &&
                         <div className="mt-6 text-right space-x-4">
-                            <Button variant="default" onClick={() => router.push(listOfUrls?.receiptForPostpaidAdd)}>
+                            <Button variant="default" onClick={() => router.push(urlsListWithTitle?.receiptForPostpaidAdd?.url)}>
                                 Add
                             </Button>
                         </div>

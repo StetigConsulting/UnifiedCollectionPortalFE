@@ -158,17 +158,45 @@ export const AGENCY_ONLY_ROUTES = [
   "/report/cc-wallet-history",
 ];
 
+export const urlsListWithTitle = {
+  agencyRecharge: {
+    url: '/department/recharge',
+    title: 'Recharge'
+  },
+  agencyBalanceHistory: {
+    url: '/department/view-balance/history',
+    title: 'History'
+  },
+  dashboard: {
+    url: '/dashboard',
+    title: 'Dashboard'
+  },
+  billBasis: {
+    url: '/admin/color-coding/bill-basis',
+    title: 'Bill Basis'
+  },
+  addBillBasis: {
+    url: '/admin/color-coding/bill-basis/add',
+    title: 'Add'
+  },
+  receiptForPostpaid: {
+    url: '/admin/receipt-for-postpaid',
+    title: 'Receipt For Postpaid'
+  },
+  receiptForPostpaidAdd: {
+    url: '/admin/receipt-for-postpaid/add',
+    title: 'Add'
+  },
+  receiptForPostpaidEdit: {
+    url: '/admin/receipt-for-postpaid/edit',
+    title: 'Edit'
+  }
+};
 
-
-export const listOfUrls = {
-  agencyRecharge: '/department/recharge',
-  agencyBalanceHistory: '/department/view-balance/history',
-  dashboard: '/dashboard',
-  billBasis: '/admin/color-coding/bill-basis',
-  addBillBasis: '/admin/color-coding/bill-basis/add',
-  receiptForPostpaid: '/admin/receipt-for-postpaid',
-  receiptForPostpaidAdd: '/admin/receipt-for-postpaid/add',
-  receiptForPostpaidEdit: '/admin/receipt-for-postpaid/edit'
+export function getTitleByUrl(url) {
+  const cleanUrl = url.split('?')[0];
+  const entry = Object.values(urlsListWithTitle).find(item => item.url === cleanUrl);
+  return entry ? entry.title : cleanUrl.split('/').pop().replaceAll('-', ' ');
 }
 
 export const collectorRolePicklist = [

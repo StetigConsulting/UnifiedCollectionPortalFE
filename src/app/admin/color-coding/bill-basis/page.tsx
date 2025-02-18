@@ -8,7 +8,7 @@ import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import ReactTable from '@/components/ReactTable';
 import { toast } from 'sonner';
 import { deleteBusinessRule, getColorCodingBillBasis } from '@/app/api-calls/admin/api';
-import { listOfUrls } from '@/lib/utils';
+import { urlsListWithTitle } from '@/lib/utils';
 import { useSession } from 'next-auth/react';
 
 const BillBasis = () => {
@@ -53,7 +53,7 @@ const BillBasis = () => {
 
     const handleEdit = (id: number) => {
         setIsLoading(true)
-        router.push(`${listOfUrls.addBillBasis}?id=${id}`)
+        router.push(`${urlsListWithTitle.addBillBasis.url}?id=${id}`)
     }
 
     useEffect(() => {
@@ -95,7 +95,7 @@ const BillBasis = () => {
                 </Button>
                 {
                     tableData.length == 0 ?
-                        <Button variant="default" onClick={() => router.push(listOfUrls.addBillBasis)}>
+                        <Button variant="default" onClick={() => router.push(urlsListWithTitle.addBillBasis.url)}>
                             Add
                         </Button>
                         :
