@@ -68,7 +68,9 @@ const AgentBankDeposit = () => {
     const onSubmit = async (data: AgentBankDepositFormData) => {
 
         const formData = new FormData();
-        formData.append('file', data.depositSlip);
+        formData.append('file', data.depositSlip[0]);
+
+        console.log(data.depositSlip);
 
         try {
             setIsSubmitting(true);
@@ -82,7 +84,7 @@ const AgentBankDeposit = () => {
                 "deposit_date": data.depositDate,
                 "amount": data.depositAmount,
                 "txn_ref_no": data?.txnRefNo,
-                "deposit_slip_file_path": "eaa26fec-2d75-41ea-aa38-3d82df1bb4b2-AgencyBankDeposit.jpg"
+                "deposit_slip_file_path": fileUploadResponse?.data?.filePath
             }
 
             const response = await addAgentBankDeposit(payload);

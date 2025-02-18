@@ -3,6 +3,11 @@ import { SidebarInset, SidebarProvider } from './ui/sidebar'
 import { AppSidebar } from './AppSidebar'
 import CustomBreadcrumb from './CustomBreadcrumb'
 import Image from 'next/image'
+import { useSession } from 'next-auth/react'
+import { getRosourceByDiscomId } from '@/app/api-calls/other/api'
+import { getAgencyRechargeableBalance } from '@/app/api-calls/department/api'
+import { testAgencyId } from '@/lib/utils'
+import { handleSignOut } from '@/app/actions/authActions'
 
 interface AuthUserReusableCodeProps {
     children: React.ReactNode;
@@ -11,12 +16,36 @@ interface AuthUserReusableCodeProps {
 }
 
 function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUserReusableCodeProps) {
+    const { data: session } = useSession()
+
+    const userRole = session?.user?.userRole;
+
+    const [logoLink, setLogoLink] = React.useState('')
+
+    const [agencyBalanceDetail, setAgencyBalanceDetail] = React.useState({})
+
+    React.useEffect(() => {
+        getRosourceByDiscomId(session?.user?.discomId).then((res) => {
+            const logoValue = res.data.find(item => item.name === "Logo")?.value;
+            setLogoLink(logoValue);
+        })
+
+        getAgencyRechargeableBalance(testAgencyId).then((res) => {
+            setAgencyBalanceDetail(res.data)
+        })
+    }, [])
+
+    const onSignOut = async (event: React.MouseEvent) => {
+        event.preventDefault();
+        await handleSignOut();
+    };
+
     return (
         <SidebarProvider style={{
             display: '-webkit-box',
             boxSizing: 'border-box'
         }}>
-            <AppSidebar />
+            <AppSidebar userRole={userRole} logoLink={logoLink} onSignOut={onSignOut} />
             {
                 isLoading &&
                 <div className="absolute inset-0 flex items-center justify-center z-50"
@@ -32,7 +61,7 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
                 </div>
             }
             <SidebarInset className='flex-1' style={{ WebkitBoxFlex: 1 }}>
-                <CustomBreadcrumb pageTitle={pageTitle}>
+                <CustomBreadcrumb pageTitle={pageTitle} onSignOut={onSignOut} agencyBalanceDetail={agencyBalanceDetail}>
                     {children}
                 </CustomBreadcrumb>
             </SidebarInset>

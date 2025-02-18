@@ -78,6 +78,16 @@ const getAgencyById = async (Id: string) => {
   }
 };
 
+export const getAgencyRechargeableBalance = async (Id: number) => {
+  try {
+    const response = await api.get(`/agencies/display-balance/${Id}`);
+    return response.data;
+  } catch (error: any) {
+
+    throw error?.response?.data
+  }
+};
+
 const rechargeAgency = async (agencyData: rechargeAgencyInterface) => {
   try {
     const response = await api.put('/agencies/recharge-wallet', agencyData);

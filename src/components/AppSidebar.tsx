@@ -37,6 +37,8 @@ import { useSession } from "next-auth/react";
 import { Button } from "./ui/button";
 import { handleSignOut } from "@/app/actions/authActions";
 import { getRosourceByDiscomId } from "@/app/api-calls/other/api";
+import { getAgencyRechargeableBalance } from "@/app/api-calls/department/api";
+import { testAgencyId } from "@/lib/utils";
 
 const navData = {
   user: {
@@ -297,28 +299,10 @@ const navData = {
   ],
 };
 
-export function AppSidebar() {
-
-  const { data: session } = useSession()
-
-  const userRole = session?.user?.userRole;
-
-  const [logoLink, setLogoLink] = React.useState('')
+export function AppSidebar({ userRole, logoLink, onSignOut }) {
 
   const filteredNavMain = navData.navMain
     .filter((nav) => !nav.roles || nav.roles.includes(userRole))
-
-  const onSignOut = async (event: React.MouseEvent) => {
-    event.preventDefault();
-    await handleSignOut();
-  };
-
-  React.useEffect(() => {
-    getRosourceByDiscomId(session?.user?.discomId).then((res) => {
-      const logoValue = res.data.find(item => item.name === "Logo")?.value;
-      setLogoLink(logoValue);
-    })
-  }, [])
 
   return (
     <Sidebar>

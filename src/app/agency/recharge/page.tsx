@@ -12,7 +12,7 @@ import AuthUserReusableCode from "@/components/AuthUserReusableCode";
 import { Loader2 } from "lucide-react";
 import { getAllAgentByAgencyId, getRechargeableBalance, rechargeAgentById } from "@/app/api-calls/agency/api";
 import { getErrorMessage, numberToWords, testAgencyId } from "@/lib/utils";
-import { getAgencyById, getAgentByPhoneNumber } from "@/app/api-calls/department/api";
+import { getAgencyById, getAgencyRechargeableBalance, getAgentByPhoneNumber } from "@/app/api-calls/department/api";
 
 const RechargeEntry = () => {
     const {
@@ -62,10 +62,10 @@ const RechargeEntry = () => {
     const getAgencyBalance = async () => {
         setIsLoading(true);
         try {
-            const response = await getAgencyById(String(testAgencyId));
+            const response = await getAgencyRechargeableBalance(testAgencyId);
             console.log("API recharge:", response);
             setRechargeableBalance(
-                response?.data?.current_balance
+                response?.data?.rechargeableAgentWalletBalance
             );
 
         } catch (error) {
@@ -84,7 +84,7 @@ const RechargeEntry = () => {
         try {
             setIsSubmitting(true);
             const response = await rechargeAgentById(payload, testAgencyId);
-            toast.success("Agenct recharge successfully");
+            toast.success("Agent recharged successfully");
             console.log("API Response:", response);
             getAgencyBalance()
             reset();
