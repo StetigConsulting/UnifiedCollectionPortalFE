@@ -6,6 +6,7 @@ import { LogOut, Wallet } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { usePathname } from 'next/navigation';
+import { getTitleByUrl } from '@/lib/utils';
 
 interface CustomBreadcrumbProps {
     pageTitle: string;
@@ -33,9 +34,9 @@ const CustomBreadcrumb: React.FC<CustomBreadcrumbProps> = ({
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
                     {isLast ? (
-                        <BreadcrumbPage className='capitalize'>{segment.replaceAll('-', ' ')}</BreadcrumbPage>
+                        <BreadcrumbPage className='capitalize'>{getTitleByUrl(router)}</BreadcrumbPage>
                     ) : (
-                        <BreadcrumbLink className='capitalize' href={href}>{segment.replaceAll('-', ' ')}</BreadcrumbLink>
+                        <BreadcrumbLink className='capitalize' href={href}>{getTitleByUrl(segment)}</BreadcrumbLink>
                     )}
                 </BreadcrumbItem>
 

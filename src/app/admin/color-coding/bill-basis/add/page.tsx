@@ -13,7 +13,7 @@ import { Loader2 } from 'lucide-react';
 import { colorCodingBillBasisSchema } from '@/lib/zod';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import { createColorCodingBillBasis, getBusinessRuleDateById, updateColorCodingBillBasis } from '@/app/api-calls/admin/api';
-import { listOfUrls } from '@/lib/utils';
+import { urlsListWithTitle } from '@/lib/utils';
 import { useSession } from 'next-auth/react';
 
 type FormData = z.infer<typeof colorCodingBillBasisSchema>;
@@ -91,7 +91,7 @@ const AddBillBasis = () => {
             }
             console.log('Submitting Data:', response.data);
             toast.success('Color coding rules saved successfully!');
-            router.replace(listOfUrls.billBasis);
+            router.replace(urlsListWithTitle.billBasis.url);
         } catch (error) {
             console.log('Error:', error?.error)
             toast.error('Error: ' + error?.error);

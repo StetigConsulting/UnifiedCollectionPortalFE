@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { getAgenciesWithDiscom, getLevels } from '@/app/api-calls/department/api';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
-import { listOfUrls } from '@/lib/utils';
+import { urlsListWithTitle } from '@/lib/utils';
 import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
@@ -93,13 +93,13 @@ const ViewBalance = () => {
         ...item,
         // action: (
         //     <div className="flex gap-2">
-        //         <Button variant="default" size="sm" onClick={() => router.push(`${listOfUrls.agencyBalanceHistory}?id=${item.id}`)}>
+        //         <Button variant="default" size="sm" onClick={() => router.push(`${urlsListWithTitle.agencyBalanceHistory.url}?id=${item.id}`)}>
         //             View History
         //         </Button>
-        //         <Button variant="success" size="sm" onClick={() => router.push(`${listOfUrls.agencyRecharge}?id=${item.id}`)}>
+        //         <Button variant="success" size="sm" onClick={() => router.push(`${urlsListWithTitle.agencyRecharge.url}?id=${item.id}`)}>
         //             Recharge
         //         </Button>
-        //         <Button variant="destructive" size="sm" onClick={() => router.push(`${listOfUrls.agencyRecharge}?id=${item.id}&type=${'reverse'}`)}>
+        //         <Button variant="destructive" size="sm" onClick={() => router.push(`${urlsListWithTitle.agencyRecharge.url}?id=${item.id}&type=${'reverse'}`)}>
         //             Reverse
         //         </Button>
         //     </div>
@@ -115,13 +115,13 @@ const ViewBalance = () => {
 
     const getSelectedRowButton = () => {
         return <div className="space-x-2">
-            <Button variant="default" onClick={() => router.push(`${listOfUrls.agencyBalanceHistory}?id=${selectedRow.id}&name=${selectedRow?.agencyName}`)}>
+            <Button variant="default" onClick={() => router.push(`${urlsListWithTitle.agencyBalanceHistory.url}?id=${selectedRow.id}&name=${selectedRow?.agencyName}`)}>
                 View History
             </Button>
-            <Button variant="success" onClick={() => router.push(`${listOfUrls.agencyRecharge}?id=${selectedRow.id}`)}>
+            <Button variant="success" onClick={() => router.push(`${urlsListWithTitle.agencyRecharge.url}?id=${selectedRow.id}`)}>
                 Recharge
             </Button>
-            <Button variant="destructive" onClick={() => router.push(`${listOfUrls.agencyRecharge}?id=${selectedRow.id}&type=${'reverse'}`)}>
+            <Button variant="destructive" onClick={() => router.push(`${urlsListWithTitle.agencyRecharge.url}?id=${selectedRow.id}&type=${'reverse'}`)}>
                 Reverse
             </Button>
         </div>
