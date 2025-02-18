@@ -30,9 +30,11 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
             setLogoLink(logoValue);
         })
 
-        getAgencyRechargeableBalance(testAgencyId).then((res) => {
-            setAgencyBalanceDetail(res.data)
-        })
+        if (session?.user?.userRole === 'AGENCY') {
+            getAgencyRechargeableBalance(testAgencyId).then((res) => {
+                setAgencyBalanceDetail(res.data)
+            })
+        }
     }, [])
 
     const onSignOut = async (event: React.MouseEvent) => {
