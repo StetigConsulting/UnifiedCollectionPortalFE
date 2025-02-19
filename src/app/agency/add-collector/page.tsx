@@ -189,7 +189,7 @@ const AddCounterCollector = () => {
                 "work_type": data.workingType,
                 "collector_role": data.collectorRole
             }
-            await createCounterCollector(payload, 6);
+            await createCounterCollector(payload, currentUserId);
             toast.success('Agent added successfully!');
             reset()
         } catch (error) {
