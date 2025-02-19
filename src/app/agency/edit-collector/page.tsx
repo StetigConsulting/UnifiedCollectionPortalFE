@@ -4,12 +4,10 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { editCollectorSchema, EditCollectorFormData } from "@/lib/zod";
-// import { createCollector } from "@/app/api-calls/collector/api";  // API call for form submission
 import CustomizedInputWithLabel from "@/components/CustomizedInputWithLabel";
 import CustomizedSelectInputWithLabel from "@/components/CustomizedSelectInputWithLabel";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-// import { getBinders, getSubDivisions, getSections, getPermissions, getCollectionTypes, getNonEnergyTypes } from "@/app/api-calls/collector/api";
 import CustomizedMultipleSelectInputWithLabelString from "@/components/CustomizedMultipleSelectInputWithLabelString";
 import AuthUserReusableCode from "@/components/AuthUserReusableCode";
 import { getAgencyById, getAgentByPhoneNumber } from "@/app/api-calls/department/api";
@@ -25,6 +23,7 @@ const EditCollector = () => {
     });
 
     const { data: session } = useSession()
+    const currentUserId = session?.user?.userId
 
     const [isLoading, setIsLoading] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -65,7 +64,7 @@ const EditCollector = () => {
                 "collector_type": data.collectorType,
                 "work_type": data.workingType
             }
-            await editCollectorData(payload, 6);//hardcoded
+            await editCollectorData(payload, currentUserId);
             toast.success('Agent edited successfully!');
             reset()
         } catch (error) {

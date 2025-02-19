@@ -11,9 +11,14 @@ import { Button } from "@/components/ui/button";
 import AuthUserReusableCode from "@/components/AuthUserReusableCode";
 import { Loader2 } from "lucide-react";
 import { extendAgentValidityById, getAllAgentByAgencyId } from "@/app/api-calls/agency/api";
-import { testAgencyId } from "@/lib/utils";
+import { useSession } from "next-auth/react";
 
 const ExtendValidity = () => {
+
+    const { data: session } = useSession()
+
+    const currentUserId = session?.user?.userId
+
     const {
         register,
         handleSubmit,
@@ -41,7 +46,7 @@ const ExtendValidity = () => {
         }
         try {
             setIsSubmitting(true);
-            const response = await extendAgentValidityById(payload, testAgencyId);
+            const response = await extendAgentValidityById(payload, currentUserId);
             toast.success("Agent Validity udpated successfully");
             console.log("API Response:", response);
             reset();
@@ -58,7 +63,7 @@ const ExtendValidity = () => {
     const getAgentList = async () => {
         setIsLoading(true);
         try {
-            const response = await getAllAgentByAgencyId(testAgencyId);
+            const response = await getAllAgentByAgencyId(currentUserId);
             console.log("API Response:", response);
             setAgencies(
                 response?.data?.map((item) => ({

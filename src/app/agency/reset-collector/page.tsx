@@ -11,11 +11,6 @@ import { Button } from "@/components/ui/button";
 import AuthUserReusableCode from "@/components/AuthUserReusableCode";
 import { Loader2 } from "lucide-react";
 
-interface SelectOption {
-    value: string;
-    label: string;
-}
-
 const ResetCollectorBalance = () => {
     const {
         register,

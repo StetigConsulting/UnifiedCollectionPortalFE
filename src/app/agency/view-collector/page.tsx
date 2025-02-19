@@ -13,6 +13,9 @@ import { useSession } from "next-auth/react";
 
 const ViewCollector = () => {
     const { data: session } = useSession();
+
+    const currentUserId = session?.user?.userId;
+
     const [collectors, setCollectors] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [workingLevelList, setWorkingLevelList] = useState([])
@@ -24,7 +27,7 @@ const ViewCollector = () => {
     const loadCollectors = async () => {
         setIsLoading(true);
         try {
-            const response = await getAllAgentByAgencyId(30)//hardcoded
+            const response = await getAllAgentByAgencyId(currentUserId)
             const updatedCollectors = response.data.map((item) => ({
                 ...item,
                 workingLevelOffice: item.working_level_office.office_description
@@ -59,7 +62,7 @@ const ViewCollector = () => {
     const activateAgent = async (id: number) => {
         setIsLoading(true);
         try {
-            await activateAgentById(id, 6);//harcoded
+            await activateAgentById(id, currentUserId);
             toast.success("Agent activated successfully.");
             loadCollectors();
         } catch (error) {
@@ -73,7 +76,7 @@ const ViewCollector = () => {
     const deactivateAgent = async (id: number) => {
         setIsLoading(true);
         try {
-            await deactivateAgentById(id, 6);//harcoded
+            await deactivateAgentById(id, currentUserId);
             toast.success("Agent deactivated successfully.");
             loadCollectors();
         } catch (error) {

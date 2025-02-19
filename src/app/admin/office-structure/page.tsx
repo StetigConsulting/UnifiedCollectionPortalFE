@@ -68,7 +68,7 @@ const OfficeStructurePage = () => {
                         At least one pseudo level must be defined
                     </div>}
                     customActionButton={<div className="flex space-x-4">
-                        <CreateNewLevelPopup fetchData={fetchOfficeStructureData} currentLevel={maxLevel} session={session?.user} />
+                        <CreateNewLevelPopup fetchData={fetchOfficeStructureData} currentLevel={maxLevel} session={session} />
                         <CreateNewLevelUploadPopup fetchData={fetchOfficeStructureData} />
                     </div>}
                     noPagination />

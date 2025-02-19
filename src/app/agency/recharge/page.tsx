@@ -11,10 +11,15 @@ import { Button } from "@/components/ui/button";
 import AuthUserReusableCode from "@/components/AuthUserReusableCode";
 import { Loader2 } from "lucide-react";
 import { getAllAgentByAgencyId, getRechargeableBalance, rechargeAgentById } from "@/app/api-calls/agency/api";
-import { getErrorMessage, numberToWords, testAgencyId } from "@/lib/utils";
+import { getErrorMessage, numberToWords } from "@/lib/utils";
 import { getAgencyById, getAgencyRechargeableBalance, getAgentByPhoneNumber } from "@/app/api-calls/department/api";
+import { useSession } from "next-auth/react";
 
 const RechargeEntry = () => {
+
+    const { data: session } = useSession();
+    const currentUserId = session?.user?.userId
+
     const {
         register,
         handleSubmit,
@@ -37,7 +42,7 @@ const RechargeEntry = () => {
     const getAgentList = async () => {
         setIsLoading(true);
         try {
-            const response = await getAllAgentByAgencyId(testAgencyId);
+            const response = await getAllAgentByAgencyId(currentUserId);
             console.log("API Response:", response);
             setAgencies(
                 response?.data?.map((item) => ({
@@ -62,7 +67,7 @@ const RechargeEntry = () => {
     const getAgencyBalance = async () => {
         setIsLoading(true);
         try {
-            const response = await getAgencyRechargeableBalance(testAgencyId);
+            const response = await getAgencyRechargeableBalance(currentUserId);
             console.log("API recharge:", response);
             setRechargeableBalance(
                 response?.data?.rechargeableAgentWalletBalance
@@ -83,7 +88,7 @@ const RechargeEntry = () => {
         }
         try {
             setIsSubmitting(true);
-            const response = await rechargeAgentById(payload, testAgencyId);
+            const response = await rechargeAgentById(payload, currentUserId);
             toast.success("Agent recharged successfully");
             console.log("API Response:", response);
             getAgencyBalance()

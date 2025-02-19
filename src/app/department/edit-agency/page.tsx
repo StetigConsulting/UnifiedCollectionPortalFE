@@ -20,6 +20,8 @@ type FormData = z.infer<typeof editAgencySchema>;
 
 const EditAgency = () => {
     const { data: session } = useSession();
+    const currentUserId = session?.user?.userId
+
     const { register, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm<FormData>({
         resolver: zodResolver(editAgencySchema),
     });
@@ -30,7 +32,7 @@ const EditAgency = () => {
 
         let payload = {
             "id": data.agencyId,
-            "user_id": 6, //hardcoded
+            "user_id": currentUserId,
             "agency_name": data.agencyName,
             "agency_address": data.address,
             "wo_number": data.woNumber,
