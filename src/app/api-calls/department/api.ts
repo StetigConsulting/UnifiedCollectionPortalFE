@@ -68,7 +68,7 @@ const getAgenciesWithDiscom = async (Id: number) => {
   }
 };
 
-const getAgencyById = async (Id: string) => {
+const getAgencyById = async (Id: number | string) => {
   try {
     const response = await api.get(`/agencies/${Id}`);
     return response.data;

@@ -38,7 +38,6 @@ import { Button } from "./ui/button";
 import { handleSignOut } from "@/app/actions/authActions";
 import { getRosourceByDiscomId } from "@/app/api-calls/other/api";
 import { getAgencyRechargeableBalance } from "@/app/api-calls/department/api";
-import { testAgencyId } from "@/lib/utils";
 
 const navData = {
   user: {

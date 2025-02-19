@@ -14,11 +14,14 @@ import { createCounterCollector, getCollectorTypes } from '@/app/api-calls/agenc
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
 import { Loader2 } from 'lucide-react';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
-import { agentWorkingType, collectorRolePicklist, levelWIthId, testAgencyId } from '@/lib/utils';
+import { agentWorkingType, collectorRolePicklist, levelWIthId } from '@/lib/utils';
 import { useSession } from 'next-auth/react';
 
 const AddCounterCollector = () => {
     const { data: session } = useSession()
+
+    const currentUserId = session?.user?.userId
+
     const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm<AddCounterCollectorFormData>({
         resolver: zodResolver(addCounterCollectorSchema),
         defaultValues: {
@@ -90,7 +93,7 @@ const AddCounterCollector = () => {
 
     const getAgencyData = async () => {
         try {
-            const agencyResponse = await getAgencyById(String(testAgencyId));
+            const agencyResponse = await getAgencyById(currentUserId);
             const agencyData = agencyResponse.data;
             console.log("agencyData", agencyData);
             setAgencyData(agencyData);
@@ -162,7 +165,7 @@ const AddCounterCollector = () => {
         setIsSubmitting(true)
         try {
             let payload = {
-                "agency_id": testAgencyId,
+                "agency_id": currentUserId,
                 "agent_name": data.name,
                 "primary_phone": data.officePhoneNumber,
                 "secondary_phone": data.personalPhoneNumber,
@@ -186,7 +189,7 @@ const AddCounterCollector = () => {
                 "work_type": data.workingType,
                 "collector_role": data.collectorRole
             }
-            await createCounterCollector(payload, 6);
+            await createCounterCollector(payload, currentUserId);
             toast.success('Agent added successfully!');
             reset()
         } catch (error) {

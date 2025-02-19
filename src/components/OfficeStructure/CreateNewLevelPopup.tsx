@@ -11,17 +11,20 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { createNewLevelSchema } from '@/lib/zod';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
-import { User } from 'next-auth';
+import { Session } from 'next-auth';
 
 interface CreateNewLevelPopupProps {
     fetchData: () => void;
     currentLevel: number;
-    session: User
+    session: Session
 }
 
 type FormData = z.infer<typeof createNewLevelSchema>;
 
 const CreateNewLevelPopup: React.FC<CreateNewLevelPopupProps> = ({ fetchData, currentLevel, session }) => {
+
+    const currentUserId = session?.user?.userId
+
     const [levelCount, setLevelCount] = useState<number>(1);
     const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
     const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -42,8 +45,8 @@ const CreateNewLevelPopup: React.FC<CreateNewLevelPopupProps> = ({ fetchData, cu
         const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/office-structure-levels/`;
 
         const payload = {
-            user_id: 6,//hardcoded
-            discom_id: session?.discomId,
+            user_id: currentUserId,
+            discom_id: session?.user?.discomId,
             level: currentLevel,
             level_name: formData.levelName,
             level_type: formData.levelType,

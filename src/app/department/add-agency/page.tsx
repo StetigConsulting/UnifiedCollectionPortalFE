@@ -27,7 +27,9 @@ import { z } from "zod";
 type FormData = z.infer<typeof addAgencySchema>;
 
 const AddAgency = () => {
-  const { data: session } = useSession()
+  const { data: session } = useSession();
+  const currentUserId = session?.user?.userId;
+
   const {
     register,
     handleSubmit,
@@ -47,7 +49,7 @@ const AddAgency = () => {
   const onSubmit = async (data: FormData) => {
     console.log("Form Data:", data);
     const agencyData: AgencyDataInterface = {
-      user_id: 6,//hardcoded
+      user_id: currentUserId,
       discom_id: session?.user?.discomId,
       agency_name: data.agencyName,
       agency_address: data.registeredAddress,

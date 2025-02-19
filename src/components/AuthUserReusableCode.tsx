@@ -6,7 +6,6 @@ import Image from 'next/image'
 import { useSession } from 'next-auth/react'
 import { getRosourceByDiscomId } from '@/app/api-calls/other/api'
 import { getAgencyRechargeableBalance } from '@/app/api-calls/department/api'
-import { testAgencyId } from '@/lib/utils'
 import { handleSignOut } from '@/app/actions/authActions'
 
 interface AuthUserReusableCodeProps {
@@ -31,7 +30,7 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
         })
 
         if (session?.user?.userRole === 'AGENCY') {
-            getAgencyRechargeableBalance(testAgencyId).then((res) => {
+            getAgencyRechargeableBalance(session?.user?.userId).then((res) => {
                 setAgencyBalanceDetail(res.data)
             })
         }

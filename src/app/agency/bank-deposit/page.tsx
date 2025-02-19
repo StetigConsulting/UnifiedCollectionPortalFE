@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import AuthUserReusableCode from "@/components/AuthUserReusableCode";
 import { Loader2 } from "lucide-react";
 import { addAgentBankDeposit, uploadAgentBankDepositSlip } from "@/app/api-calls/agency/api";
-import { getErrorMessage, numberToWords, testAgencyId } from "@/lib/utils";
+import { getErrorMessage, numberToWords } from "@/lib/utils";
 import { getAgencyById, getAgentByPhoneNumber } from "@/app/api-calls/department/api";
 import { getAllBankList } from "@/app/api-calls/other/api";
 import { useSession } from "next-auth/react";
