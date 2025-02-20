@@ -217,6 +217,11 @@ const navData = {
       path: '/report/',
       items: [
         {
+          title: "Billing Report",
+          icon: UserPlus2,
+          url: "/report/billing-report",
+        },
+        {
           title: "Top up history",
           icon: UserPlus2,
           url: "/report/top-up-history",

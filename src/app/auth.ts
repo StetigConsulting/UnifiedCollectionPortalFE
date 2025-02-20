@@ -57,7 +57,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     mobileNumber: mobileNumber,
                     name: data.data.name,
                     userId: data.data.userId,
-                    // userId: 30,
+                    // userId: 6,
                     uniqueUserId: data.data.id,
                     accessToken: data.data.accessToken,
                     refreshToken: data.data.refreshToken,

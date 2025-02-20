@@ -34,7 +34,9 @@ interface TableProps<T> {
     defaultSortOrder?: 'asc' | 'desc';
     dynamicPagination?: boolean;
     pageNumber?: number;
+    totalPageNumber?: number;
     onPageChange?: (newPage: number) => void;
+    downloadPdf?: () => void;
 }
 
 const ReactTable = <T extends Record<string, any>>({
@@ -59,7 +61,9 @@ const ReactTable = <T extends Record<string, any>>({
     defaultSortOrder = 'asc',
     dynamicPagination = false,
     pageNumber = 1,
-    onPageChange
+    totalPageNumber = 1,
+    onPageChange,
+    downloadPdf
 }: TableProps<T>) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [sortField, setSortField] = useState<keyof T | null>(defaultSortField || null);
@@ -196,7 +200,7 @@ const ReactTable = <T extends Record<string, any>>({
                                 <Button variant="default" onClick={handleCopy}>Copy</Button>
                                 <Button variant="default" onClick={exportToExcel}>Excel</Button>
                                 <Button variant="default" onClick={exportToCSV}>CSV</Button>
-                                <Button variant="default">PDF</Button>
+                                <Button variant="default" onClick={downloadPdf && downloadPdf}>PDF</Button>
                             </div>
                         }
                         <CustomizedInputWithLabel
@@ -280,7 +284,7 @@ const ReactTable = <T extends Record<string, any>>({
                     Previous
                 </button>
                 <span style={{ margin: '0 10px' }}>{pageNumber}</span>
-                <button onClick={() => onPageChange(pageNumber + 1)} disabled={data.length < itemsPerPage}>
+                <button onClick={() => onPageChange(pageNumber + 1)} disabled={totalPageNumber == pageNumber}>
                     Next
                 </button>
             </div>}
