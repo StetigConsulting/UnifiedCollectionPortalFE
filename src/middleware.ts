@@ -24,7 +24,7 @@ export async function middleware(request: any) {
         }
         return NextResponse.next();
     } else {
-        if (nextUrl.pathname === "/dashboard") {
+        if (nextUrl.pathname === "/dashboard" || nextUrl.pathname.startsWith("/report/")) {
             return NextResponse.next();
         }
 

@@ -215,6 +215,7 @@ const navData = {
       icon: NotepadText,
       url: "#",
       path: '/report/',
+      roles: ["SUPER ADMIN", "ADMIN", "AGENCY"],
       items: [
         {
           title: "Billing Report",
