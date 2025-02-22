@@ -1,80 +1,61 @@
 'use client';
 
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { nonEnergyTypeSchema } from "@/lib/zod";
-import { Button } from "@/components/ui/button";
-import CustomizedMultipleSelectInputWithLabelString from "@/components/CustomizedMultipleSelectInputWithLabelString";
-import AuthUserReusableCode from "@/components/AuthUserReusableCode";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
-import { z } from "zod";
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+import ReactTable from '@/components/ReactTable';
+import { Button } from '@/components/ui/button';
+import AuthUserReusableCode from '@/components/AuthUserReusableCode';
+import { urlsListWithTitle } from '@/lib/utils';
 
-type FormData = z.infer<typeof nonEnergyTypeSchema>;
-
-const NonEnergyType = () => {
+const NonEnergyTypeConfiguration = () => {
     const router = useRouter();
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [nonEnergyTypes, setNonEnergyTypes] = useState([]);
 
-    const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<FormData>({
-        resolver: zodResolver(nonEnergyTypeSchema),
-    });
+    const columns = [
+        { label: 'Sr. No.', key: 'id', sortable: true },
+        { label: 'Non Energy Type', key: 'type', sortable: true },
+        { label: 'Update Date', key: 'updateDate', sortable: true },
+    ];
 
-    const formData = watch();
-
-    const onSubmit = async (data: FormData) => {
+    const fetchData = async () => {
+        setIsLoading(true);
         try {
-            setIsSubmitting(true);
-            toast.success("Form submitted successfully!");
+            // const data = await fetchNonEnergyTypes();
+            // setNonEnergyTypes(data);
         } catch (error) {
-            toast.error("Failed to submit the form.");
+            console.error('Error fetching non-energy types:', error);
+            toast.error('Error fetching data');
         } finally {
-            setIsSubmitting(false);
+            setIsLoading(false);
         }
     };
 
-    const handleCancel = () => {
-        router.back();
-    };
-
-    const [noneEnergyTypeReason, setNonEnergyTypeReason] = useState([])
+    useEffect(() => {
+        fetchData();
+    }, []);
 
     return (
-        <AuthUserReusableCode pageTitle="Non Energy Type">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                <div className="space-y-2">
-                    <CustomizedMultipleSelectInputWithLabelString
-                        label="Non Energy Type"
-                        placeholder="Select reasons"
-                        errors={errors.nonEnergyType}
-                        required={true}
-                        list={noneEnergyTypeReason}
-                        value={watch('nonEnergyType') || []}
-                        onChange={(selectedValues) => setValue('nonEnergyType', selectedValues)}
-                        multi={true}
-                    />
-                    {errors.nonEnergyType && <p className="text-red-600 text-sm">{errors.nonEnergyType.message}</p>}
+        <AuthUserReusableCode pageTitle="Non Energy Type" isLoading={isLoading}>
+            <div className='p-4'>
+                <div className="flex justify-start mb-4">
+                    <Button variant="default" size="lg"
+                        onClick={() => router.push(urlsListWithTitle.nonEnergyTypeForm.url)}
+                    >
+                        Setup Non Energy Type
+                    </Button>
                 </div>
 
-                <div className="flex justify-end space-x-4 mt-6">
-                    <Button variant="outline" type="button" onClick={handleCancel}>
-                        Cancel
-                    </Button>
-                    <Button type="submit" variant="default" disabled={isSubmitting}>
-                        {isSubmitting ? (
-                            <>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
-                            </>
-                        ) : (
-                            "Save"
-                        )}
-                    </Button>
-                </div>
-            </form>
+                <ReactTable
+                    data={nonEnergyTypes}
+                    columns={columns}
+                    hideSearchAndOtherButtons
+                    avoidSrNo
+                />
+            </div>
         </AuthUserReusableCode>
     );
 };
 
-export default NonEnergyType;
+export default NonEnergyTypeConfiguration;

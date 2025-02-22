@@ -125,7 +125,7 @@ export const SUPER_ADMIN_ONLY_ROUTES = [
   "/dashboard",
   "/admin/department-user",
   "/admin/office-structure",
-  "/admin/payment-configuration",
+  "/admin/mode-of-payment",
   "/admin/denied-to-pay",
   "/admin/non-energy-type",
   "/admin/add-collector-type",
@@ -189,6 +189,70 @@ export const urlsListWithTitle = {
   },
   receiptForPostpaidEdit: {
     url: '/admin/receipt-for-postpaid/edit',
+    title: 'Edit'
+  },
+  modeOfPayment: {
+    url: '/admin/mode-of-payment',
+    title: 'Mode Of Payment'
+  },
+  modeOfPaymentAdd: {
+    url: '/admin/mode-of-payment/add',
+    title: 'Add'
+  },
+  deniedToPay: {
+    url: '/admin/denied-to-pay',
+    title: 'Denied To Pay'
+  },
+  deniedToPaySetup: {
+    url: '/admin/denied-to-pay/setup',
+    title: 'Setup'
+  },
+  excelImport: {
+    url: '/admin/import',
+    title: 'Excel Import'
+  },
+  consumerToMinimumPayableAmountMap: {
+    url: '/admin/import/minimum-payable-amount-mapping',
+    title: 'Consumer To Minimum Payable Amount Map'
+  },
+  consumerToCollectorMap: {
+    url: '/admin/import/collector-mapping',
+    title: 'Consumer To Collector Map'
+  },
+  collectorType: {
+    url: '/admin/add-collector-type',
+    title: 'Collector Type'
+  },
+  collectorTypeAdd: {
+    url: '/admin/add-collector-type/setup',
+    title: 'Add'
+  },
+  createNewUserTable: {
+    url: '/admin/create-new-user',
+    title: 'Create New User'
+  },
+  createNewUserForm: {
+    url: '/admin/create-new-user/add',
+    title: 'Add'
+  },
+  nonEnergyTypeTable: {
+    url: '/admin/non-energy-type',
+    title: 'Non Energy Type'
+  },
+  nonEnergyTypeForm: {
+    url: '/admin/non-energy-type/add',
+    title: 'Add'
+  },
+  incentive: {
+    url: '/admin/incentive',
+    title: 'Incentive'
+  },
+  incentiveAdd: {
+    url: '/admin/incentive/add',
+    title: 'Add'
+  },
+  incentiveEdit: {
+    url: '/admin/incentive/edit',
     title: 'Edit'
   }
 };

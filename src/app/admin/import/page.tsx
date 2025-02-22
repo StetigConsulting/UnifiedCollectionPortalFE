@@ -4,37 +4,21 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
+import { Network, Waypoints } from 'lucide-react';
+import { urlsListWithTitle } from '@/lib/utils';
 
 const ImportPage = () => {
     const router = useRouter();
 
-    const handleMinimumPayableAmountClick = () => {
-        router.push('/admin/import/minimum-payable-amount');
-    };
-
-    const handleConsumerToCollectorMappingClick = () => {
-        router.push('/admin/import/consumer-to-collector-mapping');
-    };
-
     return (
-        <AuthUserReusableCode pageTitle="Import">
-            <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                    <Button
-                        variant="default"
-                        size="lg"
-                        className="w-full"
-                        onClick={handleMinimumPayableAmountClick}
-                    >
-                        Minimum payable amount
+        <AuthUserReusableCode pageTitle="Excel Import">
+            <div className="flex items-center justify-center h-full">
+                <div className="flex flex-col gap-4 items-center">
+                    <Button variant="default" className="w-full py-8 text-lg" onClick={() => router.push(urlsListWithTitle.consumerToMinimumPayableAmountMap.url)}>
+                        <Network className="h-5 w-5" /> Consumer to Minimum Payable Amount Mapping
                     </Button>
-                    <Button
-                        variant="default"
-                        size="lg"
-                        className="w-full"
-                        onClick={handleConsumerToCollectorMappingClick}
-                    >
-                        Consumer to collector mapping
+                    <Button variant="default" className="w-full py-8 text-lg" onClick={() => router.push(urlsListWithTitle.consumerToCollectorMap.url)}>
+                        <Waypoints className="h-5 w-5" /> Consumer to Collector Mapping
                     </Button>
                 </div>
             </div>

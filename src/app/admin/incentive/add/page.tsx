@@ -87,11 +87,7 @@ const AddIncentivePage = () => {
                         <div className="grid grid-cols-2 gap-4">
                             <CustomizedSelectInputWithLabel
                                 label="Applicable Level"
-                                list={[
-                                    { label: 'Select applicable level', value: '' },
-                                    { label: 'Level 1', value: 'Level 1' },
-                                    { label: 'Level 2', value: 'Level 2' },
-                                ]}
+                                list={[]}
                                 value={incentive.applicableLevel}
                                 onChange={(e) => handleChange(index, e, 'applicableLevel')}
                                 errors={errors.applicableLevel?.message}
@@ -99,11 +95,7 @@ const AddIncentivePage = () => {
 
                             <CustomizedSelectInputWithLabel
                                 label="Circle"
-                                list={[
-                                    { label: 'Select circle', value: '' },
-                                    { label: 'Circle 1', value: 'Circle 1' },
-                                    { label: 'Circle 2', value: 'Circle 2' },
-                                ]}
+                                list={[]}
                                 value={incentive.circle}
                                 onChange={(e) => handleChange(index, e, 'circle')}
                                 errors={errors.circle?.message}
@@ -113,11 +105,7 @@ const AddIncentivePage = () => {
                         <div className="grid grid-cols-2 gap-4">
                             <CustomizedSelectInputWithLabel
                                 label="Division"
-                                list={[
-                                    { label: 'Select division', value: '' },
-                                    { label: 'Division 1', value: 'Division 1' },
-                                    { label: 'Division 2', value: 'Division 2' },
-                                ]}
+                                list={[]}
                                 value={incentive.division}
                                 onChange={(e) => handleChange(index, e, 'division')}
                                 errors={errors.division?.message}
@@ -125,11 +113,7 @@ const AddIncentivePage = () => {
 
                             <CustomizedSelectInputWithLabel
                                 label="Sub Division"
-                                list={[
-                                    { label: 'Select sub division', value: '' },
-                                    { label: 'SubDivision A', value: 'SubDivision A' },
-                                    { label: 'SubDivision B', value: 'SubDivision B' },
-                                ]}
+                                list={[]}
                                 value={incentive.subDivision}
                                 onChange={(e) => handleChange(index, e, 'subDivision')}
                                 errors={errors.subDivision?.message}
@@ -139,11 +123,7 @@ const AddIncentivePage = () => {
                         <div className="grid grid-cols-2 gap-4">
                             <CustomizedSelectInputWithLabel
                                 label="Section"
-                                list={[
-                                    { label: 'Select section', value: '' },
-                                    { label: 'Section 1', value: 'Section 1' },
-                                    { label: 'Section 2', value: 'Section 2' },
-                                ]}
+                                list={[]}
                                 value={incentive.section}
                                 onChange={(e) => handleChange(index, e, 'section')}
                                 errors={errors.section?.message}

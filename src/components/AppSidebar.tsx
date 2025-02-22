@@ -161,10 +161,10 @@ const navData = {
           path: '/admin/office-stucture'
         },
         {
-          title: 'Payment configuration',
-          url: '/admin/payment-configuration',
+          title: 'Mode Of Payment',
+          url: '/admin/mode-of-payment',
           icon: Gauge,
-          path: '/admin/payment-configuration'
+          path: '/admin/mode-of-payment'
         },
         {
           title: 'Denied to pay',
@@ -203,10 +203,16 @@ const navData = {
           path: '/admin/import',
         },
         {
-          title: 'Receipt for Postpaid',
+          title: 'Receipt For Postpaid',
           url: '/admin/receipt-for-postpaid',
           icon: ReceiptText,
           path: '/admin/receipt-for-postpaid',
+        },
+        {
+          title: 'Create New User',
+          url: '/admin/create-new-user',
+          icon: ReceiptText,
+          path: '/admin/create-new-user',
         },
       ],
     },
@@ -327,7 +333,7 @@ export function AppSidebar({ userRole, logoLink, onSignOut }) {
         <NavMain items={filteredNavMain} />
       </SidebarContent>
       <SidebarFooter>
-        <Button onClick={onSignOut}><LogOut /> LogOut</Button>
+        <Button onClick={onSignOut}><LogOut /> Log Out</Button>
         {/* <NavUser user={data.user} /> */}
       </SidebarFooter>
       {/* <SidebarRail /> */}
