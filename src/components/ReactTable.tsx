@@ -203,6 +203,11 @@ const ReactTable = <T extends Record<string, any>>({
                                 <Button variant="default" onClick={downloadPdf && downloadPdf}>PDF</Button>
                             </div>
                         }
+                        {isSelectable && selectedRow !== null && (
+                            <div className="flex justify-center">
+                                {onRowSelectButtons}
+                            </div>
+                        )}
                         <CustomizedInputWithLabel
                             type="text"
                             placeholder="Search"
@@ -210,11 +215,7 @@ const ReactTable = <T extends Record<string, any>>({
                             onChange={(e) => handleSearch(e)}
                         />
                     </div>
-                    {isSelectable && selectedRow !== null && (
-                        <div className="mb-4 flex justify-center">
-                            {onRowSelectButtons}
-                        </div>
-                    )}
+
                     {additionalDataBetweenTableAndAction && additionalDataBetweenTableAndAction}
                 </div>
             }

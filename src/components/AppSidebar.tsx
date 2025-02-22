@@ -179,7 +179,7 @@ const navData = {
           path: '/admin/non-energy-type',
         },
         {
-          title: 'Collector type',
+          title: 'Add Collector type',
           url: '/admin/add-collector-type',
           icon: Merge,
           path: '/admin/add-collector-type',
@@ -203,10 +203,16 @@ const navData = {
           path: '/admin/import',
         },
         {
-          title: 'Receipt for Postpaid',
+          title: 'Receipt For Postpaid',
           url: '/admin/receipt-for-postpaid',
           icon: ReceiptText,
           path: '/admin/receipt-for-postpaid',
+        },
+        {
+          title: 'Create New User',
+          url: '/admin/create-new-user',
+          icon: ReceiptText,
+          path: '/admin/create-new-user',
         },
       ],
     },
@@ -327,7 +333,7 @@ export function AppSidebar({ userRole, logoLink, onSignOut }) {
         <NavMain items={filteredNavMain} />
       </SidebarContent>
       <SidebarFooter>
-        <Button onClick={onSignOut}><LogOut /> LogOut</Button>
+        <Button onClick={onSignOut}><LogOut /> Log Out</Button>
         {/* <NavUser user={data.user} /> */}
       </SidebarFooter>
       {/* <SidebarRail /> */}

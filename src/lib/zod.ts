@@ -886,3 +886,11 @@ export const addModeOfPaymentSchema = z.object({
 });
 
 export type AddModeOfPaymentFormData = z.infer<typeof addModeOfPaymentSchema>;
+
+export const createUserSchema = z.object({
+  userRole: z.string().min(1, "User Role is required"),
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  phoneNumber: z.string().length(10, "Phone number must be exactly 10 digits"),
+});
+
+export type CreateUserFormData = z.infer<typeof createUserSchema>;

@@ -69,10 +69,11 @@ const IncentivePage = () => {
                 <ReactTable
                     data={incentiveData}
                     columns={columns}
+                    hideSearchAndOtherButtons
                 />
             </div>
 
-            <div className="mt-6 text-right">
+            <div className="mt-4 text-right">
                 <Button variant="default" onClick={() => { router.push('/admin/incentive/add') }} size="lg">
                     Add Incentive
                 </Button>

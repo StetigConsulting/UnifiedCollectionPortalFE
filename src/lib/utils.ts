@@ -226,6 +226,34 @@ export const urlsListWithTitle = {
   collectorTypeAdd: {
     url: '/admin/add-collector-type/setup',
     title: 'Add'
+  },
+  createNewUserTable: {
+    url: '/admin/create-new-user',
+    title: 'Create New User'
+  },
+  createNewUserForm: {
+    url: '/admin/create-new-user/add',
+    title: 'Add'
+  },
+  nonEnergyTypeTable: {
+    url: '/admin/non-energy-type',
+    title: 'Non Energy Type'
+  },
+  nonEnergyTypeForm: {
+    url: '/admin/non-energy-type/add',
+    title: 'Add'
+  },
+  incentive: {
+    url: '/admin/incentive',
+    title: 'Incentive'
+  },
+  incentiveAdd: {
+    url: '/admin/incentive/add',
+    title: 'Add'
+  },
+  incentiveEdit: {
+    url: '/admin/incentive/edit',
+    title: 'Edit'
   }
 };
 
