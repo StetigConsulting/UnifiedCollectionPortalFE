@@ -880,3 +880,9 @@ export const agencyBankDepositSchema = z.object({
 });
 
 export type AgencyBankDepositFormData = z.infer<typeof agencyBankDepositSchema>;
+
+export const addModeOfPaymentSchema = z.object({
+  paymentModes: z.array(z.string()),
+});
+
+export type AddModeOfPaymentFormData = z.infer<typeof addModeOfPaymentSchema>;

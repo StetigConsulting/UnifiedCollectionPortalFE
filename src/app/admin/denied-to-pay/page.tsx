@@ -1,107 +1,67 @@
 'use client';
 
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { deniedToPaySchema } from "@/lib/zod";
-import { Button } from "@/components/ui/button";
-import CustomizedSelectInputWithLabel from "@/components/CustomizedSelectInputWithLabel";
-import CustomizedMultipleSelectInputWithLabelString from "@/components/CustomizedMultipleSelectInputWithLabelString";
-import CustomizedInputWithLabel from "@/components/CustomizedInputWithLabel";
-import AuthUserReusableCode from "@/components/AuthUserReusableCode";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
-import { z } from "zod";
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+import ReactTable from '@/components/ReactTable';
+import { Button } from '@/components/ui/button';
+import AuthUserReusableCode from '@/components/AuthUserReusableCode';
+import { urlsListWithTitle } from '@/lib/utils';
 
-type FormData = z.infer<typeof deniedToPaySchema>;
-
-const DeniedToPay = () => {
+const DeniedToPayConfiguration = () => {
     const router = useRouter();
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [deniedToPayData, setDeniedToPayData] = useState([]);
 
-    const [deniedToPayReasons, setDeniedToPayReasons] = useState([]);
+    const columns = [
+        { label: 'Sr. No.', key: 'id', sortable: true },
+        { label: 'Denied To Pay Reason', key: 'deniedReason', sortable: true },
+        { label: 'Updated Date for Denied to Pay Reasons', key: 'deniedDate', sortable: true },
+        { label: 'Paid Reasons', key: 'paidReason', sortable: true },
+        { label: 'Updated Date for Paid Reasons', key: 'paidDate', sortable: true },
+    ];
 
-    const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<FormData>({
-        resolver: zodResolver(deniedToPaySchema),
-    });
-
-    const formData = watch();
-
-    const onSubmit = async (data: FormData) => {
-        console.log("Form Data:", data);
+    const fetchData = async () => {
+        setIsLoading(true);
         try {
-            setIsSubmitting(true);
-            toast.success("Form submitted successfully!");
+            // const data = await fetchDeniedToPayData();
+            // setDeniedToPayData(data);
         } catch (error) {
-            toast.error("Failed to submit the form.");
+            console.error('Error fetching denied to pay data:', error);
+            toast.error('Error fetching denied to pay data');
         } finally {
-            setIsSubmitting(false);
+            setIsLoading(false);
         }
     };
 
-    const handleCancel = () => {
-        router.back();
-    };
+    useEffect(() => {
+        fetchData();
+    }, []);
 
     return (
-        <AuthUserReusableCode pageTitle="Denied to Pay">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                <div className="space-y-2">
-                    <CustomizedMultipleSelectInputWithLabelString
-                        label="Denied to pay reason"
-                        placeholder="Select reasons"
-                        errors={errors.deniedReason}
-                        required={true}
-                        list={deniedToPayReasons}
-                        value={watch('deniedReason') || []}
-                        onChange={(selectedValues) => setValue('deniedReason', selectedValues)}
-                        multi={true}
-                    />
-                    {errors.deniedReason && <p className="text-red-600 text-sm">{errors.deniedReason.message}</p>}
-                </div>
-
-                <div className="space-y-2">
-                    <CustomizedSelectInputWithLabel
-                        label="Paid reason"
-                        placeholder="Select paid reason"
-                        list={[
-                            { label: "Reason 1", value: "Reason 1" },
-                            { label: "Reason 2", value: "Reason 2" },
-                            { label: "Reason 3", value: "Reason 3" },
-                        ]}
-                        errors={errors.paidReason}
-                        {...register("paidReason")}
-                    />
-                </div>
-
-                <div className="space-y-2">
-                    <CustomizedInputWithLabel
-                        label="Denied to pay max count per day"
-                        placeholder="Enter max count"
-                        type="number"
-                        errors={errors.maxCountPerDay}
-                        {...register("maxCountPerDay")}
-                    />
-                </div>
-
-                <div className="flex justify-end space-x-4 mt-6">
-                    <Button variant="outline" type="button" onClick={handleCancel}>
-                        Cancel
-                    </Button>
-                    <Button type="submit" variant="default" disabled={isSubmitting}>
-                        {isSubmitting ? (
-                            <>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
-                            </>
-                        ) : (
-                            "Save"
-                        )}
+        <AuthUserReusableCode pageTitle="Denied To Pay" isLoading={isLoading}>
+            <div className='p-4'>
+                <div className="flex justify-start mb-4">
+                    <Button variant="default" size="lg"
+                        onClick={() => router.push(urlsListWithTitle.deniedToPaySetup.url)}
+                    >
+                        Setup Denied To Pay / Paid Reasons
                     </Button>
                 </div>
-            </form>
+
+                <ReactTable
+                    data={deniedToPayData}
+                    columns={columns}
+                    hideSearchAndOtherButtons
+                    avoidSrNo
+                />
+
+                <div className="mt-4 p-2 bg-gray-100 text-center text-sm rounded-md">
+                    Denied To Pay Maximum Count Per Day for Each Collector: <strong>3</strong>
+                </div>
+            </div>
         </AuthUserReusableCode>
     );
 };
 
-export default DeniedToPay;
+export default DeniedToPayConfiguration;

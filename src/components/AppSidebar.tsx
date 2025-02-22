@@ -161,10 +161,10 @@ const navData = {
           path: '/admin/office-stucture'
         },
         {
-          title: 'Payment configuration',
-          url: '/admin/payment-configuration',
+          title: 'Mode Of Payment',
+          url: '/admin/mode-of-payment',
           icon: Gauge,
-          path: '/admin/payment-configuration'
+          path: '/admin/mode-of-payment'
         },
         {
           title: 'Denied to pay',
@@ -179,7 +179,7 @@ const navData = {
           path: '/admin/non-energy-type',
         },
         {
-          title: 'Add Collector type',
+          title: 'Collector type',
           url: '/admin/add-collector-type',
           icon: Merge,
           path: '/admin/add-collector-type',
