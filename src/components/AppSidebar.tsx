@@ -97,7 +97,7 @@ const navData = {
       icon: Folder,
       url: "#",
       path: '/agency/',
-      roles: ["AGENCY"],
+      roles: ["AGENCY", "SUPER ADMIN"],
       items: [
         {
           title: "Add Collector",
@@ -223,6 +223,16 @@ const navData = {
       path: '/report/',
       roles: ["SUPER ADMIN", "ADMIN", "AGENCY"],
       items: [
+        {
+          title: "Daily Collection",
+          icon: UserPlus2,
+          url: "/report/daily-collection",
+        },
+        {
+          title: "Agent Wallet History",
+          icon: UserPlus2,
+          url: "/report/agent-wallet-history",
+        },
         {
           title: "Billing Report",
           icon: UserPlus2,

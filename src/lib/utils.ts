@@ -47,10 +47,6 @@ export const levelWIthIdInt = {
   "BINDER": 21,
 }
 
-export const testDiscom = '1001';
-
-export const testAgencyId = 30;
-
 export function numberToWords(num: number): string {
   if (num === 0) return "zero";
 
@@ -102,8 +98,29 @@ export const PUBLIC_ROUTES = [
   '/auth/signin'
 ]
 
-export const PROTECTED_SUB_ROUTES = [
-
+export const listOfUrlForScopes = [
+  { url: "/dashboard", moduleName: "", action: "" },
+  { url: "/department/add-agency", moduleName: "agency", action: "CREATE" },
+  { url: "/department/recharge", moduleName: "agency", action: "RECHARGE_AGENCY_WALLET" },
+  { url: "/department/collector-type", moduleName: "agent", action: "EDIT_COLLECTOR_ROLE" },
+  { url: "/department/edit-agency", moduleName: "agency", action: "EDIT" },
+  { url: "/department/edit-agency-area", moduleName: "agency", action: "CHANGE_AREA" },
+  { url: "/department/edit-agent-area", moduleName: "agent", action: "CHANGE_AREA" },
+  { url: "/department/extend-validity", moduleName: "agency", action: "EXTEND_AGENCY_VALIDITY" },
+  { url: "/department/view-agency", moduleName: "agency", action: "READ" },
+  { url: "/department/view-balance", moduleName: "agency", action: "READ" },
+  { url: "/department/reset-device", moduleName: "agency", action: "RESET_COLLECTOR_DEVICE" },
+  { url: "/department/add-news", moduleName: "", action: "" },
+  { url: "/admin/department-user", moduleName: "", action: "" },
+  { url: "/admin/office-structure", moduleName: "office_structure", action: "CREATE" },
+  { url: "/admin/mode-of-payment", moduleName: "", action: "" },
+  { url: "/admin/denied-to-pay", moduleName: "", action: "" },
+  { url: "/admin/non-energy-type", moduleName: "", action: "" },
+  { url: "/admin/add-collector-type", moduleName: "agent", action: "EDIT_COLLECTOR_ROLE" },
+  { url: "/admin/color-coding", moduleName: "", action: "" },
+  { url: "/admin/incentive", moduleName: "", action: "" },
+  { url: "/admin/import", moduleName: "", action: "" },
+  { url: "/admin/receipt-for-postpaid", moduleName: "", action: "" }
 ]
 
 export const ADMIN_ONLY_ROUTES = [
@@ -143,19 +160,6 @@ export const AGENCY_ONLY_ROUTES = [
   "/agency/recharge",
   "/agency/extend-validity",
   "/agency/reset-collector",
-  "/report/top-up-history",
-  "/report/collector-top-up-history",
-  "/report/transaction-record",
-  "/report/login-history",
-  "/report/daily-agent-collection",
-  "/report/agency-wise-collection",
-  "/report/collector-wise",
-  "/report/cancel-wise-receipt",
-  "/report/denied-consumer",
-  "/report/counter-collector",
-  "/report/collector-activity",
-  "/report/wallet-history",
-  "/report/cc-wallet-history",
 ];
 
 export const urlsListWithTitle = {
@@ -254,6 +258,10 @@ export const urlsListWithTitle = {
   incentiveEdit: {
     url: '/admin/incentive/edit',
     title: 'Edit'
+  },
+  colorCodingLogicTable: {
+    url: '/admin/color-coding/logic',
+    title: 'Color Coding Logic'
   }
 };
 
