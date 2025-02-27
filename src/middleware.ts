@@ -8,7 +8,6 @@ import {
 } from "./lib/utils";
 
 export async function middleware(request: any) {
-    console.log("Middleware Running");
 
     const { nextUrl } = request;
     const session = await auth();
@@ -52,7 +51,6 @@ export async function middleware(request: any) {
     return NextResponse.next();
 }
 
-// Middleware configuration
 export const config = {
     matcher: [
         "/((?!api/|_next/static|_next/image|favicon.ico|icon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"

@@ -6,7 +6,7 @@ import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import ReactTable from '@/components/ReactTable';
 
-const AgencyWiseCollection = () => {
+const DailyAgentCollection = () => {
     const [dateFrom, setDateFrom] = useState('');
     const [dateTo, setDateTo] = useState('');
     const [transactionDate, setTransactionDate] = useState('');
@@ -23,16 +23,30 @@ const AgencyWiseCollection = () => {
         try {
             const response = [
                 {
-                    mobileNumber: '9876543210',
-                    date: '06-12-2024',
-                    noOfTxn: 5,
-                    amount: '₹ 5000',
+                    consumerNo: '10220766184662150818',
+                    agentMobileNumber: '9876543210',
+                    txnId: 'TXN123456',
+                    txnDate: '06-12-2024',
+                    payMode: 'Online',
+                    division: 'AED ASKA-I',
+                    subDivision: 'ASKA-I',
+                    amount: '₹ 786',
+                    currentAmount: '₹ 786',
+                    arrearAmount: '₹ 200',
+                    uploadDate: '06-12-2024',
                 },
                 {
-                    mobileNumber: '9876543211',
-                    date: '06-12-2024',
-                    noOfTxn: 3,
-                    amount: '₹ 3000',
+                    consumerNo: '10220766184662150819',
+                    agentMobileNumber: '9876543211',
+                    txnId: 'TXN123457',
+                    txnDate: '06-12-2024',
+                    payMode: 'Cash',
+                    division: 'AED ASKA-II',
+                    subDivision: 'ASKA-II',
+                    amount: '₹ 900',
+                    currentAmount: '₹ 900',
+                    arrearAmount: '₹ 150',
+                    uploadDate: '06-12-2024',
                 },
             ];
             setData(response);
@@ -46,26 +60,35 @@ const AgencyWiseCollection = () => {
     };
 
     const columns = useMemo(() => [
-        { label: 'Mobile Number', key: 'mobileNumber', sortable: true },
-        { label: 'Date', key: 'date', sortable: true },
-        { label: 'No Of TXN', key: 'noOfTxn', sortable: true },
+        { label: 'Consumer No', key: 'consumerNo', sortable: true },
+        { label: 'Agent Mobile Number', key: 'agentMobileNumber', sortable: true },
+        { label: 'TXN ID', key: 'txnId', sortable: true },
+        { label: 'TXN Date', key: 'txnDate', sortable: true },
+        { label: 'Pay Mode', key: 'payMode', sortable: true },
+        { label: 'Division', key: 'division', sortable: true },
+        { label: 'Sub Division', key: 'subDivision', sortable: true },
         { label: 'Amount', key: 'amount', sortable: true },
+        { label: 'Current Amount', key: 'currentAmount', sortable: true },
+        { label: 'Arrear Amount', key: 'arrearAmount', sortable: true },
+        { label: 'Upload Date', key: 'uploadDate', sortable: true },
     ], []);
+
 
     const handleSearch = () => {
         const filtered = data.filter(item => {
-            const itemDate = new Date(item.date);
+            const itemDate = new Date(item.txnTime);
             const fromDate = new Date(dateFrom);
             const toDate = new Date(dateTo);
             const isDateInRange =
                 (!dateFrom || itemDate >= fromDate) && (!dateTo || itemDate <= toDate);
-            return isDateInRange;
+
+            return isDateInRange
         });
         setFilteredData(filtered);
     };
 
     return (
-        <AuthUserReusableCode pageTitle="Agency Wise Collection" isLoading={isLoading}>
+        <AuthUserReusableCode pageTitle="Daily Collection" isLoading={isLoading}>
             <div className="flex items-center gap-4">
                 <div className="grid grid-cols-3 gap-4 flex-grow">
                     <CustomizedInputWithLabel
@@ -101,11 +124,8 @@ const AgencyWiseCollection = () => {
                     columns={columns}
                 />
             </div>
-
-            <div className="flex justify-between">
-            </div>
         </AuthUserReusableCode>
     );
 };
 
-export default AgencyWiseCollection;
+export default DailyAgentCollection;

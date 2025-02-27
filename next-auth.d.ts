@@ -6,9 +6,7 @@ declare module "next-auth" {
         user: {
             id: string;
             mobileNumber: string;
-            name: string;
             userId: number;
-            uniqueUserId: number;
             accessToken: string;
             refreshToken: string;
             discomId: number;
@@ -21,9 +19,7 @@ declare module "next-auth" {
     interface User {
         id: string;
         mobileNumber: string;
-        name: string;
         userId: number;
-        uniqueUserId: number;
         accessToken: string;
         refreshToken: string;
         discomId: number;
@@ -35,9 +31,7 @@ declare module "next-auth" {
     interface JWT {
         id: string;
         mobileNumber: string;
-        name: string;
         userId: number;
-        uniqueUserId: number;
         accessToken: string;
         refreshToken: string;
         discomId: number;
