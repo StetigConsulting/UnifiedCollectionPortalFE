@@ -26,7 +26,7 @@ const UserClient: React.FC<UserClientProps> = ({ session }) => {
                     <Button variant="ghost" className="flex items-center space-x-4 border">
                         <User2 className="w-6 h-6" />
                         <div className="flex flex-col">
-                            <span className='font-semibold'>{session.user.name}</span>
+                            <span className='font-semibold'>{session.user.id}</span>
                             <span className='text-gray-500 text-xs text-start'>{session.user.mobileNumber}</span>
                         </div>
                     </Button>

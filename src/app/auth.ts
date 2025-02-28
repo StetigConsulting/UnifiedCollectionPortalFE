@@ -75,7 +75,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
                     if (userRoleResponse.ok) {
                         const roleData = await userRoleResponse.json();
-                        console.log("User Role Response:", roleData);
+                        console.log("User Role Response:", roleData.user_scopes);
                         user.userRole = roleData?.data?.user_role?.role_name || "UNKNOWN";
                         user.userScopes = roleData?.data?.user_scopes?.map((scope: { action: string }) => scope.action) || [];
                     } else {
