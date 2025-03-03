@@ -17,3 +17,12 @@ export const getAllBankList = async () => {
         throw error?.response?.data
     }
 }
+
+export const getUserDetails = async () => {
+    try {
+        const response = await api.get(`/v1/tp-users/user-info`);
+        return response.data;
+    } catch (error) {
+        throw error?.response?.data
+    }
+}

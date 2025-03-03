@@ -52,14 +52,12 @@ const navData = {
       url: "/dashboard",
       icon: Gauge,
       path: '/dashboard',
-      roles: ["ADMIN", "SUPER ADMIN", "AGENCY"],
     },
     {
       title: "Admin",
       icon: Folder,
       url: "#",
       path: '/department/',
-      roles: ["SUPER ADMIN", "ADMIN"],
       items: [
         {
           title: "Add Agency",
@@ -97,7 +95,6 @@ const navData = {
       icon: Folder,
       url: "#",
       path: '/agency/',
-      roles: ["AGENCY", "SUPER ADMIN"],
       items: [
         {
           title: "Add Collector",
@@ -146,7 +143,6 @@ const navData = {
       icon: Folder,
       url: "#",
       path: '/admin/',
-      roles: ["SUPER ADMIN"],
       items: [
         {
           title: 'Department User',
@@ -221,7 +217,6 @@ const navData = {
       icon: NotepadText,
       url: "#",
       path: '/report/',
-      roles: ["SUPER ADMIN", "ADMIN", "AGENCY"],
       items: [
         {
           title: "Daily Collection",
@@ -320,10 +315,9 @@ const navData = {
   ],
 };
 
-export function AppSidebar({ userRole, logoLink, onSignOut }) {
+export function AppSidebar({ logoLink, onSignOut }) {
 
   const filteredNavMain = navData.navMain
-    .filter((nav) => !nav.roles || nav.roles.includes(userRole))
 
   return (
     <Sidebar>

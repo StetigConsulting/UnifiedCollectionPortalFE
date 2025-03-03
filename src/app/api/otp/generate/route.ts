@@ -6,20 +6,15 @@ export async function POST(req: NextRequest) {
 
   try {
     const apiResponse = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/send-otp`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/v1/auth/send-otp/${mobileNumber}`,
       {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          mobileNumber: mobileNumber,
-          sourceType: "PORTAL",
-        }),
+        method: "GET",
       }
     );
 
     const result = await apiResponse.json();
+
+    console.log(result);
 
     if (apiResponse.ok) {
       return NextResponse.json({

@@ -17,8 +17,6 @@ interface AuthUserReusableCodeProps {
 function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUserReusableCodeProps) {
     const { data: session } = useSession()
 
-    const userRole = session?.user?.userRole;
-
     const [logoLink, setLogoLink] = React.useState('')
 
     const [agencyBalanceDetail, setAgencyBalanceDetail] = React.useState({})
@@ -46,7 +44,7 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
             display: '-webkit-box',
             boxSizing: 'border-box'
         }}>
-            <AppSidebar userRole={userRole} logoLink={logoLink} onSignOut={onSignOut} />
+            <AppSidebar logoLink={logoLink} onSignOut={onSignOut} />
             {
                 isLoading &&
                 <div className="absolute inset-0 flex items-center justify-center z-50"

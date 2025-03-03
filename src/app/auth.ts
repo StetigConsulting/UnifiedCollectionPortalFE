@@ -11,6 +11,7 @@ interface ExtendedUser extends User {
     roleId: number;
     userRole?: string;
     userScopes?: string[];
+    tokenExpiry?: number;
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -29,53 +30,53 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 const otp = credentials?.otp as string;
 
 
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/authenticate`, {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/v1/auth/authenticate`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        mobileNumber: mobileNumber,
+                        mobile_number: mobileNumber,
                         otp,
-                        ipAddress: publicIp,
-                        sourceType: "PORTAL",
                     }),
                 });
 
                 const data = await response.json();
                 console.log("Authenticate Response", response, data);
 
-                if (!response.ok || !data?.data?.accessToken) {
+                if (!response.ok || !data?.data?.access_token) {
                     return null;
                 }
 
-
                 const user: ExtendedUser = {
-                    id: data.data.userId,
+                    id: null,
                     mobileNumber: mobileNumber,
-                    userId: data.data.userId,
+                    userId: null,
                     // userId: 6,
-                    accessToken: data.data.accessToken,
-                    refreshToken: data.data.refreshToken,
-                    discomId: data.data.discomId,
-                    roleId: data.data.roleId,
+                    accessToken: data.data.access_token,
+                    refreshToken: data.data.refresh_token,
+                    discomId: null,
+                    roleId: null,
                     userRole: "UNKNOWN",
                     userScopes: [],
+                    tokenExpiry: data.data.expires_in
                 };
 
                 try {
 
-                    const userRoleResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/v1/user-role-scopes/${user.roleId}`, {
+                    const userRoleResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/v1/tp-users/user-info`, {
                         method: "GET",
                         headers: {
                             "Authorization": `Bearer ${user.accessToken}`,
                             "Content-Type": "application/json"
                         }
                     });
-
+                    console.log("User Role Response:", userRoleResponse);
                     if (userRoleResponse.ok) {
                         const roleData = await userRoleResponse.json();
-                        console.log("User Role Response:", roleData.user_scopes);
+                        user.id = String(roleData?.data?.id);
+                        user.userId = parseInt(roleData?.data?.id);
+                        user.discomId = roleData?.data?.discom_id;
                         user.userRole = roleData?.data?.user_role?.role_name || "UNKNOWN";
                         user.userScopes = roleData?.data?.user_scopes?.map((scope: { action: string }) => scope.action) || [];
                     } else {
