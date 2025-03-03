@@ -90,9 +90,8 @@ export function numberToWords(num: number): string {
   return result.trim();
 }
 
-
 export const SIGNIN = '/auth/signin';
-export const ROOT = '/';
+export const ROOT = '/dashboard';
 
 export const PUBLIC_ROUTES = [
   '/auth/signin'
@@ -122,45 +121,6 @@ export const listOfUrlForScopes = [
   { url: "/admin/import", moduleName: "", action: "" },
   { url: "/admin/receipt-for-postpaid", moduleName: "", action: "" }
 ]
-
-export const ADMIN_ONLY_ROUTES = [
-  "/dashboard",
-  "/department/add-agency",
-  "/department/recharge",
-  "/department/collector-type",
-  "/department/edit-agency",
-  "/department/edit-agency-area",
-  "/department/edit-agent-area",
-  "/department/extend-validity",
-  "/department/view-agency",
-  "/department/view-balance",
-  "/department/reset-device",
-  "/department/add-news",
-]
-
-export const SUPER_ADMIN_ONLY_ROUTES = [
-  "/dashboard",
-  "/admin/department-user",
-  "/admin/office-structure",
-  "/admin/mode-of-payment",
-  "/admin/denied-to-pay",
-  "/admin/non-energy-type",
-  "/admin/add-collector-type",
-  "/admin/color-coding",
-  "/admin/incentive",
-  "/admin/import",
-  "/admin/receipt-for-postpaid"
-];
-
-export const AGENCY_ONLY_ROUTES = [
-  "/dashboard",
-  "/agency/add-collector",
-  "/agency/view-collector",
-  "/agency/binder-mapping",
-  "/agency/recharge",
-  "/agency/extend-validity",
-  "/agency/reset-collector",
-];
 
 export const urlsListWithTitle = {
   agencyRecharge: {

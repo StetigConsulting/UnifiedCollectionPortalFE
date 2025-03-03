@@ -12,17 +12,15 @@ export async function POST(req: NextRequest) {
         console.log(publicIp);
 
         const apiResponse = await fetch(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/authenticate`,
+            `${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/v1/auth/authenticate`,
             {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    mobileNumber: mobileNumber,
+                    mobile_number: mobileNumber,
                     otp: enteredOtp,
-                    "ipAddress": publicIp,
-                    "sourceType": "PORTAL"
                 }),
             }
         );

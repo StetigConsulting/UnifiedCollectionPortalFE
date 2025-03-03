@@ -26,6 +26,7 @@ declare module "next-auth" {
         roleId: number;
         userRole?: string;
         userScopes?: string[];
+        tokenExpiry?: number;
     }
 
     interface JWT {
