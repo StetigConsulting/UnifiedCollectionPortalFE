@@ -12,6 +12,8 @@ import { createNewLevelSchema } from '@/lib/zod';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 import { Session } from 'next-auth';
+import { createOfficeStructureLevel } from '@/app/api-calls/admin/api';
+import { getErrorMessage } from '@/lib/utils';
 
 interface CreateNewLevelPopupProps {
     fetchData: () => void;
@@ -54,22 +56,8 @@ const CreateNewLevelPopup: React.FC<CreateNewLevelPopupProps> = ({ fetchData, cu
 
         setIsSaving(true);
         try {
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload),
-            });
+            const response = await createOfficeStructureLevel(payload)
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                const errorMessage =
-                    errorData?.error || errorData?.message || 'Failed to create level.';
-                throw new Error(errorMessage);
-            }
-
-            await response.json();
             toast.success('Level created successfully');
             setValue('levelName', '');
             setValue('levelType', '');
@@ -77,7 +65,7 @@ const CreateNewLevelPopup: React.FC<CreateNewLevelPopupProps> = ({ fetchData, cu
             fetchData();
         } catch (error) {
             console.error('Failed to create level:', error);
-            toast.error('Failed to create level.' + error);
+            toast.error('Error: ', getErrorMessage(error));
         } finally {
             setIsSaving(false);
         }

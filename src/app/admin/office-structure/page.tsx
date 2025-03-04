@@ -8,6 +8,7 @@ import ReactTable from '@/components/ReactTable';
 import CreateNewLevelPopup from '@/components/OfficeStructure/CreateNewLevelPopup';
 import CreateNewLevelUploadPopup from '@/components/OfficeStructure/CreateNewLevelUploadPopup';
 import { useSession } from 'next-auth/react';
+import { getOfficeStrutureData } from '@/app/api-calls/admin/api';
 
 const OfficeStructurePage = () => {
 
@@ -21,10 +22,7 @@ const OfficeStructurePage = () => {
     const fetchOfficeStructureData = async () => {
         setLoading(true);
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/office-structure-levels/${session?.user?.discomId}`);
-            if (!response.ok) throw new Error('Failed to fetch office structure data');
-
-            const data = await response.json();
+            const data = await getOfficeStrutureData(session?.user?.discomId)
             setOfficeStructureData(
                 data?.data?.map((item) => {
                     return ({

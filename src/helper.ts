@@ -15,11 +15,12 @@ export const listOfUrlForScopes = [
   { url: "/department/deactivate-agency", backendScopeName: "TPCollectionWebPortal:agency:DEACTIVATE" },
   { url: "/department/activate-agency", backendScopeName: "TPCollectionWebPortal:agency:ACTIVATE" },
   { url: "/department/reset-device", backendScopeName: "TPCollectionWebPortal:agent:RESET_COLLECTOR_DEVICE" },
-  { url: "/agency/bank-deposit", backendScopeName: "TPCollectionWebPortal:agent_bank_deposit:ALL" }, // Fixed
+  { url: "/department/bank-deposit", backendScopeName: "TPCollectionWebPortal:agency_bank_deposit:ALL" },
+  { url: "/agency/bank-deposit", backendScopeName: "TPCollectionWebPortal:agent_bank_deposit:ALL" },
   { url: "/department/cancel-receipt", backendScopeName: "TPCollectionWebPortal:collection:CANCEL_RECEIPT" },
   { url: "/admin/create-new-user", backendScopeName: "TPCollectionWebPortal:user:CREATE" },
   { url: "/admin/office-structure", backendScopeName: "TPCollectionWebPortal:office_structure:ALL" },
-  { url: "/admin/pseudo-level-mapping", backendScopeName: "TPCollectionWebPortal:agent-pseudo-mapping:ALL" },
+  { url: "/agency/binder-mapping", backendScopeName: "TPCollectionWebPortal:agent_pseudo_mapping:ALL" },
   { url: "/admin/mode-of-payment", backendScopeName: "TPCollectionWebPortal:business_rules:ALL" },
   { url: "/admin/denied-to-pay", backendScopeName: "TPCollectionWebPortal:business_rules:ALL" },
   { url: "/admin/non-energy-type", backendScopeName: "TPCollectionWebPortal:business_rules:ALL" },
@@ -30,8 +31,8 @@ export const listOfUrlForScopes = [
   { url: "/admin/incentive", backendScopeName: "TPCollectionWebPortal:business_rules:ALL" },
   { url: "/admin/import", backendScopeName: "TPCollectionWebPortal:business_rules:ALL" },
   { url: "/admin/receipt-for-postpaid", backendScopeName: "TPCollectionWebPortal:business_rules:ALL" },
-  { url: "/common/agency-wallet-history-report", backendScopeName: "TPCollectionWebPortal:agency_wallet_history_report:READ" },
-  { url: "/common/agent-wallet-history-report", backendScopeName: "TPCollectionWebPortal:agent_wallet_history_report:READ" },
+  { url: "/report/agency-wallet-history-report", backendScopeName: "TPCollectionWebPortal:agency_wallet_history_report:READ" },
+  { url: "/report/agent-wallet-history-report", backendScopeName: "TPCollectionWebPortal:agent_wallet_history_report:READ" },
   { url: "/agency/add-collector", backendScopeName: "TPCollectionWebPortal:agent:CREATE" },
   { url: "/agency/view-collector", backendScopeName: "TPCollectionWebPortal:agent:READ" },
   { url: "/agency/recharge", backendScopeName: "TPCollectionWebPortal:agent:RECHARGE_WALLET" },
@@ -39,15 +40,15 @@ export const listOfUrlForScopes = [
   { url: "/agency/edit-collector", backendScopeName: "TPCollectionWebPortal:agent:EDIT" },
   { url: "/agency/activate-agent", backendScopeName: "TPCollectionWebPortal:agent:ACTIVATE" },
   { url: "/agency/deactivate-agent", backendScopeName: "TPCollectionWebPortal:agent:DEACTIVATE" },
-  { url: "/energy/billing-report", backendScopeName: "TPCollectionWebPortal:billing_report:READ" },
-  { url: "/dashboard/bill-upload-history", backendScopeName: "TPCollectionWebPortal:dashboard:ALL" }
+  { url: "/report/billing-report", backendScopeName: "TPCollectionWebPortal:billing_report:READ" },
+  { url: "/dashboard", backendScopeName: "TPCollectionWebPortal:dashboard:ALL" }
 ];
 
 
 
 export const checkIfUserHasAccessToPage = ({ backendScope, currentUrl }) => {
   const foundScope = listOfUrlForScopes.find((item) => item.url === currentUrl);
-
+  // return true
   if (!foundScope) return false;
 
   return backendScope.includes(foundScope.backendScopeName);

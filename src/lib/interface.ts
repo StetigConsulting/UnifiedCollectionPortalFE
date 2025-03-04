@@ -49,6 +49,13 @@ export interface extendValidityInterface {
     validity_from_date: string;
     validity_to_date: string;
 }
+export interface officeStructureLevelInterface {
+    user_id: number;
+    discom_id: number;
+    level: number;
+    level_name: string;
+    level_type: string;
+}
 
 export interface ReceiptForPostpaid {
     id?: number;

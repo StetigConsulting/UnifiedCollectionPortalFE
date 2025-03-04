@@ -9,6 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Upload, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { fileUploadSchema } from '@/lib/zod';
+import { uploadOfficeStructureLevel } from '@/app/api-calls/admin/api';
 
 interface CreateNewLevelUploadPopupProps {
     fetchData: () => void;
@@ -40,19 +41,12 @@ const CreateNewLevelUploadPopup: React.FC<CreateNewLevelUploadPopupProps> = ({ f
 
     const handleFormSubmit = async (data: FormData) => {
 
-        const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/office-structures/import`;
-
         const formData = new FormData();
         formData.append('file', data.file);
 
         setIsUploading(true);
         try {
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                body: formData,
-            });
-
-            if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+            const response = await uploadOfficeStructureLevel(formData)
 
             toast.success('File uploaded successfully');
             setFileName(null);
