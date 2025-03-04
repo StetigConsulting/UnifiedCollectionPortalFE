@@ -4,47 +4,42 @@ import { AddAgencyBankDeposit, AgencyBankHistoryPagination, AgencyDataInterface,
 
 const getAllPaymentModes = async () => {
   try {
-    let response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/v1/payment-modes`
-    );
+    const response = await api.get(`/v1/payment-modes`);
+    return response.data;
+  } catch (error: any) {
 
-    return response.json();
-  } catch (e) {
-    throw e;
+    throw error?.response?.data
   }
 };
 
+
 const getAllNonEnergyTypes = async () => {
   try {
-    let response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/v1/non-energy-types`
-    );
+    const response = await api.get(`/v1/non-energy-types`);
+    return response.data;
+  } catch (error: any) {
 
-    return response.json();
-  } catch (e) {
-    throw e;
+    throw error?.response?.data
   }
 };
 
 const getLevelsDiscomId = async (id: number) => {
   try {
-    let response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/office-structures/${id}/next-level`
-    );
-    return response.json();
-  } catch (e) {
-    throw e;
+    const response = await api.get(`/office-structures/${id}/next-level`);
+    return response.data;
+  } catch (error: any) {
+
+    throw error?.response?.data
   }
 };
 
 const getLevels = async (id: number) => {
   try {
-    let response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/office-structure-levels/${id}`
-    );
-    return response.json();
-  } catch (e) {
-    throw e;
+    const response = await api.get(`/office-structure-levels/${id}`);
+    return response.data;
+  } catch (error: any) {
+
+    throw error?.response?.data
   }
 };
 

@@ -58,14 +58,7 @@ const AddIncentivePage = () => {
     const handleSave = async () => {
         setIsSubmitting(true);
         try {
-            // Replace with actual API call
-            await fetch('/api/save-incentive', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(incentiveData),
-            });
+
             toast.success('Incentive data saved!');
         } catch (error) {
             console.error('Error saving incentive:', error);

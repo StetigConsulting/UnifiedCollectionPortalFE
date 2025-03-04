@@ -29,7 +29,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 const mobileNumber = credentials?.mobileNumber as string;
                 const otp = credentials?.otp as string;
 
-
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/v1/auth/authenticate`, {
                     method: "POST",
                     headers: {
@@ -71,14 +70,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                             "Content-Type": "application/json"
                         }
                     });
-                    console.log("User Role Response:", userRoleResponse);
+
                     if (userRoleResponse.ok) {
                         const roleData = await userRoleResponse.json();
+                        console.log("User Role Response:", roleData);
                         user.id = String(roleData?.data?.id);
                         user.userId = parseInt(roleData?.data?.id);
                         user.discomId = roleData?.data?.discom_id;
                         user.userRole = roleData?.data?.user_role?.role_name || "UNKNOWN";
-                        user.userScopes = roleData?.data?.user_scopes?.map((scope: { action: string }) => scope.action) || [];
+                        user.userScopes = roleData?.data?.user_scopes?.map((scope: { user_scope: string }) => scope.user_scope) || [];
                     } else {
                         console.error("Failed to fetch user role", userRoleResponse.statusText);
                     }

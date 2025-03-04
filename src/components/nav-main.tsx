@@ -17,13 +17,16 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
+import { checkIfUserHasAccessToPage } from "@/helper";
+import { Session } from "next-auth";
 
 export function NavMain({
   items,
+  session
 }: {
   items: {
     title: string;
-    url: string;
+    url?: string;
     icon?: LucideIcon;
     isActive?: boolean;
     path?: string;
@@ -33,65 +36,93 @@ export function NavMain({
       url: string;
     }[];
   }[];
+  session: Session
 }) {
-
   const pathname = usePathname();
 
   return (
     <SidebarMenu>
-      {items.map((item) => (
-        <Collapsible
-          key={item.title}
-          asChild
-          defaultOpen={pathname.includes(item.path)}
-          className="group/collapsible"
-        >
-          <SidebarMenuItem>
-            <CollapsibleTrigger asChild>
-              {item.url ?
-                <a href={item.url}>
+      {items.map((item) => {
+        const childItems = item.items || [];
+        console.log(item)
+        if (item?.items?.length > 0) {
+          if (item?.url !== '#') {
+            const hasAccessibleChild = childItems.some(subItem =>
+              checkIfUserHasAccessToPage({ backendScope: session.user.userScopes, currentUrl: subItem.url })
+            );
+
+            if (!hasAccessibleChild) return null;
+          }
+        } else {
+          const hasAccessToParent = checkIfUserHasAccessToPage({ backendScope: session.user.userScopes, currentUrl: item.path || item.url });
+          if (!hasAccessToParent) return null;
+        }
+
+        return (
+          <Collapsible
+            key={item.title}
+            asChild
+            defaultOpen={pathname.includes(item.path)}
+            className="group/collapsible"
+          >
+            <SidebarMenuItem>
+              <CollapsibleTrigger asChild>
+                {item.url ? (
+                  <a href={item.url}>
+                    <SidebarMenuButton
+                      tooltip={item.title}
+                      className={cn(pathname.includes(item.path) && "bg-themeColor py-5 text-white")}
+                    >
+                      {item.icon && <item.icon />}
+                      <span>{item.title}</span>
+                      {childItems.length > 0 && (
+                        <ChevronLeft className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:-rotate-90" />
+                      )}
+                    </SidebarMenuButton>
+                  </a>
+                ) : (
                   <SidebarMenuButton
                     tooltip={item.title}
-                    className={cn(pathname.includes(item.path) && "bg-themeColor py-5 text-white")}
+                    className={cn(pathname.includes(item.path) && "bg-blue-300")}
                   >
                     {item.icon && <item.icon />}
                     <span>{item.title}</span>
-                    {item.items && item.items.length > 0 && (
+                    {childItems.length > 0 && (
                       <ChevronLeft className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:-rotate-90" />
                     )}
                   </SidebarMenuButton>
-                </a> :
-                <SidebarMenuButton
-                  tooltip={item.title}
-                  className={cn(pathname.includes(item.path) && "bg-blue-300")}
-                >
-                  {item.icon && <item.icon />}
-                  <span>{item.title}</span>
-                  {item.items && item.items.length > 0 && (
-                    <ChevronLeft className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:-rotate-90" />
-                  )}
-                </SidebarMenuButton>
-              }
-            </CollapsibleTrigger>
-            {item.items && item.items.length > 0 &&
-              <CollapsibleContent>
-                <SidebarMenuSub className="border-l-0 mx-0">
-                  {item.items?.map((subItem) => (
-                    <SidebarMenuSubItem key={subItem.title}>
-                      <SidebarMenuSubButton className={cn(pathname === subItem.url && "bg-lightThemeColor")} asChild>
-                        <a href={subItem.url}>
-                          {subItem.icon && <subItem.icon />}
-                          <span>{subItem.title}</span>
-                        </a>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  ))}
-                </SidebarMenuSub>
-              </CollapsibleContent>
-            }
-          </SidebarMenuItem>
-        </Collapsible>
-      ))}
-    </SidebarMenu>
+                )}
+              </CollapsibleTrigger>
+
+              {childItems.length > 0 && (
+                <CollapsibleContent>
+                  <SidebarMenuSub className="border-l-0 mx-0">
+                    {childItems.map((subItem) => {
+                      const hasAccess = checkIfUserHasAccessToPage({ backendScope: session.user.userScopes, currentUrl: subItem.url });
+                      console.log('item', subItem.url, hasAccess, session.user.userScopes, subItem.url)
+                      if (!hasAccess) return null;
+
+                      return (
+                        <SidebarMenuSubItem key={subItem.title}>
+                          <SidebarMenuSubButton
+                            className={cn(pathname === subItem.url && "bg-lightThemeColor")}
+                            asChild
+                          >
+                            <a href={subItem.url}>
+                              {subItem.icon && <subItem.icon />}
+                              <span>{subItem.title}</span>
+                            </a>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      );
+                    })}
+                  </SidebarMenuSub>
+                </CollapsibleContent>
+              )}
+            </SidebarMenuItem>
+          </Collapsible>
+        );
+      })}
+    </SidebarMenu >
   );
 }

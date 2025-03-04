@@ -45,11 +45,7 @@ const EditIncentivePage = () => {
     const handleSave = async (data: FormData) => {
         setIsSubmitting(true);
         try {
-            // await fetch('/api/save-incentive', {
-            //     method: 'POST',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify(data),
-            // });
+
             toast.success('Incentive data saved!');
         } catch (error) {
             console.error('Error saving incentive:', error);
@@ -61,11 +57,7 @@ const EditIncentivePage = () => {
 
     const handleDelete = async () => {
         try {
-            // await fetch('/api/delete-incentive', {
-            //     method: 'DELETE',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify({ id: incentiveData.id }),
-            // });
+
             toast.success('Incentive deleted successfully');
             router.push('/incentive');
         } catch (error) {
