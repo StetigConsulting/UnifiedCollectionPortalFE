@@ -54,7 +54,7 @@ const navData = {
       path: '/dashboard',
     },
     {
-      title: "Admin",
+      title: "Action",
       icon: Folder,
       url: "#",
       path: '/department/',
@@ -88,62 +88,6 @@ const navData = {
         { title: "Reset Device (Collector)", icon: MonitorCog, url: '/department/reset-device' },
         // { title: "Change Collector Role", icon: FolderSync, url: '/department/change-collector-role' },
         // { title: "Change Section", icon: FolderSync, url: '/department/change-section' },
-      ],
-    },
-    {
-      title: "Agency",
-      icon: Folder,
-      url: "#",
-      path: '/agency/',
-      items: [
-        {
-          title: "Add Collector",
-          icon: UserPlus2,
-          url: "/agency/add-collector",
-        },
-        {
-          title: "Edit Collector",
-          icon: UserPlus2,
-          url: "/agency/edit-collector",
-        },
-        {
-          title: "View Collector",
-          icon: Eye,
-          url: "/agency/view-collector",
-        },
-        {
-          title: "Pseudo Level Mapping",
-          icon: UserPlus2,
-          url: "/agency/binder-mapping",
-        },
-        {
-          title: "Recharge Agent",
-          icon: UserPlus2,
-          url: "/agency/recharge",
-        },
-        {
-          title: "Extend Validity",
-          icon: UserPlus2,
-          url: "/agency/extend-validity",
-        },
-        {
-          title: "Reset Collector",
-          icon: UserPlus2,
-          url: "/agency/reset-collector",
-        },
-        {
-          title: "Bank Deposit",
-          icon: UserPlus2,
-          url: "/agency/bank-deposit",
-        },
-      ]
-    },
-    {
-      title: "Super Admin",
-      icon: Folder,
-      url: "#",
-      path: '/admin/',
-      items: [
         {
           title: 'Department User',
           url: '/admin/department-user',
@@ -210,8 +154,66 @@ const navData = {
           icon: ReceiptText,
           path: '/admin/create-new-user',
         },
+        {
+          title: "Add Collector",
+          icon: UserPlus2,
+          url: "/agency/add-collector",
+        },
+        {
+          title: "Edit Collector",
+          icon: UserPlus2,
+          url: "/agency/edit-collector",
+        },
+        {
+          title: "View Collector",
+          icon: Eye,
+          url: "/agency/view-collector",
+        },
+        {
+          title: "Pseudo Level Mapping",
+          icon: UserPlus2,
+          url: "/agency/binder-mapping",
+        },
+        {
+          title: "Recharge Agent",
+          icon: UserPlus2,
+          url: "/agency/recharge",
+        },
+        {
+          title: "Extend Validity",
+          icon: UserPlus2,
+          url: "/agency/extend-validity",
+        },
+        {
+          title: "Reset Collector",
+          icon: UserPlus2,
+          url: "/agency/reset-collector",
+        },
+        {
+          title: "Bank Deposit",
+          icon: UserPlus2,
+          url: "/agency/bank-deposit",
+        },
       ],
     },
+    // {
+    //   title: "Agency",
+    //   icon: Folder,
+    //   url: "#",
+    //   path: '/agency/',
+    //   items: [
+
+    //   ]
+    // },
+    // {
+    //   title: "Super Admin",
+    //   icon: Folder,
+    //   url: "#",
+    //   path: '/admin/',
+    //   items: [
+
+    //   ],
+    // },
     {
       title: "Report",
       icon: NotepadText,
