@@ -22,15 +22,17 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
     const [agencyBalanceDetail, setAgencyBalanceDetail] = React.useState({})
 
     React.useEffect(() => {
-        getRosourceByDiscomId(session?.user?.discomId).then((res) => {
-            const logoValue = res.data.find(item => item.name === "Logo")?.value;
-            setLogoLink(logoValue);
-        })
-
-        if (session?.user?.userRole === 'AGENCY') {
-            getAgencyRechargeableBalance(session?.user?.userId).then((res) => {
-                setAgencyBalanceDetail(res.data)
+        if (session?.user) {
+            getRosourceByDiscomId(session?.user?.discomId).then((res) => {
+                const logoValue = res.data.find(item => item.name === "Logo")?.value;
+                setLogoLink(logoValue);
             })
+
+            if (session?.user?.userRole === 'AGENCY') {
+                getAgencyRechargeableBalance(session?.user?.userId).then((res) => {
+                    setAgencyBalanceDetail(res.data)
+                })
+            }
         }
     }, [])
 
