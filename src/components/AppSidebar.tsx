@@ -317,6 +317,8 @@ const navData = {
 
 export function AppSidebar({ logoLink, onSignOut }) {
 
+  const { data: session } = useSession()
+
   const filteredNavMain = navData.navMain
 
   return (
@@ -334,7 +336,7 @@ export function AppSidebar({ logoLink, onSignOut }) {
           />}
       </SidebarHeader>
       <SidebarContent className="overflow-x-hidden">
-        <NavMain items={filteredNavMain} />
+        <NavMain items={filteredNavMain} session={session} />
       </SidebarContent>
       <SidebarFooter>
         <Button onClick={onSignOut}><LogOut /> Log Out</Button>

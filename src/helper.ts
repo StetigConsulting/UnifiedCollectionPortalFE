@@ -1,76 +1,56 @@
+import { urlsListWithTitle } from "./lib/utils";
+
 export const listOfUrlForScopes = [
-  {
-    url: "/dashboard",
-    backendScopeName: "test:agency",
-    moduleName: "",
-    action: "",
-  },
-  { url: "/department/add-agency", moduleName: "agency", action: "CREATE" },
-  {
-    url: "/department/recharge",
-    moduleName: "agency",
-    action: "RECHARGE_AGENCY_WALLET",
-  },
-  {
-    url: "/department/collector-type",
-    moduleName: "agent",
-    action: "EDIT_COLLECTOR_ROLE",
-  },
-  { url: "/department/edit-agency", moduleName: "agency", action: "EDIT" },
-  {
-    url: "/department/edit-agency-area",
-    moduleName: "agency",
-    action: "CHANGE_AREA",
-  },
-  {
-    url: "/department/edit-agent-area",
-    moduleName: "agent",
-    action: "CHANGE_AREA",
-  },
-  {
-    url: "/department/extend-validity",
-    moduleName: "agency",
-    action: "EXTEND_AGENCY_VALIDITY",
-  },
-  { url: "/department/view-agency", moduleName: "agency", action: "READ" },
-  { url: "/department/view-balance", moduleName: "agency", action: "READ" },
-  {
-    url: "/department/reset-device",
-    moduleName: "agency",
-    action: "RESET_COLLECTOR_DEVICE",
-  },
-  { url: "/department/add-news", moduleName: "", action: "" },
-  { url: "/admin/department-user", moduleName: "", action: "" },
-  {
-    url: "/admin/office-structure",
-    moduleName: "office_structure",
-    action: "CREATE",
-  },
-  { url: "/admin/mode-of-payment", moduleName: "", action: "" },
-  { url: "/admin/denied-to-pay", moduleName: "", action: "" },
-  { url: "/admin/non-energy-type", moduleName: "", action: "" },
-  {
-    url: "/admin/add-collector-type",
-    moduleName: "agent",
-    action: "EDIT_COLLECTOR_ROLE",
-  },
-  { url: "/admin/color-coding", moduleName: "", action: "" },
-  { url: "/admin/incentive", moduleName: "", action: "" },
-  { url: "/admin/import", moduleName: "", action: "" },
-  { url: "/admin/receipt-for-postpaid", moduleName: "", action: "" },
+  { url: urlsListWithTitle.dashboard.url, backendScopeName: "TPCollectionWebPortal:dashboard:ALL" },
+  { url: "/department/add-agency", backendScopeName: "TPCollectionWebPortal:agency:CREATE" },
+  { url: "/department/recharge", backendScopeName: "TPCollectionWebPortal:agency:RECHARGE_WALLET" },
+  { url: "/department/recharge", backendScopeName: "TPCollectionWebPortal:agency:REVERSE_WALLET" },
+  { url: "/department/edit-agent-area", backendScopeName: "TPCollectionWebPortal:agent:EDIT_COLLECTOR_ROLE" },
+  { url: "/department/edit-agency", backendScopeName: "TPCollectionWebPortal:agency:EDIT" },
+  { url: "/department/extend-validity", backendScopeName: "TPCollectionWebPortal:agency:EXTEND_VALIDITY" },
+  { url: "/department/view-agency", backendScopeName: "TPCollectionWebPortal:agency:READ" },
+  { url: "/department/view-balance", backendScopeName: "TPCollectionWebPortal:agency:READ" },
+  { url: "/department/edit-agency-area", backendScopeName: "TPCollectionWebPortal:agency:CHANGE_AREA" },
+  { url: "/department/agency-display-balance", backendScopeName: "TPCollectionWebPortal:agency-balance:READ" },
+  { url: "/department/deactivate-agency", backendScopeName: "TPCollectionWebPortal:agency:DEACTIVATE" },
+  { url: "/department/activate-agency", backendScopeName: "TPCollectionWebPortal:agency:ACTIVATE" },
+  { url: "/department/reset-device", backendScopeName: "TPCollectionWebPortal:agent:RESET_COLLECTOR_DEVICE" },
+  { url: "/agency/bank-deposit", backendScopeName: "TPCollectionWebPortal:agent_bank_deposit:ALL" }, // Fixed
+  { url: "/department/cancel-receipt", backendScopeName: "TPCollectionWebPortal:collection:CANCEL_RECEIPT" },
+  { url: "/admin/create-new-user", backendScopeName: "TPCollectionWebPortal:user:CREATE" },
+  { url: "/admin/office-structure", backendScopeName: "TPCollectionWebPortal:office_structure:ALL" },
+  { url: "/admin/pseudo-level-mapping", backendScopeName: "TPCollectionWebPortal:agent-pseudo-mapping:ALL" },
+  { url: "/admin/mode-of-payment", backendScopeName: "TPCollectionWebPortal:business_rules:ALL" },
+  { url: "/admin/denied-to-pay", backendScopeName: "TPCollectionWebPortal:business_rules:ALL" },
+  { url: "/admin/non-energy-type", backendScopeName: "TPCollectionWebPortal:business_rules:ALL" },
+  { url: "/admin/add-collector-type", backendScopeName: "TPCollectionWebPortal:agent:EDIT_COLLECTOR_ROLE" },
+  { url: "/admin/color-coding/logic", backendScopeName: "TPCollectionWebPortal:business_rules:ALL" },
+  { url: "/admin/color-coding/bill-basis", backendScopeName: "TPCollectionWebPortal:business_rules:ALL" },
+  { url: "/admin/color-coding/ecl-flag-customer", backendScopeName: "TPCollectionWebPortal:business_rules:ALL" },
+  { url: "/admin/incentive", backendScopeName: "TPCollectionWebPortal:business_rules:ALL" },
+  { url: "/admin/import", backendScopeName: "TPCollectionWebPortal:business_rules:ALL" },
+  { url: "/admin/receipt-for-postpaid", backendScopeName: "TPCollectionWebPortal:business_rules:ALL" },
+  { url: "/common/agency-wallet-history-report", backendScopeName: "TPCollectionWebPortal:agency_wallet_history_report:READ" },
+  { url: "/common/agent-wallet-history-report", backendScopeName: "TPCollectionWebPortal:agent_wallet_history_report:READ" },
+  { url: "/agency/add-collector", backendScopeName: "TPCollectionWebPortal:agent:CREATE" },
+  { url: "/agency/view-collector", backendScopeName: "TPCollectionWebPortal:agent:READ" },
+  { url: "/agency/recharge", backendScopeName: "TPCollectionWebPortal:agent:RECHARGE_WALLET" },
+  { url: "/agency/extend-validity", backendScopeName: "TPCollectionWebPortal:agent:EXTEND_VALIDITY" },
+  { url: "/agency/edit-collector", backendScopeName: "TPCollectionWebPortal:agent:EDIT" },
+  { url: "/agency/activate-agent", backendScopeName: "TPCollectionWebPortal:agent:ACTIVATE" },
+  { url: "/agency/deactivate-agent", backendScopeName: "TPCollectionWebPortal:agent:DEACTIVATE" },
+  { url: "/energy/billing-report", backendScopeName: "TPCollectionWebPortal:billing_report:READ" },
+  { url: "/dashboard/bill-upload-history", backendScopeName: "TPCollectionWebPortal:dashboard:ALL" }
 ];
 
-const checkIfuserHasAcces = ({ backendScope, currentUrl }) => {
-  const allScopes = backendScope?.map((ite) => ite.scope_name);
-  const avialableScopes = listOfUrlForScopes.filter((ite) =>
-    allScopes.includes(ite.backendScopeName)
-  );
 
-  return avialableScopes.filter((ite) => ite.url == currentUrl);
+
+export const checkIfUserHasAccessToPage = ({ backendScope, currentUrl }) => {
+  const foundScope = listOfUrlForScopes.find((item) => item.url === currentUrl);
+
+  if (!foundScope) return false;
+
+  return backendScope.includes(foundScope.backendScopeName);
 };
 
-
-checkIfuserHasAcces({
-    backendScope : "api response",
-    currentUrl : urls.dashbaord
-})
+//write code for checking other than pages
