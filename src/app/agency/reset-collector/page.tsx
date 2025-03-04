@@ -28,18 +28,7 @@ const ResetCollectorBalance = () => {
     const onSubmit = async (data: ResetCollectorFormData) => {
         setIsSubmitting(true);
         try {
-            const response = await fetch("/api/reset-collector-balance", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(data),
-            });
-            if (response.ok) {
-                toast.success("Collector balance reset successfully");
-            } else {
-                toast.error("Failed to reset balance");
-            }
+
         } catch (error) {
             toast.error("An error occurred while resetting the balance");
             console.error("Error:", error);

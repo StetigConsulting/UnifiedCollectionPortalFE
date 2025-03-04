@@ -1,5 +1,39 @@
 import api from "@/lib/axios";
-import { CreateColorCodingBillBasis, CreateColorCodingLogic, ECLFlaggedCustomerRule, ReceiptForPostpaid } from "@/lib/interface";
+import { CreateColorCodingBillBasis, CreateColorCodingLogic, ECLFlaggedCustomerRule, officeStructureLevelInterface, ReceiptForPostpaid } from "@/lib/interface";
+
+export const getOfficeStrutureData = async (id: number) => {
+    try {
+        const response = await api.get(`/office-structure-levels/${id}`);
+        return response.data;
+    } catch (error: any) {
+
+        throw error?.response?.data
+    }
+};
+
+export const createOfficeStructureLevel = async (data: officeStructureLevelInterface) => {
+    try {
+        const response = await api.post(`/office-structure-levels/`, data);
+        return response.data;
+    } catch (error: any) {
+
+        throw error?.response?.data
+    }
+};
+
+export const uploadOfficeStructureLevel = async (file: FormData) => {
+    try {
+        const response = await api.post(`/office-structures/import`, file, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        return response.data;
+    } catch (error) {
+
+        throw error?.response?.data
+    }
+}
 
 const createReceiptForPostpaid = async (data: ReceiptForPostpaid) => {
     try {
