@@ -44,7 +44,6 @@ export function NavMain({
     <SidebarMenu>
       {items.map((item) => {
         const childItems = item.items || [];
-        console.log(item)
         if (item?.items?.length > 0) {
           if (item?.url !== '#') {
             const hasAccessibleChild = childItems.some(subItem =>
@@ -99,7 +98,6 @@ export function NavMain({
                   <SidebarMenuSub className="border-l-0 mx-0">
                     {childItems.map((subItem) => {
                       const hasAccess = checkIfUserHasAccessToPage({ backendScope: session.user.userScopes, currentUrl: subItem.url });
-                      console.log('item', subItem.url, hasAccess, session.user.userScopes, subItem.url)
                       if (!hasAccess) return null;
 
                       return (

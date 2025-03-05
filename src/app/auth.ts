@@ -19,7 +19,7 @@ async function refreshAccessToken(token: any) {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/v1/auth/refresh-token`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ refresh_token: token.refreshToken }),
+            body: JSON.stringify({ grant_type: 'refresh', refresh_token: token.refreshToken }),
         });
 
         console.log('refreshing', response)
