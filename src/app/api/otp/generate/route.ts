@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
 
     const result = await apiResponse.json();
 
-    console.log(result);
+    console.log('result', result);
 
     if (apiResponse.ok) {
       return NextResponse.json({
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
       });
     } else {
       return NextResponse.json(
-        { message: result.error.message || "OTP Send failed" },
+        { message: result.error || "OTP Send failed" },
         { status: apiResponse.status }
       );
     }
