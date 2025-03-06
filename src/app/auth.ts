@@ -14,6 +14,32 @@ interface ExtendedUser extends User {
     tokenExpiry?: number;
 }
 
+async function refreshAccessToken(token: any) {
+    try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/v1/auth/refresh-token`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ grant_type: 'refresh', refresh_token: token.refreshToken }),
+        });
+
+        console.log('refreshing', response)
+
+        const data = await response.json();
+
+        if (!response.ok) throw new Error("Failed to refresh token");
+
+        return {
+            ...token,
+            accessToken: data.data.access_token,
+            refreshToken: data.data.refresh_token,
+            tokenExpiry: Date.now() / 1000 + data.data.expires_in / 1000,
+        };
+    } catch (error) {
+        console.error("Token refresh failed:", error);
+        return { ...token, accessToken: null };
+    }
+}
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
     providers: [
         Credentials({
@@ -122,6 +148,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     session: {
         strategy: 'jwt'
     },
+    jwt: { maxAge: 2 * 60 * 60 },
     pages: {
         signIn: "/auth/signin",
     },

@@ -52,6 +52,7 @@ const AddCounterCollector = () => {
         setIsLoading(true)
         getAllPaymentModes()
             .then((data) => {
+                console.log('setting')
                 setPermissions(
                     data?.data
                         ?.filter((ite) => ite.mode_type == "Collection")
@@ -248,12 +249,10 @@ const AddCounterCollector = () => {
     console.log(formData);
 
     const handleDisplayWorkingLevel = (levels, agencyWorkingLevel) => {
-        console.log('door to door', formData.collectorRole)
         const agencyLevel = levels.find((lvl) => lvl.value === agencyWorkingLevel);
 
         if (agencyLevel) {
             if (formData.collectorRole === 'Door To Door') {
-                console.log('door to door')
                 levels = levels.filter((lvl) => lvl.value > agencyLevel.value);
             } else {
                 levels = levels.filter((lvl) => lvl.value >= agencyLevel.value);
