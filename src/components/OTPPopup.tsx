@@ -62,6 +62,8 @@ const OTPPopup: React.FC<OTPPopupProps> = ({ sendOTP, setResendTimer, isOpen, se
         try {
             const result = await handleCredentialsSignin({ mobileNumber: formData, otp });
 
+            console.log(result, process.env.NEXT_PUBLIC_API_BASE_URL_V2)
+
             if (result?.message) {
                 console.log("Sign-in result:", result.message);
             } else {
