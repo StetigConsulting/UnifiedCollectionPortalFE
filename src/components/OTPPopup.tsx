@@ -51,7 +51,7 @@ const OTPPopup: React.FC<OTPPopupProps> = ({ sendOTP, setResendTimer, isOpen, se
     const handleResendOTP = async () => {
         if (resendAttempts < 3) {
             setResendAttempts(resendAttempts + 1);
-            setResendTimer(30);
+            setResendTimer(120);
             await sendOTP();
         } else {
             toast.error('Maximum resend attempts reached.');
