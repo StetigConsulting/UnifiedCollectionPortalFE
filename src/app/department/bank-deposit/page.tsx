@@ -141,7 +141,7 @@ const AgentBankDeposit = () => {
             page: currentPage,
             page_size: tableDataPerPage,
             filter: {
-                discom_id: session.user.discomId
+                discom_id: session?.user?.discomId
             }
         }
         payload = {
