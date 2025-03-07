@@ -71,7 +71,7 @@ const SignUpForm = () => {
 			const result = await response.json();
 			if (response.ok) {
 				toast.success(result.message || 'OTP sent successfully!');
-				setResendTimer(30);
+				setResendTimer(120);
 				setIsOTPPopup(true);
 			} else {
 				toast.error(result.message || 'Failed to send OTP.');
