@@ -40,8 +40,6 @@ const AddAgency = () => {
     resolver: zodResolver(addAgencySchema),
   });
 
-  console.log("Errors:", errors);
-
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);

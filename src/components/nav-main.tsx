@@ -47,13 +47,13 @@ export function NavMain({
         if (item?.items?.length > 0) {
           if (item?.url !== '#') {
             const hasAccessibleChild = childItems.some(subItem =>
-              checkIfUserHasAccessToPage({ backendScope: session.user.userScopes, currentUrl: subItem.url })
+              checkIfUserHasAccessToPage({ backendScope: session?.user?.userScopes, currentUrl: subItem.url })
             );
 
             if (!hasAccessibleChild) return null;
           }
         } else {
-          const hasAccessToParent = checkIfUserHasAccessToPage({ backendScope: session.user.userScopes, currentUrl: item.path || item.url });
+          const hasAccessToParent = checkIfUserHasAccessToPage({ backendScope: session?.user?.userScopes, currentUrl: item.path || item.url });
           if (!hasAccessToParent) return null;
         }
 
@@ -97,7 +97,7 @@ export function NavMain({
                 <CollapsibleContent>
                   <SidebarMenuSub className="border-l-0 mx-0">
                     {childItems.map((subItem) => {
-                      const hasAccess = checkIfUserHasAccessToPage({ backendScope: session.user.userScopes, currentUrl: subItem.url });
+                      const hasAccess = checkIfUserHasAccessToPage({ backendScope: session?.user?.userScopes, currentUrl: subItem.url });
                       if (!hasAccess) return null;
 
                       return (

@@ -9,10 +9,8 @@ export async function middleware(request: any) {
 
     const { nextUrl } = request;
     const session = await auth();
-    const userRole = session?.user?.userRole;
     const isAuthenticated = !!session?.user;
 
-    console.log("Session User Role:", userRole);
     console.log("Is Authenticated:", isAuthenticated);
 
     if (!isAuthenticated) {

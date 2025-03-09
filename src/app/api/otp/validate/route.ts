@@ -2,15 +2,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
-    const { mobileNumber, otp: enteredOtp } = await req.json();
+    const { mobileNumber, otp } = await req.json();
 
     try {
-        const ipResponse = await fetch('https://api.ipify.org?format=json');
-        const ipData = await ipResponse.json();
-        const publicIp = ipData.ip;
-
-        console.log(publicIp);
-
         const apiResponse = await fetch(
             `${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/v1/auth/authenticate`,
             {
@@ -20,18 +14,20 @@ export async function POST(req: NextRequest) {
                 },
                 body: JSON.stringify({
                     mobile_number: mobileNumber,
-                    otp: enteredOtp,
+                    otp,
                 }),
             }
         );
 
         const result = await apiResponse.json();
 
+        console.log(result)
+
         if (apiResponse.ok) {
             return NextResponse.json({ message: 'OTP validated successfully', data: result });
         } else {
             return NextResponse.json(
-                { message: result.message || 'OTP validation failed' },
+                { message: result.error || 'OTP validation failed' },
                 { status: apiResponse.status }
             );
         }

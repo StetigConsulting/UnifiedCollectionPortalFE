@@ -51,11 +51,13 @@ const CustomBreadcrumb: React.FC<CustomBreadcrumbProps> = ({
                     data-sidebar="trigger"
                     variant="ghost"
                     size="icon"
-                    className="h-7 w-7"
+                    className="h-7 w-7 group relative"
                     onClick={onSignOut}
                 >
                     <LogOut size={16} className='cursor-pointer' />
-                    <span className="sr-only">Log Out</span>
+                    <span className="absolute left-full ml-2 opacity-0 transition-opacity bg-gray-800 text-white text-xs px-2 py-1 rounded group-hover:opacity-100">
+                        Log Out
+                    </span>
                 </Button>
 
                 <Separator orientation="vertical" className="mr-2 h-4" />

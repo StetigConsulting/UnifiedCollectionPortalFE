@@ -60,15 +60,29 @@ const OTPPopup: React.FC<OTPPopupProps> = ({ sendOTP, setResendTimer, isOpen, se
     const handleOTPSubmit = async () => {
         setIsValidating(true); // Start loading state
         try {
-            const result = await handleCredentialsSignin({ mobileNumber: formData, otp });
-
-            if (result?.message) {
-                console.log("Sign-in result:", result.message);
-            } else {
+            const response = await fetch('/api/otp/validate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ mobileNumber: formData, otp }),
+            });
+            const result = await response.json();
+            if (response.ok) {
+                let userDetails = result?.data?.data
+                console.log(userDetails)
+                const userSignIn = await handleCredentialsSignin({
+                    access_token: userDetails?.access_token,
+                    expires_in: userDetails?.expires_in,
+                    refresh_token: userDetails?.refresh_token
+                })
                 const session = await getSession();
                 console.log("Sign-in successful:", session?.user);
                 router.push(urlsListWithTitle.dashboard.url);
+            } else {
+                toast.error(result.message)
             }
+
         } catch (error) {
             console.log("An unexpected error occurred. Please try again.");
         } finally {
