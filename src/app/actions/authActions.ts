@@ -1,7 +1,7 @@
 "use server";
 
 import { AuthError } from 'next-auth';
-import { signIn, signOut } from '../auth';
+import { auth, signIn, signOut } from '../auth';
 
 export async function handleCredentialsSignin({ access_token, expires_in, refresh_token }: {
     access_token: string,
@@ -28,6 +28,23 @@ export async function handleCredentialsSignin({ access_token, expires_in, refres
 }
 
 export async function handleSignOut() {
+
+    const session = await auth();
+    const accessToken = session?.user?.accessToken;
+
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/v1/auth/logout`, {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${accessToken}`,
+            "Content-Type": "application/json"
+        }
+    });
+
+    // if (response.ok) {
+    //     console.error("Logout API failed:", response.statusText);
+    //     return { message: "Failed to log out. Please try again." };
+    // }
+
     await signOut({
         redirectTo: '/auth/signin',
         redirect: true,
