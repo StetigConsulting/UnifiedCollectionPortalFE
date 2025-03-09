@@ -9,13 +9,13 @@ import CreateNewLevelPopup from '@/components/OfficeStructure/CreateNewLevelPopu
 import CreateNewLevelUploadPopup from '@/components/OfficeStructure/CreateNewLevelUploadPopup';
 import { useSession } from 'next-auth/react';
 import { getOfficeStrutureData } from '@/app/api-calls/admin/api';
+import moment from 'moment';
 
 const OfficeStructurePage = () => {
 
     const { data: session } = useSession()
 
     const [officeStructureData, setOfficeStructureData] = useState([]);
-    const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(false);
     const [maxLevel, setMaxLevel] = useState(1);
 
@@ -27,7 +27,7 @@ const OfficeStructurePage = () => {
                 data?.data?.map((item) => {
                     return ({
                         ...item,
-                        createdOn: formatDate(item.createdOn),
+                        createdOn: moment(item.createdOn).format('MMMM D, YYYY [at] h:mm A'),
                     })
                 })
             );

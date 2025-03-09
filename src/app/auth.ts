@@ -48,9 +48,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 otp: { label: "OTP", type: "text", placeholder: "OTP" }
             },
             async authorize(credentials): Promise<ExtendedUser | null> {
-                const ipResponse = await fetch("https://api.ipify.org?format=json");
-                const ipData = await ipResponse.json();
-                const publicIp = ipData.ip;
 
                 const mobileNumber = credentials?.mobileNumber as string;
                 const otp = credentials?.otp as string;

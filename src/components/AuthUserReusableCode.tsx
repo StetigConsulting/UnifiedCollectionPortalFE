@@ -28,7 +28,7 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
                 setLogoLink(logoValue);
             })
 
-            if (session?.user?.userRole === 'AGENCY') {
+            if (session?.user?.userScopes.includes('TPCollectionWebPortal:agency_balance:READ')) {
                 getAgencyRechargeableBalance(session?.user?.userId).then((res) => {
                     setAgencyBalanceDetail(res.data)
                 })

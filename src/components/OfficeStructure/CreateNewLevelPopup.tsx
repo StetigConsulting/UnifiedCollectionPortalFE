@@ -44,7 +44,6 @@ const CreateNewLevelPopup: React.FC<CreateNewLevelPopupProps> = ({ fetchData, cu
     const decrementLevel = () => setLevelCount((prev) => Math.max(prev - 1, 1));
 
     const handleFormSubmit = async (formData: FormData) => {
-        const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/office-structure-levels/`;
 
         const payload = {
             user_id: currentUserId,
