@@ -46,12 +46,12 @@ export const listOfUrlForScopes = [
 
 
 
-export const checkIfUserHasAccessToPage = ({ backendScope, currentUrl }) => {
+export const checkIfUserHasAccessToPage = ({ backendScope = [], currentUrl }) => {
   const foundScope = listOfUrlForScopes.find((item) => item.url === currentUrl);
   // return true
   if (!foundScope) return false;
 
-  return backendScope.includes(foundScope.backendScopeName);
+  return backendScope?.includes(foundScope?.backendScopeName);
 };
 
 //write code for checking other than pages
