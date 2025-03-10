@@ -5,7 +5,6 @@ import UserClient from './UserClient';
 
 const User = async () => {
     const session = await auth();
-    console.log(session);
     return <UserClient session={session} />;
 };
 
