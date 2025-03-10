@@ -133,7 +133,7 @@ async function refreshAccessToken(token) {
             },
             body: JSON.stringify({
                 grant_type: "refresh",
-                refresh_token: token.refreshToken + 'a',
+                refresh_token: token.refreshToken,
             }),
         });
 
