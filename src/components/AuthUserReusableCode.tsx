@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { SidebarInset, SidebarProvider } from './ui/sidebar'
 import { AppSidebar } from './AppSidebar'
 import CustomBreadcrumb from './CustomBreadcrumb'
@@ -7,6 +7,7 @@ import { useSession } from 'next-auth/react'
 import { getRosourceByDiscomId } from '@/app/api-calls/other/api'
 import { getAgencyRechargeableBalance } from '@/app/api-calls/department/api'
 import { handleSignOut } from '@/app/actions/authActions'
+import { toast } from 'sonner'
 
 interface AuthUserReusableCodeProps {
     children: React.ReactNode;
@@ -35,6 +36,13 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
             }
         }
     }, [])
+
+    useEffect(() => {
+        if (session == null) {
+            toast.error('Session Expired')
+            handleSignOut();
+        }
+    }, [session])
 
     const onSignOut = async (event: React.MouseEvent) => {
         event.preventDefault();
