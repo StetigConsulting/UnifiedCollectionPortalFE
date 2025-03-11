@@ -139,7 +139,7 @@ async function refreshAccessToken(token) {
 
         const refreshedTokens = await response.json();
 
-        console.log('token tefff', refreshedTokens)
+        // console.log('token tefff', refreshedTokens)
 
         if (response.status === 401) {
             console.error("Refresh token expired, logging out user.");
