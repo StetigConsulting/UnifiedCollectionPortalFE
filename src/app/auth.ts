@@ -39,8 +39,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     // tokenExpiry: Date.now() + 1 * 60 * 1000,
                 };
 
-                console.log(Date.now(), Date.now() + Number(credentials.expires_in))
-
                 try {
                     const userRoleResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/v1/tp-users/user-info`, {
                         method: "GET",
