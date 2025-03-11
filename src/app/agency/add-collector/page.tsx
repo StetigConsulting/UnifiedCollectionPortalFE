@@ -26,7 +26,8 @@ const AddCounterCollector = () => {
         resolver: zodResolver(addCounterCollectorSchema),
         defaultValues: {
             initialBalance: 0,
-            isPersonalNumberSameAsOffice: false
+            isPersonalNumberSameAsOffice: false,
+            workingLevel: null
         },
     });
 
@@ -437,7 +438,8 @@ const AddCounterCollector = () => {
                         formData.workingLevel != null &&
                         ((agencyWorkingLevel == levelNameMappedWithId?.DIVISION) ||
                             (formData.workingLevel == levelNameMappedWithId?.SUB_DIVISION ||
-                                formData.workingLevel == levelNameMappedWithId?.DIVISION)) &&
+                                formData.workingLevel == levelNameMappedWithId?.DIVISION ||
+                                formData.workingLevel == levelNameMappedWithId?.SECTION)) &&
                         <CustomizedMultipleSelectInputWithLabelNumber
                             label="Division"
                             errors={errors.division}
@@ -458,7 +460,7 @@ const AddCounterCollector = () => {
 
                     {
                         formData.workingLevel != null
-                        && ((agencyWorkingLevel == levelNameMappedWithId?.CIRCLE)
+                        && ((agencyWorkingLevel == levelNameMappedWithId?.SUB_DIVISION)
                             || (formData.workingLevel == levelNameMappedWithId?.SECTION
                                 || formData.workingLevel == levelNameMappedWithId?.SUB_DIVISION)) && (
                             <CustomizedMultipleSelectInputWithLabelNumber
@@ -477,8 +479,9 @@ const AddCounterCollector = () => {
                                 }}
                             />)
                     }
-                    {
-                        formData.workingLevel == levelNameMappedWithId?.SECTION && (
+                    {formData.workingLevel != null
+                        && ((agencyWorkingLevel == levelNameMappedWithId?.SUB_DIVISION) ||
+                            formData.workingLevel == levelNameMappedWithId?.SECTION) && (
                             <CustomizedMultipleSelectInputWithLabelNumber
                                 label="Section"
                                 errors={errors.section}
