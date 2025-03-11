@@ -44,28 +44,26 @@ const AddCounterCollector = () => {
 
     const [agencyData, setAgencyData] = useState({ working_level: null })
 
-    const [agencyWorkingLevel, setAgencyWorkingLevel] = useState() // maintains the working level of agency
+    const [agencyWorkingLevel, setAgencyWorkingLevel] = useState<number>() // maintains the working level of agency
     const [workingLevelActualLists, setWorkingLevelActualLists] = useState([]) //this is total list of working level
 
     useEffect(() => {
+        getWorkingLevel()
         getAgencyData()
         setIsLoading(true)
-        getAllPaymentModes()
-            .then((data) => {
-                console.log('setting')
-                setPermissions(
-                    data?.data
-                        ?.filter((ite) => ite.mode_type == "Collection")
-                        ?.map((ite) => {
-                            return {
-                                label: ite.mode_name,
-                                value: ite.id,
-                            };
-                        })
-                );
-                setIsLoading(false)
-            })
-            .catch((err) => { })
+        getAllPaymentModes().then((data) => {
+            setPermissions(
+                data?.data
+                    ?.filter((ite) => ite.mode_type == "Collection")
+                    ?.map((ite) => {
+                        return {
+                            label: ite.mode_name,
+                            value: ite.id,
+                        };
+                    })
+            );
+            setIsLoading(false)
+        }).catch((err) => { })
         getAllNonEnergyTypes().then((data) => {
             setNonEnergyTypes(
                 data?.data?.map((ite) => {
@@ -107,8 +105,18 @@ const AddCounterCollector = () => {
                     label: ite.levelName,
                 }));
 
+            let levelIdMap = levelsResponse?.data
+                ?.filter((item) => item.levelType === "MAIN")
+                .reduce((acc, item) => {
+                    let levelName = item.levelName.replace(' ', "_");
+                    acc[levelName] = item.id;
+                    return acc;
+                }, {});
+
             setWorkingLevelActualLists(levels);
             setAgencyWorkingLevel(agencyData?.working_level);
+
+            console.log(agencyData?.working_level)
 
             const agencyWorkingLevel = agencyData?.working_level;
 
@@ -126,13 +134,14 @@ const AddCounterCollector = () => {
 
             console.log(agencyLevel.value, levelData)
 
-            if (agencyLevel.value == levelWIthId.CIRCLE) {
+            if (agencyLevel.value == levelIdMap.CIRCLE) {
+                console.log('setting circle')
                 setCircles(levelData)
-            } else if (agencyLevel.value == levelWIthId.DIVISION) {
+            } else if (agencyLevel.value == levelIdMap.DIVISION) {
                 setDivisions(levelData)
-            } else if (agencyLevel.value == levelWIthId.SUB_DIVISION) {
+            } else if (agencyLevel.value == levelIdMap.SUB_DIVISION) {
                 setSubDivisions(levelData)
-            } else if (agencyLevel.value == levelWIthId.CIRCLE) {
+            } else if (agencyLevel.value == levelIdMap.SECTION) {
                 setSections(levelData)
             }
 
@@ -174,18 +183,18 @@ const AddCounterCollector = () => {
                 "validity_from_date": data.fromValidity,
                 "validity_to_date": data.toValidity,
                 "collection_payment_modes": data.permission,
-                "working_level": parseInt(data.workingLevel),
+                "working_level": data.workingLevel,
                 "collection_type_energy": data.collectionType.includes('Energy'),
                 "collection_type_non_energy": data.collectionType.includes('Non-Energy'),
                 "is_active": true,
                 "non_energy_types": data.nonEnergy,
-                "working_level_office": data.workingLevel === levelWIthId.CIRCLE
+                "working_level_office": data.workingLevel === levelNameMappedWithId.CIRCLE
                     ? data?.circle?.[0]
-                    : data.workingLevel === levelWIthId.DIVISION
+                    : data.workingLevel === levelNameMappedWithId.DIVISION
                         ? data.division?.[0]
-                        : data.workingLevel === levelWIthId.SUB_DIVISION
+                        : data.workingLevel === levelNameMappedWithId.SUB_DIVISION
                             ? data.subDivision?.[0]
-                            : data.workingLevel === levelWIthId.SECTION ? data.section?.[0] : null,
+                            : data.workingLevel === levelNameMappedWithId.SECTION ? data.section?.[0] : null,
                 "collector_type": parseInt(data.collectorType),
                 "work_type": data.workingType,
                 "collector_role": data.collectorRole
@@ -246,8 +255,6 @@ const AddCounterCollector = () => {
 
     const formData = watch()
 
-    console.log(formData);
-
     const handleDisplayWorkingLevel = (levels, agencyWorkingLevel) => {
         const agencyLevel = levels.find((lvl) => lvl.value === agencyWorkingLevel);
 
@@ -273,6 +280,16 @@ const AddCounterCollector = () => {
         }
     }, [formData.collectorRole]);
 
+    useEffect(() => {
+        if (formData.workingLevel) {
+            handleDisplayWorkingLevel(workingLevelActualLists, agencyWorkingLevel);
+            setValue('circle', [])
+            setValue('division', [])
+            setValue('subDivision', [])
+            setValue('section', [])
+        }
+    }, [formData.workingLevel]);
+
     const handlePersonalPhoneSameAsOffice = () => {
         console.log(formData)
         if (formData.isPersonalNumberSameAsOffice === false) {
@@ -283,6 +300,25 @@ const AddCounterCollector = () => {
             setValue('personalPhoneNumber', '')
         }
     }
+
+    const [levelNameMappedWithId, setLevelNameMappedWithId] = useState<Record<string, number>>({})
+
+    const getWorkingLevel = () => {
+        getLevels(session?.user?.discomId).then((data) => {
+            let levelIdMap = data?.data
+                ?.filter((item) => item.levelType === "MAIN")
+                .reduce((acc, item) => {
+                    let levelName = item.levelName.replace(' ', "_");
+                    acc[levelName] = item.id;
+                    return acc;
+                }, {});
+
+            console.log(levelIdMap)
+            setLevelNameMappedWithId(levelIdMap)
+        })
+    }
+
+    console.log(formData)
 
     return (
         <AuthUserReusableCode pageTitle="Add Collector" isLoading={isLoading}>
@@ -373,12 +409,13 @@ const AddCounterCollector = () => {
                         label='Working Level'
                         required
                         list={workingLevel}
-                        {...register('workingLevel')}
+                        {...register('workingLevel', { valueAsNumber: true })}
                         errors={errors.workingLevel}
                     />
                     {
-                        formData.workingLevel &&
-                        agencyData.working_level == parseInt(levelWIthId.CIRCLE) &&
+                        formData.workingLevel != null && ((agencyWorkingLevel == levelNameMappedWithId?.CIRCLE) ||
+                            (formData.workingLevel == levelNameMappedWithId?.CIRCLE ||
+                                formData.workingLevel == levelNameMappedWithId?.DIVISION)) &&
                         <CustomizedMultipleSelectInputWithLabelNumber
                             label="Circle"
                             errors={errors.circle}
@@ -397,9 +434,10 @@ const AddCounterCollector = () => {
                         />
                     }
                     {
-                        formData.workingLevel &&
-                        agencyData.working_level != parseInt(levelWIthId.CIRCLE) &&
-                        agencyData.working_level == parseInt(levelWIthId.DIVISION) &&
+                        formData.workingLevel != null &&
+                        ((agencyWorkingLevel == levelNameMappedWithId?.DIVISION) ||
+                            (formData.workingLevel == levelNameMappedWithId?.SUB_DIVISION ||
+                                formData.workingLevel == levelNameMappedWithId?.DIVISION)) &&
                         <CustomizedMultipleSelectInputWithLabelNumber
                             label="Division"
                             errors={errors.division}
@@ -419,10 +457,10 @@ const AddCounterCollector = () => {
                     }
 
                     {
-                        formData.workingLevel && (agencyData.working_level == parseInt(levelWIthId.SUB_DIVISION)
-                            || agencyData.working_level == parseInt(levelWIthId.SECTION))
-                        && (formData.workingLevel == levelWIthId.SECTION
-                            || formData.workingLevel == levelWIthId.SUB_DIVISION) && (
+                        formData.workingLevel != null
+                        && ((agencyWorkingLevel == levelNameMappedWithId?.CIRCLE)
+                            || (formData.workingLevel == levelNameMappedWithId?.SECTION
+                                || formData.workingLevel == levelNameMappedWithId?.SUB_DIVISION)) && (
                             <CustomizedMultipleSelectInputWithLabelNumber
                                 label="Sub Division"
                                 errors={errors.subDivision}
@@ -440,7 +478,7 @@ const AddCounterCollector = () => {
                             />)
                     }
                     {
-                        formData.workingLevel == levelWIthId.SECTION && (
+                        formData.workingLevel == levelNameMappedWithId?.SECTION && (
                             <CustomizedMultipleSelectInputWithLabelNumber
                                 label="Section"
                                 errors={errors.section}

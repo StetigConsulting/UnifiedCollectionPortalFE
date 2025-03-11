@@ -399,7 +399,7 @@ export const addCounterCollectorSchema = z.object({
   collectorType: z.string().min(1, { message: "Collector type is required" }),
   collectorRole: z.string().min(1, { message: "Collector role is required" }),
   workingType: z.string().min(1, { message: "Working type is required" }),
-  workingLevel: z.string().min(1, { message: "Working level is required" }),
+  workingLevel: z.number(),
 
   maximumLimit: z
     .number({ invalid_type_error: "Maximum limit must be a number" })
@@ -419,7 +419,7 @@ export const addCounterCollectorSchema = z.object({
 
   permission: z
     .array(z.number(), { message: "Permission must be an array of numbers" })
-    .min(1, { message: "At least one permission is required" }),
+    .min(1, { message: "At least one permission is required" }).optional(),
 
   collectionType: z
     .array(z.string(), { message: "Collection type must be an array of strings" })
