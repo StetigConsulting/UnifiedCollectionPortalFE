@@ -14,8 +14,6 @@ export async function POST(req: NextRequest) {
 
     const result = await apiResponse.json();
 
-    console.log('result', result);
-
     if (apiResponse.ok) {
       return NextResponse.json({
         message: "OTP sent successfully",

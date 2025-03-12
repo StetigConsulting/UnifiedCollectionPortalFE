@@ -14,7 +14,7 @@ import CustomizedMultipleSelectInputWithLabelString from "@/components/Customize
 import CustomizedSelectInputWithLabel from "@/components/CustomizedSelectInputWithLabel";
 import { Button } from "@/components/ui/button";
 import { AgencyDataInterface } from "@/lib/interface";
-import { getErrorMessage, levelWIthId } from "@/lib/utils";
+import { getErrorMessage } from "@/lib/utils";
 import { addAgencySchema } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
@@ -72,13 +72,13 @@ const AddAgency = () => {
       non_energy_types: data.collectionType.includes("Non-Energy")
         ? data.nonEnergy.map(Number)
         : undefined,
-      working_level_offices: data.workingLevel === levelWIthId.CIRCLE
+      working_level_offices: data.workingLevel === levelNameMappedWithId.CIRCLE
         ? data.circle.map(Number)
-        : data.workingLevel === levelWIthId.DIVISION
+        : data.workingLevel === levelNameMappedWithId.DIVISION
           ? data.division.map(Number)
-          : data.workingLevel === levelWIthId.SUB_DIVISION
+          : data.workingLevel === levelNameMappedWithId.SUB_DIVISION
             ? data.subDivision.map(Number)
-            : data.workingLevel === levelWIthId.SECTION ? data.section.map(Number) : [],
+            : data.workingLevel === levelNameMappedWithId.SECTION ? data.section.map(Number) : [],
     };
 
     try {
@@ -146,7 +146,7 @@ const AddAgency = () => {
           setDivisions([]);
           setSubDivisions([]);
           setSections([]);
-          if (newValue?.new?.length > 0 && formData.workingLevel !== levelWIthId.CIRCLE) {
+          if (newValue?.new?.length > 0 && formData.workingLevel !== levelNameMappedWithId.CIRCLE) {
             getDivisions(newValue?.new[0]);
           }
         }
@@ -157,7 +157,7 @@ const AddAgency = () => {
           setValue("section", []);
           setSubDivisions([]);
           setSections([]);
-          if (newValue?.new.length > 0 && (formData.workingLevel === levelWIthId.SUB_DIVISION || formData.workingLevel === levelWIthId.SECTION)) {
+          if (newValue?.new.length > 0 && (formData.workingLevel === levelNameMappedWithId.SUB_DIVISION || formData.workingLevel === levelNameMappedWithId.SECTION)) {
             getSubDivisions(newValue?.new[0]);
           }
         }
@@ -166,7 +166,7 @@ const AddAgency = () => {
           let newValue = changes["subDivision"];
           setValue("section", []);
           setSections([]);
-          if (newValue?.new.length > 0 && formData.workingLevel === levelWIthId.SECTION) {
+          if (newValue?.new.length > 0 && formData.workingLevel === levelNameMappedWithId.SECTION) {
             getSections(newValue?.new[0]);
           }
         }
@@ -176,6 +176,7 @@ const AddAgency = () => {
   }, [formData]);
 
   useEffect(() => {
+    getWorkingLevel()
     getAllPaymentModes()
       .then((data) => {
         setPaymentMethods(
@@ -278,6 +279,23 @@ const AddAgency = () => {
       );
     }).finally(() => { setIsLoading(false); });
   };
+
+  const [levelNameMappedWithId, setLevelNameMappedWithId] = useState<Record<string, number>>({})
+
+  const getWorkingLevel = () => {
+    getLevels(session?.user?.discomId).then((data) => {
+      let levelIdMap = data?.data
+        ?.filter((item) => item.levelType === "MAIN")
+        .reduce((acc, item) => {
+          let levelName = item.levelName.replace(' ', "_");
+          acc[levelName] = item.id;
+          return acc;
+        }, {});
+
+      console.log(levelIdMap)
+      setLevelNameMappedWithId(levelIdMap)
+    })
+  }
 
   return (
     <AuthUserReusableCode pageTitle="Add Agency" isLoading={isLoading}>
@@ -412,7 +430,7 @@ const AddAgency = () => {
             required={true}
             placeholder="Select Working level"
             list={workingLevel}
-            {...register("workingLevel")}
+            {...register("workingLevel", { valueAsNumber: true })}
           />
           {formData.workingLevel &&
             <CustomizedMultipleSelectInputWithLabel
@@ -423,10 +441,10 @@ const AddAgency = () => {
               placeholder="Select Circle Type"
               value={watch('circle') || []}
               onChange={(selectedValues) => setValue('circle', selectedValues)}
-              multi={formData.workingLevel == levelWIthId.CIRCLE}
+              multi={formData.workingLevel == levelNameMappedWithId.CIRCLE}
             />
           }
-          {formData.workingLevel && formData.workingLevel != levelWIthId.CIRCLE && (
+          {formData.workingLevel && formData.workingLevel != levelNameMappedWithId.CIRCLE && (
             <CustomizedMultipleSelectInputWithLabel
               label="Division"
               required={true}
@@ -434,13 +452,13 @@ const AddAgency = () => {
               disabled={formData?.circle?.length == 0}
               value={watch('division') || []}
               onChange={(selectedValues) => setValue('division', selectedValues)}
-              multi={formData.workingLevel == levelWIthId.DIVISION}
+              multi={formData.workingLevel == levelNameMappedWithId.DIVISION}
               errors={errors.division}
             />
           )}
           {
-            formData.workingLevel && (formData.workingLevel == levelWIthId.SECTION
-              || formData.workingLevel == levelWIthId.SUB_DIVISION) && (
+            formData.workingLevel && (formData.workingLevel == levelNameMappedWithId.SECTION
+              || formData.workingLevel == levelNameMappedWithId.SUB_DIVISION) && (
               <CustomizedMultipleSelectInputWithLabel
                 label="Sub Division"
                 errors={errors.subDivision}
@@ -449,13 +467,13 @@ const AddAgency = () => {
                 required={true}
                 disabled={formData?.division?.length == 0}
                 value={watch('subDivision') || []}
-                multi={formData.workingLevel == levelWIthId.SUB_DIVISION}
+                multi={formData.workingLevel == levelNameMappedWithId.SUB_DIVISION}
                 onChange={(selectedValues) => setValue('subDivision', selectedValues)}
               />
             )
           }
           {
-            formData.workingLevel && formData.workingLevel == levelWIthId.SECTION && (
+            formData.workingLevel && formData.workingLevel == levelNameMappedWithId.SECTION && (
               <CustomizedMultipleSelectInputWithLabel
                 label="Section"
                 errors={errors.section}
@@ -464,7 +482,7 @@ const AddAgency = () => {
                 required={true}
                 disabled={formData?.subDivision?.length == 0}
                 value={watch('section') || []}
-                multi={formData.workingLevel == levelWIthId.SECTION}
+                multi={formData.workingLevel == levelNameMappedWithId.SECTION}
                 onChange={(selectedValues) => setValue('section', selectedValues)}
               />
             )

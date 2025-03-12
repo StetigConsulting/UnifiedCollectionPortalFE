@@ -14,7 +14,7 @@ import { createCounterCollector, getCollectorTypes } from '@/app/api-calls/agenc
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
 import { Loader2 } from 'lucide-react';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
-import { agentWorkingType, collectorRolePicklist, levelWIthId } from '@/lib/utils';
+import { agentWorkingType, collectorRolePicklist } from '@/lib/utils';
 import { useSession } from 'next-auth/react';
 
 const AddCounterCollector = () => {
@@ -424,7 +424,6 @@ const AddCounterCollector = () => {
                             list={circles}
                             required={true}
                             value={watch('circle') || []}
-                            // multi={formData.workingLevel === (levelWIthId.CIRCLE)}
                             onChange={(selectedValues) => {
                                 setValue('circle', selectedValues)
                                 if (selectedValues.length > 0) {
@@ -447,7 +446,6 @@ const AddCounterCollector = () => {
                             list={divisions}
                             required={true}
                             value={watch('division') || []}
-                            // multi={formData.workingLevel === (levelWIthId.DIVISION)}
                             onChange={(selectedValues) => {
                                 setValue('division', selectedValues)
                                 if (selectedValues.length > 0) {
@@ -470,7 +468,6 @@ const AddCounterCollector = () => {
                                 list={subDivisions}
                                 required={true}
                                 value={watch('subDivision') || []}
-                                // multi={formData.workingLevel === levelWIthId.SUB_DIVISION}
                                 onChange={(selectedValues) => {
                                     setValue('subDivision', selectedValues)
                                     if (selectedValues.length > 0) {
@@ -489,7 +486,6 @@ const AddCounterCollector = () => {
                                 list={sections}
                                 required={true}
                                 value={watch('section') || []}
-                                // multi={formData.workingLevel === levelWIthId.SECTION}
                                 onChange={(selectedValues) => setValue('section', selectedValues)}
                             />)
                     }

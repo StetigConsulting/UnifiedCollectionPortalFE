@@ -21,8 +21,6 @@ export async function POST(req: NextRequest) {
 
         const result = await apiResponse.json();
 
-        console.log(result)
-
         if (apiResponse.ok) {
             return NextResponse.json({ message: 'OTP validated successfully', data: result });
         } else {
