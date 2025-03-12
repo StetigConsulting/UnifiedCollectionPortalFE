@@ -432,7 +432,7 @@ const AddAgency = () => {
             list={workingLevel}
             {...register("workingLevel", { valueAsNumber: true })}
           />
-          {formData.workingLevel &&
+          {formData.workingLevel != null &&
             <CustomizedMultipleSelectInputWithLabel
               label="Circle"
               errors={errors.circle}
@@ -444,7 +444,7 @@ const AddAgency = () => {
               multi={formData.workingLevel == levelNameMappedWithId.CIRCLE}
             />
           }
-          {formData.workingLevel && formData.workingLevel != levelNameMappedWithId.CIRCLE && (
+          {formData.workingLevel != null && formData.workingLevel != levelNameMappedWithId.CIRCLE && (
             <CustomizedMultipleSelectInputWithLabel
               label="Division"
               required={true}
@@ -457,7 +457,7 @@ const AddAgency = () => {
             />
           )}
           {
-            formData.workingLevel && (formData.workingLevel == levelNameMappedWithId.SECTION
+            formData.workingLevel != null && (formData.workingLevel == levelNameMappedWithId.SECTION
               || formData.workingLevel == levelNameMappedWithId.SUB_DIVISION) && (
               <CustomizedMultipleSelectInputWithLabel
                 label="Sub Division"
@@ -473,7 +473,7 @@ const AddAgency = () => {
             )
           }
           {
-            formData.workingLevel && formData.workingLevel == levelNameMappedWithId.SECTION && (
+            formData.workingLevel != null && formData.workingLevel == levelNameMappedWithId.SECTION && (
               <CustomizedMultipleSelectInputWithLabel
                 label="Section"
                 errors={errors.section}
