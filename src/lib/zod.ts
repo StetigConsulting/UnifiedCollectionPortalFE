@@ -68,7 +68,9 @@ export const addAgencySchema = z
     }),
     paymentMode: z.string().optional(),
     paymentRemark: z.string().optional(),
-    workingLevel: z.string().nonempty("Working Level is required"),
+    workingLevel: z.number({
+      required_error: "Working Level is required",
+    }),
     circle: z.array(z.number()).optional(),
     division: z.array(z.number()).optional(),
     subDivision: z.array(z.number()).optional(),
@@ -100,7 +102,7 @@ export const addAgencySchema = z
         path: ["nonEnergy"],
       });
     }
-    if (data.workingLevel && data.workingLevel === levelWIthId.SECTION) {
+    if (data.workingLevel && data.workingLevel === parseInt(levelWIthId.SECTION)) {
       if (data.section.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -130,7 +132,7 @@ export const addAgencySchema = z
         });
       }
     }
-    if (data.workingLevel && data.workingLevel === levelWIthId.SUB_DIVISION) {
+    if (data.workingLevel && data.workingLevel === parseInt(levelWIthId.SUB_DIVISION)) {
       if (data.subDivision.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -153,7 +155,7 @@ export const addAgencySchema = z
         });
       }
     }
-    if (data.workingLevel && data.workingLevel === levelWIthId.DIVISION) {
+    if (data.workingLevel && data.workingLevel === parseInt(levelWIthId.DIVISION)) {
       if (data.division.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -169,7 +171,7 @@ export const addAgencySchema = z
         });
       }
     }
-    if (data.workingLevel && data.workingLevel === levelWIthId.CIRCLE) {
+    if (data.workingLevel && data.workingLevel === parseInt(levelWIthId.CIRCLE)) {
       if (data.circle.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,

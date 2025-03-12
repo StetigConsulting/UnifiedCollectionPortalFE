@@ -48,7 +48,7 @@ const CreateNewLevelUploadPopup: React.FC<CreateNewLevelUploadPopupProps> = ({ f
         try {
             const response = await uploadOfficeStructureLevel(formData)
 
-            toast.success('File uploaded successfully');
+            toast.success(response.message || 'File uploaded successfully');
             setFileName(null);
             setValue('file', null as any);
             setIsDialogOpen(false);
