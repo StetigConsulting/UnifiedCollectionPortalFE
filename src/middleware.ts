@@ -13,6 +13,10 @@ export async function middleware(request: any) {
 
     console.log("Is Authenticated:", isAuthenticated);
 
+    if (nextUrl.pathname === '/') {
+        return NextResponse.redirect(new URL(SIGNIN, nextUrl));
+    }
+
     if (!isAuthenticated) {
         if (nextUrl.pathname !== SIGNIN) {
             return NextResponse.redirect(new URL(SIGNIN, nextUrl));
