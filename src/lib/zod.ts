@@ -246,11 +246,91 @@ export const editAgencyAreaSchema = z.object({
   agency: z.string().min(1, { message: "Agency is required" }),
   agencyName: z.string().min(1, { message: "Agency Name is required" }),
   agencyId: z.number(),
-  workingLevel: z.string().min(1, { message: "Working Level is required" }),
+  workingLevel: z.number({ required_error: "Working Level is required" }),
   circle: z.array(z.number()).optional(),
   division: z.array(z.number()).optional(),
   subDivision: z.array(z.number()).optional(),
   section: z.array(z.number()).optional(),
+  levelsData: z.any()
+}).superRefine((data, ctx) => {
+  if (data.workingLevel && data.workingLevel === data?.levelsData?.SECTION) {
+    if (data.section.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "At least one Section type is required",
+        path: ["section"],
+      });
+    }
+    if (data.subDivision.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Sub division is required",
+        path: ["subDivision"],
+      });
+    }
+    if (data.division.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Division is required",
+        path: ["division"],
+      });
+    }
+    if (data.circle.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Circle is required",
+        path: ["circle"],
+      });
+    }
+  }
+  if (data.workingLevel && data.workingLevel === data?.levelsData?.SUB_DIVISION) {
+    if (data.subDivision.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Atleast one sub division is required",
+        path: ["subDivision"],
+      });
+    }
+    if (data.division.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Division is required",
+        path: ["division"],
+      });
+    }
+    if (data.circle.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Circle is required",
+        path: ["circle"],
+      });
+    }
+  }
+  if (data.workingLevel && data.workingLevel === data?.levelsData?.DIVISION) {
+    if (data.division.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Atleast one division is required",
+        path: ["division"],
+      });
+    }
+    if (data.circle.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Circle is required",
+        path: ["circle"],
+      });
+    }
+  }
+  if (data.workingLevel && data.workingLevel === data?.levelsData?.CIRCLE) {
+    if (data.circle.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Atleast one circle is required",
+        path: ["circle"],
+      });
+    }
+  }
 });
 
 export type EditAgencyAreaFormData = z.infer<typeof editAgencyAreaSchema>;
