@@ -430,7 +430,7 @@ const AddAgency = () => {
             required={true}
             placeholder="Select Working level"
             list={workingLevel}
-            {...register("workingLevel")}
+            {...register("workingLevel", { valueAsNumber: true })}
           />
           {formData.workingLevel &&
             <CustomizedMultipleSelectInputWithLabel
