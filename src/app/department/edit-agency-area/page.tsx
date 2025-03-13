@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import AuthUserReusableCode from "@/components/AuthUserReusableCode";
 import { editAgencyAreaById, getAgenciesWithDiscom, getLevels, getLevelsDiscomId } from "@/app/api-calls/department/api";
-import { levelWIthId } from "@/lib/utils";
 import CustomizedMultipleSelectInputWithLabelNumber from "@/components/CustomizedMultipleSelectInputWithLabelNumber";
 import { Loader2 } from "lucide-react";
 import AlertPopup from "@/components/Agency/ViewAgency/AlertPopup";
