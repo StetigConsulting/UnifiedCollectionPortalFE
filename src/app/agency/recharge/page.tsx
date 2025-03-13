@@ -193,7 +193,7 @@ const RechargeEntry = () => {
                                 required={true}
                                 errors={errors.agencyId}
                                 disabled
-                                {...register("agencyId")}
+                                {...register("agencyId", { valueAsNumber: true })}
                             />
                             <CustomizedInputWithLabel
                                 label="Phone Number"
