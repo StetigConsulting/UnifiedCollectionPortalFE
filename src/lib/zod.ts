@@ -88,6 +88,7 @@ export const addAgencySchema = z
         "At least one Collection Type is required"
       ),
     nonEnergy: z.array(z.number()).optional().default([]),
+    levelWithIdMap: z.any(),
   })
   .superRefine((data, ctx) => {
     if (
@@ -102,7 +103,7 @@ export const addAgencySchema = z
         path: ["nonEnergy"],
       });
     }
-    if (data.workingLevel && data.workingLevel === parseInt(levelWIthId.SECTION)) {
+    if (data.workingLevel && data.workingLevel === data.levelWithIdMap.SECTION) {
       if (data.section.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -132,7 +133,7 @@ export const addAgencySchema = z
         });
       }
     }
-    if (data.workingLevel && data.workingLevel === parseInt(levelWIthId.SUB_DIVISION)) {
+    if (data.workingLevel && data.workingLevel === data.levelWithIdMap.SUB_DIVISION) {
       if (data.subDivision.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -155,7 +156,7 @@ export const addAgencySchema = z
         });
       }
     }
-    if (data.workingLevel && data.workingLevel === parseInt(levelWIthId.DIVISION)) {
+    if (data.workingLevel && data.workingLevel === data.levelWithIdMap.DIVISION) {
       if (data.division.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -171,7 +172,7 @@ export const addAgencySchema = z
         });
       }
     }
-    if (data.workingLevel && data.workingLevel === parseInt(levelWIthId.CIRCLE)) {
+    if (data.workingLevel && data.workingLevel === data.levelWithIdMap.CIRCLE) {
       if (data.circle.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -667,7 +668,7 @@ export const addReceiptsSchema = z.object({
   configRule: z.string().min(1, 'Config rule is required'),
   receipts: z.array(
     z.object({
-      applicableLevel: z.string().optional(),
+      applicableLevel: z.number().optional(),
       circle: z.array(z.number()).optional(),
       division: z.array(z.number()).optional(),
       subDivision: z.array(z.number()).optional(),
@@ -675,6 +676,7 @@ export const addReceiptsSchema = z.object({
       receiptsPerMonth: z.number().optional(),
       receiptsPerDay: z.number().optional(),
       allowSecondReceipt: z.boolean(),
+      levelMapWithId: z.any(),
     })
   ).nonempty('At least one receipt entry must be added')
 }).superRefine((data, ctx) => {
@@ -689,7 +691,7 @@ export const addReceiptsSchema = z.object({
           code: z.ZodIssueCode.custom,
         });
       } else {
-        if (receipt.applicableLevel === levelWIthId.SECTION) {
+        if (receipt.applicableLevel === receipt.levelMapWithId.SECTION) {
           if (!receipt.circle?.length) {
             ctx.addIssue({
               path: [`receipts`, index, 'circle'],
@@ -719,7 +721,7 @@ export const addReceiptsSchema = z.object({
             });
           }
         }
-        else if (receipt.applicableLevel === levelWIthId.SUB_DIVISION) {
+        else if (receipt.applicableLevel === receipt.levelMapWithId.SUB_DIVISION) {
           if (!receipt.circle?.length) {
             ctx.addIssue({
               path: [`receipts`, index, 'circle'],
@@ -741,7 +743,7 @@ export const addReceiptsSchema = z.object({
               code: z.ZodIssueCode.custom,
             });
           }
-        } else if (receipt.applicableLevel === levelWIthId.DIVISION) {
+        } else if (receipt.applicableLevel === receipt.levelMapWithId.DIVISION) {
           if (!receipt.circle?.length) {
             ctx.addIssue({
               path: [`receipts`, index, 'circle'],
@@ -756,7 +758,7 @@ export const addReceiptsSchema = z.object({
               code: z.ZodIssueCode.custom,
             });
           }
-        } else if (receipt.applicableLevel === levelWIthId.CIRCLE) {
+        } else if (receipt.applicableLevel === receipt.levelMapWithId.CIRCLE) {
           if (!receipt.circle?.length) {
             ctx.addIssue({
               path: [`receipts`, index, 'circle'],

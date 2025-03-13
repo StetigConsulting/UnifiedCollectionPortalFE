@@ -294,6 +294,7 @@ const AddAgency = () => {
 
       console.log(levelIdMap)
       setLevelNameMappedWithId(levelIdMap)
+      setValue('levelWithIdMap', levelIdMap)
     })
   }
 

@@ -13,7 +13,7 @@ import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { addReceiptsSchema } from '@/lib/zod';
 import { getLevels, getLevelsDiscomId } from '@/app/api-calls/department/api';
-import { getErrorMessage, levelWIthId, urlsListWithTitle } from '@/lib/utils';
+import { getErrorMessage, urlsListWithTitle } from '@/lib/utils';
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
 import { ReceiptForPostpaid } from '@/lib/interface';
 import { createReceiptForPostpaid } from '@/app/api-calls/admin/api';
@@ -37,7 +37,7 @@ const AddReceiptsForPostpaid = () => {
         defaultValues: {
             receipts: [
                 {
-                    applicableLevel: '',
+                    applicableLevel: null,
                     circle: [],
                     division: [],
                     subDivision: [],
@@ -53,6 +53,8 @@ const AddReceiptsForPostpaid = () => {
     const receipts = watch('receipts');
     const configRule = watch('configRule');
 
+    console.log(receipts)
+
     const onSubmit = async (data: FormData) => {
         try {
             for (const receipt of data.receipts) {
@@ -60,13 +62,13 @@ const AddReceiptsForPostpaid = () => {
                     discom_id: session?.user?.discomId,
                     rule_level: data.configRule,
                     ...data.configRule == 'Levelwise' && {
-                        office_structure_id: receipt.applicableLevel === levelWIthId.CIRCLE
+                        office_structure_id: receipt.applicableLevel === levelNameMappedWithId.CIRCLE
                             ? receipt.circle.map(Number)?.[0]
-                            : receipt.applicableLevel === levelWIthId.DIVISION
+                            : receipt.applicableLevel === levelNameMappedWithId.DIVISION
                                 ? receipt.division.map(Number)?.[0]
-                                : receipt.applicableLevel === levelWIthId.SUB_DIVISION
+                                : receipt.applicableLevel === levelNameMappedWithId.SUB_DIVISION
                                     ? receipt.subDivision.map(Number)?.[0]
-                                    : receipt.applicableLevel === levelWIthId.SECTION ? receipt.section.map(Number)?.[0] : null,
+                                    : receipt.applicableLevel === levelNameMappedWithId.SECTION ? receipt.section.map(Number)?.[0] : null,
                     },
                     ...data.configRule == 'Discomwise' && {
                         office_structure_id: session?.user?.discomId
@@ -100,7 +102,7 @@ const AddReceiptsForPostpaid = () => {
         setValue('receipts', [
             ...receipts,
             {
-                applicableLevel: '',
+                applicableLevel: null,
                 circle: [],
                 division: [],
                 subDivision: [],
@@ -108,6 +110,7 @@ const AddReceiptsForPostpaid = () => {
                 receiptsPerMonth: null,
                 receiptsPerDay: null,
                 allowSecondReceipt: false,
+                levelMapWithId: levelNameMappedWithId
             },
         ]);
         let listOfPicklistItems = listOfPicklist
@@ -124,6 +127,7 @@ const AddReceiptsForPostpaid = () => {
     const [listOfApplicableLevel, setListOfApplicableLevel] = useState([])
 
     useEffect(() => {
+        getWorkingLevel()
         getLevels(session?.user?.discomId).then((res) => {
             setListOfApplicableLevel(
                 res?.data
@@ -174,7 +178,7 @@ const AddReceiptsForPostpaid = () => {
         });
     };
 
-    const handleLevelChange = (index: number, value: string) => {
+    const handleLevelChange = (index: number, value: number) => {
         setValue(`receipts.${index}.applicableLevel`, value);
         setValue(`receipts.${index}.circle`, []);
         setValue(`receipts.${index}.division`, []);
@@ -185,33 +189,51 @@ const AddReceiptsForPostpaid = () => {
         }
     };
 
-    const handleCircleChange = (index: number, value: number[], levelValue: string) => {
+    const handleCircleChange = (index: number, value: number[], levelValue: number) => {
         setValue(`receipts.${index}.circle`, value);
         setValue(`receipts.${index}.division`, []);
         setValue(`receipts.${index}.subDivision`, []);
         setValue(`receipts.${index}.section`, []);
-        if (value && levelValue != levelWIthId.CIRCLE) {
+        if (value && levelValue != levelNameMappedWithId.CIRCLE) {
             getPicklistFromList({ id: value, type: 'division', index });
         }
     };
 
-    const handleDivisionChange = (index: number, value: number[], levelValue: string) => {
+    const handleDivisionChange = (index: number, value: number[], levelValue: number) => {
         setValue(`receipts.${index}.division`, value);
         setValue(`receipts.${index}.subDivision`, []);
         setValue(`receipts.${index}.section`, []);
-        if (value && (levelValue == levelWIthId.SECTION
-            || levelValue == levelWIthId.SUB_DIVISION)) {
+        if (value && (levelValue == levelNameMappedWithId.SECTION
+            || levelValue == levelNameMappedWithId.SUB_DIVISION)) {
             getPicklistFromList({ id: value, type: 'subDivision', index });
         }
     };
 
-    const handleSubDivisionChange = (index: number, value: number[], levelValue: string) => {
+    const handleSubDivisionChange = (index: number, value: number[], levelValue: number) => {
         setValue(`receipts.${index}.subDivision`, value);
         setValue(`receipts.${index}.section`, []);
-        if (value && levelValue == levelWIthId.SECTION) {
+        if (value && levelValue == levelNameMappedWithId.SECTION) {
             getPicklistFromList({ id: value, type: 'section', index });
         }
     };
+
+    const [levelNameMappedWithId, setLevelNameMappedWithId] = useState<Record<string, number>>({})
+
+    const getWorkingLevel = () => {
+        getLevels(session?.user?.discomId).then((data) => {
+            let levelIdMap = data?.data
+                ?.filter((item) => item.levelType === "MAIN")
+                .reduce((acc, item) => {
+                    let levelName = item.levelName.replace(' ', "_");
+                    acc[levelName] = item.id;
+                    return acc;
+                }, {});
+
+            console.log(levelIdMap)
+            setLevelNameMappedWithId(levelIdMap)
+            setValue(`receipts.0.levelMapWithId`, levelIdMap);
+        })
+    }
 
     return (
         <AuthUserReusableCode pageTitle="Receipts for Postpaid" isLoading={isLoading}>
@@ -233,66 +255,67 @@ const AddReceiptsForPostpaid = () => {
                                 <CustomizedSelectInputWithLabel
                                     label="Applicable Level"
                                     list={listOfApplicableLevel}
-                                    {...register(`receipts.${index}.applicableLevel`)}
+                                    {...register(`receipts.${index}.applicableLevel`, { valueAsNumber: true })}
                                     errors={errors?.receipts?.[index]?.applicableLevel}
-                                    onChange={(e) => handleLevelChange(index, e.target.value)}
+                                    onChange={(e) => handleLevelChange(index, parseInt(e.target.value))}
                                 />
-                                {receipts[index].applicableLevel &&
-                                    <CustomizedMultipleSelectInputWithLabelNumber
-                                        label="Circle"
-                                        errors={errors?.receipts?.[index]?.circle}
-                                        required={true}
-                                        list={listOfPicklist[index]?.circle}
-                                        placeholder="Select Circle Type"
-                                        value={watch(`receipts.${index}.circle`) || []}
-                                        // onChange={(selectedValues) => setValue(`receipts.${index}.circle`, selectedValues)}
-                                        onChange={(selectedValues) => handleCircleChange(index, selectedValues, receipts[index].applicableLevel)}
-
-                                    />
-                                }
-                                {receipts[index].applicableLevel && receipts[index].applicableLevel != levelWIthId.CIRCLE && (
-                                    <CustomizedMultipleSelectInputWithLabelNumber
-                                        label="Division"
-                                        required={true}
-                                        list={listOfPicklist[index]?.division}
-                                        disabled={receipts[index]?.circle?.length == 0}
-                                        value={watch(`receipts.${index}.division`) || []}
-                                        // onChange={(selectedValues) => setValue(`receipts.${index}.division`, selectedValues)}
-                                        onChange={(selectedValues) => handleDivisionChange(index, selectedValues, receipts[index].applicableLevel)}
-
-                                        errors={errors?.receipts?.[index]?.division}
-                                    />
-                                )}
-                                {receipts[index].applicableLevel && (receipts[index].applicableLevel == levelWIthId.SECTION
-                                    || receipts[index].applicableLevel == levelWIthId.SUB_DIVISION) && (
-                                        <CustomizedMultipleSelectInputWithLabelNumber
-                                            label="Sub Division"
-                                            required={true}
-                                            list={listOfPicklist[index]?.subDivision}
-                                            disabled={receipts[index]?.division?.length == 0}
-                                            value={watch(`receipts.${index}.subDivision`) || []}
-                                            onChange={(selectedValues) => handleSubDivisionChange(index, selectedValues, receipts[index].applicableLevel)}
-                                            // onChange={(selectedValues) => setValue(`receipts.${index}.subDivision`, selectedValues)}
-
-                                            errors={errors?.receipts?.[index]?.subDivision}
-                                        />
-                                    )}
                                 {
-                                    receipts[index].applicableLevel && receipts[index].applicableLevel == levelWIthId.SECTION && (
+                                    receipts[index].applicableLevel != null && receipts[index].applicableLevel > 0 && <>
                                         <CustomizedMultipleSelectInputWithLabelNumber
-                                            label="Section"
-                                            containerClass='col-span-2'
-                                            errors={errors?.receipts?.[index]?.section}
-                                            placeholder="Select Section"
-                                            list={listOfPicklist[index]?.section}
+                                            label="Circle"
+                                            errors={errors?.receipts?.[index]?.circle}
                                             required={true}
-                                            disabled={receipts[index]?.subDivision?.length == 0}
-                                            value={watch(`receipts.${index}.section`) || []}
-
-                                            onChange={(selectedValues) => setValue(`receipts.${index}.section`, selectedValues)}
+                                            list={listOfPicklist[index]?.circle}
+                                            placeholder="Select Circle Type"
+                                            value={watch(`receipts.${index}.circle`) || []}
+                                            // onChange={(selectedValues) => setValue(`receipts.${index}.circle`, selectedValues)}
+                                            onChange={(selectedValues) => handleCircleChange(index, selectedValues, receipts[index].applicableLevel)}
                                         />
-                                    )
+                                        {receipts[index].applicableLevel != levelNameMappedWithId.CIRCLE && (
+                                            <CustomizedMultipleSelectInputWithLabelNumber
+                                                label="Division"
+                                                required={true}
+                                                list={listOfPicklist[index]?.division}
+                                                disabled={receipts[index]?.circle?.length == 0}
+                                                value={watch(`receipts.${index}.division`) || []}
+                                                // onChange={(selectedValues) => setValue(`receipts.${index}.division`, selectedValues)}
+                                                onChange={(selectedValues) => handleDivisionChange(index, selectedValues, receipts[index].applicableLevel)}
+                                                errors={errors?.receipts?.[index]?.division}
+                                            />
+                                        )}
+                                        {(receipts[index].applicableLevel == levelNameMappedWithId.SECTION
+                                            || receipts[index].applicableLevel == levelNameMappedWithId.SUB_DIVISION) && (
+                                                <CustomizedMultipleSelectInputWithLabelNumber
+                                                    label="Sub Division"
+                                                    required={true}
+                                                    list={listOfPicklist[index]?.subDivision}
+                                                    disabled={receipts[index]?.division?.length == 0}
+                                                    value={watch(`receipts.${index}.subDivision`) || []}
+                                                    onChange={(selectedValues) => handleSubDivisionChange(index, selectedValues, receipts[index].applicableLevel)}
+                                                    // onChange={(selectedValues) => setValue(`receipts.${index}.subDivision`, selectedValues)}
+                                                    errors={errors?.receipts?.[index]?.subDivision}
+                                                />
+                                            )
+                                        }
+                                        {
+                                            receipts[index].applicableLevel == levelNameMappedWithId.SECTION && (
+                                                <CustomizedMultipleSelectInputWithLabelNumber
+                                                    label="Section"
+                                                    containerClass='col-span-2'
+                                                    errors={errors?.receipts?.[index]?.section}
+                                                    placeholder="Select Section"
+                                                    list={listOfPicklist[index]?.section}
+                                                    required={true}
+                                                    disabled={receipts[index]?.subDivision?.length == 0}
+                                                    value={watch(`receipts.${index}.section`) || []}
+
+                                                    onChange={(selectedValues) => setValue(`receipts.${index}.section`, selectedValues)}
+                                                />
+                                            )
+                                        }
+                                    </>
                                 }
+
                                 <CustomizedInputWithLabel
                                     label="Receipts per month against one bill"
                                     type="number"
