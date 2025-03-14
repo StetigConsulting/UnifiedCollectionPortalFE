@@ -36,8 +36,12 @@ const AddAgency = () => {
     formState: { errors },
     setValue,
     watch,
+    reset
   } = useForm<FormData>({
     resolver: zodResolver(addAgencySchema),
+    defaultValues: {
+      workingLevel: null,
+    }
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -86,13 +90,11 @@ const AddAgency = () => {
       const response = await createAgency(agencyData);
       toast.success("Agency created successfully");
       console.log("API Response:", response);
-      location.reload();
+      reset();
+      // location.reload();
     } catch (error) {
-      console.error("Failed to create agency:", Object.keys(error.data)
-        .map((key) => error.data[key])
-        .join(', '));
       let errorMessage = getErrorMessage(error);
-      toast.error(errorMessage)
+      toast.error('Error: ' + errorMessage)
     } finally {
       setIsSubmitting(false);
     }
@@ -128,6 +130,10 @@ const AddAgency = () => {
         if (Object.keys(changes).includes("workingLevel")) {
           console.log('i  min')
           let newValue = changes["workingLevel"];
+          if (Number.isNaN(newValue?.new)) {
+            console.log('isnamn')
+            setValue('workingLevel', null);
+          }
           if (newValue?.new) {
             setValue("circle", []);
             setValue("division", []);

@@ -1,10 +1,12 @@
 import api from "@/lib/axios";
 import { AddAgencyBankDeposit, AgencyBankHistoryPagination, AgencyDataInterface, ChangeCounterCollector, EditAgencyArea, editAgencyInterface, EditAgentRoleArea, extendValidityInterface, rechargeAgencyInterface, ViewHistoryPayload } from "@/lib/interface";
+import { getSession } from "next-auth/react";
 
 
 const getAllPaymentModes = async () => {
   try {
-    const response = await api.get(`/v1/payment-modes`);
+    const session = await getSession();
+    const response = await api.get(`/v1/payment-modes/discom/${session?.user?.discomId}`);
     return response.data;
   } catch (error: any) {
 
@@ -15,7 +17,8 @@ const getAllPaymentModes = async () => {
 
 const getAllNonEnergyTypes = async () => {
   try {
-    const response = await api.get(`/v1/non-energy-types`);
+    const session = await getSession();
+    const response = await api.get(`/v1/non-energy-types/discom/${session?.user?.discomId}`);
     return response.data;
   } catch (error: any) {
 
