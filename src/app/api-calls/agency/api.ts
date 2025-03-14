@@ -1,5 +1,6 @@
 import api from "@/lib/axios";
 import { AddAgentBankDeposit, AddCounterCollector, EditCollector, ExtendAgentValidity, RechargeAgent, UpdateBinder } from "@/lib/interface";
+import { getSession } from "next-auth/react";
 
 export const createCounterCollector = async (data: AddCounterCollector, user_id: number) => {
     try {
@@ -93,7 +94,8 @@ export const extendAgentValidityById = async (data: ExtendAgentValidity, user_id
 
 export const getCollectorTypes = async () => {
     try {
-        const response = await api.get(`/v1/collector-types/`);
+        const session = await getSession()
+        const response = await api.get(`/v1/collector-types/discom/${session?.user?.discomId}`);
         return response.data;
     } catch (error) {
 
