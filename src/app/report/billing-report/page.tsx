@@ -59,7 +59,9 @@ const BillingReport = () => {
         try {
             setIsLoading(true);
             const response = await downloadBillingReport('pdf');
-            console.log(response.headers);
+            console.log(response.headers['content-disposition']);
+            const rawDisposition = response.request.getResponseHeader('Content-Disposition');
+            console.log('Raw Content-Disposition:', rawDisposition);
             const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
             const pdfUrl = window.URL.createObjectURL(pdfBlob);
 
