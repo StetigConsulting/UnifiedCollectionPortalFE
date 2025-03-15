@@ -40,7 +40,6 @@ const WalletHistory = () => {
                     previousBalance: '5000000',
                     txnDate: '10-09-2022',
                 },
-                // Add more rows as necessary
             ];
             setWalletData(response);
             setFilteredData(response);
