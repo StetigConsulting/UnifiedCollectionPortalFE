@@ -64,7 +64,7 @@ const AgentWalletHistory = () => {
             setIsLoading(true);
             const response = await downloadBillingReport('pdf');
             console.log(response);
-            const pdfBlob = new Blob([response], { type: 'application/pdf' });
+            const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
             const pdfUrl = window.URL.createObjectURL(pdfBlob);
 
             const link = document.createElement('a');
