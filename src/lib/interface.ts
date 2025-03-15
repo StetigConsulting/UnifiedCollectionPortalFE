@@ -238,3 +238,21 @@ export interface AgencyBankHistoryPagination {
     page_size: number;
     filter: AgencyBankHistoryFilter;
 }
+
+export interface CreateUserInterface {
+    user_role_id: number;
+    user_name: string;
+    mobile_number: string;
+}
+
+export interface DeniedToPayInterface {
+    discom_id: number;
+    office_structure_id: number;
+    rule_level: string;
+    rule_name: string;
+    json_rule: {
+        max_limit: number;
+        denied_to_pay_reasons: string[];
+        paid_reasons: string[];
+    };
+}

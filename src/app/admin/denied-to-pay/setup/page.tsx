@@ -13,11 +13,14 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { z } from "zod";
+import { createDeniedToPay } from "@/app/api-calls/admin/api";
+import { useSession } from "next-auth/react";
 
 type FormData = z.infer<typeof deniedToPaySchema>;
 
 const SetupDeniedToPay = () => {
     const router = useRouter();
+    const { data: session } = useSession();
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const [deniedToPayReasons, setDeniedToPayReasons] = useState([]);
@@ -31,7 +34,21 @@ const SetupDeniedToPay = () => {
     const onSubmit = async (data: FormData) => {
         console.log("Form Data:", data);
         try {
+            let payload = {
+                "discom_id": session?.user?.discomId,
+                "office_structure_id": session?.user?.discomId,
+                "rule_level": "Discomwise",
+                "rule_name": "DENIED_TO_PAY",
+                "json_rule": {
+                    "max_limit": data.maxCountPerDay,
+                    "denied_to_pay_reasons": data.deniedReason,
+                    "paid_reasons": data.paidReason
+                }
+
+            }
             setIsSubmitting(true);
+
+            const response = await createDeniedToPay(payload);
             toast.success("Form submitted successfully!");
         } catch (error) {
             toast.error("Failed to submit the form.");
@@ -47,6 +64,17 @@ const SetupDeniedToPay = () => {
     return (
         <AuthUserReusableCode pageTitle="Denied to Pay">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-4">
+
+                <div className="space-y-2">
+                    <CustomizedInputWithLabel
+                        label="Denied to pay max count per day"
+                        placeholder="Enter max count"
+                        type="number"
+                        errors={errors.maxCountPerDay}
+                        {...register("maxCountPerDay", { valueAsNumber: true })}
+                    />
+                </div>
+
                 <div className="space-y-2">
                     <CustomizedMultipleSelectInputWithLabelString
                         label="Denied to pay reason"
@@ -58,26 +86,18 @@ const SetupDeniedToPay = () => {
                         onChange={(selectedValues) => setValue('deniedReason', selectedValues)}
                         multi={true}
                     />
-                    {errors.deniedReason && <p className="text-red-600 text-sm">{errors.deniedReason.message}</p>}
                 </div>
 
                 <div className="space-y-2">
-                    <CustomizedSelectInputWithLabel
+                    <CustomizedMultipleSelectInputWithLabelString
                         label="Paid reason"
-                        placeholder="Select paid reason"
-                        list={[]}
+                        placeholder="Select paid reasons"
                         errors={errors.paidReason}
-                        {...register("paidReason")}
-                    />
-                </div>
-
-                <div className="space-y-2">
-                    <CustomizedInputWithLabel
-                        label="Denied to pay max count per day"
-                        placeholder="Enter max count"
-                        type="number"
-                        errors={errors.maxCountPerDay}
-                        {...register("maxCountPerDay")}
+                        required={true}
+                        list={[]}
+                        value={watch('paidReason') || []}
+                        onChange={(selectedValues) => setValue('paidReason', selectedValues)}
+                        multi={true}
                     />
                 </div>
 

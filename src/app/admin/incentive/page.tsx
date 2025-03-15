@@ -6,6 +6,8 @@ import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+import { Pencil, Trash2 } from 'lucide-react';
+import { getListOfAllIncentive } from '@/app/api-calls/admin/api';
 
 const IncentivePage = () => {
     const [incentiveData, setIncentiveData] = useState([]);
@@ -20,29 +22,8 @@ const IncentivePage = () => {
     const fetchIncentiveList = async () => {
         setIsLoading(true);
         try {
-            const response = [
-                {
-                    incentiveId: 'INC123456',
-                    applicableLabel: 'Example Label 1',
-                    circle: 'Circle A',
-                    division: 'Division 1',
-                    subDivision: 'SubDivision A',
-                    section: 'Section 1',
-                    currentPercentage: '10%',
-                    arrearPercentage: '5%',
-                },
-                {
-                    incentiveId: 'INC654321',
-                    applicableLabel: 'Example Label 2',
-                    circle: 'Circle B',
-                    division: 'Division 2',
-                    subDivision: 'SubDivision B',
-                    section: 'Section 2',
-                    currentPercentage: '15%',
-                    arrearPercentage: '8%',
-                },
-            ];
-            setIncentiveData(response);
+            // const response = await getListOfAllIncentive();
+            // setIncentiveData(response.data);
         } catch (error) {
             console.error('Error fetching top-up history:', error);
             toast.error('Failed to load top-up history.');
@@ -53,29 +34,50 @@ const IncentivePage = () => {
 
     const columns = useMemo(() => [
         { label: 'Incentive ID', key: 'incentiveId', sortable: true },
-        { label: 'Applicable Label', key: 'applicableLabel', sortable: true },
-        { label: 'Circle', key: 'circle', sortable: true },
-        { label: 'Division', key: 'division', sortable: true },
-        { label: 'Sub Division', key: 'subDivision', sortable: true },
-        { label: 'Section', key: 'section', sortable: true },
+        { label: 'Office Structure Level', key: 'officeStructureLevel', sortable: true },
+        { label: 'Office Structure Name', key: 'officeStructureName', sortable: true },
         { label: 'Current %', key: 'currentPercentage', sortable: true },
         { label: 'Arrear %', key: 'arrearPercentage', sortable: true },
-        { label: 'Action', key: 'action', sortable: false }
     ], []);
 
+    const [selectedRow, setSelectedRow] = useState<any | null>(null);
+
+    const handleRowSelection = (row: any) => {
+        console.log(row)
+        setSelectedRow(row)
+    }
+
+    const getSelectedRowButton = () => {
+        return <div className="space-x-2">
+            <Button variant='destructive' onClick={() => { }}>
+                <Trash2 className='cursor-pointer h-5 w-5' />Delete
+            </Button>
+            <Button variant='default' onClick={() => { }}>
+                <Pencil className='cursor-pointer h-5 w-5' />Edit Agency
+            </Button>
+        </div>
+    }
+
     return (
-        <AuthUserReusableCode pageTitle="Incentive">
+        <AuthUserReusableCode pageTitle="Incentive" isLoading={isLoading}>
             <div className="overflow-x-auto">
                 <ReactTable
                     data={incentiveData}
                     columns={columns}
                     hideSearchAndOtherButtons
+                    isSelectable={true}
+                    onRowSelect={handleRowSelection}
+                    onRowSelectButtons={
+                        getSelectedRowButton()
+                    }
+                    selectedRow={selectedRow}
+                    avoidSrNo
                 />
             </div>
 
             <div className="mt-4 text-right">
                 <Button variant="default" onClick={() => { router.push('/admin/incentive/add') }} size="lg">
-                    Add Incentive
+                    Add Collector Incentive
                 </Button>
             </div>
         </AuthUserReusableCode>

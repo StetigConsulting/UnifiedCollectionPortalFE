@@ -1,5 +1,5 @@
 import api from "@/lib/axios";
-import { CreateColorCodingBillBasis, CreateColorCodingLogic, ECLFlaggedCustomerRule, officeStructureLevelInterface, ReceiptForPostpaid } from "@/lib/interface";
+import { CreateColorCodingBillBasis, CreateColorCodingLogic, CreateUserInterface, DeniedToPayInterface, ECLFlaggedCustomerRule, officeStructureLevelInterface, ReceiptForPostpaid } from "@/lib/interface";
 
 export const getOfficeStrutureData = async (id: number) => {
     try {
@@ -182,6 +182,71 @@ const getBusinessRuleDateById = async (id: string) => {
         return response.data;
     } catch (error: any) {
 
+        throw error?.response?.data
+    }
+}
+
+export const getListOfAllUsers = async () => {
+    try {
+        const response = await api.get(`/v1/tp-users/user-info`);
+        return response.data;
+    } catch (error: any) {
+
+        throw error?.response?.data
+    }
+}
+
+export const getAllUserRoles = async () => {
+    try {
+        const response = await api.get(`/v1/user-roles/`);
+        return response.data;
+    } catch (error: any) {
+
+        throw error?.response?.data
+    }
+}
+
+export const createUser = async (data: CreateUserInterface) => {
+    try {
+        const response = await api.post(`/v1/tp-users/`, data);
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
+export const getDeniedToPayData = async () => {
+    try {
+        const response = await api.get(`/v1/denied-to-pay-reasons`);
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
+export const getPaidReason = async () => {
+    try {
+        const response = await api.get(`/v1/paid-reasons`);
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
+export const createDeniedToPay = async (data: DeniedToPayInterface) => {
+    try {
+        const response = await api.post(`/v1/business-rules/`, data);
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
+export const getListOfAllIncentive = async () => {
+    try {
+        const response = await api.get(`/v1/paid-reasons`);
+        return response.data;
+    } catch (error: any) {
         throw error?.response?.data
     }
 }

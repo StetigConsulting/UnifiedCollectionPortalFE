@@ -203,7 +203,7 @@ const Recharge = () => {
                         label="Amount"
                         errors={errors.amount}
                         containerClass=""
-                        type='number'
+                        // type='number'
                         required
                         placeholder="Enter Amount"
                         {...register("amount", { valueAsNumber: true })}

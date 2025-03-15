@@ -592,9 +592,9 @@ export const paymentModeSchema = z.object({
 });
 
 export const deniedToPaySchema = z.object({
-  deniedReason: z.array(z.string()).min(1, { message: "Please select at least one reason" }),
-  paidReason: z.string().nonempty({ message: "Please select a paid reason" }),
-  maxCountPerDay: z.number().min(1, { message: "Max count must be greater than or equal to 1" }),
+  deniedReason: z.array(z.string()).min(1, { message: "Please select at least one denied reason" }),
+  paidReason: z.array(z.string()).min(1, { message: "Please select at least one paid" }),
+  maxCountPerDay: z.number({ invalid_type_error: 'Max Count is required' }).min(1, { message: "Max count must be greater than or equal to 1" }),
 });
 
 export const nonEnergyTypeSchema = z.object({
@@ -972,7 +972,9 @@ export const addModeOfPaymentSchema = z.object({
 export type AddModeOfPaymentFormData = z.infer<typeof addModeOfPaymentSchema>;
 
 export const createUserSchema = z.object({
-  userRole: z.string().min(1, "User Role is required"),
+  userRole: z.number({ invalid_type_error: "User Role is required" })
+    .int("User Role must be an integer")
+    .min(1, "User Role is required"),
   name: z.string().min(2, "Name must be at least 2 characters"),
   phoneNumber: z.string().length(10, "Phone number must be exactly 10 digits"),
 });
