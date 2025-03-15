@@ -7,10 +7,10 @@ import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
 import { getErrorMessage, tableDataPerPage } from '@/lib/utils';
-import { downloadPdfForBillingReport, getBillingReport } from '@/app/api-calls/report/api';
+import { downloadBillingReport, getBillingReport } from '@/app/api-calls/report/api';
 import { useSession } from 'next-auth/react';
 
-const CCWalletHistory = () => {
+const BillingReport = () => {
 
     const { data: session } = useSession()
     const currentUserId = session?.user?.userId
@@ -45,6 +45,8 @@ const CCWalletHistory = () => {
             setIsLoading(false);
         } catch (error) {
             console.log(getErrorMessage(error))
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -56,22 +58,28 @@ const CCWalletHistory = () => {
     const handleDownloadPdf = async () => {
         try {
             setIsLoading(true);
-            const response = await downloadPdfForBillingReport('pdf', currentUserId);
-            console.log(response);
-            const pdfBlob = new Blob([response], { type: 'application/pdf' });
+            const response = await downloadBillingReport('pdf');
+            console.log(response.headers['content-disposition']);
+            const rawDisposition = response.request.getResponseHeader('Content-Disposition');
+            console.log('Raw Content-Disposition:', rawDisposition);
+            const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
             const pdfUrl = window.URL.createObjectURL(pdfBlob);
 
-            const link = document.createElement('a');
-            link.href = pdfUrl;
-            link.download = `billing_report_${currentUserId}.pdf`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            handleDownload(pdfUrl);
         } catch (error) {
             toast.error(getErrorMessage(error))
         } finally {
             setIsLoading(false);
         }
+    }
+
+    const handleDownload = (contentUrl: any) => {
+        const link = document.createElement('a');
+        link.href = contentUrl;
+        link.download = `billing_report_${currentUserId}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 
     const handlePageChange = (page: number) => {
@@ -96,4 +104,4 @@ const CCWalletHistory = () => {
     );
 };
 
-export default CCWalletHistory;
+export default BillingReport;

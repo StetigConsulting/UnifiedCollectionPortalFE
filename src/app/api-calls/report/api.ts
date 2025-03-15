@@ -13,15 +13,12 @@ export const getBillingReport = async (data: any, user_id: number) => {
     }
 };
 
-export const downloadPdfForBillingReport = async (data: any, user_id: number) => {
+export const downloadBillingReport = async (type: any) => {
     try {
-        const response = await api.post('/v1/energy-reports/billing-report/download/pdf', {}, {
-            headers: {
-                "user-id": user_id,
-                responseType: 'arraybuffer'
-            },
+        const response = await api.post(`/v1/energy-reports/billing-report/download/${type}`, {
+            responseType: 'blob'
         });
-        return response.data;
+        return response;
     } catch (error: any) {
         throw error?.response?.data
     }
