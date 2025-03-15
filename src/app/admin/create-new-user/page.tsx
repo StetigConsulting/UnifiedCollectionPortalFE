@@ -7,6 +7,7 @@ import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import { urlsListWithTitle } from '@/lib/utils';
+import { getListOfAllUsers } from '@/app/api-calls/admin/api';
 
 
 const CreateUserConfiguration = () => {
@@ -25,11 +26,11 @@ const CreateUserConfiguration = () => {
     const fetchData = async () => {
         setIsLoading(true);
         try {
-            // const data = await fetchUsers();
-            // setUsers(data);
+            const data = await getListOfAllUsers();
+            console.log('data', data.data);
+            // setUsers(data?.data);
         } catch (error) {
             console.error('Error fetching users:', error);
-            toast.error('Error fetching users');
         } finally {
             setIsLoading(false);
         }

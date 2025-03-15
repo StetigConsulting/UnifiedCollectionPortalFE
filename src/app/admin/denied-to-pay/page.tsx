@@ -7,25 +7,44 @@ import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import { urlsListWithTitle } from '@/lib/utils';
+import { getDeniedToPayData, getPaidReason } from '@/app/api-calls/admin/api';
 
 const DeniedToPayConfiguration = () => {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [deniedToPayData, setDeniedToPayData] = useState([]);
+    const [paidReason, setPaidReason] = useState([]);
 
-    const columns = [
+    const deniedToPayColumns = [
         { label: 'Sr. No.', key: 'id', sortable: true },
         { label: 'Denied To Pay Reason', key: 'deniedReason', sortable: true },
         { label: 'Updated Date for Denied to Pay Reasons', key: 'deniedDate', sortable: true },
-        { label: 'Paid Reasons', key: 'paidReason', sortable: true },
-        { label: 'Updated Date for Paid Reasons', key: 'paidDate', sortable: true },
     ];
 
-    const fetchData = async () => {
+    const paidReasonColumns = [
+        { label: 'Sr. No.', key: 'id', sortable: true },
+        { label: 'Denied To Pay Reason', key: 'deniedReason', sortable: true },
+        { label: 'Updated Date for Denied to Pay Reasons', key: 'deniedDate', sortable: true },
+    ];
+
+    const fetchDeniedToPay = async () => {
         setIsLoading(true);
         try {
-            // const data = await fetchDeniedToPayData();
-            // setDeniedToPayData(data);
+            const data = await getDeniedToPayData();
+            setDeniedToPayData(data.data);
+        } catch (error) {
+            console.error('Error fetching denied to pay data:', error);
+            toast.error('Error fetching denied to pay data');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const fetchPaidReason = async () => {
+        setIsLoading(true);
+        try {
+            const data = await getPaidReason();
+            setDeniedToPayData(data.data);
         } catch (error) {
             console.error('Error fetching denied to pay data:', error);
             toast.error('Error fetching denied to pay data');
@@ -35,7 +54,8 @@ const DeniedToPayConfiguration = () => {
     };
 
     useEffect(() => {
-        fetchData();
+        fetchDeniedToPay();
+        fetchPaidReason();
     }, []);
 
     return (
@@ -49,9 +69,18 @@ const DeniedToPayConfiguration = () => {
                     </Button>
                 </div>
 
+                <p className='font-bold mb-4'>Denied To Pay</p>
                 <ReactTable
                     data={deniedToPayData}
-                    columns={columns}
+                    columns={deniedToPayColumns}
+                    hideSearchAndOtherButtons
+                    avoidSrNo
+                />
+
+                <p className='font-bold my-4'>Paid Reasons</p>
+                <ReactTable
+                    data={paidReason}
+                    columns={paidReasonColumns}
                     hideSearchAndOtherButtons
                     avoidSrNo
                 />

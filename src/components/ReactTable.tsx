@@ -191,7 +191,7 @@ const ReactTable = <T extends Record<string, any>>({
 
     return (
         <div className={`${className}`}>
-            {!hideSearchAndOtherButtons &&
+            {!hideSearchAndOtherButtons ?
                 <div className=''>
                     {additionalData && additionalData}
                     <div className="flex justify-between items-center py-4">
@@ -218,6 +218,11 @@ const ReactTable = <T extends Record<string, any>>({
 
                     {additionalDataBetweenTableAndAction && additionalDataBetweenTableAndAction}
                 </div>
+                : <>{isSelectable && selectedRow !== null && (
+                    <div className="mb-4">
+                        {onRowSelectButtons}
+                    </div>
+                )}</>
             }
             <div className='overflow-x-auto w-full'>
                 <table border={1} width="100%" cellPadding={5} className='w-full caption-bottom text-sm min-w-full border border-gray-200 divide-y divide-gray-200'>

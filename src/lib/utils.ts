@@ -48,7 +48,7 @@ export const levelWIthIdInt = {
 }
 
 export function numberToWords(num: number): string {
-  if (num === 0) return "zero";
+  if (num === 0 || Number.isNaN(num)) return "zero";
 
   const belowTwenty = [
     "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",
@@ -57,7 +57,7 @@ export function numberToWords(num: number): string {
   const tens = [
     "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety",
   ];
-  const thousands = ["", "thousand", "million", "billion"];
+  const thousands = ["", "thousand", "lakh", "crore"];
 
   const convertToWords = (n: number): string => {
     if (n === 0) return "";
@@ -75,20 +75,31 @@ export function numberToWords(num: number): string {
     return "";
   };
 
+  let integerPart = Math.floor(num);
+  let decimalPart = Math.round((num % 1) * 100);
   let result = "";
   let i = 0;
 
-  while (num > 0) {
-    const chunk = num % 1000;
+  while (integerPart > 0) {
+    const chunk = integerPart % 1000;
     if (chunk > 0) {
       result = convertToWords(chunk) + (thousands[i] ? " " + thousands[i] : "") + (result ? " " + result : "");
     }
-    num = Math.floor(num / 1000);
+    integerPart = Math.floor(integerPart / 1000);
     i++;
   }
 
-  return result.trim();
+  result = result.trim();
+  result += " rupees";
+
+  if (decimalPart > 0) {
+    const paisaWords = convertToWords(decimalPart);
+    result += " and " + paisaWords + " paise";
+  }
+
+  return result;
 }
+
 
 export const SIGNIN = '/auth/signin';
 export const ROOT = '/dashboard';
