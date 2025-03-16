@@ -134,6 +134,14 @@ export const listOfUrlForScopes = [
 ]
 
 export const urlsListWithTitle = {
+  addCollectorForm: {
+    url: '/agency/add-collector',
+    title: 'Add Collector'
+  },
+  viewCollectorList: {
+    url: '/agency/view-collector',
+    title: 'View Collector'
+  },
   agencyRecharge: {
     url: '/department/recharge',
     title: 'Recharge'

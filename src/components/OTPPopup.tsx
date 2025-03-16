@@ -10,6 +10,7 @@ import { handleCredentialsSignin } from '@/app/actions/authActions';
 import { getSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { urlsListWithTitle } from '@/lib/utils';
+import { checkIfUserHasAccessToPage } from '@/helper';
 
 interface OTPPopupProps {
     isOpen: boolean;
@@ -78,7 +79,19 @@ const OTPPopup: React.FC<OTPPopupProps> = ({ sendOTP, setResendTimer, isOpen, se
                 })
                 const session = await getSession();
                 console.log("Sign-in successful:", session?.user);
-                router.push(urlsListWithTitle.dashboard.url);
+                if (checkIfUserHasAccessToPage({
+                    backendScope: session?.user?.userScopes,
+                    currentUrl: urlsListWithTitle.dashboard.url
+                }))
+                    router.push(urlsListWithTitle.dashboard.url);
+                else if (checkIfUserHasAccessToPage({
+                    backendScope: session?.user?.userScopes,
+                    currentUrl: urlsListWithTitle.viewCollectorList.url
+                }))
+                    router.push(urlsListWithTitle.viewCollectorList.url);
+                else {
+                    router.push(urlsListWithTitle.addCollectorForm.url);
+                }
             } else {
                 toast.error(result.message)
             }

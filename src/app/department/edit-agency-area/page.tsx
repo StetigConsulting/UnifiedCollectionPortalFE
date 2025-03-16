@@ -159,6 +159,7 @@ const EditAgencyArea = () => {
             }
             const response = await editAgencyAreaById(payload);
             toast.success("Agency details updated successfully!");
+            getAgencyList()
             reset()
         } catch (error) {
             toast.error("Failed to update agency details.");
