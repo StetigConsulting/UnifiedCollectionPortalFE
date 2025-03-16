@@ -414,9 +414,8 @@ const AddCounterCollector = () => {
                         errors={errors.workingLevel}
                     />
                     {
-                        formData.workingLevel != null && ((agencyWorkingLevel == levelNameMappedWithId?.CIRCLE) ||
-                            (formData.workingLevel == levelNameMappedWithId?.CIRCLE ||
-                                formData.workingLevel == levelNameMappedWithId?.DIVISION)) &&
+                        formData.workingLevel != null && !Number.isNaN(formData.workingLevel) && (
+                            (agencyWorkingLevel == levelNameMappedWithId?.CIRCLE)) &&
                         <CustomizedMultipleSelectInputWithLabelNumber
                             label="Circle"
                             errors={errors.circle}
@@ -434,11 +433,13 @@ const AddCounterCollector = () => {
                         />
                     }
                     {
-                        formData.workingLevel != null &&
+                        formData.workingLevel != null && !Number.isNaN(formData.workingLevel) &&
                         ((agencyWorkingLevel == levelNameMappedWithId?.DIVISION) ||
                             (formData.workingLevel == levelNameMappedWithId?.SUB_DIVISION ||
                                 formData.workingLevel == levelNameMappedWithId?.DIVISION ||
                                 formData.workingLevel == levelNameMappedWithId?.SECTION)) &&
+                        (agencyWorkingLevel != levelNameMappedWithId?.SUB_DIVISION
+                            && agencyWorkingLevel != levelNameMappedWithId?.SECTION) &&
                         <CustomizedMultipleSelectInputWithLabelNumber
                             label="Division"
                             errors={errors.division}
@@ -458,9 +459,10 @@ const AddCounterCollector = () => {
 
                     {
                         formData.workingLevel != null
-                        && ((agencyWorkingLevel == levelNameMappedWithId?.SUB_DIVISION)
-                            || (formData.workingLevel == levelNameMappedWithId?.SECTION
-                                || formData.workingLevel == levelNameMappedWithId?.SUB_DIVISION)) && (
+                        && ((agencyWorkingLevel == levelNameMappedWithId?.SUB_DIVISION) ||
+                            (formData.workingLevel == levelNameMappedWithId?.SECTION
+                                || formData.workingLevel == levelNameMappedWithId?.SUB_DIVISION)) &&
+                        (agencyWorkingLevel != levelNameMappedWithId?.SECTION) && (
                             <CustomizedMultipleSelectInputWithLabelNumber
                                 label="Sub Division"
                                 errors={errors.subDivision}
@@ -476,9 +478,8 @@ const AddCounterCollector = () => {
                                 }}
                             />)
                     }
-                    {formData.workingLevel != null
-                        && ((agencyWorkingLevel == levelNameMappedWithId?.SUB_DIVISION) ||
-                            formData.workingLevel == levelNameMappedWithId?.SECTION) && (
+                    {formData.workingLevel != null &&
+                        formData.workingLevel == levelNameMappedWithId?.SECTION && (
                             <CustomizedMultipleSelectInputWithLabelNumber
                                 label="Section"
                                 errors={errors.section}
