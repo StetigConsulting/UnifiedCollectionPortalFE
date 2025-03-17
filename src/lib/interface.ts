@@ -246,6 +246,7 @@ export interface CreateUserInterface {
 }
 
 export interface DeniedToPayInterface {
+    id?: number;
     discom_id: number;
     office_structure_id: number;
     rule_level: string;

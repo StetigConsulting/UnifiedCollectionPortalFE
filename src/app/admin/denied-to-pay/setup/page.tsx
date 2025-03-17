@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { deniedToPaySchema } from "@/lib/zod";
@@ -13,8 +13,10 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { z } from "zod";
-import { createDeniedToPay } from "@/app/api-calls/admin/api";
+import { createDeniedToPay, fetchDeniedToPayData, getDeniedToPayData, getPaidReason, updateDeniedToPay } from "@/app/api-calls/admin/api";
 import { useSession } from "next-auth/react";
+import { DeniedToPayInterface } from "@/lib/interface";
+import { urlsListWithTitle } from "@/lib/utils";
 
 type FormData = z.infer<typeof deniedToPaySchema>;
 
@@ -22,10 +24,12 @@ const SetupDeniedToPay = () => {
     const router = useRouter();
     const { data: session } = useSession();
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [deniedToPayData, setDeniedToPayData] = useState([]);
+    const [paidReason, setPaidReason] = useState([]);
+    const [existingId, setExistingId] = useState<number | null>(null);
 
-    const [deniedToPayReasons, setDeniedToPayReasons] = useState([]);
-
-    const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<FormData>({
+    const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm<FormData>({
         resolver: zodResolver(deniedToPaySchema),
     });
 
@@ -34,7 +38,7 @@ const SetupDeniedToPay = () => {
     const onSubmit = async (data: FormData) => {
         console.log("Form Data:", data);
         try {
-            let payload = {
+            let payload: DeniedToPayInterface = {
                 "discom_id": session?.user?.discomId,
                 "office_structure_id": session?.user?.discomId,
                 "rule_level": "Discomwise",
@@ -44,12 +48,22 @@ const SetupDeniedToPay = () => {
                     "denied_to_pay_reasons": data.deniedReason,
                     "paid_reasons": data.paidReason
                 }
-
             }
             setIsSubmitting(true);
 
-            const response = await createDeniedToPay(payload);
-            toast.success("Form submitted successfully!");
+            if (existingId) {
+                payload.id = existingId;
+            }
+
+            let response = null;
+            if (existingId) {
+                response = await updateDeniedToPay(payload)
+            } else {
+                response = await createDeniedToPay(payload);
+            }
+
+            toast.success(response.message);
+            router.push(urlsListWithTitle.deniedToPay.url);
         } catch (error) {
             toast.error("Failed to submit the form.");
         } finally {
@@ -61,8 +75,52 @@ const SetupDeniedToPay = () => {
         router.back();
     };
 
+    const fetchDeniedToPay = async () => {
+        setIsLoading(true);
+        try {
+            const data = await getDeniedToPayData();
+            setDeniedToPayData(data.data.map((item) => ({ label: item.reason, value: item.reason })));
+        } catch (error) {
+            console.error('Error fetching denied to pay data:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const fetchPaidReason = async () => {
+        setIsLoading(true);
+        try {
+            const data = await getPaidReason();
+            setPaidReason(data.data.map((item) => ({ label: item.reason, value: item.reason })));
+        } catch (error) {
+            console.error('Error fetching denied to paid reason:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const fetchExistingDataForDeniedToPay = async () => {
+        setIsLoading(true);
+        try {
+            const data = await fetchDeniedToPayData(session.user.discomId);
+            const existingData = data.data[0];
+            setExistingId(existingData.id);
+            setValue('maxCountPerDay', existingData.json_rule.max_limit);
+            setValue('deniedReason', existingData.json_rule.denied_to_pay_reasons);
+            setValue('paidReason', existingData.json_rule.paid_reasons);
+        } catch (error) {
+            console.error('Error fetching existing denied to pay data:', error);
+        }
+    }
+
+    useEffect(() => {
+        fetchDeniedToPay();
+        fetchPaidReason();
+        fetchExistingDataForDeniedToPay();
+    }, []);
+
     return (
-        <AuthUserReusableCode pageTitle="Denied to Pay">
+        <AuthUserReusableCode pageTitle="Denied to Pay" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-4">
 
                 <div className="space-y-2">
@@ -81,7 +139,7 @@ const SetupDeniedToPay = () => {
                         placeholder="Select reasons"
                         errors={errors.deniedReason}
                         required={true}
-                        list={deniedToPayReasons}
+                        list={deniedToPayData}
                         value={watch('deniedReason') || []}
                         onChange={(selectedValues) => setValue('deniedReason', selectedValues)}
                         multi={true}
@@ -94,7 +152,7 @@ const SetupDeniedToPay = () => {
                         placeholder="Select paid reasons"
                         errors={errors.paidReason}
                         required={true}
-                        list={[]}
+                        list={paidReason}
                         value={watch('paidReason') || []}
                         onChange={(selectedValues) => setValue('paidReason', selectedValues)}
                         multi={true}
