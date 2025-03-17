@@ -638,13 +638,126 @@ export const colorCodingEclSchema = z.object({
 });
 
 export const addIncentiveSchema = z.object({
-  applicableLevel: z.string().min(1, 'Applicable level is required'),
-  circle: z.string().min(1, 'Circle is required'),
-  division: z.string().min(1, 'Division is required'),
-  subDivision: z.string().min(1, 'Sub Division is required'),
-  section: z.string().min(1, 'Section is required'),
-  currentPercentage: z.number().min(0, 'Current percentage must be a positive number'),
-  arrearPercentage: z.number().min(0, 'Arrears percentage must be a positive number'),
+  incentives: z.array(
+    z.object({
+      collectorType: z.string().min(1, 'Collector type is required'),
+      applicableLevel: z.number({
+        invalid_type_error: 'Applicable level is required',
+      }).min(1, 'Applicable level is required'),
+      circle: z.array(z.number()).optional(),
+      division: z.array(z.number()).optional(),
+      subDivision: z.array(z.number()).optional(),
+      section: z.array(z.number()).optional(),
+      addIncentiveOn: z.array(z.number()).min(1, 'At least one incentive type must be selected'),
+      currentPercentage: z.number().min(0, 'Current percentage must be a positive number'),
+      arrearPercentage: z.number().min(0, 'Arrears percentage must be a positive number'),
+      levelMapWithId: z.any(),
+    })
+  ).nonempty('At least one receipt entry must be added')
+}).superRefine((data, ctx) => {
+
+  // data.receipts.forEach((receipt, index) => {
+  //   if (configRule === 'Levelwise') {
+  //     if (!receipt.applicableLevel) {
+  //       ctx.addIssue({
+  //         path: [`receipts`, index, 'applicableLevel'],
+  //         message: 'Applicable Level is required',
+  //         code: z.ZodIssueCode.custom,
+  //       });
+  //     } else {
+  //       if (receipt.applicableLevel === receipt.levelMapWithId.SECTION) {
+  //         if (!receipt.circle?.length) {
+  //           ctx.addIssue({
+  //             path: [`receipts`, index, 'circle'],
+  //             message: 'Circle is required',
+  //             code: z.ZodIssueCode.custom,
+  //           });
+  //         }
+  //         if (!receipt.division?.length) {
+  //           ctx.addIssue({
+  //             path: [`receipts`, index, 'division'],
+  //             message: 'Division is required',
+  //             code: z.ZodIssueCode.custom,
+  //           });
+  //         }
+  //         if (!receipt.subDivision?.length) {
+  //           ctx.addIssue({
+  //             path: [`receipts`, index, 'subDivision'],
+  //             message: 'Sub Division is required',
+  //             code: z.ZodIssueCode.custom,
+  //           });
+  //         }
+  //         if (!receipt.section?.length) {
+  //           ctx.addIssue({
+  //             path: [`receipts`, index, 'section'],
+  //             message: 'Section is required',
+  //             code: z.ZodIssueCode.custom,
+  //           });
+  //         }
+  //       }
+  //       else if (receipt.applicableLevel === receipt.levelMapWithId.SUB_DIVISION) {
+  //         if (!receipt.circle?.length) {
+  //           ctx.addIssue({
+  //             path: [`receipts`, index, 'circle'],
+  //             message: 'Circle is required',
+  //             code: z.ZodIssueCode.custom,
+  //           });
+  //         }
+  //         if (!receipt.division?.length) {
+  //           ctx.addIssue({
+  //             path: [`receipts`, index, 'division'],
+  //             message: 'Division is required',
+  //             code: z.ZodIssueCode.custom,
+  //           });
+  //         }
+  //         if (!receipt.subDivision?.length) {
+  //           ctx.addIssue({
+  //             path: [`receipts`, index, 'subDivision'],
+  //             message: 'Sub Division is required',
+  //             code: z.ZodIssueCode.custom,
+  //           });
+  //         }
+  //       } else if (receipt.applicableLevel === receipt.levelMapWithId.DIVISION) {
+  //         if (!receipt.circle?.length) {
+  //           ctx.addIssue({
+  //             path: [`receipts`, index, 'circle'],
+  //             message: 'Circle is required',
+  //             code: z.ZodIssueCode.custom,
+  //           });
+  //         }
+  //         if (!receipt.division?.length) {
+  //           ctx.addIssue({
+  //             path: [`receipts`, index, 'division'],
+  //             message: 'Division is required',
+  //             code: z.ZodIssueCode.custom,
+  //           });
+  //         }
+  //       } else if (receipt.applicableLevel === receipt.levelMapWithId.CIRCLE) {
+  //         if (!receipt.circle?.length) {
+  //           ctx.addIssue({
+  //             path: [`receipts`, index, 'circle'],
+  //             message: 'Circle is required',
+  //             code: z.ZodIssueCode.custom,
+  //           });
+  //         }
+  //       }
+  //     }
+  //   }
+  //   if (receipt.receiptsPerMonth <= 0) {
+  //     ctx.addIssue({
+  //       path: [`receipts`, index, 'receiptsPerMonth'],
+  //       message: 'Receipts per month must be greater than 0',
+  //       code: z.ZodIssueCode.custom,
+  //     });
+  //   }
+  //   if (receipt.receiptsPerDay <= 0) {
+  //     ctx.addIssue({
+  //       path: [`receipts`, index, 'receiptsPerDay'],
+  //       message: 'Receipts per day must be greater than 0',
+  //       code: z.ZodIssueCode.custom,
+  //     });
+  //   }
+  // });
 });
 
 

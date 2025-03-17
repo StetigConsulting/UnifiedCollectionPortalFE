@@ -39,7 +39,7 @@ export function NavMain({
   session: Session
 }) {
   const pathname = usePathname();
-
+  console.log('session', pathname.split('/')[0]);
   return (
     <SidebarMenu>
       {items.map((item) => {
@@ -66,7 +66,7 @@ export function NavMain({
           >
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
-                {item.url ? (
+                {item.url != '#' ? (
                   <a href={item.url}>
                     <SidebarMenuButton
                       tooltip={item.title}
