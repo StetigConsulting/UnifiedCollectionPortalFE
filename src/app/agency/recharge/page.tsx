@@ -92,15 +92,14 @@ const RechargeEntry = () => {
             toast.success("Agent recharged successfully");
             console.log("API Response:", response);
             getAgencyBalance()
-            location.reload()
-            // reset();
+            // location.reload()
+            reset();
         } catch (error) {
-            // console.error("Failed to edit agency:", error.data[Object.keys(error.data)[0]]);
             let errorMessage = getErrorMessage(error);
             console.log(errorMessage)
             toast.error('Error: ' + errorMessage)
         } finally {
-            // setIsSubmitting(false);
+            setIsSubmitting(false);
         }
     };
 
