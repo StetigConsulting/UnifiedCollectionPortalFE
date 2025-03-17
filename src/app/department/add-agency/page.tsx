@@ -2,6 +2,7 @@
 
 import {
   createAgency,
+  getAllCollectionPaymentMode,
   getAllNonEnergyTypes,
   getAllPaymentModes,
   getLevels,
@@ -183,30 +184,30 @@ const AddAgency = () => {
 
   useEffect(() => {
     getWorkingLevel()
-    getAllPaymentModes()
-      .then((data) => {
-        setPaymentMethods(
-          data?.data
-            ?.filter((ite) => ite.mode_type == "Security Deposit")
-            ?.map((ite) => {
-              return {
-                label: ite.mode_name,
-                value: ite.id,
-              };
-            })
-        );
-        setPermissions(
-          data?.data
-            ?.filter((ite) => ite.mode_type == "Collection")
-            ?.map((ite) => {
-              return {
-                label: ite.mode_name,
-                value: ite.id,
-              };
-            })
-        );
-      })
-      .catch((err) => { })
+    getAllPaymentModes().then((data) => {
+      setPermissions(
+        data?.data
+          ?.filter((ite) => ite.mode_type == "Collection")
+          ?.map((ite) => {
+            return {
+              label: ite.mode_name,
+              value: ite.id,
+            };
+          })
+      );
+    }).catch((err) => { })
+    getAllCollectionPaymentMode().then((data) => {
+      setPaymentMethods(
+        data?.data
+          ?.filter((ite) => ite.mode_type == "Security Deposit")
+          ?.map((ite) => {
+            return {
+              label: ite.mode_name,
+              value: ite.id,
+            };
+          })
+      );
+    }).catch((err) => { })
     getAllNonEnergyTypes().then((data) => {
       setNonEnergyTypes(
         data?.data?.map((ite) => {
