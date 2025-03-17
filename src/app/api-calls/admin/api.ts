@@ -242,6 +242,15 @@ export const createDeniedToPay = async (data: DeniedToPayInterface) => {
     }
 }
 
+export const updateDeniedToPay = async (data: DeniedToPayInterface) => {
+    try {
+        const response = await api.put(`/v1/business-rules/`, data);
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
 export const getListOfAllIncentive = async () => {
     try {
         const response = await api.get(`/v1/paid-reasons`);
@@ -250,6 +259,15 @@ export const getListOfAllIncentive = async () => {
         throw error?.response?.data
     }
 }
+
+export const fetchDeniedToPayData = async (id: number) => {
+    try {
+        const response = await api.get(`/v1/business-rules/discom/${id}/rule-name/DENIED_TO_PAY`);
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+};
 
 export {
     createReceiptForPostpaid, getListOfReceiptForPostpaid, deleteBusinessRule, getReceiptForPostpaidById,

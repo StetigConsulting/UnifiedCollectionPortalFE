@@ -50,6 +50,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                         }
                     });
 
+                    console.log('userRoleResponse', userRoleResponse)
+
                     if (userRoleResponse.ok) {
                         const roleData = await userRoleResponse.json();
                         user.id = String(roleData?.data?.id);

@@ -9,11 +9,18 @@ const getAllPaymentModes = async () => {
     const response = await api.get(`/v1/payment-modes/discom/${session?.user?.discomId}`);
     return response.data;
   } catch (error: any) {
-
     throw error?.response?.data
   }
 };
 
+export const getAllCollectionPaymentMode = async () => {
+  try {
+    const response = await api.get(`/v1/payment-modes/`);
+    return response.data;
+  } catch (error: any) {
+    throw error?.response?.data
+  }
+};
 
 const getAllNonEnergyTypes = async () => {
   try {

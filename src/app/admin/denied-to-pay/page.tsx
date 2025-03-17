@@ -16,14 +16,12 @@ const DeniedToPayConfiguration = () => {
     const [paidReason, setPaidReason] = useState([]);
 
     const deniedToPayColumns = [
-        { label: 'Sr. No.', key: 'id', sortable: true },
-        { label: 'Denied To Pay Reason', key: 'deniedReason', sortable: true },
+        { label: 'Denied To Pay Reason', key: 'reason', sortable: true },
         { label: 'Updated Date for Denied to Pay Reasons', key: 'deniedDate', sortable: true },
     ];
 
     const paidReasonColumns = [
-        { label: 'Sr. No.', key: 'id', sortable: true },
-        { label: 'Denied To Pay Reason', key: 'deniedReason', sortable: true },
+        { label: 'Denied To Pay Reason', key: 'reason', sortable: true },
         { label: 'Updated Date for Denied to Pay Reasons', key: 'deniedDate', sortable: true },
     ];
 
@@ -34,7 +32,7 @@ const DeniedToPayConfiguration = () => {
             setDeniedToPayData(data.data);
         } catch (error) {
             console.error('Error fetching denied to pay data:', error);
-            toast.error('Error fetching denied to pay data');
+            // toast.error('Error fetching denied to pay data');
         } finally {
             setIsLoading(false);
         }
@@ -44,10 +42,10 @@ const DeniedToPayConfiguration = () => {
         setIsLoading(true);
         try {
             const data = await getPaidReason();
-            setDeniedToPayData(data.data);
+            setPaidReason(data.data);
         } catch (error) {
             console.error('Error fetching denied to pay data:', error);
-            toast.error('Error fetching denied to pay data');
+            // toast.error('Error fetching denied to pay data');
         } finally {
             setIsLoading(false);
         }
@@ -70,20 +68,24 @@ const DeniedToPayConfiguration = () => {
                 </div>
 
                 <p className='font-bold mb-4'>Denied To Pay</p>
+                {/* <div className='h-[200px] overflow-auto'> */}
                 <ReactTable
                     data={deniedToPayData}
                     columns={deniedToPayColumns}
                     hideSearchAndOtherButtons
-                    avoidSrNo
+                // avoidSrNo
                 />
+                {/* </div> */}
 
                 <p className='font-bold my-4'>Paid Reasons</p>
+                {/* <div className='h-[200px] overflow-auto'> */}
                 <ReactTable
                     data={paidReason}
                     columns={paidReasonColumns}
                     hideSearchAndOtherButtons
-                    avoidSrNo
+                // avoidSrNo
                 />
+                {/* </div> */}
 
                 <div className="mt-4 p-2 bg-gray-100 text-center text-sm rounded-md">
                     Denied To Pay Maximum Count Per Day for Each Collector: <strong>3</strong>
