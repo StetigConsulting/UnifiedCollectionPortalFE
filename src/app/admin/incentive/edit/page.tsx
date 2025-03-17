@@ -22,26 +22,6 @@ const EditIncentivePage = () => {
         resolver: zodResolver(addIncentiveSchema),
     });
 
-    useEffect(() => {
-        const fetchedData = {
-            applicableLevel: 'Level 1',
-            circle: 'Circle 1',
-            division: 'Division 1',
-            subDivision: 'SubDivision A',
-            section: 'Section 1',
-            currentPercentage: 5,
-            arrearPercentage: 10,
-        };
-
-        setValue('applicableLevel', fetchedData.applicableLevel);
-        setValue('circle', fetchedData.circle);
-        setValue('division', fetchedData.division);
-        setValue('subDivision', fetchedData.subDivision);
-        setValue('section', fetchedData.section);
-        setValue('currentPercentage', fetchedData.currentPercentage);
-        setValue('arrearPercentage', fetchedData.arrearPercentage);
-    }, []);
-
     const handleSave = async (data: FormData) => {
         setIsSubmitting(true);
         try {
@@ -72,7 +52,8 @@ const EditIncentivePage = () => {
 
     return (
         <AuthUserReusableCode pageTitle="Edit Incentive">
-            <form onSubmit={handleSubmit(handleSave)} className="space-y-6">
+            <h1>test</h1>
+            {/* <form onSubmit={handleSubmit(handleSave)} className="space-y-6">
                 <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                         <CustomizedSelectInputWithLabel
@@ -167,7 +148,7 @@ const EditIncentivePage = () => {
                         )}
                     </Button>
                 </div>
-            </form>
+            </form> */}
         </AuthUserReusableCode>
     );
 };
