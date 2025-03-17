@@ -9,15 +9,23 @@ import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import CustomizedMultipleSelectInputWithLabelString from '@/components/CustomizedMultipleSelectInputWithLabelString';
 import { AddModeOfPaymentFormData, addModeOfPaymentSchema } from '@/lib/zod';
 import { z } from 'zod';
+import { useSession } from 'next-auth/react';
+import { PaymentModeUpdateInterface } from '@/lib/interface';
+import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
+import { updatePaymentMode } from '@/app/api-calls/admin/api';
+import { getErrorMessage } from '@/lib/utils';
 
 const paymentModesList = [
-    { label: "Cash", value: "Cash" },
-    { label: "Cheque", value: "Cheque" },
-    { label: "DD", value: "DD" },
-    { label: "Activate", value: "Activate" }
+    { label: "Cash", value: 1 },
+    { label: "Cheque", value: 2 },
+    { label: "DD", value: 3 },
+    { label: "Activate", value: 4 }
 ];
 
 const AddPaymentConfiguration: React.FC = () => {
+
+    const { data: session } = useSession();
+
     const {
         register,
         handleSubmit,
@@ -33,20 +41,26 @@ const AddPaymentConfiguration: React.FC = () => {
     const onSubmit = async (data: AddModeOfPaymentFormData) => {
         setIsSubmitting(true);
         try {
-            console.log('Submitted Data:', data);
+            let payload: PaymentModeUpdateInterface = {
+                discom_id: session.user.discomId,
+                payment_modes: data.paymentModes
+            }
+            const response = await updatePaymentMode(payload);
             toast.success('Payment Modes Updated Successfully!');
         } catch (error) {
-            toast.error('An error occurred while saving.');
+            toast.error('Error: ' + getErrorMessage(error));
             console.error(error);
         } finally {
             setIsSubmitting(false);
         }
     };
 
+
+
     return (
         <AuthUserReusableCode pageTitle="Mode Of Payment">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                <CustomizedMultipleSelectInputWithLabelString
+                <CustomizedMultipleSelectInputWithLabelNumber
                     label="Select Payment mode"
                     errors={errors.paymentModes}
                     placeholder="Select Payment mode"
