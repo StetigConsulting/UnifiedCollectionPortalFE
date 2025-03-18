@@ -257,3 +257,8 @@ export interface DeniedToPayInterface {
         paid_reasons: string[];
     };
 }
+
+export interface PaymentModeUpdateInterface {
+    discom_id: number;
+    payment_modes: number[];
+}

@@ -26,3 +26,12 @@ export const getUserDetails = async () => {
         throw error?.response?.data
     }
 }
+
+export const getBillingDataUploadHistory = async (data: any) => {
+    try {
+        const response = await api.get(`/v1/dashboards/bill-upload-history/${data.discom}/${data.date}`);
+        return response.data;
+    } catch (error) {
+        throw error?.response?.data
+    }
+}

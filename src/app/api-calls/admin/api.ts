@@ -1,5 +1,5 @@
 import api from "@/lib/axios";
-import { CreateColorCodingBillBasis, CreateColorCodingLogic, CreateUserInterface, DeniedToPayInterface, ECLFlaggedCustomerRule, officeStructureLevelInterface, ReceiptForPostpaid } from "@/lib/interface";
+import { CreateColorCodingBillBasis, CreateColorCodingLogic, CreateUserInterface, DeniedToPayInterface, ECLFlaggedCustomerRule, officeStructureLevelInterface, PaymentModeUpdateInterface, ReceiptForPostpaid } from "@/lib/interface";
 
 export const getOfficeStrutureData = async (id: number) => {
     try {
@@ -188,7 +188,7 @@ const getBusinessRuleDateById = async (id: string) => {
 
 export const getListOfAllUsers = async () => {
     try {
-        const response = await api.get(`/v1/tp-users/user-info`);
+        const response = await api.get(`/v1/users/`);
         return response.data;
     } catch (error: any) {
 
@@ -242,7 +242,7 @@ export const createDeniedToPay = async (data: DeniedToPayInterface) => {
     }
 }
 
-export const updateDeniedToPay = async (data: DeniedToPayInterface) => {
+export const updateDeniedToPay = async (data: PaymentModeUpdateInterface) => {
     try {
         const response = await api.put(`/v1/business-rules/`, data);
         return response.data;
@@ -268,6 +268,33 @@ export const fetchDeniedToPayData = async (id: number) => {
         throw error?.response?.data
     }
 };
+
+export const updatePaymentMode = async (data: any) => {
+    try {
+        const response = await api.post(`/v1/payment-modes/`, data);
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
+export const getAllCollectorIncentive = async () => {
+    try {
+        const response = await api.get(`/v1/collector-incentive-applicability/`);
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
+export const getInceniveDetailsById = async (id: string) => {
+    try {
+        const response = await api.get(`/v1/collector-incentive-applicability/${id}`);
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
 
 export {
     createReceiptForPostpaid, getListOfReceiptForPostpaid, deleteBusinessRule, getReceiptForPostpaidById,

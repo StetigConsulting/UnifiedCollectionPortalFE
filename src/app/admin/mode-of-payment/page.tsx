@@ -7,6 +7,8 @@ import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { urlsListWithTitle } from '@/lib/utils';
+import { getAllPaymentModes } from '@/app/api-calls/department/api';
+import { FileCog } from 'lucide-react';
 
 const PaymentConfiguration = () => {
     const router = useRouter()
@@ -14,8 +16,7 @@ const PaymentConfiguration = () => {
     const [paymentMethods, setPaymentMethods] = useState([]);
 
     const columns = [
-        { label: 'Method ID', key: 'id', sortable: true },
-        { label: 'Method Name', key: 'method_name', sortable: true },
+        { label: 'Method Name', key: 'mode_name', sortable: true },
         { label: 'Activated Date', key: 'activated_date', sortable: true },
         { label: 'Deactivated Date', key: 'deactivated_date', sortable: true },
     ];
@@ -23,8 +24,8 @@ const PaymentConfiguration = () => {
     const fetchPaymentMethods = async () => {
         setIsLoading(true);
         try {
-            // const response = await getPaymentMethods();
-            setPaymentMethods([]);
+            const response = await getAllPaymentModes();
+            setPaymentMethods(response.data);
         } catch (error) {
             console.error('Failed to fetch payment methods:', error);
             toast.error('Error fetching payment methods');
@@ -41,10 +42,10 @@ const PaymentConfiguration = () => {
         <AuthUserReusableCode pageTitle="Mode Of Payment" isLoading={isLoading}>
             <div className='p-4'>
                 <div className="grid grid-cols-2 gap-4">
-                    <Button variant="default" size="lg" className="w-full"
+                    <Button variant="default" className='w-full'
                         onClick={() => { router.push(urlsListWithTitle.modeOfPaymentAdd.url) }}
                     >
-                        Setup Payment Mode
+                        <FileCog />Setup Payment Mode
                     </Button>
                 </div>
             </div>
@@ -52,7 +53,6 @@ const PaymentConfiguration = () => {
                 data={paymentMethods}
                 columns={columns}
                 hideSearchAndOtherButtons
-                avoidSrNo
             />
         </AuthUserReusableCode>
     );

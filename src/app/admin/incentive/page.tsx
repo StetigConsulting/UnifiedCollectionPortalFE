@@ -7,7 +7,8 @@ import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { Pencil, Trash2 } from 'lucide-react';
-import { getListOfAllIncentive } from '@/app/api-calls/admin/api';
+import { getAllCollectorIncentive, getListOfAllIncentive } from '@/app/api-calls/admin/api';
+import { urlsListWithTitle } from '@/lib/utils';
 
 const IncentivePage = () => {
     const [incentiveData, setIncentiveData] = useState([]);
@@ -22,8 +23,8 @@ const IncentivePage = () => {
     const fetchIncentiveList = async () => {
         setIsLoading(true);
         try {
-            // const response = await getListOfAllIncentive();
-            // setIncentiveData(response.data);
+            const response = await getAllCollectorIncentive();
+            setIncentiveData(response.data);
         } catch (error) {
             console.error('Error fetching top-up history:', error);
             toast.error('Failed to load top-up history.');
@@ -33,11 +34,10 @@ const IncentivePage = () => {
     };
 
     const columns = useMemo(() => [
-        { label: 'Incentive ID', key: 'incentiveId', sortable: true },
         { label: 'Office Structure Level', key: 'officeStructureLevel', sortable: true },
         { label: 'Office Structure Name', key: 'officeStructureName', sortable: true },
-        { label: 'Current %', key: 'currentPercentage', sortable: true },
-        { label: 'Arrear %', key: 'arrearPercentage', sortable: true },
+        { label: 'Current %', key: 'current_amount', sortable: true },
+        { label: 'Arrear %', key: 'arrear_amount', sortable: true },
     ], []);
 
     const [selectedRow, setSelectedRow] = useState<any | null>(null);
@@ -52,14 +52,14 @@ const IncentivePage = () => {
             <Button variant='destructive' onClick={() => { }}>
                 <Trash2 className='cursor-pointer h-5 w-5' />Delete
             </Button>
-            <Button variant='default' onClick={() => { }}>
-                <Pencil className='cursor-pointer h-5 w-5' />Edit Agency
+            <Button variant='default' onClick={() => { router.push(`${urlsListWithTitle?.incentiveEdit.url}?id=${selectedRow.id}`) }}>
+                <Pencil className='cursor-pointer h-5 w-5' />Edit Collector Incentive
             </Button>
         </div>
     }
 
     return (
-        <AuthUserReusableCode pageTitle="Incentive" isLoading={isLoading}>
+        <AuthUserReusableCode pageTitle="Collector Incentive" isLoading={isLoading}>
             <div className="overflow-x-auto">
                 <ReactTable
                     data={incentiveData}
@@ -71,7 +71,6 @@ const IncentivePage = () => {
                         getSelectedRowButton()
                     }
                     selectedRow={selectedRow}
-                    avoidSrNo
                 />
             </div>
 

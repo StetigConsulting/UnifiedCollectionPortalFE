@@ -11,13 +11,7 @@ export const signinSchema = object({
 export const dashboardSchema = object({
   fromDate: z
     .string()
-    .nonempty({ message: "From date is required" })
-    .refine((val) => !isNaN(Date.parse(val)), {
-      message: "Invalid date format",
-    }),
-  toDate: z
-    .string()
-    .nonempty({ message: "To date is required" })
+    .nonempty({ message: "Date is required" })
     .refine((val) => !isNaN(Date.parse(val)), {
       message: "Invalid date format",
     }),
@@ -760,6 +754,20 @@ export const addIncentiveSchema = z.object({
   // });
 });
 
+export const editIncentiveSchema = z.object({
+  collectorType: z.number().min(1, 'Collector type is required'),
+  applicableLevel: z.number({
+    invalid_type_error: 'Applicable level is required',
+  }).min(1, 'Applicable level is required'),
+  circle: z.array(z.number()).optional(),
+  division: z.array(z.number()).optional(),
+  subDivision: z.array(z.number()).optional(),
+  section: z.array(z.number()).optional(),
+  addIncentiveOn: z.array(z.number()).min(1, 'At least one incentive type must be selected'),
+  currentPercentage: z.number().min(0, 'Current percentage must be a positive number'),
+  arrearPercentage: z.number().min(0, 'Arrears percentage must be a positive number'),
+  levelMapWithId: z.any(),
+})
 
 // export const addReceiptsSchema = z.object({
 //   configRule: z.string().min(1, 'Config rule is required'),
@@ -1079,7 +1087,7 @@ export const agencyBankDepositSchema = z.object({
 export type AgencyBankDepositFormData = z.infer<typeof agencyBankDepositSchema>;
 
 export const addModeOfPaymentSchema = z.object({
-  paymentModes: z.array(z.string()),
+  paymentModes: z.array(z.number()),
 });
 
 export type AddModeOfPaymentFormData = z.infer<typeof addModeOfPaymentSchema>;
