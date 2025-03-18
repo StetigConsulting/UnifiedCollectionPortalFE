@@ -242,7 +242,7 @@ export const createDeniedToPay = async (data: DeniedToPayInterface) => {
     }
 }
 
-export const updateDeniedToPay = async (data: PaymentModeUpdateInterface) => {
+export const updateDeniedToPay = async (data: DeniedToPayInterface) => {
     try {
         const response = await api.put(`/v1/business-rules/`, data);
         return response.data;
