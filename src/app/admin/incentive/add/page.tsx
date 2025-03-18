@@ -18,6 +18,7 @@ import CustomizedMultipleSelectInputWithLabelNumber from '@/components/Customize
 import { ReceiptForPostpaid } from '@/lib/interface';
 import { createReceiptForPostpaid } from '@/app/api-calls/admin/api';
 import { useSession } from 'next-auth/react';
+import { getCollectorTypes } from '@/app/api-calls/agency/api';
 
 type FormData = z.infer<typeof addIncentiveSchema>;
 
@@ -125,8 +126,22 @@ const AddCollectorIncentive = () => {
 
     const [listOfApplicableLevel, setListOfApplicableLevel] = useState([])
 
+    const [collectorTypes, setCollectorTypes] = useState([])
+
     useEffect(() => {
-        getWorkingLevel()
+        getCollectorTypes().then((res) => {
+            setIsLoading(true)
+            setCollectorTypes(
+                res?.data
+                    ?.map((ite) => {
+                        return {
+                            label: ite.name,
+                            value: ite.id,
+                        };
+                    })
+            );
+            setIsLoading(false)
+        }).catch((error) => { })
         getLevels(session?.user?.discomId).then((res) => {
             setListOfApplicableLevel(
                 res?.data
@@ -139,6 +154,7 @@ const AddCollectorIncentive = () => {
                     })
             );
         })
+        getWorkingLevel()
     }, [])
 
     const [listOfPicklist, setListOfPicklist] = useState([{
@@ -218,8 +234,9 @@ const AddCollectorIncentive = () => {
 
     const [levelNameMappedWithId, setLevelNameMappedWithId] = useState<Record<string, number>>({})
 
-    const getWorkingLevel = () => {
-        getLevels(session?.user?.discomId).then((data) => {
+    const getWorkingLevel = async () => {
+        setIsLoading(true)
+        await getLevels(session?.user?.discomId).then((data) => {
             let levelIdMap = data?.data
                 ?.filter((item) => item.levelType === "MAIN")
                 .reduce((acc, item) => {
@@ -232,6 +249,7 @@ const AddCollectorIncentive = () => {
             setLevelNameMappedWithId(levelIdMap)
             setValue(`incentives.0.levelMapWithId`, levelIdMap);
         })
+        setIsLoading(false)
     }
 
     return (
@@ -245,9 +263,7 @@ const AddCollectorIncentive = () => {
                             <CustomizedSelectInputWithLabel
                                 label="Collector Type"
                                 containerClass='col-span-2'
-                                list={[
-
-                                ]}
+                                list={collectorTypes}
                                 {...register(`incentives.${index}.collectorType`)}
                                 errors={errors?.incentives?.[index]?.collectorType}
                             />

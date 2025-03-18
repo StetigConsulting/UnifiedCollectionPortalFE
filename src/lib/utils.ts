@@ -228,7 +228,7 @@ export const urlsListWithTitle = {
   },
   incentive: {
     url: '/admin/incentive',
-    title: 'Incentive'
+    title: 'Collector Incentive'
   },
   incentiveAdd: {
     url: '/admin/incentive/add',

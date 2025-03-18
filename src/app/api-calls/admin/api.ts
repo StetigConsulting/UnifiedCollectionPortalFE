@@ -278,6 +278,24 @@ export const updatePaymentMode = async (data: any) => {
     }
 }
 
+export const getAllCollectorIncentive = async () => {
+    try {
+        const response = await api.get(`/v1/collector-incentive-applicability/`);
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
+export const getInceniveDetailsById = async (id: string) => {
+    try {
+        const response = await api.get(`/v1/collector-incentive-applicability/${id}`);
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
 export {
     createReceiptForPostpaid, getListOfReceiptForPostpaid, deleteBusinessRule, getReceiptForPostpaidById,
     editReceiptForPostpaid, createColorCodingLogic, getColorCodingBillBasis, createColorCodingBillBasis, getColorCodingLogic,
