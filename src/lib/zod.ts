@@ -11,13 +11,7 @@ export const signinSchema = object({
 export const dashboardSchema = object({
   fromDate: z
     .string()
-    .nonempty({ message: "From date is required" })
-    .refine((val) => !isNaN(Date.parse(val)), {
-      message: "Invalid date format",
-    }),
-  toDate: z
-    .string()
-    .nonempty({ message: "To date is required" })
+    .nonempty({ message: "Date is required" })
     .refine((val) => !isNaN(Date.parse(val)), {
       message: "Invalid date format",
     }),
