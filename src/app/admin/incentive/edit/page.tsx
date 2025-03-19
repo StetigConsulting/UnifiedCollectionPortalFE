@@ -12,12 +12,14 @@ import { toast } from 'sonner';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { z } from 'zod';
-import { getErrorMessage, urlsListWithTitle } from '@/lib/utils';
+import { addIncentiveOnKeyValue, addIncentiveOnPicklistValues, getErrorMessage, urlsListWithTitle } from '@/lib/utils';
 import { getCollectorTypes } from '@/app/api-calls/agency/api';
 import { getLevels, getLevelsDiscomId } from '@/app/api-calls/department/api';
 import { useSession } from 'next-auth/react';
-import { getInceniveDetailsById } from '@/app/api-calls/admin/api';
+import { editCollectorIncentive, getInceniveDetailsById } from '@/app/api-calls/admin/api';
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
+import CustomizedMultipleSelectInputWithLabelString from '@/components/CustomizedMultipleSelectInputWithLabelString';
+import { CollectorIncentiveInterface, EditCollectorIncentiveInterface } from '@/lib/interface';
 
 type FormData = z.infer<typeof editIncentiveSchema>;
 
@@ -28,12 +30,41 @@ const EditIncentivePage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<FormData>({
         resolver: zodResolver(editIncentiveSchema),
+        defaultValues: {
+            addIncentiveOn: []
+        }
     });
-
     const handleSave = async (data: FormData) => {
         setIsSubmitting(true);
         try {
-
+            let current = data;
+            let payload: EditCollectorIncentiveInterface = {
+                id: idFromUrl,
+                incentive_on: current.addIncentiveOn[0]
+            }
+            if (current.addIncentiveOn[0] === addIncentiveOnKeyValue.arrearAmount) {
+                payload = {
+                    ...payload,
+                    arrear_amount: current.arrearPercentage,
+                }
+            }
+            if (current.addIncentiveOn[0] === addIncentiveOnKeyValue.currentAmount) {
+                payload = {
+                    ...payload,
+                    current_amount: current.currentPercentage,
+                }
+            }
+            if (current.addIncentiveOn[0] === addIncentiveOnKeyValue.bothAmount) {
+                payload = {
+                    ...payload,
+                    arrear_amount: current.arrearPercentage,
+                    current_amount: current.currentPercentage,
+                }
+            }
+            const response = await editCollectorIncentive(payload);
+            console.log("API Response:", response);
+            setIsLoading(true)
+            router.push(urlsListWithTitle.incentive.url)
             toast.success('Incentive data saved!');
         } catch (error) {
             console.error('Error saving incentive:', error);
@@ -82,6 +113,10 @@ const EditIncentivePage = () => {
         })
         getWorkingLevel()
         getIncentiveDetails()
+        getPicklistFromList({
+            id: session?.user?.discomId,
+            type: 'circle'
+        })
     }, [])
 
     const [levelNameMappedWithId, setLevelNameMappedWithId] = useState<Record<string, number>>({})
@@ -106,14 +141,18 @@ const EditIncentivePage = () => {
 
     const getIncentiveDetails = async () => {
         try {
+            setIsLoading(true)
             const response = await getInceniveDetailsById(idFromUrl);
             console.log(response.data);
             setValue('collectorType', response.data.collector_type.id);
-            setValue('collectorType', response.data.collector_type.id);
+            setValue('applicableLevel', response.data?.office_structure?.office_structure_level_id)
+            setValue('addIncentiveOn', [response?.data?.incentive_on])
             setValue('currentPercentage', response.data.current_amount);
             setValue('arrearPercentage', response.data.arrear_amount);
         } catch (error) {
             console.error('Error fetching incentive details:', error);
+        } finally {
+            setIsLoading(false)
         }
     }
 
@@ -204,6 +243,8 @@ const EditIncentivePage = () => {
                             containerClass='col-span-2'
                             list={collectorTypes}
                             {...register(`collectorType`, { valueAsNumber: true })}
+                            value={String(watch("collectorType"))}
+                            disabled
                             errors={errors?.collectorType}
                         />
                         <CustomizedSelectInputWithLabel
@@ -211,6 +252,7 @@ const EditIncentivePage = () => {
                             list={listOfApplicableLevel}
                             {...register(`applicableLevel`, { valueAsNumber: true })}
                             errors={errors?.applicableLevel}
+                            disabled
                             onChange={(e) => handleLevelChange(parseInt(e.target.value))}
                         />
 
@@ -219,18 +261,19 @@ const EditIncentivePage = () => {
                                 <CustomizedMultipleSelectInputWithLabelNumber
                                     label="Circle"
                                     errors={errors?.circle}
-                                    required={true}
+
                                     list={listOfPicklist?.circle}
                                     placeholder="Select Circle Type"
                                     value={watch(`circle`) || []}
+                                    disabled
                                     onChange={(selectedValues) => handleCircleChange(selectedValues, incentive.applicableLevel)}
                                 />
                                 {incentive.applicableLevel != levelNameMappedWithId.CIRCLE && (
                                     <CustomizedMultipleSelectInputWithLabelNumber
                                         label="Division"
-                                        required={true}
+
                                         list={listOfPicklist?.division}
-                                        disabled={incentive?.circle?.length == 0}
+                                        disabled
                                         value={watch(`division`) || []}
                                         // onChange={(selectedValues) => setValue(`incentives.${index}.division`, selectedValues)}
                                         onChange={(selectedValues) => handleDivisionChange(selectedValues, incentive.applicableLevel)}
@@ -241,9 +284,8 @@ const EditIncentivePage = () => {
                                     || incentive.applicableLevel == levelNameMappedWithId.SUB_DIVISION) && (
                                         <CustomizedMultipleSelectInputWithLabelNumber
                                             label="Sub Division"
-                                            required={true}
                                             list={listOfPicklist?.subDivision}
-                                            disabled={incentive?.division?.length == 0}
+                                            disabled
                                             value={watch(`subDivision`) || []}
                                             onChange={(selectedValues) => handleSubDivisionChange(selectedValues, incentive.applicableLevel)}
                                             // onChange={(selectedValues) => setValue(`incentives.${index}.subDivision`, selectedValues)}
@@ -259,8 +301,8 @@ const EditIncentivePage = () => {
                                             errors={errors?.section}
                                             placeholder="Select Section"
                                             list={listOfPicklist?.section}
-                                            required={true}
-                                            disabled={incentive?.subDivision?.length == 0}
+
+                                            disabled
                                             value={watch(`section`) || []}
                                             onChange={(selectedValues) => setValue(`section`, selectedValues)}
                                         />
@@ -269,27 +311,34 @@ const EditIncentivePage = () => {
                             </>
                         }
 
-                        <CustomizedMultipleSelectInputWithLabelNumber
+                        <CustomizedMultipleSelectInputWithLabelString
                             label="Add Incentive On"
                             required={true}
-                            list={[]}
+                            list={addIncentiveOnPicklistValues}
                             value={watch(`addIncentiveOn`) || []}
                             onChange={(selectedValues) => setValue(`addIncentiveOn`, selectedValues)}
                             errors={errors?.addIncentiveOn}
                         />
-
-                        <CustomizedInputWithLabel
-                            label="Current Amount"
-                            type="number"
-                            {...register(`currentPercentage`, { valueAsNumber: true })}
-                            errors={errors?.currentPercentage}
-                        />
-                        <CustomizedInputWithLabel
-                            label="Arrear Amount"
-                            type="number"
-                            {...register(`arrearPercentage`, { valueAsNumber: true })}
-                            errors={errors?.arrearPercentage}
-                        />
+                        {
+                            incentive?.addIncentiveOn[0]?.includes(addIncentiveOnKeyValue.currentAmount) &&
+                            <CustomizedInputWithLabel
+                                label="Current Amount"
+                                type="number"
+                                required
+                                {...register(`currentPercentage`, { valueAsNumber: true })}
+                                errors={errors?.currentPercentage}
+                            />
+                        }
+                        {
+                            incentive?.addIncentiveOn[0]?.includes(addIncentiveOnKeyValue.arrearAmount) &&
+                            <CustomizedInputWithLabel
+                                label="Arrear Amount"
+                                type="number"
+                                required
+                                {...register(`arrearPercentage`, { valueAsNumber: true })}
+                                errors={errors?.arrearPercentage}
+                            />
+                        }
                     </div>
 
                     <div className="flex justify-end space-x-4 mt-4">

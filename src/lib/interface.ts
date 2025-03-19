@@ -277,6 +277,14 @@ export interface CollectorIncentiveInterface {
     discom_id: number,
     office_structure_id: number,
     collector_type_id: number,
-    incentive_on: string[],
-    current_amount: number
+    incentive_on: string,
+    current_amount?: number,
+    arrear_amount?: number
+}
+
+export interface EditCollectorIncentiveInterface {
+    id: string,
+    incentive_on: string,
+    current_amount?: number,
+    arrear_amount?: number
 }

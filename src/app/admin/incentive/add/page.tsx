@@ -13,10 +13,10 @@ import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { addIncentiveSchema } from '@/lib/zod';
 import { getLevels, getLevelsDiscomId } from '@/app/api-calls/department/api';
-import { getErrorMessage, urlsListWithTitle } from '@/lib/utils';
+import { addIncentiveOnKeyValue, addIncentiveOnPicklistValues, getErrorMessage, urlsListWithTitle } from '@/lib/utils';
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
 import { CollectorIncentiveInterface, ReceiptForPostpaid } from '@/lib/interface';
-import { createReceiptForPostpaid } from '@/app/api-calls/admin/api';
+import { addCollectorIncentive, createReceiptForPostpaid } from '@/app/api-calls/admin/api';
 import { useSession } from 'next-auth/react';
 import { getCollectorTypes } from '@/app/api-calls/agency/api';
 import CustomizedMultipleSelectInputWithLabelString from '@/components/CustomizedMultipleSelectInputWithLabelString';
@@ -48,6 +48,7 @@ const AddCollectorIncentive = () => {
                     currentPercentage: null,
                     arrearPercentage: null,
                     levelMapWithId: {},
+                    addIncentiveOn: []
                 },
             ],
         },
@@ -60,20 +61,43 @@ const AddCollectorIncentive = () => {
     const onSubmit = async (data: FormData) => {
         try {
             setIsSubmitting(true);
-            for (const current of data.incentives) {
-                let payload: CollectorIncentiveInterface = {
-                    discom_id: session?.user?.discomId,
-                    office_structure_id: session?.user?.discomId,
-                    collector_type_id: current.collectorType,
-                    incentive_on: current.addIncentiveOn,
+            let current = data.incentives[0];
+            let payload: CollectorIncentiveInterface = {
+                discom_id: session?.user?.discomId,
+                office_structure_id: current.applicableLevel === levelNameMappedWithId.CIRCLE
+                    ? current.circle[0]
+                    : current.applicableLevel === levelNameMappedWithId.DIVISION
+                        ? current.division[0]
+                        : current.applicableLevel === levelNameMappedWithId.SUB_DIVISION
+                            ? current.subDivision[0]
+                            : current.applicableLevel === levelNameMappedWithId.SECTION ? current.section[0] : null,
+                collector_type_id: current.collectorType,
+                incentive_on: current.addIncentiveOn[0]
+            }
+            if (current.addIncentiveOn[0] === addIncentiveOnKeyValue.arrearAmount) {
+                payload = {
+                    ...payload,
+                    arrear_amount: current.arrearPercentage,
+                }
+            }
+            if (current.addIncentiveOn[0] === addIncentiveOnKeyValue.currentAmount) {
+                payload = {
+                    ...payload,
                     current_amount: current.currentPercentage,
                 }
-                // const response = await createReceiptForPostpaid(payload);
-                // console.log("API Response:", response);
-                setIsLoading(true)
-                router.push(urlsListWithTitle.incentive.url)
             }
-            toast.success('Number of Receipts Rule added Successfully');
+            if (current.addIncentiveOn[0] === addIncentiveOnKeyValue.bothAmount) {
+                payload = {
+                    ...payload,
+                    arrear_amount: current.arrearPercentage,
+                    current_amount: current.currentPercentage,
+                }
+            }
+            const response = await addCollectorIncentive(payload);
+            console.log("API Response:", response);
+            setIsLoading(true)
+            router.push(urlsListWithTitle.incentive.url)
+            toast.success('Collector incentive added Successfully');
         } catch (error) {
             toast.error('Error: ' + getErrorMessage(error));
         } finally {
@@ -320,24 +344,30 @@ const AddCollectorIncentive = () => {
                             <CustomizedMultipleSelectInputWithLabelString
                                 label="Add Incentive On"
                                 required={true}
-                                list={[]}
+                                list={addIncentiveOnPicklistValues}
                                 value={watch(`incentives.${index}.addIncentiveOn`) || []}
                                 onChange={(selectedValues) => setValue(`incentives.${index}.addIncentiveOn`, selectedValues)}
                                 errors={errors?.incentives?.[index]?.addIncentiveOn}
                             />
+                            {
+                                incentives[0]?.addIncentiveOn[0]?.includes(addIncentiveOnKeyValue.currentAmount) &&
+                                <CustomizedInputWithLabel
+                                    label="Current Amount"
+                                    type="number"
+                                    {...register(`incentives.${index}.currentPercentage`, { valueAsNumber: true })}
+                                    errors={errors?.incentives?.[index]?.currentPercentage}
+                                />
+                            }
 
-                            <CustomizedInputWithLabel
-                                label="Current Amount"
-                                type="number"
-                                {...register(`incentives.${index}.currentPercentage`, { valueAsNumber: true })}
-                                errors={errors?.incentives?.[index]?.currentPercentage}
-                            />
-                            <CustomizedInputWithLabel
-                                label="Arrear Amount"
-                                type="number"
-                                {...register(`incentives.${index}.arrearPercentage`, { valueAsNumber: true })}
-                                errors={errors?.incentives?.[index]?.arrearPercentage}
-                            />
+                            {
+                                incentives[0]?.addIncentiveOn[0]?.includes(addIncentiveOnKeyValue.arrearAmount) &&
+                                <CustomizedInputWithLabel
+                                    label="Arrear Amount"
+                                    type="number"
+                                    {...register(`incentives.${index}.arrearPercentage`, { valueAsNumber: true })}
+                                    errors={errors?.incentives?.[index]?.arrearPercentage}
+                                />
+                            }
                         </div>
                     ))}
                 </div>
