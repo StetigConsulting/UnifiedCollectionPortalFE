@@ -39,7 +39,6 @@ export function NavMain({
   session: Session
 }) {
   const pathname = usePathname();
-  console.log('session', pathname.split('/')[0]);
   return (
     <SidebarMenu>
       {items.map((item) => {
