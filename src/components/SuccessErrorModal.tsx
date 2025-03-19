@@ -1,8 +1,9 @@
 'use client';
 
 import React from 'react';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { X, CheckCircle2, AlertCircle } from 'lucide-react';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
 interface ModalProps {
     isOpen: boolean;
@@ -15,6 +16,11 @@ const SuccessErrorModal: React.FC<ModalProps> = ({ isOpen, onClose, message, typ
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="flex flex-col items-center justify-center p-6">
+                <DialogHeader>
+                    <VisuallyHidden>
+                        <DialogTitle>Minimum Payable Amount</DialogTitle>
+                    </VisuallyHidden>
+                </DialogHeader>
                 {type === 'success' ? (
                     <CheckCircle2 className="h-14 w-14 text-green-500 mb-4" />
                 ) : (

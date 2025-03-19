@@ -341,6 +341,99 @@ export const deleteCollectorIncentive = async (id: number) => {
     }
 }
 
+export const downloadMinimumPayableAmount = async () => {
+    try {
+        const response = await api.post(`/v1/consumer-minimum-payable-amounts/export`);
+        return response;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
+export const deleteMinimumPayableAmount = async () => {
+    try {
+        const response = await api.delete(`/v1/consumer-minimum-payable-amounts/`);
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
+export const uploadMinimumPayableAmount = async (file: FormData) => {
+    try {
+        const response = await api.post(`/v1/consumer-minimum-payable-amounts/import`, file, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
+export const downloadConsumerToCollector = async () => {
+    try {
+        const response = await api.post(`/v1/consumer-agent-mappings/export`);
+        return response;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
+export const deleteConsumerToCollector = async () => {
+    try {
+        const response = await api.delete(`/v1/consumer-agent-mappings/`);
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
+export const uploadConsumerToCollector = async (file: FormData) => {
+    try {
+        const response = await api.post(`/v1/consumer-agent-mappings/import`, file, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
+export const downloadEclConsumer = async () => {
+    try {
+        const response = await api.post(`/v1/ecl-consumers/export`);
+        return response;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
+export const deleteEclConsumer = async () => {
+    try {
+        const response = await api.delete(`/v1/ecl-consumers/`);
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
+export const uploadEclConsumer = async (file: FormData) => {
+    try {
+        const response = await api.post(`/v1/ecl-consumers/import`, file, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
 export {
     createReceiptForPostpaid, getListOfReceiptForPostpaid, deleteBusinessRule, getReceiptForPostpaidById,
     editReceiptForPostpaid, createColorCodingLogic, getColorCodingBillBasis, createColorCodingBillBasis, getColorCodingLogic,

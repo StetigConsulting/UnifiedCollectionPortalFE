@@ -194,6 +194,10 @@ export const urlsListWithTitle = {
     url: '/admin/import',
     title: 'Excel Import'
   },
+  eclConsummerWithArrearImport: {
+    url: '/admin/import/ecl-consumer',
+    title: 'Excel Import for ECL Consumer with Arrear'
+  },
   consumerToMinimumPayableAmountMap: {
     url: '/admin/import/minimum-payable-amount-mapping',
     title: 'Consumer To Minimum Payable Amount Map'

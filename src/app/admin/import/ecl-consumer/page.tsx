@@ -6,11 +6,11 @@ import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import { Download, Trash2, Upload, X, CloudUpload, Loader2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import SuccessErrorModal from '@/components/SuccessErrorModal';
-import { downloadConsumerToCollector, deleteConsumerToCollector, uploadConsumerToCollector } from '@/app/api-calls/admin/api';
+import { downloadEclConsumer, deleteEclConsumer, uploadEclConsumer } from '@/app/api-calls/admin/api';
 import { toast } from 'sonner';
 import { getErrorMessage } from '@/lib/utils';
 
-const ConsumerToCollectorMapping: React.FC = () => {
+const EclConsumerMapping: React.FC = () => {
     const [isUploadModalOpen, setIsUploadModalOpen] = useState<boolean>(false);
     const [isSuccessModalOpen, setIsSuccessModalOpen] = useState<boolean>(false);
     const [isErrorModalOpen, setIsErrorModalOpen] = useState<boolean>(false);
@@ -22,10 +22,10 @@ const ConsumerToCollectorMapping: React.FC = () => {
     const handleDownload = async () => {
         try {
             setIsLoading(false)
-            const response = await downloadConsumerToCollector()
+            const response = await downloadEclConsumer()
 
             const contentDisposition = response.headers["content-disposition"];
-            let filename = "ConsumerCollectorMapping";
+            let filename = "ECLConsumers";
 
             if (contentDisposition) {
                 const matches = contentDisposition.match(/filename="(.+)"/);
@@ -59,7 +59,7 @@ const ConsumerToCollectorMapping: React.FC = () => {
     const handleDelete = async () => {
         try {
             setIsLoading(true)
-            const response = await deleteConsumerToCollector()
+            const response = await deleteEclConsumer()
             toast.success(response.message)
         } catch (error) {
             toast.error('Error: ' + getErrorMessage(error))
@@ -91,7 +91,7 @@ const ConsumerToCollectorMapping: React.FC = () => {
             const formData = new FormData();
             formData.append('file', selectedFile);
 
-            const response = await uploadConsumerToCollector(formData);
+            const response = await uploadEclConsumer(formData);
             toast.success(response.message)
             setIsUploadModalOpen(false);
             setIsSuccessModalOpen(true);
@@ -109,7 +109,7 @@ const ConsumerToCollectorMapping: React.FC = () => {
 
 
     return (
-        <AuthUserReusableCode pageTitle="Consumer To Collector Mapping" isLoading={isLoading}>
+        <AuthUserReusableCode pageTitle="Excel Import for ECL Consumer with Arrear" isLoading={isLoading}>
             <div className="flex items-center justify-center h-full">
                 <div className="flex flex-col gap-4 items-center">
                     <Button variant="default" className="w-full py-6 text-lg flex items-center gap-2" onClick={handleDownload}>
@@ -129,7 +129,7 @@ const ConsumerToCollectorMapping: React.FC = () => {
             <Dialog open={isUploadModalOpen} onOpenChange={setIsUploadModalOpen}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Consumer To Collector Mapping</DialogTitle>
+                        <DialogTitle>Excel Import</DialogTitle>
                     </DialogHeader>
 
                     <div className="border-2 border-dashed border-gray-300 p-6 text-center rounded-md">
@@ -170,4 +170,4 @@ const ConsumerToCollectorMapping: React.FC = () => {
     );
 };
 
-export default ConsumerToCollectorMapping;
+export default EclConsumerMapping;
