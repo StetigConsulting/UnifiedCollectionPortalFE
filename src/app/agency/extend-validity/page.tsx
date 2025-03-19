@@ -85,9 +85,7 @@ const ExtendValidity = () => {
 
     useEffect(() => {
         if (selectedAgency) {
-            console.log(selectedAgency)
-            const agency = agencies.find((item) => item.id === selectedAgency.toString());
-            console.log(agency)
+            const agency = agencies.find((item) => item.id === Number(selectedAgency));
             if (agency) {
                 setValue('collectorId', agency.id || null);
                 setValue('currentValidityFrom', agency.validity_from_date || '');
