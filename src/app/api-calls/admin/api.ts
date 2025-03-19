@@ -188,7 +188,7 @@ const getBusinessRuleDateById = async (id: string) => {
 
 export const getListOfAllUsers = async () => {
     try {
-        const response = await api.get(`/v1/users/`);
+        const response = await api.get(`/v1/tp-users/`);
         return response.data;
     } catch (error: any) {
 
