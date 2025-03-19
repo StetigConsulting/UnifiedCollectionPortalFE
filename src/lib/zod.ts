@@ -763,7 +763,7 @@ export const editIncentiveSchema = z.object({
   division: z.array(z.number()).optional(),
   subDivision: z.array(z.number()).optional(),
   section: z.array(z.number()).optional(),
-  addIncentiveOn: z.array(z.number()).min(1, 'At least one incentive type must be selected'),
+  addIncentiveOn: z.array(z.string()).min(1, 'At least one incentive type must be selected'),
   currentPercentage: z.number().min(0, 'Current percentage must be a positive number'),
   arrearPercentage: z.number().min(0, 'Arrears percentage must be a positive number'),
   levelMapWithId: z.any(),

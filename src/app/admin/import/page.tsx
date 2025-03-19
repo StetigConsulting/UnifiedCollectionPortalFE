@@ -17,6 +17,9 @@ const ImportPage = () => {
                     <Button variant="default" className="w-full py-8 text-lg" onClick={() => router.push(urlsListWithTitle.consumerToMinimumPayableAmountMap.url)}>
                         <Network className="h-5 w-5" /> Consumer to Minimum Payable Amount Mapping
                     </Button>
+                    <Button variant="default" className="w-full py-8 text-lg" onClick={() => router.push(urlsListWithTitle.eclConsummerWithArrearImport.url)}>
+                        <Network className="h-5 w-5" /> Excel Import for ECL Consumer with Arrear
+                    </Button>
                     <Button variant="default" className="w-full py-8 text-lg" onClick={() => router.push(urlsListWithTitle.consumerToCollectorMap.url)}>
                         <Waypoints className="h-5 w-5" /> Consumer to Collector Mapping
                     </Button>

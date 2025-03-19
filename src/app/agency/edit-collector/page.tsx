@@ -188,7 +188,7 @@ const EditCollector = () => {
                     <CustomizedInputWithLabel
                         label="Personal Phone Number"
                         placeholder="Enter Phone Number"
-                        required
+                        disabled
                         {...register("phoneNumber")}
                         errors={errors.phoneNumber}
                     />

@@ -194,6 +194,10 @@ export const urlsListWithTitle = {
     url: '/admin/import',
     title: 'Excel Import'
   },
+  eclConsummerWithArrearImport: {
+    url: '/admin/import/ecl-consumer',
+    title: 'Excel Import for ECL Consumer with Arrear'
+  },
   consumerToMinimumPayableAmountMap: {
     url: '/admin/import/minimum-payable-amount-mapping',
     title: 'Consumer To Minimum Payable Amount Map'
@@ -288,3 +292,15 @@ export const getLevelFormattedForPicklist = (list) => {
 }
 
 export const tableDataPerPage = 50;
+
+export const addIncentiveOnPicklistValues = [
+  { label: 'Current Amount', value: 'Current Amount' },
+  { label: 'Arrear Amount', value: 'Arrear Amount' },
+  { label: 'Current Amount, Arrear Amount', value: 'Current Amount,Arrear Amount' }
+]
+
+export const addIncentiveOnKeyValue = {
+  currentAmount: 'Current Amount',
+  arrearAmount: 'Arrear Amount',
+  bothAmount: 'Current Amount,Arrear Amount'
+}

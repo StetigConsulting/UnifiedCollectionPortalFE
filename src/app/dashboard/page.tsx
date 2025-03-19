@@ -88,7 +88,7 @@ const dashboard = () => {
             label="Date"
             type="date"
           />
-          <div className={`self-end ${errors.fromDate ? 'mb-4' : 'mb-2'} text-end`}>
+          <div className={`self-end ${errors.fromDate ? 'mb-5' : ''} text-end`}>
             <Button variant="default" type="submit">
               Search
             </Button>

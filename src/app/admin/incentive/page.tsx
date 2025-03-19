@@ -7,8 +7,9 @@ import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { Pencil, Trash2 } from 'lucide-react';
-import { getAllCollectorIncentive, getListOfAllIncentive } from '@/app/api-calls/admin/api';
-import { urlsListWithTitle } from '@/lib/utils';
+import { deleteCollectorIncentive, getAllCollectorIncentive } from '@/app/api-calls/admin/api';
+import { getErrorMessage, urlsListWithTitle } from '@/lib/utils';
+import AlertPopup from '@/components/Agency/ViewAgency/AlertPopup';
 
 const IncentivePage = () => {
     const [incentiveData, setIncentiveData] = useState([]);
@@ -26,8 +27,22 @@ const IncentivePage = () => {
             const response = await getAllCollectorIncentive();
             setIncentiveData(response.data);
         } catch (error) {
+            console.error('Error fetching incentive:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const deleteIncentive = async (id: number) => {
+        setIsLoading(true);
+        try {
+            const response = await deleteCollectorIncentive(id);
+            toast.success('Incentive deleted successfully')
+            selectedRow(null)
+            fetchIncentiveList()
+        } catch (error) {
             console.error('Error fetching top-up history:', error);
-            toast.error('Failed to load top-up history.');
+            toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }
@@ -49,20 +64,29 @@ const IncentivePage = () => {
 
     const getSelectedRowButton = () => {
         return <div className="space-x-2">
-            <Button variant='destructive' onClick={() => { }}>
+            <AlertPopup triggerCode={<Button variant='destructive' className="cursor-pointer">
                 <Trash2 className='cursor-pointer h-5 w-5' />Delete
-            </Button>
+            </Button>} handleContinue={() => deleteIncentive(selectedRow.id)}
+                title='Confirm Deactivating'
+                description='Are you sure you want to save the deactivate Agency? Please review the details carefully before confirming.' continueButtonText='Confirm'
+            />
             <Button variant='default' onClick={() => { router.push(`${urlsListWithTitle?.incentiveEdit.url}?id=${selectedRow.id}`) }}>
                 <Pencil className='cursor-pointer h-5 w-5' />Edit Collector Incentive
             </Button>
         </div>
     }
 
+    const formattedTableData = incentiveData.map((item) => ({
+        ...item,
+        officeStructureLevel: item?.office_structure?.office_structure_level_name,
+        officeStructureName: item?.office_structure?.office_description
+    }))
+
     return (
         <AuthUserReusableCode pageTitle="Collector Incentive" isLoading={isLoading}>
             <div className="overflow-x-auto">
                 <ReactTable
-                    data={incentiveData}
+                    data={formattedTableData}
                     columns={columns}
                     hideSearchAndOtherButtons
                     isSelectable={true}

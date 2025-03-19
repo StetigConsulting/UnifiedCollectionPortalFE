@@ -1,5 +1,5 @@
 import api from "@/lib/axios";
-import { CreateColorCodingBillBasis, CreateColorCodingLogic, CreateUserInterface, DeniedToPayInterface, ECLFlaggedCustomerRule, officeStructureLevelInterface, PaymentModeUpdateInterface, ReceiptForPostpaid } from "@/lib/interface";
+import { CollectorIncentiveInterface, CreateColorCodingBillBasis, CreateColorCodingLogic, CreateUserInterface, DeniedToPayInterface, ECLFlaggedCustomerRule, EditCollectorIncentiveInterface, officeStructureLevelInterface, PaymentModeUpdateInterface, ReceiptForPostpaid } from "@/lib/interface";
 
 export const getOfficeStrutureData = async (id: number) => {
     try {
@@ -308,6 +308,126 @@ export const getAllCollectorIncentive = async () => {
 export const getInceniveDetailsById = async (id: string) => {
     try {
         const response = await api.get(`/v1/collector-incentive-applicability/${id}`);
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
+export const addCollectorIncentive = async (data: CollectorIncentiveInterface) => {
+    try {
+        const response = await api.post(`/v1/collector-incentive-applicability/`, data);
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
+export const editCollectorIncentive = async (data: EditCollectorIncentiveInterface) => {
+    try {
+        const response = await api.put(`/v1/collector-incentive-applicability/`, data);
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
+export const deleteCollectorIncentive = async (id: number) => {
+    try {
+        const response = await api.delete(`/v1/collector-incentive-applicability/${id}`);
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
+export const downloadMinimumPayableAmount = async () => {
+    try {
+        const response = await api.post(`/v1/consumer-minimum-payable-amounts/export`);
+        return response;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
+export const deleteMinimumPayableAmount = async () => {
+    try {
+        const response = await api.delete(`/v1/consumer-minimum-payable-amounts/`);
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
+export const uploadMinimumPayableAmount = async (file: FormData) => {
+    try {
+        const response = await api.post(`/v1/consumer-minimum-payable-amounts/import`, file, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
+export const downloadConsumerToCollector = async () => {
+    try {
+        const response = await api.post(`/v1/consumer-agent-mappings/export`);
+        return response;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
+export const deleteConsumerToCollector = async () => {
+    try {
+        const response = await api.delete(`/v1/consumer-agent-mappings/`);
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
+export const uploadConsumerToCollector = async (file: FormData) => {
+    try {
+        const response = await api.post(`/v1/consumer-agent-mappings/import`, file, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
+export const downloadEclConsumer = async () => {
+    try {
+        const response = await api.post(`/v1/ecl-consumers/export`);
+        return response;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
+export const deleteEclConsumer = async () => {
+    try {
+        const response = await api.delete(`/v1/ecl-consumers/`);
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
+export const uploadEclConsumer = async (file: FormData) => {
+    try {
+        const response = await api.post(`/v1/ecl-consumers/import`, file, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
         return response.data;
     } catch (error: any) {
         throw error?.response?.data

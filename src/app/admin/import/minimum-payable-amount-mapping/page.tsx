@@ -3,22 +3,69 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
-import { Download, Trash2, Upload, X, CloudUpload } from 'lucide-react';
+import { Download, Trash2, Upload, X, CloudUpload, Loader2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import SuccessErrorModal from '@/components/SuccessErrorModal';
+import { deleteMinimumPayableAmount, downloadMinimumPayableAmount, uploadMinimumPayableAmount } from '@/app/api-calls/admin/api';
+import { toast } from 'sonner';
+import { getErrorMessage } from '@/lib/utils';
 
 const ConsumerMinimumPayableMapping: React.FC = () => {
     const [isUploadModalOpen, setIsUploadModalOpen] = useState<boolean>(false);
     const [isSuccessModalOpen, setIsSuccessModalOpen] = useState<boolean>(false);
     const [isErrorModalOpen, setIsErrorModalOpen] = useState<boolean>(false);
+    const [isUploading, setIsUploading] = useState(false)
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-    const handleDownload = () => {
-        console.log("Download triggered");
+    const [isLoading, setIsLoading] = useState(false)
+
+    const handleDownload = async () => {
+        try {
+            setIsLoading(false)
+            const response = await downloadMinimumPayableAmount()
+
+            const contentDisposition = response.headers["content-disposition"];
+            let filename = "ConsumerWiseMinPayableAmount";
+
+            if (contentDisposition) {
+                const matches = contentDisposition.match(/filename="(.+)"/);
+                if (matches && matches.length > 1) {
+                    filename = matches[1];
+                }
+            }
+
+            const contentType = response.headers["content-disposition"];
+            console.log(contentType)
+            let extension = "csv";
+
+            const blob = new Blob([response.data], { type: contentType });
+            const url = window.URL.createObjectURL(blob);
+
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `${filename}.${extension}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            toast.error('Error: ' + getErrorMessage(error))
+        } finally {
+            setIsLoading(false)
+        }
     };
 
-    const handleDelete = () => {
-        console.log("Delete triggered");
+    const handleDelete = async () => {
+        try {
+            setIsLoading(true)
+            const response = await deleteMinimumPayableAmount()
+            toast.success(response.message)
+        } catch (error) {
+            toast.error('Error: ' + getErrorMessage(error))
+        } finally {
+            setIsLoading(false)
+        }
     };
 
     const handleUploadClick = () => {
@@ -31,22 +78,38 @@ const ConsumerMinimumPayableMapping: React.FC = () => {
         }
     };
 
-    const handleUpload = () => {
+
+    const handleUpload = async () => {
         if (!selectedFile) {
             setIsUploadModalOpen(false);
             setIsErrorModalOpen(true);
             return;
         }
-        console.log("Uploading:", selectedFile.name);
-        setIsUploadModalOpen(false);
-        setIsSuccessModalOpen(true);
-        setTimeout(() => {
-            setIsSuccessModalOpen(false);
-        }, 2000);
+        try {
+            setIsLoading(true);
+            setIsUploading(true)
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+
+            const response = await uploadMinimumPayableAmount(formData);
+            toast.success(response.message)
+            setIsUploadModalOpen(false);
+            setIsSuccessModalOpen(true);
+            setSelectedFile(null)
+        } catch (error) {
+            setIsUploadModalOpen(false);
+            setIsErrorModalOpen(true);
+            setSelectedFile(null)
+            toast.error('Error: ' + getErrorMessage(error));
+        } finally {
+            setIsLoading(false);
+            setIsUploading(false)
+        }
     };
 
+
     return (
-        <AuthUserReusableCode pageTitle="Consumer To Minimum Payable Amount Mapping">
+        <AuthUserReusableCode pageTitle="Consumer To Minimum Payable Amount Mapping" isLoading={isLoading}>
             <div className="flex items-center justify-center h-full">
                 <div className="flex flex-col gap-4 items-center">
                     <Button variant="default" className="w-80 py-6 text-lg flex items-center gap-2" onClick={handleDownload}>
@@ -67,17 +130,14 @@ const ConsumerMinimumPayableMapping: React.FC = () => {
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>Minimum Payable Amount</DialogTitle>
-                        <button className="absolute top-2 right-2 text-gray-500 hover:text-gray-700" onClick={() => setIsUploadModalOpen(false)}>
-                            <X className="h-5 w-5" />
-                        </button>
                     </DialogHeader>
 
                     <div className="border-2 border-dashed border-gray-300 p-6 text-center rounded-md">
                         <CloudUpload className="h-10 w-10 text-gray-500 mx-auto mb-2" />
                         <p className="text-gray-500">Drag & drop files or <label htmlFor="fileUpload" className="text-blue-600 cursor-pointer underline">Browse</label></p>
-                        <input type="file" id="fileUpload" className="hidden" onChange={handleFileSelect} accept=".xls,.xlsx" />
+                        <input type="file" id="fileUpload" className="hidden" onChange={handleFileSelect} accept=".xls,.xlsx,.csv" />
                         <p className="text-xs text-gray-500 mt-2">
-                            Mandatory to upload data in proper format. Please refer to the "Download" button for guidelines.
+                            Mandatory to Upload Data in proper format, please refer the 'Download Excel Format / Existing Data' button to know more
                         </p>
                     </div>
 
@@ -89,13 +149,23 @@ const ConsumerMinimumPayableMapping: React.FC = () => {
 
                     <DialogFooter className="flex justify-between">
                         <Button variant="outline" onClick={() => setIsUploadModalOpen(false)}>Cancel</Button>
-                        <Button variant="default" onClick={handleUpload} disabled={!selectedFile}>Upload</Button>
+                        <Button variant="default" onClick={handleUpload} disabled={!selectedFile || isUploading}>
+                            {isUploading ? (
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Uploading...
+                                </>
+                            ) : (
+                                'Upload'
+                            )}
+                        </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
 
-            <SuccessErrorModal isOpen={isSuccessModalOpen} onClose={() => setIsSuccessModalOpen(false)} message="Data Upload Successfully!" type="success" />
-            <SuccessErrorModal isOpen={isErrorModalOpen} onClose={() => setIsErrorModalOpen(false)} message="Upload Failed! Please select a file." type="error" />
+            <SuccessErrorModal isOpen={isSuccessModalOpen} onClose={() => setIsSuccessModalOpen(false)}
+                message="Data Upload Successfully!" type="success" />
+            <SuccessErrorModal isOpen={isErrorModalOpen} onClose={() => setIsErrorModalOpen(false)}
+                message="Error occurred while uploading data" type="error" />
         </AuthUserReusableCode>
     );
 };
