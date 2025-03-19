@@ -278,6 +278,24 @@ export const updatePaymentMode = async (data: any) => {
     }
 }
 
+export const updateNonEnergyType = async (data: any) => {
+    try {
+        const response = await api.post(`/v1/non-energy-types/`, data);
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
+export const updateCollectorType = async (data: any) => {
+    try {
+        const response = await api.post(`/v1/collector-types/`, data);
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
 export const getAllCollectorIncentive = async () => {
     try {
         const response = await api.get(`/v1/collector-incentive-applicability/`);

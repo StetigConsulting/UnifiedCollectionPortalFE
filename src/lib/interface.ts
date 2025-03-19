@@ -262,3 +262,21 @@ export interface PaymentModeUpdateInterface {
     discom_id: number;
     payment_modes: number[];
 }
+
+export interface NonEnergyTypeUpdateInterface {
+    discom_id: number;
+    non_energy_types: number[];
+}
+
+export interface CollectorTypeUpdateInterface {
+    discom_id: number;
+    collector_types: number[];
+}
+
+export interface CollectorIncentiveInterface {
+    discom_id: number,
+    office_structure_id: number,
+    collector_type_id: number,
+    incentive_on: string[],
+    current_amount: number
+}

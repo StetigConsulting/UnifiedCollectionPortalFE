@@ -66,19 +66,7 @@ api.interceptors.response.use(
             try {
                 const session = await getSession();
 
-                if (!session?.user?.refreshToken) {
-                    console.error("No refresh token found, logging out...");
-                    await signOut();
-                    return Promise.reject(error);
-                }
-
-                const newTokens = await refreshAccessToken(session.user.refreshToken);
-
-                if (!newTokens) {
-                    console.error("Failed to refresh token, logging out...");
-                    await signOut();
-                    return Promise.reject(error);
-                }
+                const newTokens = await refreshAccessToken(session?.user?.refreshToken);
 
                 originalRequest.headers.Authorization = `Bearer ${newTokens.accessToken}`;
                 return api(originalRequest);

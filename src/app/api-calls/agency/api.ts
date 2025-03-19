@@ -98,7 +98,15 @@ export const getCollectorTypes = async () => {
         const response = await api.get(`/v1/collector-types/discom/${session?.user?.discomId}`);
         return response.data;
     } catch (error) {
+        throw error?.response?.data
+    }
+}
 
+export const getAllGlobalCollectorTypes = async () => {
+    try {
+        const response = await api.get(`/v1/collector-types/`);
+        return response.data;
+    } catch (error) {
         throw error?.response?.data
     }
 }

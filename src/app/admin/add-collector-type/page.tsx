@@ -7,6 +7,8 @@ import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import { urlsListWithTitle } from '@/lib/utils';
+import { FileCog } from 'lucide-react';
+import { getCollectorTypes } from '@/app/api-calls/agency/api';
 
 const CollectorTypeConfiguration = () => {
     const router = useRouter();
@@ -15,15 +17,15 @@ const CollectorTypeConfiguration = () => {
 
     const columns = [
         { label: 'Sr. No.', key: 'id', sortable: true },
-        { label: 'Collector Type', key: 'collectorType', sortable: true },
+        { label: 'Collector Type', key: 'name', sortable: true },
         { label: 'Update Date', key: 'updateDate', sortable: true },
     ];
 
     const fetchData = async () => {
         setIsLoading(true);
         try {
-            // const data = await fetchCollectorTypes();
-            // setCollectorTypes(data);
+            const response = await getCollectorTypes();
+            setCollectorTypes(response.data);
         } catch (error) {
             console.error('Error fetching collector types:', error);
             toast.error('Error fetching collector types');
@@ -43,7 +45,7 @@ const CollectorTypeConfiguration = () => {
                     <Button variant="default" size="lg"
                         onClick={() => router.push(urlsListWithTitle.collectorTypeAdd.url)}
                     >
-                        Setup Non Collector Type
+                        <FileCog />Setup Non Collector Type
                     </Button>
                 </div>
 

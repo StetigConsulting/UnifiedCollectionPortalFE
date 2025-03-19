@@ -41,19 +41,20 @@ const PaymentConfiguration = () => {
     return (
         <AuthUserReusableCode pageTitle="Mode Of Payment" isLoading={isLoading}>
             <div className='p-4'>
-                <div className="grid grid-cols-2 gap-4">
-                    <Button variant="default" className='w-full'
+                <div className="flex justify-start mb-4">
+                    <Button variant="default" size='lg'
                         onClick={() => { router.push(urlsListWithTitle.modeOfPaymentAdd.url) }}
                     >
                         <FileCog />Setup Payment Mode
                     </Button>
                 </div>
+
+                <ReactTable
+                    data={paymentMethods}
+                    columns={columns}
+                    hideSearchAndOtherButtons
+                />
             </div>
-            <ReactTable
-                data={paymentMethods}
-                columns={columns}
-                hideSearchAndOtherButtons
-            />
         </AuthUserReusableCode>
     );
 };

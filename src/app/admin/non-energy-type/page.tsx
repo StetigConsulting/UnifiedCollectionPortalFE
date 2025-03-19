@@ -7,6 +7,8 @@ import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import { urlsListWithTitle } from '@/lib/utils';
+import { getAllNonEnergyTypes } from '@/app/api-calls/department/api';
+import { FileCog } from 'lucide-react';
 
 const NonEnergyTypeConfiguration = () => {
     const router = useRouter();
@@ -15,15 +17,15 @@ const NonEnergyTypeConfiguration = () => {
 
     const columns = [
         { label: 'Sr. No.', key: 'id', sortable: true },
-        { label: 'Non Energy Type', key: 'type', sortable: true },
+        { label: 'Non Energy Type', key: 'type_name', sortable: true },
         { label: 'Update Date', key: 'updateDate', sortable: true },
     ];
 
     const fetchData = async () => {
         setIsLoading(true);
         try {
-            // const data = await fetchNonEnergyTypes();
-            // setNonEnergyTypes(data);
+            const data = await getAllNonEnergyTypes();
+            setNonEnergyTypes(data.data);
         } catch (error) {
             console.error('Error fetching non-energy types:', error);
             toast.error('Error fetching data');
@@ -43,7 +45,7 @@ const NonEnergyTypeConfiguration = () => {
                     <Button variant="default" size="lg"
                         onClick={() => router.push(urlsListWithTitle.nonEnergyTypeForm.url)}
                     >
-                        Setup Non Energy Type
+                        <FileCog />Setup Non Energy Type
                     </Button>
                 </div>
 

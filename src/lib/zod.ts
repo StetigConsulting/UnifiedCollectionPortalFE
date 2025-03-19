@@ -580,7 +580,7 @@ export const resetCollectorBalanceSchema = z.object({
 export type ResetCollectorFormData = z.infer<typeof resetCollectorBalanceSchema>;
 
 export const paymentModeSchema = z.object({
-  selectedPaymentModes: z.array(z.enum(['Cash', 'Cheque', 'DD', 'Activate'])).min(1, {
+  selectedPaymentModes: z.array(z.number()).min(1, {
     message: 'At least one payment mode must be selected.',
   }),
 });
@@ -592,11 +592,11 @@ export const deniedToPaySchema = z.object({
 });
 
 export const nonEnergyTypeSchema = z.object({
-  nonEnergyType: z.array(z.string()).min(1, "At least one option must be selected"),
+  nonEnergyType: z.array(z.number()).min(1, "At least one option must be selected"),
 });
 
 export const addCollectorTypeSchema = z.object({
-  collectorType: z.array(z.string()).min(1, "At least one collector type must be selected"),
+  collectorType: z.array(z.number()).min(1, "At least one collector type must be selected"),
 });
 
 export const colorCodingLogicSchema = z.object({
@@ -634,7 +634,7 @@ export const colorCodingEclSchema = z.object({
 export const addIncentiveSchema = z.object({
   incentives: z.array(
     z.object({
-      collectorType: z.string().min(1, 'Collector type is required'),
+      collectorType: z.number(),
       applicableLevel: z.number({
         invalid_type_error: 'Applicable level is required',
       }).min(1, 'Applicable level is required'),
@@ -642,7 +642,7 @@ export const addIncentiveSchema = z.object({
       division: z.array(z.number()).optional(),
       subDivision: z.array(z.number()).optional(),
       section: z.array(z.number()).optional(),
-      addIncentiveOn: z.array(z.number()).min(1, 'At least one incentive type must be selected'),
+      addIncentiveOn: z.array(z.string()).min(1, 'At least one incentive type must be selected'),
       currentPercentage: z.number().min(0, 'Current percentage must be a positive number'),
       arrearPercentage: z.number().min(0, 'Arrears percentage must be a positive number'),
       levelMapWithId: z.any(),

@@ -55,7 +55,7 @@ const BillingReport = () => {
         { label: 'Bill Count', key: 'bill_count', sortable: true },
     ], []);
 
-    const handleDownloadPdf = async () => {
+    const handleDownloadPdf2 = async () => {
         try {
             setIsLoading(true);
             const response = await downloadBillingReport('pdf');
@@ -72,6 +72,42 @@ const BillingReport = () => {
             setIsLoading(false);
         }
     }
+
+    const handleDownloadPdf = async () => {
+        try {
+            const response = await downloadBillingReport('pdf')
+
+            const contentDisposition = response.headers["content-disposition"];
+            let filename = "report";
+
+            if (contentDisposition) {
+                const matches = contentDisposition.match(/filename="(.+)"/);
+                if (matches && matches.length > 1) {
+                    filename = matches[1];
+                }
+            }
+
+            const contentType = response.headers["content-disposition"];
+            console.log(contentType)
+            let extension = "pdf";
+
+            const blob = new Blob([response.data], { type: contentType });
+            const url = window.URL.createObjectURL(blob);
+
+            // Create a download link
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `report.${extension}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            // Clean up the URL
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error("Error downloading the report:", error);
+        }
+    };
 
     const handleDownload = (contentUrl: any) => {
         const link = document.createElement('a');

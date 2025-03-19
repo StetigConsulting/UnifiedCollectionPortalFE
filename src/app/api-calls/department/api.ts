@@ -13,7 +13,7 @@ const getAllPaymentModes = async () => {
   }
 };
 
-export const getAllCollectionPaymentMode = async () => {
+export const getAllGlobalPaymentMode = async () => {
   try {
     const response = await api.get(`/v1/payment-modes/`);
     return response.data;
@@ -28,7 +28,15 @@ const getAllNonEnergyTypes = async () => {
     const response = await api.get(`/v1/non-energy-types/discom/${session?.user?.discomId}`);
     return response.data;
   } catch (error: any) {
+    throw error?.response?.data
+  }
+};
 
+export const getAllGlobalNonEnergyTypes = async () => {
+  try {
+    const response = await api.get(`/v1/non-energy-types/`);
+    return response.data;
+  } catch (error: any) {
     throw error?.response?.data
   }
 };

@@ -15,10 +15,11 @@ import { addIncentiveSchema } from '@/lib/zod';
 import { getLevels, getLevelsDiscomId } from '@/app/api-calls/department/api';
 import { getErrorMessage, urlsListWithTitle } from '@/lib/utils';
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
-import { ReceiptForPostpaid } from '@/lib/interface';
+import { CollectorIncentiveInterface, ReceiptForPostpaid } from '@/lib/interface';
 import { createReceiptForPostpaid } from '@/app/api-calls/admin/api';
 import { useSession } from 'next-auth/react';
 import { getCollectorTypes } from '@/app/api-calls/agency/api';
+import CustomizedMultipleSelectInputWithLabelString from '@/components/CustomizedMultipleSelectInputWithLabelString';
 
 type FormData = z.infer<typeof addIncentiveSchema>;
 
@@ -38,7 +39,7 @@ const AddCollectorIncentive = () => {
         defaultValues: {
             incentives: [
                 {
-                    collectorType: '',
+                    collectorType: null,
                     applicableLevel: null,
                     circle: [],
                     division: [],
@@ -58,35 +59,20 @@ const AddCollectorIncentive = () => {
 
     const onSubmit = async (data: FormData) => {
         try {
-            // for (const receipt of data.receipts) {
-            //     let payload: ReceiptForPostpaid = {
-            //         discom_id: session?.user?.discomId,
-            //         rule_level: data.configRule,
-            //         ...data.configRule == 'Levelwise' && {
-            //             office_structure_id: receipt.applicableLevel === levelNameMappedWithId.CIRCLE
-            //                 ? receipt.circle.map(Number)?.[0]
-            //                 : receipt.applicableLevel === levelNameMappedWithId.DIVISION
-            //                     ? receipt.division.map(Number)?.[0]
-            //                     : receipt.applicableLevel === levelNameMappedWithId.SUB_DIVISION
-            //                         ? receipt.subDivision.map(Number)?.[0]
-            //                         : receipt.applicableLevel === levelNameMappedWithId.SECTION ? receipt.section.map(Number)?.[0] : null,
-            //         },
-            //         ...data.configRule == 'Discomwise' && {
-            //             office_structure_id: session?.user?.discomId
-            //         },
-            //         rule_name: "RECEIPT_FOR_POSTPAID",
-            //         json_rule: {
-            //             receipt_per_month_per_bill: receipt.receiptsPerMonth || 0,
-            //             second_receipt_different_payment_mode: receipt.allowSecondReceipt,
-            //             receipt_per_day_per_bill: receipt.receiptsPerDay || 0
-            //         }
-            //     };
-            //     const response = await createReceiptForPostpaid(payload);
-            //     setIsSubmitting(true);
-            //     console.log("API Response:", response);
-            //     setIsLoading(true)
-            //     router.push(urlsListWithTitle.receiptForPostpaid.url)
-            // }
+            setIsSubmitting(true);
+            for (const current of data.incentives) {
+                let payload: CollectorIncentiveInterface = {
+                    discom_id: session?.user?.discomId,
+                    office_structure_id: session?.user?.discomId,
+                    collector_type_id: current.collectorType,
+                    incentive_on: current.addIncentiveOn,
+                    current_amount: current.currentPercentage,
+                }
+                // const response = await createReceiptForPostpaid(payload);
+                // console.log("API Response:", response);
+                setIsLoading(true)
+                router.push(urlsListWithTitle.incentive.url)
+            }
             toast.success('Number of Receipts Rule added Successfully');
         } catch (error) {
             toast.error('Error: ' + getErrorMessage(error));
@@ -259,12 +245,12 @@ const AddCollectorIncentive = () => {
                 <div className="">
                     {incentives.map((_, index) => (
                         <div key={index} className="grid grid-cols-2 gap-4 p-4 rounded-lg">
-                            <h2 className="col-span-2 text-lg font-semibold">Incentive {index + 1}</h2>
+                            {/* <h2 className="col-span-2 text-lg font-semibold">Incentive {index + 1}</h2> */}
                             <CustomizedSelectInputWithLabel
                                 label="Collector Type"
                                 containerClass='col-span-2'
                                 list={collectorTypes}
-                                {...register(`incentives.${index}.collectorType`)}
+                                {...register(`incentives.${index}.collectorType`, { valueAsNumber: true })}
                                 errors={errors?.incentives?.[index]?.collectorType}
                             />
                             <CustomizedSelectInputWithLabel
@@ -331,7 +317,7 @@ const AddCollectorIncentive = () => {
                                 </>
                             }
 
-                            <CustomizedMultipleSelectInputWithLabelNumber
+                            <CustomizedMultipleSelectInputWithLabelString
                                 label="Add Incentive On"
                                 required={true}
                                 list={[]}
@@ -357,9 +343,9 @@ const AddCollectorIncentive = () => {
                 </div>
 
                 <div className="mt-6 text-end space-x-4">
-                    <Button variant="outline" type="button" onClick={addMoreReceipts}>
+                    {/* <Button variant="outline" type="button" onClick={addMoreReceipts}>
                         + Add More
-                    </Button>
+                    </Button> */}
 
                     <Button variant="outline" type="button" onClick={handleCancel}>
                         Cancel

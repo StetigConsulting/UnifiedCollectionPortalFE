@@ -2,7 +2,7 @@
 
 import {
   createAgency,
-  getAllCollectionPaymentMode,
+  getAllGlobalPaymentMode,
   getAllNonEnergyTypes,
   getAllPaymentModes,
   getLevels,
@@ -196,7 +196,7 @@ const AddAgency = () => {
           })
       );
     }).catch((err) => { })
-    getAllCollectionPaymentMode().then((data) => {
+    getAllGlobalPaymentMode().then((data) => {
       setPaymentMethods(
         data?.data
           ?.filter((ite) => ite.mode_type == "Security Deposit")
