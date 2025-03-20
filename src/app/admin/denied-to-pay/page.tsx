@@ -60,14 +60,22 @@ const DeniedToPayConfiguration = () => {
             const data = await fetchDeniedToPayData(session.user.discomId);
             const existingData = data.data[0];
             setMaximumLimit(existingData.json_rule.max_limit);
+            setDeniedToPayData(existingData?.json_rule?.denied_to_pay_reasons.map((item) => ({
+                reason: item
+            })))
+            setPaidReason(existingData?.json_rule?.paid_reasons.map((item) => ({
+                reason: item
+            })))
         } catch (error) {
             console.error('Error fetching existing denied to pay data:', error);
+        } finally {
+            setIsLoading(false)
         }
     }
 
     useEffect(() => {
-        fetchDeniedToPay();
-        fetchPaidReason();
+        // fetchDeniedToPay();
+        // fetchPaidReason();
         fetchExistingDataForDeniedToPay()
     }, []);
 

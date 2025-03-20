@@ -18,7 +18,6 @@ const CollectorTypeConfiguration = () => {
     const columns = [
         { label: 'Sr. No.', key: 'id', sortable: true },
         { label: 'Collector Type', key: 'name', sortable: true },
-        { label: 'Update Date', key: 'updateDate', sortable: true },
     ];
 
     const fetchData = async () => {

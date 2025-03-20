@@ -40,7 +40,7 @@ const EditIncentivePage = () => {
             let current = data;
             let payload: EditCollectorIncentiveInterface = {
                 id: idFromUrl,
-                incentive_on: current.addIncentiveOn.join(',')
+                incentive_on: current.addIncentiveOn.sort((a, b) => b.localeCompare(a)).join(',')
             }
             if (current.addIncentiveOn?.includes(addIncentiveOnKeyValue.arrearAmount)) {
                 payload = {
@@ -55,7 +55,7 @@ const EditIncentivePage = () => {
                 }
             }
             const response = await editCollectorIncentive(payload);
-            console.log("API Response:", response);
+
             setIsLoading(true)
             router.push(urlsListWithTitle.incentive.url)
             toast.success('Incentive data saved!');
@@ -79,7 +79,25 @@ const EditIncentivePage = () => {
     const idFromUrl = searchParams.get('id');
 
     useEffect(() => {
-        getCollectorTypes().then((res) => {
+        getCollectorTypeList()
+        getWorkingLevel()
+        // getIncentiveDetails()
+        getPicklistFromList({
+            id: session?.user?.discomId,
+            type: 'circle'
+        })
+    }, [])
+
+    const [levelNameMappedWithId, setLevelNameMappedWithId] = useState<Record<string, number>>({})
+
+    useEffect(() => {
+        if (Object.keys(levelNameMappedWithId).length > 0) {
+            getIncentiveDetails();
+        }
+    }, [levelNameMappedWithId]);
+
+    const getCollectorTypeList = async () => {
+        await getCollectorTypes().then((res) => {
             setIsLoading(true)
             setCollectorTypes(
                 res?.data
@@ -90,29 +108,9 @@ const EditIncentivePage = () => {
                         };
                     })
             );
-            setIsLoading(false)
+            // setIsLoading(false)
         }).catch((error) => { })
-        getLevels(session?.user?.discomId).then((res) => {
-            setListOfApplicableLevel(
-                res?.data
-                    ?.filter((ite) => ite.levelType == "MAIN")
-                    ?.map((ite) => {
-                        return {
-                            value: ite.id,
-                            label: ite.levelName,
-                        };
-                    })
-            );
-        })
-        getWorkingLevel()
-        getIncentiveDetails()
-        getPicklistFromList({
-            id: session?.user?.discomId,
-            type: 'circle'
-        })
-    }, [])
-
-    const [levelNameMappedWithId, setLevelNameMappedWithId] = useState<Record<string, number>>({})
+    }
 
     const getWorkingLevel = async () => {
         setIsLoading(true)
@@ -125,25 +123,71 @@ const EditIncentivePage = () => {
                     return acc;
                 }, {});
 
-            console.log(levelIdMap)
+            setListOfApplicableLevel(
+                data?.data
+                    ?.filter((ite) => ite.levelType == "MAIN")
+                    ?.map((ite) => {
+                        return {
+                            value: ite.id,
+                            label: ite.levelName,
+                        };
+                    })
+            );
             setLevelNameMappedWithId(levelIdMap)
+            // getIncentiveDetails(levelIdMap)
             // setValue(`incentives.0.levelMapWithId`, levelIdMap);
         })
-        setIsLoading(false)
+        // setIsLoading(false)
     }
 
     const getIncentiveDetails = async () => {
         try {
             setIsLoading(true)
             const response = await getInceniveDetailsById(idFromUrl);
-            console.log(response.data);
             setValue('collectorType', response.data.collector_type.id);
-            setValue('applicableLevel', response.data?.office_structure?.office_structure_level_id)
+            setWorkingLevels(response?.data)
+            // setValue('applicableLevel', workingLevelId)
             setValue('addIncentiveOn', response?.data?.incentive_on.split(','))
             setValue('currentPercentage', response.data.current_amount);
             setValue('arrearPercentage', response.data.arrear_amount);
         } catch (error) {
             console.error('Error fetching incentive details:', error);
+        } finally {
+            // setIsLoading(false)
+        }
+    }
+
+    const setWorkingLevels = (data) => {
+        try {
+            setIsLoading(true)
+            let workingLevelId = data?.office_structure?.office_structure_level_id;
+            setValue(`applicableLevel`, workingLevelId);
+            let parentOfficeList = data?.parent_office_structure_hierarchy
+
+            let circleId = parentOfficeList.filter(item => item?.office_structure_level_id === levelNameMappedWithId.CIRCLE)
+            if (circleId.length > 0) {
+                handleCircleChange([circleId[0].id], workingLevelId)
+                setIsLoading(true)
+                let divisionId = parentOfficeList.filter(item => item?.office_structure_level_id === levelNameMappedWithId.DIVISION)
+                if (divisionId.length > 0) {
+                    handleDivisionChange([divisionId[0].id], workingLevelId)
+                    setIsLoading(true)
+                    let subDivisionId = parentOfficeList.filter(item => item?.office_structure_level_id === levelNameMappedWithId.SUB_DIVISION)
+                    if (subDivisionId.length > 0) {
+                        handleSubDivisionChange([subDivisionId[0].id], workingLevelId)
+                        setIsLoading(true)
+                        setValue('section', [data?.office_structure?.id])
+                    } else {
+                        setValue('subDivision', [data?.office_structure?.id])
+                    }
+                } else {
+                    setValue('division', [data?.office_structure?.id])
+                }
+            } else {
+                setValue('circle', [data?.office_structure?.id])
+            }
+        } catch (error) {
+            console.log(error)
         } finally {
             setIsLoading(false)
         }
@@ -156,10 +200,10 @@ const EditIncentivePage = () => {
         section: [],
     });
 
-    const getPicklistFromList = ({ id, type = 'circle' }) => {
+    const getPicklistFromList = async ({ id, type = 'circle' }) => {
         setIsLoading(true);
 
-        getLevelsDiscomId(id).then((data) => {
+        await getLevelsDiscomId(id).then((data) => {
             const picklist = data?.data?.officeStructure?.map((ite) => ({
                 value: ite.id,
                 label: ite.office_description,
@@ -226,6 +270,8 @@ const EditIncentivePage = () => {
 
     const incentive = watch()
 
+    console.log(incentive)
+
     return (
         <AuthUserReusableCode pageTitle="Edit Incentive" isLoading={isLoading}>
             <form onSubmit={handleSubmit(handleSave)} className="space-y-6">
@@ -254,9 +300,8 @@ const EditIncentivePage = () => {
                                 <CustomizedMultipleSelectInputWithLabelNumber
                                     label="Circle"
                                     errors={errors?.circle}
-
                                     list={listOfPicklist?.circle}
-                                    placeholder="Select Circle Type"
+                                    placeholder="Select Circle"
                                     value={watch(`circle`) || []}
                                     disabled
                                     onChange={(selectedValues) => handleCircleChange(selectedValues, incentive.applicableLevel)}

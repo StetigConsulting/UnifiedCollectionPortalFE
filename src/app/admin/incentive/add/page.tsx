@@ -72,7 +72,7 @@ const AddCollectorIncentive = () => {
                             ? current.subDivision[0]
                             : current.applicableLevel === levelNameMappedWithId.SECTION ? current.section[0] : null,
                 collector_type_id: current.collectorType,
-                incentive_on: current.addIncentiveOn.join(',')
+                incentive_on: current.addIncentiveOn.sort((a, b) => b.localeCompare(a)).join(',')
             }
             if (current.addIncentiveOn.includes(addIncentiveOnKeyValue.arrearAmount)) {
                 payload = {
@@ -254,6 +254,8 @@ const AddCollectorIncentive = () => {
         })
         setIsLoading(false)
     }
+
+    console.log(errors)
 
     return (
         <AuthUserReusableCode pageTitle="Add Incentive" isLoading={isLoading}>
