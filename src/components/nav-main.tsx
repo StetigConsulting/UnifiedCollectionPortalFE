@@ -95,12 +95,12 @@ export function NavMain({
               {childItems.length > 0 && (
                 <CollapsibleContent>
                   <SidebarMenuSub className="border-l-0 mx-0">
-                    {childItems.map((subItem) => {
+                    {childItems.map((subItem, index) => {
                       const hasAccess = checkIfUserHasAccessToPage({ backendScope: session?.user?.userScopes, currentUrl: subItem.url });
                       if (!hasAccess) return null;
 
                       return (
-                        <SidebarMenuSubItem key={subItem.title}>
+                        <SidebarMenuSubItem key={subItem.title + index}>
                           <SidebarMenuSubButton
                             className={cn(pathname === subItem.url && "bg-lightThemeColor")}
                             asChild

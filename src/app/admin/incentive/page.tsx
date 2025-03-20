@@ -38,7 +38,7 @@ const IncentivePage = () => {
         try {
             const response = await deleteCollectorIncentive(id);
             toast.success('Incentive deleted successfully')
-            selectedRow(null)
+            setSelectedRow(null)
             fetchIncentiveList()
         } catch (error) {
             console.error('Error fetching top-up history:', error);

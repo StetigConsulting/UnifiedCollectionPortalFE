@@ -72,24 +72,17 @@ const AddCollectorIncentive = () => {
                             ? current.subDivision[0]
                             : current.applicableLevel === levelNameMappedWithId.SECTION ? current.section[0] : null,
                 collector_type_id: current.collectorType,
-                incentive_on: current.addIncentiveOn[0]
+                incentive_on: current.addIncentiveOn.sort((a, b) => b.localeCompare(a)).join(',')
             }
-            if (current.addIncentiveOn[0] === addIncentiveOnKeyValue.arrearAmount) {
+            if (current.addIncentiveOn.includes(addIncentiveOnKeyValue.arrearAmount)) {
                 payload = {
                     ...payload,
                     arrear_amount: current.arrearPercentage,
                 }
             }
-            if (current.addIncentiveOn[0] === addIncentiveOnKeyValue.currentAmount) {
+            if (current.addIncentiveOn.includes(addIncentiveOnKeyValue.currentAmount)) {
                 payload = {
                     ...payload,
-                    current_amount: current.currentPercentage,
-                }
-            }
-            if (current.addIncentiveOn[0] === addIncentiveOnKeyValue.bothAmount) {
-                payload = {
-                    ...payload,
-                    arrear_amount: current.arrearPercentage,
                     current_amount: current.currentPercentage,
                 }
             }
@@ -262,6 +255,8 @@ const AddCollectorIncentive = () => {
         setIsLoading(false)
     }
 
+    console.log(errors)
+
     return (
         <AuthUserReusableCode pageTitle="Add Incentive" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -345,14 +340,15 @@ const AddCollectorIncentive = () => {
                                 label="Add Incentive On"
                                 required={true}
                                 list={addIncentiveOnPicklistValues}
+                                multi={true}
                                 value={watch(`incentives.${index}.addIncentiveOn`) || []}
                                 onChange={(selectedValues) => setValue(`incentives.${index}.addIncentiveOn`, selectedValues)}
                                 errors={errors?.incentives?.[index]?.addIncentiveOn}
                             />
                             {
-                                incentives[0]?.addIncentiveOn[0]?.includes(addIncentiveOnKeyValue.currentAmount) &&
+                                incentives[0]?.addIncentiveOn?.includes(addIncentiveOnKeyValue.currentAmount) &&
                                 <CustomizedInputWithLabel
-                                    label="Current Amount"
+                                    label="Current Incentive %"
                                     type="number"
                                     {...register(`incentives.${index}.currentPercentage`, { valueAsNumber: true })}
                                     errors={errors?.incentives?.[index]?.currentPercentage}
@@ -360,9 +356,9 @@ const AddCollectorIncentive = () => {
                             }
 
                             {
-                                incentives[0]?.addIncentiveOn[0]?.includes(addIncentiveOnKeyValue.arrearAmount) &&
+                                incentives[0]?.addIncentiveOn?.includes(addIncentiveOnKeyValue.arrearAmount) &&
                                 <CustomizedInputWithLabel
-                                    label="Arrear Amount"
+                                    label="Arrear Incentive %"
                                     type="number"
                                     {...register(`incentives.${index}.arrearPercentage`, { valueAsNumber: true })}
                                     errors={errors?.incentives?.[index]?.arrearPercentage}

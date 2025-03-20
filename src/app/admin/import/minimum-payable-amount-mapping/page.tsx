@@ -9,6 +9,8 @@ import SuccessErrorModal from '@/components/SuccessErrorModal';
 import { deleteMinimumPayableAmount, downloadMinimumPayableAmount, uploadMinimumPayableAmount } from '@/app/api-calls/admin/api';
 import { toast } from 'sonner';
 import { getErrorMessage } from '@/lib/utils';
+import AlertPopup from '@/components/Agency/ViewAgency/AlertPopup';
+import moment from 'moment';
 
 const ConsumerMinimumPayableMapping: React.FC = () => {
     const [isUploadModalOpen, setIsUploadModalOpen] = useState<boolean>(false);
@@ -19,13 +21,17 @@ const ConsumerMinimumPayableMapping: React.FC = () => {
 
     const [isLoading, setIsLoading] = useState(false)
 
+    const getTimestamp = () => {
+        return moment(new Date()).format('YYYY-MM-DD_HH-MM-SS')
+    };
+
     const handleDownload = async () => {
         try {
             setIsLoading(false)
             const response = await downloadMinimumPayableAmount()
 
             const contentDisposition = response.headers["content-disposition"];
-            let filename = "ConsumerWiseMinPayableAmount";
+            let filename = `ConsumerWiseMinPayableAmount_${getTimestamp()}`;
 
             if (contentDisposition) {
                 const matches = contentDisposition.match(/filename="(.+)"/);
@@ -107,18 +113,37 @@ const ConsumerMinimumPayableMapping: React.FC = () => {
         }
     };
 
+    const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+        event.preventDefault();
+        event.stopPropagation();
+    };
+
+    const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const file = event.dataTransfer.files?.[0];
+        if (file) {
+            setSelectedFile(file);
+        }
+    };
 
     return (
         <AuthUserReusableCode pageTitle="Consumer To Minimum Payable Amount Mapping" isLoading={isLoading}>
             <div className="flex items-center justify-center h-full">
                 <div className="flex flex-col gap-4 items-center">
-                    <Button variant="default" className="w-80 py-6 text-lg flex items-center gap-2" onClick={handleDownload}>
+                    <AlertPopup triggerCode={<Button variant="default" className="w-full py-6 text-lg flex items-center gap-2" >
                         <Download className="h-5 w-5" /> Download
-                    </Button>
+                    </Button>} handleContinue={() => handleDownload()}
+                        title='Download Data !'
+                        description='Are you sure that you want to download the existing data !' continueButtonText='Confirm'
+                    />
 
-                    <Button variant="destructive" className="w-80 py-6 text-lg flex items-center gap-2" onClick={handleDelete}>
+                    <AlertPopup triggerCode={<Button variant="destructive" className="w-full py-6 text-lg flex items-center gap-2">
                         <Trash2 className="h-5 w-5" /> Delete
-                    </Button>
+                    </Button>} handleContinue={() => handleDelete()}
+                        title='Confirm Deleting !'
+                        description='Are you sure that you want to delete the existing data !' continueButtonText='Confirm'
+                    />
 
                     <Button variant="success" className="w-80 py-6 text-lg flex items-center gap-2" onClick={handleUploadClick}>
                         <Upload className="h-5 w-5" /> Upload New Document
@@ -132,7 +157,8 @@ const ConsumerMinimumPayableMapping: React.FC = () => {
                         <DialogTitle>Minimum Payable Amount</DialogTitle>
                     </DialogHeader>
 
-                    <div className="border-2 border-dashed border-gray-300 p-6 text-center rounded-md">
+                    <div className="border-2 border-dashed border-gray-300 p-6 text-center rounded-md" onDragOver={handleDragOver}
+                        onDrop={handleDrop}>
                         <CloudUpload className="h-10 w-10 text-gray-500 mx-auto mb-2" />
                         <p className="text-gray-500">Drag & drop files or <label htmlFor="fileUpload" className="text-blue-600 cursor-pointer underline">Browse</label></p>
                         <input type="file" id="fileUpload" className="hidden" onChange={handleFileSelect} accept=".xls,.xlsx,.csv" />

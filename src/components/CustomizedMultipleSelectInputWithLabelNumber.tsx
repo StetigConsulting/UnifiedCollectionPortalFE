@@ -80,7 +80,7 @@ const CustomizedMultipleSelectInputWithLabelNumber: React.FC<SelectProps> = ({
                 style={{ padding: '8px' }}
                 onClick={toggleDropdown}
             >
-                {selectedValues.length > 0 ? (
+                {selectedValues.length > 0 && list.length > 0 ? (
                     <div className="flex flex-wrap gap-2">
                         {selectedValues?.map((selectedValue, i) => {
                             const selectedOption = list?.find((o) => o.value === selectedValue);

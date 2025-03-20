@@ -7,13 +7,16 @@ import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import { urlsListWithTitle } from '@/lib/utils';
-import { getDeniedToPayData, getPaidReason } from '@/app/api-calls/admin/api';
+import { fetchDeniedToPayData, getDeniedToPayData, getPaidReason } from '@/app/api-calls/admin/api';
+import { useSession } from 'next-auth/react';
 
 const DeniedToPayConfiguration = () => {
+    const { data: session } = useSession()
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [deniedToPayData, setDeniedToPayData] = useState([]);
     const [paidReason, setPaidReason] = useState([]);
+    const [maximumLimit, setMaximumLimit] = useState(null);
 
     const deniedToPayColumns = [
         { label: 'Denied To Pay Reason', key: 'reason', sortable: true },
@@ -51,9 +54,29 @@ const DeniedToPayConfiguration = () => {
         }
     };
 
+    const fetchExistingDataForDeniedToPay = async () => {
+        setIsLoading(true);
+        try {
+            const data = await fetchDeniedToPayData(session.user.discomId);
+            const existingData = data.data[0];
+            setMaximumLimit(existingData.json_rule.max_limit);
+            setDeniedToPayData(existingData?.json_rule?.denied_to_pay_reasons.map((item) => ({
+                reason: item
+            })))
+            setPaidReason(existingData?.json_rule?.paid_reasons.map((item) => ({
+                reason: item
+            })))
+        } catch (error) {
+            console.error('Error fetching existing denied to pay data:', error);
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
     useEffect(() => {
-        fetchDeniedToPay();
-        fetchPaidReason();
+        // fetchDeniedToPay();
+        // fetchPaidReason();
+        fetchExistingDataForDeniedToPay()
     }, []);
 
     return (
@@ -88,7 +111,7 @@ const DeniedToPayConfiguration = () => {
                 {/* </div> */}
 
                 <div className="mt-4 p-2 bg-gray-100 text-center text-sm rounded-md">
-                    Denied To Pay Maximum Count Per Day for Each Collector: <strong>3</strong>
+                    Denied To Pay Maximum Count Per Day for Each Collector: <strong>{maximumLimit}</strong>
                 </div>
             </div>
         </AuthUserReusableCode>

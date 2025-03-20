@@ -296,7 +296,6 @@ export const tableDataPerPage = 50;
 export const addIncentiveOnPicklistValues = [
   { label: 'Current Amount', value: 'Current Amount' },
   { label: 'Arrear Amount', value: 'Arrear Amount' },
-  { label: 'Current Amount, Arrear Amount', value: 'Current Amount,Arrear Amount' }
 ]
 
 export const addIncentiveOnKeyValue = {

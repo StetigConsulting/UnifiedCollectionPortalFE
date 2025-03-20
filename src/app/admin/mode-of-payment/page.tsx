@@ -17,8 +17,6 @@ const PaymentConfiguration = () => {
 
     const columns = [
         { label: 'Method Name', key: 'mode_name', sortable: true },
-        { label: 'Activated Date', key: 'activated_date', sortable: true },
-        { label: 'Deactivated Date', key: 'deactivated_date', sortable: true },
     ];
 
     const fetchPaymentMethods = async () => {
