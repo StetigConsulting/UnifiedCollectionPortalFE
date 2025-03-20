@@ -45,7 +45,7 @@ const AddPaymentConfiguration: React.FC = () => {
                 payment_modes: data.paymentModes
             }
             const response = await updatePaymentMode(payload);
-            toast.success('Non Energy Type Updated Successfully!');
+            toast.success('Mode of Payment Updated Successfully!');
             router.push(urlsListWithTitle.modeOfPayment.url);
         } catch (error) {
             toast.error('Error: ' + (error.error));

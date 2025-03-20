@@ -40,24 +40,17 @@ const EditIncentivePage = () => {
             let current = data;
             let payload: EditCollectorIncentiveInterface = {
                 id: idFromUrl,
-                incentive_on: current.addIncentiveOn[0]
+                incentive_on: current.addIncentiveOn.join(',')
             }
-            if (current.addIncentiveOn[0] === addIncentiveOnKeyValue.arrearAmount) {
+            if (current.addIncentiveOn?.includes(addIncentiveOnKeyValue.arrearAmount)) {
                 payload = {
                     ...payload,
                     arrear_amount: current.arrearPercentage,
                 }
             }
-            if (current.addIncentiveOn[0] === addIncentiveOnKeyValue.currentAmount) {
+            if (current.addIncentiveOn[0]?.includes(addIncentiveOnKeyValue.currentAmount)) {
                 payload = {
                     ...payload,
-                    current_amount: current.currentPercentage,
-                }
-            }
-            if (current.addIncentiveOn[0] === addIncentiveOnKeyValue.bothAmount) {
-                payload = {
-                    ...payload,
-                    arrear_amount: current.arrearPercentage,
                     current_amount: current.currentPercentage,
                 }
             }
@@ -146,7 +139,7 @@ const EditIncentivePage = () => {
             console.log(response.data);
             setValue('collectorType', response.data.collector_type.id);
             setValue('applicableLevel', response.data?.office_structure?.office_structure_level_id)
-            setValue('addIncentiveOn', [response?.data?.incentive_on])
+            setValue('addIncentiveOn', response?.data?.incentive_on.split(','))
             setValue('currentPercentage', response.data.current_amount);
             setValue('arrearPercentage', response.data.arrear_amount);
         } catch (error) {
@@ -314,15 +307,16 @@ const EditIncentivePage = () => {
                         <CustomizedMultipleSelectInputWithLabelString
                             label="Add Incentive On"
                             required={true}
+                            multi={true}
                             list={addIncentiveOnPicklistValues}
                             value={watch(`addIncentiveOn`) || []}
                             onChange={(selectedValues) => setValue(`addIncentiveOn`, selectedValues)}
                             errors={errors?.addIncentiveOn}
                         />
                         {
-                            incentive?.addIncentiveOn[0]?.includes(addIncentiveOnKeyValue.currentAmount) &&
+                            incentive?.addIncentiveOn?.includes(addIncentiveOnKeyValue.currentAmount) &&
                             <CustomizedInputWithLabel
-                                label="Current Amount"
+                                label="Current Incentive %"
                                 type="number"
                                 required
                                 {...register(`currentPercentage`, { valueAsNumber: true })}
@@ -330,9 +324,9 @@ const EditIncentivePage = () => {
                             />
                         }
                         {
-                            incentive?.addIncentiveOn[0]?.includes(addIncentiveOnKeyValue.arrearAmount) &&
+                            incentive?.addIncentiveOn?.includes(addIncentiveOnKeyValue.arrearAmount) &&
                             <CustomizedInputWithLabel
-                                label="Arrear Amount"
+                                label="Arrear Incentive %"
                                 type="number"
                                 required
                                 {...register(`arrearPercentage`, { valueAsNumber: true })}
