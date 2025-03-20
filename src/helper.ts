@@ -34,14 +34,13 @@ export const listOfUrlForScopes = [
   { url: "/report/agency-wallet-history-report", backendScopeName: "TPCollectionWebPortal:agency_wallet_history_report:READ" },
   { url: "/report/agent-wallet-history-report", backendScopeName: "TPCollectionWebPortal:agent_wallet_history_report:READ" },
   { url: "/agency/add-collector", backendScopeName: "TPCollectionWebPortal:agent:CREATE" },
-  { url: "/agency/view-collector", backendScopeName: "TPCollectionWebPortal:agent:READ" },
+  { url: "/agency/view-collector", backendScopeName: "TPCollectionWebPortal:agent:VIEW" },
   { url: "/agency/recharge", backendScopeName: "TPCollectionWebPortal:agent:RECHARGE_WALLET" },
   { url: "/agency/extend-validity", backendScopeName: "TPCollectionWebPortal:agent:EXTEND_VALIDITY" },
   { url: "/agency/edit-collector", backendScopeName: "TPCollectionWebPortal:agent:EDIT" },
   { url: "/agency/activate-agent", backendScopeName: "TPCollectionWebPortal:agent:ACTIVATE" },
   { url: "/agency/deactivate-agent", backendScopeName: "TPCollectionWebPortal:agent:DEACTIVATE" },
   { url: "/report/billing-report", backendScopeName: "TPCollectionWebPortal:billing_report:READ" },
-  { url: "/dashboard", backendScopeName: "TPCollectionWebPortal:dashboard:ALL" }
 ];
 
 
