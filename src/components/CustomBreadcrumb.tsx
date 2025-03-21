@@ -95,7 +95,7 @@ const CustomBreadcrumb: React.FC<CustomBreadcrumbProps> = ({
                 </div>
                 {
                     lastLoginAt &&
-                    <p className='ml-4'>Last  Login: {moment(lastLoginAt).format('DD-MM-YYYY')}</p>
+                    <p className='ml-4'>Last  Login: {moment(lastLoginAt).format('DD-MM-YYYY, HH:MM:SS A')}</p>
                 }
             </Card >
             <header className="p-4 bg-lightThemeColor flex">

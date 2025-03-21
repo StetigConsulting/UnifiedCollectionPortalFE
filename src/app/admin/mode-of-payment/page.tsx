@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { urlsListWithTitle } from '@/lib/utils';
+import { getErrorMessage, urlsListWithTitle } from '@/lib/utils';
 import { getAllPaymentModes } from '@/app/api-calls/department/api';
 import { FileCog } from 'lucide-react';
 
@@ -26,7 +26,7 @@ const PaymentConfiguration = () => {
             setPaymentMethods(response.data);
         } catch (error) {
             console.error('Failed to fetch payment methods:', error);
-            toast.error('Error fetching payment methods');
+            toast.error('Error ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }

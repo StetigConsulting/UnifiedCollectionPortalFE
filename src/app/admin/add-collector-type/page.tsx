@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
-import { urlsListWithTitle } from '@/lib/utils';
+import { getErrorMessage, urlsListWithTitle } from '@/lib/utils';
 import { FileCog } from 'lucide-react';
 import { getCollectorTypes } from '@/app/api-calls/agency/api';
 
@@ -27,7 +27,7 @@ const CollectorTypeConfiguration = () => {
             setCollectorTypes(response.data);
         } catch (error) {
             console.error('Error fetching collector types:', error);
-            toast.error('Error fetching collector types');
+            toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }

@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
-import { urlsListWithTitle } from '@/lib/utils';
+import { getErrorMessage, urlsListWithTitle } from '@/lib/utils';
 import { getAllNonEnergyTypes } from '@/app/api-calls/department/api';
 import { FileCog } from 'lucide-react';
 
@@ -27,7 +27,7 @@ const NonEnergyTypeConfiguration = () => {
             setNonEnergyTypes(data.data);
         } catch (error) {
             console.error('Error fetching non-energy types:', error);
-            toast.error('Error fetching data');
+            toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }
