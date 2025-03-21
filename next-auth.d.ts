@@ -5,13 +5,13 @@ declare module "next-auth" {
     interface Session {
         user: {
             id: string;
-            mobileNumber: string;
+            userName: string;
             userId: number;
             accessToken: string;
             refreshToken: string;
             discomId: number;
             roleId: number;
-            userRole?: string;
+            lastLoginAt?: string;
             userScopes?: string[];
             tokenExpiry?: number;
         };
@@ -19,26 +19,26 @@ declare module "next-auth" {
 
     interface User {
         id: string;
-        mobileNumber: string;
+        userName: string;
         userId: number;
         accessToken: string;
         refreshToken: string;
         discomId: number;
         roleId: number;
-        userRole?: string;
+        lastLoginAt?: string;
         userScopes?: string[];
         tokenExpiry?: number;
     }
 
     interface JWT {
         id: string;
-        mobileNumber: string;
+        userName: string;
         userId: number;
         accessToken: string;
         refreshToken: string;
         discomId: number;
         roleId: number;
-        userRole?: string;
+        lastLoginAt?: string;
         userScopes?: string[];
         tokenExpiry?: number;
     }

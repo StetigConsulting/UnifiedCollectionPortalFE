@@ -28,7 +28,7 @@ export const listOfUrlForScopes = [
   { url: "/admin/mode-of-payment", backendScopeName: "TPCollectionWebPortal:business_rules:ALL" },
   { url: "/admin/denied-to-pay", backendScopeName: "TPCollectionWebPortal:business_rules:ALL" },
   { url: "/admin/non-energy-type", backendScopeName: "TPCollectionWebPortal:business_rules:ALL" },
-  { url: "/admin/add-collector-type", backendScopeName: "TPCollectionWebPortal:agent:EDIT_COLLECTOR_ROLE" },
+  { url: "/admin/add-collector-type", backendScopeName: "TPCollectionWebPortal:collector_types:WRITE" },
   { url: "/admin/incentive", backendScopeName: "TPCollectionWebPortal:business_rules:ALL" },
   { url: "/admin/import", backendScopeName: "TPCollectionWebPortal:business_rules:ALL" },
   { url: "/report/agency-wallet-history-report", backendScopeName: "TPCollectionWebPortal:agency_wallet_history_report:READ" },
