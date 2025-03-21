@@ -10,12 +10,13 @@ interface ModalProps {
     onClose: () => void;
     message: string;
     type: 'success' | 'error';
+    errorTable?: any;
 }
 
-const SuccessErrorModal: React.FC<ModalProps> = ({ isOpen, onClose, message, type }) => {
+const SuccessErrorModal: React.FC<ModalProps> = ({ isOpen, onClose, message, type, errorTable }) => {
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="flex flex-col items-center justify-center p-6">
+            <DialogContent className="flex flex-col items-center justify-center p-6 w-auto max-w-2/3">
                 <DialogHeader>
                     <VisuallyHidden>
                         <DialogTitle>Minimum Payable Amount</DialogTitle>
@@ -30,6 +31,9 @@ const SuccessErrorModal: React.FC<ModalProps> = ({ isOpen, onClose, message, typ
                 <button className="absolute top-2 right-2 text-gray-500 hover:text-gray-700" onClick={onClose}>
                     <X className="h-5 w-5" />
                 </button>
+                <div className='mt-4 w-full max-h-[300px] overflow-y-auto'>
+                    {errorTable}
+                </div>
             </DialogContent>
         </Dialog>
     );

@@ -17,6 +17,9 @@ import { getErrorMessage, urlsListWithTitle } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import { getAllGlobalPaymentMode, getAllPaymentModes } from '@/app/api-calls/department/api';
 import { Loader2 } from 'lucide-react';
+import SuccessErrorModal from '@/components/SuccessErrorModal';
+import ReactTable from '@/components/ReactTable';
+import NormalReactTable from '@/components/NormalReactTable';
 
 const AddPaymentConfiguration: React.FC = () => {
     const router = useRouter();
@@ -37,6 +40,10 @@ const AddPaymentConfiguration: React.FC = () => {
 
     const [paymentModesList, setPaymentModesList] = useState([])
 
+    const [isErrorModalOpened, setIsErrorModalOpened] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('')
+    const [errorValidationIssues, setErrorValidationIssues] = useState([])
+
     const onSubmit = async (data: AddModeOfPaymentFormData) => {
         setIsSubmitting(true);
         try {
@@ -48,8 +55,25 @@ const AddPaymentConfiguration: React.FC = () => {
             toast.success('Mode of Payment Updated Successfully!');
             router.push(urlsListWithTitle.modeOfPayment.url);
         } catch (error) {
-            toast.error('Error: ' + (error.error));
-            console.error(error);
+            const flattenedErrors = error?.data?.validation_errors?.flatMap(item => {
+                return [
+                    ...item.active_entities.map(entity => ({
+                        ...entity,
+                        entity: item.entity,
+                        status: "active"
+                    })),
+                    ...item.in_active_entities.map(entity => ({
+                        ...entity,
+                        entity: item.entity,
+                        status: "inactive"
+                    }))
+                ];
+            });
+            // toast.error('Error: ' + (error.error));
+            setIsErrorModalOpened(true)
+            setErrorMessage(error.error)
+            console.log(flattenedErrors);
+            setErrorValidationIssues(flattenedErrors);
         } finally {
             setIsSubmitting(false);
         }
@@ -87,6 +111,17 @@ const AddPaymentConfiguration: React.FC = () => {
         fetchPaymentMethods()
     }, [])
 
+    const columns = [
+        { label: 'Entity', key: 'entity', sortable: true },
+        { label: 'Agency ID', key: 'agency_id', sortable: true },
+        { label: 'Agency Name', key: 'agency_name', sortable: true },
+        { label: 'Agent ID', key: 'id', sortable: true },
+        { label: 'Agent Name', key: 'agent_name', sortable: true },
+        { label: 'Payment Modes', key: 'payment_modes', sortable: true },
+        { label: 'Active', key: 'status', sortable: true },
+    ];
+
+
     return (
         <AuthUserReusableCode pageTitle="Mode Of Payment" isLoading={isLoading || isSubmitting}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -109,6 +144,13 @@ const AddPaymentConfiguration: React.FC = () => {
                     </Button>
                 </div>
             </form>
+            <SuccessErrorModal isOpen={isErrorModalOpened} onClose={() => setIsErrorModalOpened(false)}
+                message={errorMessage} type="error"
+                errorTable={<NormalReactTable
+                    data={errorValidationIssues}
+                    columns={columns}
+                />}
+            />
         </AuthUserReusableCode>
     );
 };
