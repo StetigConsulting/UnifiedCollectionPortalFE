@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { getErrorMessage } from '@/lib/utils';
 import moment from 'moment';
 import AlertPopup from '@/components/Agency/ViewAgency/AlertPopup';
+import NormalReactTable from '@/components/NormalReactTable';
 
 const EclConsumerMapping: React.FC = () => {
     const [isUploadModalOpen, setIsUploadModalOpen] = useState<boolean>(false);
@@ -84,6 +85,8 @@ const EclConsumerMapping: React.FC = () => {
         }
     };
 
+    const [errorMessage, setErrorMessage] = useState('')
+    const [errorValidationIssues, setErrorValidationIssues] = useState([])
 
     const handleUpload = async () => {
         if (!selectedFile) {
@@ -103,10 +106,16 @@ const EclConsumerMapping: React.FC = () => {
             setIsSuccessModalOpen(true);
             setSelectedFile(null)
         } catch (error) {
+            const flattenedErrors = error?.data?.errorSummary?.flatMap(item => ({
+                error: item
+            }));
             setIsUploadModalOpen(false);
             setIsErrorModalOpen(true);
             setSelectedFile(null)
-            toast.error('Error: ' + getErrorMessage(error));
+            setErrorMessage(error.error)
+            console.log(flattenedErrors);
+            setErrorValidationIssues(flattenedErrors);
+            // toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
             setIsUploading(false)
@@ -126,6 +135,10 @@ const EclConsumerMapping: React.FC = () => {
             setSelectedFile(file);
         }
     };
+
+    const columns = [
+        { label: 'Error', key: 'error', sortable: true },
+    ];
 
     return (
         <AuthUserReusableCode pageTitle="Excel Import for ECL Consumer with Arrear" isLoading={isLoading}>
@@ -191,7 +204,11 @@ const EclConsumerMapping: React.FC = () => {
             <SuccessErrorModal isOpen={isSuccessModalOpen} onClose={() => setIsSuccessModalOpen(false)}
                 message="Data Upload Successfully!" type="success" />
             <SuccessErrorModal isOpen={isErrorModalOpen} onClose={() => setIsErrorModalOpen(false)}
-                message="Error occurred while uploading data" type="error" />
+                message={errorMessage} type="error"
+                errorTable={<NormalReactTable
+                    data={errorValidationIssues}
+                    columns={columns}
+                />} />
         </AuthUserReusableCode>
     );
 };
