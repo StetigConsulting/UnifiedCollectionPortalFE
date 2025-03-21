@@ -48,20 +48,24 @@ const AddCollectorTypeSetup = () => {
             toast.success('Collector Type Updated Successfully!');
             router.push(urlsListWithTitle.collectorType.url);
         } catch (error) {
-            const flattenedErrors = error?.data?.validation_errors?.flatMap(item => {
+            let flattenedErrors = error?.data?.validation_errors?.flatMap(item => {
                 return [
                     ...item.active_entities.map(entity => ({
                         ...entity,
                         entity: item.entity,
-                        status: "active"
+                        status: "Active"
                     })),
                     ...item.in_active_entities.map(entity => ({
                         ...entity,
                         entity: item.entity,
-                        status: "inactive"
+                        status: "Inactive"
                     }))
                 ];
             });
+            flattenedErrors = flattenedErrors.map(item => ({
+                ...item,
+                id: item?.entity === "Collector Incentive Applicability" ? null : item?.id
+            }))
             setIsErrorModalOpened(true)
             setErrorMessage(error.error)
             console.log(flattenedErrors);
@@ -114,7 +118,7 @@ const AddCollectorTypeSetup = () => {
         { label: 'Agent ID', key: 'id', sortable: true },
         { label: 'Agent Name', key: 'agent_name', sortable: true },
         { label: 'Office Structure', key: 'office_structure', sortable: true },
-        { label: 'Active', key: 'status', sortable: true },
+        { label: 'Status', key: 'status', sortable: true },
     ];
 
     return (

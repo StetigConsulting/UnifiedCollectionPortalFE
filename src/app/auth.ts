@@ -3,13 +3,13 @@ import Credentials from "next-auth/providers/credentials";
 
 interface ExtendedUser extends User {
     id: string;
-    mobileNumber: string;
+    userName: string;
     userId: number;
     accessToken: string;
     refreshToken: string;
     discomId: number;
     roleId: number;
-    userRole?: string;
+    lastLoginAt?: string;
     userScopes?: string[];
     tokenExpiry?: number;
 }
@@ -28,12 +28,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 const user: ExtendedUser = {
                     id: "",
                     userId: 0,
-                    mobileNumber: '',
+                    userName: '',
                     accessToken: String(credentials.access_token),
                     refreshToken: String(credentials.refresh_token),
                     discomId: 0,
                     roleId: 0,
-                    userRole: "UNKNOWN",
+                    lastLoginAt: "UNKNOWN",
                     userScopes: [],
                     tokenExpiry: Date.now() + Number(credentials.expires_in),
                     // tokenExpiry: Date.now() + 1 * 60 * 1000,
@@ -50,14 +50,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                         }
                     });
 
-                    console.log('userRoleResponse', userRoleResponse)
 
                     if (userRoleResponse.ok) {
                         const roleData = await userRoleResponse.json();
+                        console.log('userRoleResponse', roleData)
                         user.id = String(roleData?.data?.id);
+                        user.userName = roleData?.data?.user_name;
                         user.userId = parseInt(roleData?.data?.id);
                         user.discomId = roleData?.data?.discom_id;
-                        user.userRole = roleData?.data?.user_role?.role_name || "UNKNOWN";
+                        user.lastLoginAt = roleData?.data?.last_login_date_time;
                         user.userScopes = roleData?.data?.user_scopes?.map((scope: { user_scope: string }) => scope.user_scope) || [];
                     } else {
                         console.error("Failed to fetch user role", userRoleResponse.statusText);
@@ -74,13 +75,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         async jwt({ token, user }) {
             if (user) {
                 token.id = user.id;
-                token.mobileNumber = user.mobileNumber;
+                token.userName = user.userName;
                 token.userId = user.userId;
                 token.accessToken = user.accessToken;
                 token.refreshToken = user.refreshToken;
                 token.discomId = user.discomId;
                 token.roleId = user.roleId;
-                token.userRole = user.userRole;
+                token.lastLoginAt = user.lastLoginAt;
                 token.userScopes = user.userScopes;
                 token.tokenExpiry = user.tokenExpiry
             }
@@ -104,13 +105,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 return null;
             }
             session.user.id = token.id as string;
-            session.user.mobileNumber = token.mobileNumber as string;
+            session.user.userName = token.userName as string;
             session.user.userId = token.userId as number;
             session.user.accessToken = token.accessToken as string;
             session.user.refreshToken = token.refreshToken as string;
             session.user.discomId = token.discomId as number;
             session.user.roleId = token.roleId as number;
-            session.user.userRole = token.userRole as string;
+            session.user.lastLoginAt = token.lastLoginAt as string;
             session.user.userScopes = token.userScopes as string[];
             session.user.tokenExpiry = token.tokenExpiry as number;
             return session;

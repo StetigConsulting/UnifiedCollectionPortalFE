@@ -2,11 +2,12 @@ import React from 'react'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from './ui/breadcrumb'
 import { Separator } from './ui/separator'
 import { SidebarTrigger } from './ui/sidebar'
-import { LogOut, Wallet } from 'lucide-react';
+import { LogOut, User, Wallet } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { usePathname } from 'next/navigation';
 import { getTitleByUrl } from '@/lib/utils';
+import moment from 'moment';
 
 interface CustomBreadcrumbProps {
     pageTitle: string;
@@ -14,10 +15,13 @@ interface CustomBreadcrumbProps {
     onSignOut: (event: React.MouseEvent) => Promise<void>;
     agencyBalanceDetail: any;
     blacklist?: string[];
+    userName?: string;
+    lastLoginAt?: string;
 }
 
 const CustomBreadcrumb: React.FC<CustomBreadcrumbProps> = ({
     pageTitle, children, onSignOut, agencyBalanceDetail,
+    userName, lastLoginAt,
     blacklist = ["agency", 'dashboard', 'admin', 'department']
 }) => {
     const router = usePathname();
@@ -86,17 +90,26 @@ const CustomBreadcrumb: React.FC<CustomBreadcrumbProps> = ({
                         <Separator orientation="vertical" className="mr-2 h-4" />
                     </>
                 }
-                <Breadcrumb className='ml-auto'>
-                    <BreadcrumbList>
-                        <BreadcrumbItem className="hidden md:block">
-                            <BreadcrumbLink href="/dashboard">Home</BreadcrumbLink>
-                        </BreadcrumbItem>
-                        {breadcrumbLinks}
-                    </BreadcrumbList>
-                </Breadcrumb>
+                <div className='bg-lightThemeColor px-4 py-2 rounded-lg flex gap-2 text-sm ml-auto'>
+                    <User size={16} className='self-center' /> {userName}
+                </div>
+                {
+                    lastLoginAt &&
+                    <p className='ml-4'>Last  Login: {moment(lastLoginAt).format('DD-MM-YYYY')}</p>
+                }
             </Card >
-            <header className="p-4 bg-lightThemeColor">
-                <h1 className="text-2xl font-bold">{pageTitle}</h1>
+            <header className="p-4 bg-lightThemeColor flex">
+                <h1 className="text-xl font-bold">{pageTitle}</h1>
+                <div className='ml-auto self-center'>
+                    <Breadcrumb>
+                        <BreadcrumbList>
+                            <BreadcrumbItem className="hidden md:block">
+                                <BreadcrumbLink href="/dashboard">Home</BreadcrumbLink>
+                            </BreadcrumbItem>
+                            {breadcrumbLinks}
+                        </BreadcrumbList>
+                    </Breadcrumb>
+                </div>
             </header>
             <Card className="flex-1 overflow-auto p-4"
             // style={{ backgroundColor: '#80808021' }}
