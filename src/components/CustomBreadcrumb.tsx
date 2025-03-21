@@ -91,7 +91,7 @@ const CustomBreadcrumb: React.FC<CustomBreadcrumbProps> = ({
                     </>
                 }
                 <div className='bg-lightThemeColor px-4 py-2 rounded-lg flex gap-2 text-sm ml-auto'>
-                    <User size={16} className='self-center' /> {userName}
+                    <User size={16} className='self-center' /> Welcome, {userName}
                 </div>
                 {
                     lastLoginAt &&
