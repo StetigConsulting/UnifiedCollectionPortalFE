@@ -44,7 +44,7 @@ const CollectorTypeConfiguration = () => {
                     <Button variant="default" size="lg"
                         onClick={() => router.push(urlsListWithTitle.collectorTypeAdd.url)}
                     >
-                        <FileCog />Setup Non Collector Type
+                        <FileCog />Setup Collector Type
                     </Button>
                 </div>
 
