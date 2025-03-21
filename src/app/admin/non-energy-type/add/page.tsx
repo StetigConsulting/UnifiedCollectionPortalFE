@@ -17,6 +17,8 @@ import { updateNonEnergyType } from "@/app/api-calls/admin/api";
 import { NonEnergyTypeUpdateInterface } from "@/lib/interface";
 import { useSession } from "next-auth/react";
 import CustomizedMultipleSelectInputWithLabelNumber from "@/components/CustomizedMultipleSelectInputWithLabelNumber";
+import SuccessErrorModal from "@/components/SuccessErrorModal";
+import NormalReactTable from "@/components/NormalReactTable";
 
 type FormData = z.infer<typeof nonEnergyTypeSchema>;
 
@@ -32,6 +34,10 @@ const NonEnergyType = () => {
 
     const formData = watch();
 
+    const [isErrorModalOpened, setIsErrorModalOpened] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('')
+    const [errorValidationIssues, setErrorValidationIssues] = useState([])
+
     const onSubmit = async (data: FormData) => {
         setIsSubmitting(true);
         try {
@@ -43,8 +49,24 @@ const NonEnergyType = () => {
             toast.success('Payment Modes Updated Successfully!');
             router.push(urlsListWithTitle.nonEnergyTypeTable.url);
         } catch (error) {
-            toast.error('Error: ' + (error.error));
-            console.error(error);
+            const flattenedErrors = error?.data?.validation_errors?.flatMap(item => {
+                return [
+                    ...item.active_entities.map(entity => ({
+                        ...entity,
+                        entity: item.entity,
+                        status: "active"
+                    })),
+                    ...item.in_active_entities.map(entity => ({
+                        ...entity,
+                        entity: item.entity,
+                        status: "inactive"
+                    }))
+                ];
+            });
+            setIsErrorModalOpened(true)
+            setErrorMessage(error.error)
+            console.log(flattenedErrors);
+            setErrorValidationIssues(flattenedErrors);
         } finally {
             setIsSubmitting(false);
         }
@@ -85,7 +107,15 @@ const NonEnergyType = () => {
         fetchNonEnergyType()
     }, [])
 
-    console.log(errors)
+    const columns = [
+        { label: 'Entity', key: 'entity', sortable: true },
+        { label: 'Agency ID', key: 'agency_id', sortable: true },
+        { label: 'Agency Name', key: 'agency_name', sortable: true },
+        { label: 'Agent ID', key: 'id', sortable: true },
+        { label: 'Agent Name', key: 'agent_name', sortable: true },
+        { label: 'Non Energy Types', key: 'non_energy_types', sortable: true },
+        { label: 'Active', key: 'status', sortable: true },
+    ];
 
     return (
         <AuthUserReusableCode pageTitle="Non Energy Type" isLoading={isLoading}>
@@ -118,6 +148,13 @@ const NonEnergyType = () => {
                     </Button>
                 </div>
             </form>
+            <SuccessErrorModal isOpen={isErrorModalOpened} onClose={() => setIsErrorModalOpened(false)}
+                message={errorMessage} type="error"
+                errorTable={<NormalReactTable
+                    data={errorValidationIssues}
+                    columns={columns}
+                />}
+            />
         </AuthUserReusableCode>
     );
 };
