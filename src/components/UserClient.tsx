@@ -27,7 +27,7 @@ const UserClient: React.FC<UserClientProps> = ({ session }) => {
                         <User2 className="w-6 h-6" />
                         <div className="flex flex-col">
                             <span className='font-semibold'>{session?.user?.id}</span>
-                            <span className='text-gray-500 text-xs text-start'>{session?.user?.mobileNumber}</span>
+                            <span className='text-gray-500 text-xs text-start'>{session?.user?.userName}</span>
                         </div>
                     </Button>
                 </DropdownMenuTrigger>
