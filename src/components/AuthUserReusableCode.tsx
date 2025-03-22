@@ -94,4 +94,4 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
     )
 }
 
-export default AuthUserReusableCode
+export default React.memo(AuthUserReusableCode)
