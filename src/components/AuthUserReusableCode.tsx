@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { SidebarInset, SidebarProvider } from './ui/sidebar'
 import { AppSidebar } from './AppSidebar'
 import CustomBreadcrumb from './CustomBreadcrumb'
@@ -26,6 +26,8 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
     const [agencyBalanceDetail, setAgencyBalanceDetail] = React.useState({})
 
     const [isFetchingResource, setIsFetchingResource] = useState(false)
+
+    const memoizedLogoLink = useMemo(() => logoLink, [logoLink]);
 
     React.useEffect(() => {
         if (session?.user) {
@@ -66,7 +68,7 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
             display: '-webkit-box',
             boxSizing: 'border-box'
         }}>
-            <AppSidebar logoLink={logoLink} onSignOut={onSignOut} />
+            <AppSidebar logoLink={memoizedLogoLink} onSignOut={onSignOut} />
             {
                 isLoading &&
                 <div className="absolute inset-0 flex items-center justify-center z-50"
