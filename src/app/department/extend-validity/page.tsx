@@ -38,6 +38,7 @@ const ExtendValidity = () => {
             const response = await extendValidity(payload);
             toast.success("Validity extended successfully");
             console.log("API Response:", response);
+            getAgencyList()
             reset({
                 agencyName: null,
                 agencyId: null,
@@ -51,7 +52,6 @@ const ExtendValidity = () => {
                 url.search = '';
                 window.history.pushState({}, '', url.href);
             }
-            getAgencyList()
         } catch (error) {
             console.error("Failed to extend validity:", error);
             let errorMessage = error?.data ? error?.data[Object.keys(error?.data)[0]] : error.error;

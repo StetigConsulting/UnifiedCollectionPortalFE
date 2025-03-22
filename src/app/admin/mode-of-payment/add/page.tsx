@@ -60,12 +60,12 @@ const AddPaymentConfiguration: React.FC = () => {
                     ...item.active_entities.map(entity => ({
                         ...entity,
                         entity: item.entity,
-                        status: "active"
+                        status: "Active"
                     })),
                     ...item.in_active_entities.map(entity => ({
                         ...entity,
                         entity: item.entity,
-                        status: "inactive"
+                        status: "Inactive"
                     }))
                 ];
             });
@@ -118,7 +118,7 @@ const AddPaymentConfiguration: React.FC = () => {
         { label: 'Agent ID', key: 'id', sortable: true },
         { label: 'Agent Name', key: 'agent_name', sortable: true },
         { label: 'Payment Modes', key: 'payment_modes', sortable: true },
-        { label: 'Active', key: 'status', sortable: true },
+        { label: 'Status', key: 'status', sortable: true },
     ];
 
 

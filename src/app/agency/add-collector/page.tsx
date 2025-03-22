@@ -136,7 +136,6 @@ const AddCounterCollector = () => {
             console.log(agencyLevel.value, levelData)
 
             if (agencyLevel.value == levelIdMap.CIRCLE) {
-                console.log('setting circle')
                 setCircles(levelData)
             } else if (agencyLevel.value == levelIdMap.DIVISION) {
                 setDivisions(levelData)
@@ -428,7 +427,6 @@ const AddCounterCollector = () => {
                                 if (selectedValues.length > 0) {
                                     getDivisions(selectedValues[0]);
                                 }
-
                             }}
                         />
                     }

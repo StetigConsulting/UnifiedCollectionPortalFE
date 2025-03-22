@@ -1,6 +1,8 @@
 import { handleCredentialsSignin } from "@/app/actions/authActions";
 import axios from "axios";
 import { getSession, signOut } from "next-auth/react";
+import { Router } from "next/router";
+import { toast } from "sonner";
 
 const api = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_BASE_URL_V2,
@@ -36,13 +38,21 @@ const refreshAccessToken = async (refreshToken: string) => {
     } catch (error) {
         if (error.response?.status === 401) {
             console.error("Refresh token expired, logging out...");
-            await signOut();
+            localStorage.removeItem('csrf_token');
+            // await signOut();
         } else {
             console.error("Error refreshing access token:", error);
         }
         return null;
     }
 };
+// const handleSignOut = async () => {
+//     await signOut({ redirect: false }); // Do not redirect automatically
+//     // Clear CSRF token and handle logout UI
+//     localStorage.removeItem('csrf_token');
+//     Router.push('/'); // Redirect to homepage using Next.js router
+// };
+
 
 api.interceptors.request.use(
     async (config) => {
@@ -72,7 +82,9 @@ api.interceptors.response.use(
                 return api(originalRequest);
             } catch (refreshError) {
                 console.error("Token refresh failed, logging out...");
+                toast.error("Your session has expired. Please log in again.");
                 await signOut();
+                window.location.href = '/';
                 return Promise.reject(refreshError);
             }
         }

@@ -8,6 +8,7 @@ import { getRosourceByDiscomId } from '@/app/api-calls/other/api'
 import { getAgencyRechargeableBalance } from '@/app/api-calls/department/api'
 import { handleSignOut } from '@/app/actions/authActions'
 import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
 
 interface AuthUserReusableCodeProps {
     children: React.ReactNode;
@@ -17,6 +18,8 @@ interface AuthUserReusableCodeProps {
 
 function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUserReusableCodeProps) {
     const { data: session } = useSession()
+
+    const router = useRouter()
 
     const [logoLink, setLogoLink] = React.useState('')
 
@@ -41,6 +44,7 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
         if (session == null) {
             toast.error('Session Expired')
             handleSignOut();
+            router.push('/auth/signin');
         }
     }, [session])
 
