@@ -77,7 +77,7 @@ const EditAgencyArea = () => {
         })
     }, []);
 
-    const getDivisions = async (id) => {
+    const getDivisions = async (id, stopLoader = false) => {
         setIsLoading(true)
         await getLevelsDiscomId(id).then((data) => {
             setDivisions(
@@ -88,10 +88,11 @@ const EditAgencyArea = () => {
                     };
                 })
             );
+            stopLoader && setIsLoading(false)
         })
     };
 
-    const getSubDivisions = async (id) => {
+    const getSubDivisions = async (id, stopLoader = false) => {
         setIsLoading(true)
         await getLevelsDiscomId(id).then((data) => {
             setSubDivisions(
@@ -102,10 +103,11 @@ const EditAgencyArea = () => {
                     };
                 })
             );
+            stopLoader && setIsLoading(false)
         })
     };
 
-    const getSections = async (id) => {
+    const getSections = async (id, stopLoader = false) => {
         setIsLoading(true)
         await getLevelsDiscomId(id).then((data) => {
             setSections(
@@ -116,6 +118,7 @@ const EditAgencyArea = () => {
                     };
                 })
             );
+            stopLoader && setIsLoading(false)
         })
     };
 
@@ -295,7 +298,7 @@ const EditAgencyArea = () => {
                             onChange={(selectedValues) => {
                                 setValue('circle', selectedValues)
                                 if (selectedValues.length > 0 && formData.workingLevel != (levelNameMappedWithId.CIRCLE)) {
-                                    getDivisions(selectedValues[0]);
+                                    getDivisions(selectedValues[0], true);
                                     setValue('division', [])
                                 }
                             }}
@@ -314,7 +317,7 @@ const EditAgencyArea = () => {
                                 onChange={(selectedValues) => {
                                     setValue('division', selectedValues)
                                     if (selectedValues.length > 0 && formData.workingLevel != (levelNameMappedWithId.DIVISION)) {
-                                        getSubDivisions(selectedValues[0]);
+                                        getSubDivisions(selectedValues[0], true);
                                         setValue('subDivision', [])
                                     }
                                 }}
@@ -335,7 +338,7 @@ const EditAgencyArea = () => {
                                     onChange={(selectedValues) => {
                                         setValue('subDivision', selectedValues)
                                         if (selectedValues.length > 0 && formData.workingLevel == (levelNameMappedWithId.SECTION)) {
-                                            getSections(selectedValues[0]);
+                                            getSections(selectedValues[0], true);
                                             setValue('section', [])
                                         }
                                     }}

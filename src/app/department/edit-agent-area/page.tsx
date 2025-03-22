@@ -423,8 +423,8 @@ const EditAgentAreaRoleForm = () => {
                                 />
                             )}
                         {
-                            formData.workingLevel != null
-                            && ((agencyData.working_level == levelIdMapWithLevelName?.SUB_DIVISION) ||
+                            formData.workingLevel != null && !Number.isNaN(formData.workingLevel) &&
+                            ((agencyData.working_level == levelIdMapWithLevelName?.SUB_DIVISION) ||
                                 (formData.workingLevel == levelIdMapWithLevelName?.SECTION
                                     || formData.workingLevel == levelIdMapWithLevelName?.SUB_DIVISION)) &&
                             (agencyData.working_level != levelIdMapWithLevelName?.SECTION) && (
@@ -446,7 +446,8 @@ const EditAgentAreaRoleForm = () => {
                             )
                         }
                         {
-                            formData.workingLevel != null && formData.workingLevel == levelIdMapWithLevelName.SECTION && (
+                            formData.workingLevel != null && !Number.isNaN(formData.workingLevel) &&
+                            formData.workingLevel == levelIdMapWithLevelName.SECTION && (
                                 <CustomizedMultipleSelectInputWithLabelNumber
                                     label="Section"
                                     errors={errors.section}
