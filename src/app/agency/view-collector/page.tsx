@@ -30,7 +30,7 @@ const ViewCollector = () => {
             const response = await getAllAgentByAgencyId(currentUserId)
             const updatedCollectors = response.data.map((item) => ({
                 ...item,
-                workingLevelOffice: item.working_level_office.office_description
+                workingLevelOffice: item?.working_level_office?.office_description
             }));
 
             const discomList = await getLevels(session?.user?.discomId);

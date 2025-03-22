@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SidebarInset, SidebarProvider } from './ui/sidebar'
 import { AppSidebar } from './AppSidebar'
 import CustomBreadcrumb from './CustomBreadcrumb'
@@ -25,20 +25,28 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
 
     const [agencyBalanceDetail, setAgencyBalanceDetail] = React.useState({})
 
+    const [isFetchingResource, setIsFetchingResource] = useState(false)
+
     React.useEffect(() => {
         if (session?.user) {
-            getRosourceByDiscomId(session?.user?.discomId).then((res) => {
-                const logoValue = res.data.find(item => item.name === "Logo")?.value;
-                setLogoLink(logoValue);
-            })
-
-            if (session?.user?.userScopes.includes('TPCollectionWebPortal:agency_balance:READ')) {
-                getAgencyRechargeableBalance(session?.user?.userId).then((res) => {
-                    setAgencyBalanceDetail(res.data)
-                })
-            }
+            getHeaderDetails()
         }
     }, [])
+
+    const getHeaderDetails = async () => {
+        setIsFetchingResource(true)
+        await getRosourceByDiscomId(session?.user?.discomId).then((res) => {
+            const logoValue = res.data.find(item => item.name === "Logo")?.value;
+            setLogoLink(logoValue);
+        })
+
+        if (session?.user?.userScopes.includes('TPCollectionWebPortal:agency_balance:READ')) {
+            await getAgencyRechargeableBalance(session?.user?.userId).then((res) => {
+                setAgencyBalanceDetail(res.data)
+            })
+        }
+        setIsFetchingResource(false)
+    }
 
     useEffect(() => {
         if (session == null) {

@@ -100,10 +100,16 @@ const EditReceiptsForPostpaid = () => {
         router.back();
     };
 
+    const [levelNameMappedWithId, setLevelNameMappedWithId] = useState<Record<string, number>>({})
     const [listOfApplicableLevel, setListOfApplicableLevel] = useState([])
 
     useEffect(() => {
-        getLevels(session?.user?.discomId).then((res) => {
+        handleGetWorkingLevel()
+    }, [])
+
+    const handleGetWorkingLevel = async () => {
+        setIsLoading(false)
+        await getLevels(session?.user?.discomId).then((res) => {
             setListOfApplicableLevel(
                 res?.data
                     ?.filter((ite) => ite.levelType == "MAIN")
@@ -114,8 +120,16 @@ const EditReceiptsForPostpaid = () => {
                         };
                     })
             );
+            let levelIdMap = res?.data
+                ?.filter((item) => item.levelType === "MAIN")
+                .reduce((acc, item) => {
+                    let levelName = item.levelName.replace(' ', "_");
+                    acc[levelName] = item.id;
+                    return acc;
+                }, {});
+            setLevelNameMappedWithId(levelIdMap)
         })
-    }, [])
+    }
 
     const [listOfPicklist, setListOfPicklist] = useState([{
         circle: [],
@@ -124,10 +138,10 @@ const EditReceiptsForPostpaid = () => {
         section: [],
     }]);
 
-    const getPicklistFromList = ({ id, type = 'circle', index }) => {
+    const getPicklistFromList = async ({ id, type = 'circle', index }) => {
         setIsLoading(true);
 
-        getLevelsDiscomId(id).then((data) => {
+        await getLevelsDiscomId(id).then((data) => {
             const picklist = data?.data?.officeStructure?.map((ite) => ({
                 value: ite.id,
                 label: ite.office_description,
@@ -153,42 +167,42 @@ const EditReceiptsForPostpaid = () => {
         });
     };
 
-    const handleLevelChange = (index: number, value: string) => {
+    const handleLevelChange = async (index: number, value: string) => {
         setValue(`receipts.${index}.applicableLevel`, value);
         setValue(`receipts.${index}.circle`, []);
         setValue(`receipts.${index}.division`, []);
         setValue(`receipts.${index}.subDivision`, []);
         setValue(`receipts.${index}.section`, []);
         if (value) {
-            getPicklistFromList({ id: session?.user?.discomId, type: 'circle', index });
+            await getPicklistFromList({ id: session?.user?.discomId, type: 'circle', index });
         }
     };
 
-    const handleCircleChange = (index: number, value: number[], levelValue: string) => {
+    const handleCircleChange = async (index: number, value: number[], levelValue: string) => {
         setValue(`receipts.${index}.circle`, value);
         setValue(`receipts.${index}.division`, []);
         setValue(`receipts.${index}.subDivision`, []);
         setValue(`receipts.${index}.section`, []);
         if (value && levelValue != levelWIthId.CIRCLE) {
-            getPicklistFromList({ id: value, type: 'division', index });
+            await getPicklistFromList({ id: value, type: 'division', index });
         }
     };
 
-    const handleDivisionChange = (index: number, value: number[], levelValue: string) => {
+    const handleDivisionChange = async (index: number, value: number[], levelValue: string) => {
         setValue(`receipts.${index}.division`, value);
         setValue(`receipts.${index}.subDivision`, []);
         setValue(`receipts.${index}.section`, []);
         if (value && (levelValue == levelWIthId.SECTION
             || levelValue == levelWIthId.SUB_DIVISION)) {
-            getPicklistFromList({ id: value, type: 'subDivision', index });
+            await getPicklistFromList({ id: value, type: 'subDivision', index });
         }
     };
 
-    const handleSubDivisionChange = (index: number, value: number[], levelValue: string) => {
+    const handleSubDivisionChange = async (index: number, value: number[], levelValue: string) => {
         setValue(`receipts.${index}.subDivision`, value);
         setValue(`receipts.${index}.section`, []);
         if (value && levelValue == levelWIthId.SECTION) {
-            getPicklistFromList({ id: value, type: 'section', index });
+            await getPicklistFromList({ id: value, type: 'section', index });
         }
     };
 
@@ -196,10 +210,10 @@ const EditReceiptsForPostpaid = () => {
     const receiptIdFromUrl = searchParams.get('id');
 
     useEffect(() => {
-        if (receiptIdFromUrl) {
+        if (Object.keys(levelNameMappedWithId).length > 0) {
             getReceiptDetail(receiptIdFromUrl);
         }
-    }, [receiptIdFromUrl])
+    }, [levelNameMappedWithId])
 
     const getReceiptDetail = async (id: string) => {
         setIsLoading(true)
@@ -207,17 +221,60 @@ const EditReceiptsForPostpaid = () => {
             const response = await getReceiptForPostpaidById(id);
             console.log("API Response:", response);
             let payload = {
-                ...receipts[0],
                 receiptsPerMonth: response?.data?.json_rule?.receipt_per_month_per_bill,
                 receiptsPerDay: response?.data?.json_rule?.receipt_per_day_per_bill,
                 allowSecondReceipt: response?.data?.json_rule?.second_receipt_different_payment_mode,
+                ...response?.data?.rule_level === 'Levelwise' && {
+                    applicableLevel: response?.data?.office_structure?.office_structure_level_id,
+                    circle: [],
+                    division: [],
+                    subDivision: [],
+                    section: []
+                }
             }
+
             setValue('configRule', response?.data?.rule_level);
             setValue('receipts', [payload]);
+            await setWorkingLevels(response?.data)
         } catch (error) {
             console.error("Failed to get:", error.data[Object.keys(error.data)[0]]);
         } finally {
             setIsLoading(false);
+        }
+    }
+
+    const setWorkingLevels = async (data) => {
+        try {
+            setIsLoading(true)
+            let workingLevelId = data?.office_structure?.office_structure_level_id;
+            let parentOfficeList = data?.parent_office_structure_hierarchy
+            await handleLevelChange(0, workingLevelId)
+            let circleId = parentOfficeList.filter(item => item?.office_structure_level_id === levelNameMappedWithId.CIRCLE)
+            if (circleId.length > 0) {
+                await handleCircleChange(0, [circleId[0].id], workingLevelId)
+                setIsLoading(true)
+                let divisionId = parentOfficeList.filter(item => item?.office_structure_level_id === levelNameMappedWithId.DIVISION)
+                if (divisionId.length > 0) {
+                    await handleDivisionChange(0, [divisionId[0].id], workingLevelId)
+                    setIsLoading(true)
+                    let subDivisionId = parentOfficeList.filter(item => item?.office_structure_level_id === levelNameMappedWithId.SUB_DIVISION)
+                    if (subDivisionId.length > 0) {
+                        await handleSubDivisionChange(0, [subDivisionId[0].id], workingLevelId)
+                        setIsLoading(true)
+                        setValue(`receipts.0.section`, [data?.office_structure?.id])
+                    } else {
+                        setValue('receipts.0.subDivision', [data?.office_structure?.id])
+                    }
+                } else {
+                    setValue('receipts.0.division', [data?.office_structure?.id])
+                }
+            } else {
+                setValue('receipts.0.circle', [data?.office_structure?.id])
+            }
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setIsLoading(false)
         }
     }
 
