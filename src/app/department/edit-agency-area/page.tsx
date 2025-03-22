@@ -9,7 +9,7 @@ import CustomizedSelectInputWithLabel from "@/components/CustomizedSelectInputWi
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import AuthUserReusableCode from "@/components/AuthUserReusableCode";
-import { editAgencyAreaById, getAgenciesWithDiscom, getLevels, getLevelsDiscomId } from "@/app/api-calls/department/api";
+import { editAgencyAreaById, getAgenciesWithDiscom, getAgencyById, getLevels, getLevelsDiscomId } from "@/app/api-calls/department/api";
 import CustomizedMultipleSelectInputWithLabelNumber from "@/components/CustomizedMultipleSelectInputWithLabelNumber";
 import { Loader2 } from "lucide-react";
 import AlertPopup from "@/components/Agency/ViewAgency/AlertPopup";
@@ -46,7 +46,16 @@ const EditAgencyArea = () => {
                     acc[levelName] = item.id;
                     return acc;
                 }, {});
-
+            setWorkingLevels(
+                data?.data
+                    ?.filter((ite) => ite.levelType == "MAIN")
+                    ?.map((ite) => {
+                        return {
+                            value: ite.id,
+                            label: ite.levelName,
+                        };
+                    })
+            );
             setValue('levelsData', levelIdMap)
             setLevelNameMappedWithId(levelIdMap)
         })
@@ -66,18 +75,6 @@ const EditAgencyArea = () => {
                 })
             );
         })
-        getLevels(session?.user?.discomId).then((data) => {
-            setWorkingLevels(
-                data?.data
-                    ?.filter((ite) => ite.levelType == "MAIN")
-                    ?.map((ite) => {
-                        return {
-                            value: ite.id,
-                            label: ite.levelName,
-                        };
-                    })
-            );
-        })
     }, []);
 
     const getDivisions = async (id) => {
@@ -91,12 +88,12 @@ const EditAgencyArea = () => {
                     };
                 })
             );
-        }).finally(() => { setIsLoading(false); });
+        })
     };
 
-    const getSubDivisions = (id) => {
+    const getSubDivisions = async (id) => {
         setIsLoading(true)
-        getLevelsDiscomId(id).then((data) => {
+        await getLevelsDiscomId(id).then((data) => {
             setSubDivisions(
                 data?.data?.officeStructure?.map((ite) => {
                     return {
@@ -105,12 +102,12 @@ const EditAgencyArea = () => {
                     };
                 })
             );
-        }).finally(() => { setIsLoading(false); })
+        })
     };
 
-    const getSections = (id) => {
+    const getSections = async (id) => {
         setIsLoading(true)
-        getLevelsDiscomId(id).then((data) => {
+        await getLevelsDiscomId(id).then((data) => {
             setSections(
                 data?.data?.officeStructure?.map((ite) => {
                     return {
@@ -119,7 +116,7 @@ const EditAgencyArea = () => {
                     };
                 })
             );
-        }).finally(() => { setIsLoading(false); });
+        })
     };
 
     const getAgencyList = async () => {
@@ -140,7 +137,6 @@ const EditAgencyArea = () => {
         } finally {
             setIsLoading(false);
         }
-
     }
 
     const onSubmit = async () => {
@@ -174,47 +170,71 @@ const EditAgencyArea = () => {
 
     console.log(formData);
 
+    const handleSetAllLevelData = async (data) => {
+        try {
+            handleWorkingLevelChange('')
+            setIsLoading(true)
+            let workingLevelId = data?.working_level;
+            let workingLevelOffices = data?.working_level_offices?.map(item => item.id) || []
+            let parentOfficeList = data?.parent_office_structure_hierarchy
+
+            console.log(parentOfficeList, workingLevelOffices)
+
+            let circleId = parentOfficeList.filter(item => item?.office_structure_level_id === levelNameMappedWithId.CIRCLE)
+            if (circleId.length > 0) {
+                setValue('circle', [circleId[0]?.id]);
+                setIsLoading(true)
+                let divisionId = parentOfficeList.filter(item => item?.office_structure_level_id === levelNameMappedWithId.DIVISION)
+                console.log('division', divisionId)
+                await getDivisions(circleId[0]?.id)
+                if (divisionId.length > 0) {
+                    setValue('division', [divisionId[0].id]);
+                    setIsLoading(true)
+                    let subDivisionId = parentOfficeList.filter(item => item?.office_structure_level_id === levelNameMappedWithId.SUB_DIVISION)
+                    await getSubDivisions(divisionId[0].id)
+                    if (subDivisionId.length > 0) {
+                        setValue('subDivision', [subDivisionId[0].id])
+                        setIsLoading(true)
+                        await getSections(subDivisionId[0].id)
+                        setValue('section', workingLevelOffices)
+                    } else {
+                        setValue('subDivision', workingLevelOffices)
+                    }
+                } else {
+                    setValue('division', workingLevelOffices)
+                }
+            } else {
+                setValue('circle', workingLevelOffices)
+            }
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    const fetchAgencyDetails = async () => {
+        try {
+            setIsLoading(true);
+            const response = await getAgencyById(selectedAgency)
+            const agencyDetails = response?.data;
+            setValue("agencyId", agencyDetails.id);
+            setValue("agencyName", agencyDetails.agency_name);
+            setValue("workingLevel", agencyDetails.working_level);
+            await handleSetAllLevelData(agencyDetails)
+        } catch (error) {
+            console.error("Failed to fetch agency details", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     useEffect(() => {
         if (selectedAgency) {
-            const agency = agencies.find((item) => item.id === Number(selectedAgency));
-            if (agency) {
-                setValue("agencyId", agency.id);
-                setValue("agencyName", agency.agency_name);
-                setValue('workingLevel', agency.working_level);
-                setValue('circle', [])
-                setValue('division', [])
-                setValue('subDivision', [])
-                setValue('section', [])
-                if (agency.working_level == levelNameMappedWithId.CIRCLE) {
-                    const level = agency.working_level_offices?.map((data) => data.id) || [];
-                    console.log("Setting Circle:", level);
-                    setValue("circle", level.length > 0 ? level : []);
-                }
-                if (agency.working_level == levelNameMappedWithId.DIVISION) {
-                    const level = agency.working_level_offices?.map((data) => data.id) || [];
-                    console.log("Setting Circle:", level, agency.working_level_offices);
-                    let parentId = agency.working_level_offices?.[0]?.parent_office_id;
-                    console.log(agency.working_level_offices, parentId)
-                    setValue("circle", [parentId]);
-                    getDivisions(parentId)
-                    setValue("division", level.length > 0 ? level : []);
-                }
-                // if (agency.working_level == levelNameMappedWithId.SUB_DIVISION) {
-                //     const level = agency.working_level_offices?.map((data) => data.id) || [];
-                //     console.log("Setting Circle:", level, agency.working_level_offices);
-                //     let parentId = agency.working_level_offices?.[0]?.parent_office_id;
-                //     console.log(agency.working_level_offices, parentId)
-                //     getSubDivisions(parentId)
-                //     setValue("subDivision", level.length > 0 ? level : []);
-                //     setValue("circle", [parentId]);
-                //     // getDivisions(parentId)
-                //     setValue("division", [parentId]);
-
-                // }
-                console.log(agency)
-            }
+            fetchAgencyDetails();
         }
-    }, [selectedAgency, agencies, setValue]);
+    }, [selectedAgency]);
+
 
     const handleWorkingLevelChange = (e) => {
         setValue("circle", []);

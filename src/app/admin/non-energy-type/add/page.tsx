@@ -54,12 +54,12 @@ const NonEnergyType = () => {
                     ...item.active_entities.map(entity => ({
                         ...entity,
                         entity: item.entity,
-                        status: "active"
+                        status: "Active"
                     })),
                     ...item.in_active_entities.map(entity => ({
                         ...entity,
                         entity: item.entity,
-                        status: "inactive"
+                        status: "Inactive"
                     }))
                 ];
             });
@@ -114,7 +114,7 @@ const NonEnergyType = () => {
         { label: 'Agent ID', key: 'id', sortable: true },
         { label: 'Agent Name', key: 'agent_name', sortable: true },
         { label: 'Non Energy Types', key: 'non_energy_types', sortable: true },
-        { label: 'Active', key: 'status', sortable: true },
+        { label: 'Status', key: 'status', sortable: true },
     ];
 
     return (

@@ -10,7 +10,7 @@ const CustomizedInputWithLabel = ({ label = '', errors = null, requiredText = ''
             </label>}
             <input
                 type="text"
-                className="border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm w-full focus:outline-none focus:ring focus:ring-blue-500 focus:border-blue-500 transition-all ease-in-out"
+                className={`border border-gray-300 rounded-md shadow-sm px-3 py-2 text-sm w-full focus:outline-none focus:ring focus:ring-blue-500 focus:border-blue-500 transition-all ease-in-out ${props.disabled ? "bg-gray-100 cursor-not-allowed" : "bg-white cursor-pointer"}`}
                 {...props}
             />
             {additionAction && additionAction}
