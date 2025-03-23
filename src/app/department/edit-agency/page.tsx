@@ -86,6 +86,11 @@ const EditAgency = () => {
             const response = await getAgencyById(id);
             const agency = response.data;
             console.log("Agency Data:", agency);
+            setAgencyList([{
+                ...response.data,
+                label: response.data.agency_name,
+                value: response.data.id,
+            }]);
             setValue('agency', agency.id || null);
             setValue('agencyId', agency.id || null);
             setValue('agencyName', agency.agency_name || '');
@@ -95,11 +100,6 @@ const EditAgency = () => {
             setValue('maximumAgent', agency.max_agent || null);
             setValue('woNumber', agency.wo_number || '');
             setValue('contactPerson', agency.contact_person || '');
-            setAgencyList([{
-                ...response.data,
-                label: response.data.agency_name,
-                value: response.data.id,
-            }]);
             setValue('agency', response.data.id)
         } catch (error) {
             console.error("Failed to fetch agency by ID:", error);
@@ -154,6 +154,23 @@ const EditAgency = () => {
             }
         }
     }, [selectedAgency, agencyList, setValue]);
+
+    // useEffect(() => {
+    //     if (agencyList.length > 0) {
+    //         const agency = agencyList[0];
+    //         setValue('agency', agency.id || null);
+    //         setValue('agencyId', agency.id || null);
+    //         setValue('agencyName', agency.agency_name || '');
+    //         setValue('phoneNumber', agency.phone || '');
+    //         setValue('address', agency.agency_address || '');
+    //         setValue('maximumAmount', agency.maximum_limit || null);
+    //         setValue('maximumAgent', agency.max_agent || null);
+    //         setValue('woNumber', agency.wo_number || '');
+    //         setValue('contactPerson', agency.contact_person || '');
+    //     }
+    // }, [agencyList]);
+
+    console.log(selectedAgency)
 
     return (
         <AuthUserReusableCode pageTitle="Edit Agency" isLoading={isLoading}>
