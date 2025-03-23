@@ -86,6 +86,7 @@ const EditAgency = () => {
             const response = await getAgencyById(id);
             const agency = response.data;
             console.log("Agency Data:", agency);
+            setValue('agency', agency.id || null);
             setValue('agencyId', agency.id || null);
             setValue('agencyName', agency.agency_name || '');
             setValue('phoneNumber', agency.phone || '');
