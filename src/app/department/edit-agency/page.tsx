@@ -85,13 +85,12 @@ const EditAgency = () => {
         try {
             const response = await getAgencyById(id);
             const agency = response.data;
-            console.log("Agency Data:", agency);
             setAgencyList([{
                 ...response.data,
                 label: response.data.agency_name,
                 value: response.data.id,
             }]);
-            setValue('agency', agency.id || null);
+            console.log("Agency Data:", agency);
             setValue('agencyId', agency.id || null);
             setValue('agencyName', agency.agency_name || '');
             setValue('phoneNumber', agency.phone || '');
@@ -100,7 +99,8 @@ const EditAgency = () => {
             setValue('maximumAgent', agency.max_agent || null);
             setValue('woNumber', agency.wo_number || '');
             setValue('contactPerson', agency.contact_person || '');
-            setValue('agency', response.data.id)
+
+            setValue('agency', agency.id)
         } catch (error) {
             console.error("Failed to fetch agency by ID:", error);
         } finally {
@@ -155,36 +155,21 @@ const EditAgency = () => {
         }
     }, [selectedAgency, agencyList, setValue]);
 
-    // useEffect(() => {
-    //     if (agencyList.length > 0) {
-    //         const agency = agencyList[0];
-    //         setValue('agency', agency.id || null);
-    //         setValue('agencyId', agency.id || null);
-    //         setValue('agencyName', agency.agency_name || '');
-    //         setValue('phoneNumber', agency.phone || '');
-    //         setValue('address', agency.agency_address || '');
-    //         setValue('maximumAmount', agency.maximum_limit || null);
-    //         setValue('maximumAgent', agency.max_agent || null);
-    //         setValue('woNumber', agency.wo_number || '');
-    //         setValue('contactPerson', agency.contact_person || '');
-    //     }
-    // }, [agencyList]);
-
-    console.log(selectedAgency)
-
     return (
         <AuthUserReusableCode pageTitle="Edit Agency" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
-                    <CustomizedSelectInputWithLabel
-                        label="Select Agency"
-                        errors={errors.agency}
-                        containerClass="col-span-2"
-                        placeholder="Select Agency"
-                        list={agencyList}
-                        required
-                        {...register("agency")}
-                    />
+                    {!agencyIdFromUrl &&
+                        <CustomizedSelectInputWithLabel
+                            label="Select Agency"
+                            errors={errors.agency}
+                            containerClass="col-span-2"
+                            placeholder="Select Agency"
+                            list={agencyList}
+                            required
+                            {...register("agency")}
+                        />
+                    }
                     <CustomizedInputWithLabel
                         label="Agency ID"
                         errors={errors.agencyId}
