@@ -212,6 +212,10 @@ export const urlsListWithTitle = {
   colorCodingLogicTable: {
     url: '/admin/color-coding/logic',
     title: 'Color Coding Logic'
+  },
+  agencyDashboard: {
+    url: '/agency-dashboard',
+    title: 'Home'
   }
 };
 

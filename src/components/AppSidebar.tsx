@@ -54,6 +54,12 @@ const navData = {
       path: '/dashboard',
     },
     {
+      title: "Dashboard",
+      url: "/agency-dashboard",
+      icon: Gauge,
+      path: '/agency-dashboard',
+    },
+    {
       title: "Action",
       icon: Folder,
       url: "#",

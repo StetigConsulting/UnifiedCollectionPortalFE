@@ -88,7 +88,7 @@ const OTPPopup: React.FC<OTPPopupProps> = ({ sendOTP, setResendTimer, isOpen, se
                     backendScope: session?.user?.userScopes,
                     currentUrl: urlsListWithTitle.viewCollectorList.url
                 }))
-                    router.push(urlsListWithTitle.viewCollectorList.url);
+                    router.push(urlsListWithTitle.agencyDashboard.url);
                 else {
                     router.push(urlsListWithTitle.addCollectorForm.url);
                 }

@@ -86,7 +86,7 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
             <SidebarInset className='flex-1' style={{ WebkitBoxFlex: 1 }}>
                 <CustomBreadcrumb pageTitle={pageTitle} onSignOut={onSignOut}
                     userName={session?.user?.userName} lastLoginAt={session?.user?.lastLoginAt}
-                    agencyBalanceDetail={agencyBalanceDetail}>
+                    agencyBalanceDetail={agencyBalanceDetail} scopes={session?.user?.userScopes}>
                     {children}
                 </CustomBreadcrumb>
             </SidebarInset>

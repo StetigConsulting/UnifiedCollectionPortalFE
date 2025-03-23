@@ -6,8 +6,9 @@ import { LogOut, User, Wallet } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { usePathname } from 'next/navigation';
-import { getTitleByUrl } from '@/lib/utils';
+import { getTitleByUrl, urlsListWithTitle } from '@/lib/utils';
 import moment from 'moment';
+import { checkIfUserHasAccessToPage } from '@/helper';
 
 interface CustomBreadcrumbProps {
     pageTitle: string;
@@ -17,12 +18,13 @@ interface CustomBreadcrumbProps {
     blacklist?: string[];
     userName?: string;
     lastLoginAt?: string;
+    scopes?: string[];
 }
 
 const CustomBreadcrumb: React.FC<CustomBreadcrumbProps> = ({
     pageTitle, children, onSignOut, agencyBalanceDetail,
-    userName, lastLoginAt,
-    blacklist = ["agency", 'dashboard', 'admin', 'department']
+    userName, lastLoginAt, scopes,
+    blacklist = ["agency", 'dashboard', 'agency-dashboard', 'admin', 'department']
 }) => {
     const router = usePathname();
     const pathSegments = router.split("/").filter((seg) => seg !== "");
@@ -47,6 +49,21 @@ const CustomBreadcrumb: React.FC<CustomBreadcrumbProps> = ({
             </React.Fragment>
         );
     });
+
+    const getLinkForDashboard = () => {
+        if (checkIfUserHasAccessToPage({
+            backendScope: scopes,
+            currentUrl: urlsListWithTitle.dashboard.url
+        }))
+            return urlsListWithTitle.dashboard.url
+        else (checkIfUserHasAccessToPage({
+            backendScope: scopes,
+            currentUrl: urlsListWithTitle.viewCollectorList.url
+        }))
+        return urlsListWithTitle.agencyDashboard.url
+
+    }
+
     return (
         <div className='flex flex-col h-screen bg-lightThemeColor p-2'>
             <Card className="flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 border-b px-4">
@@ -104,7 +121,7 @@ const CustomBreadcrumb: React.FC<CustomBreadcrumbProps> = ({
                     <Breadcrumb>
                         <BreadcrumbList>
                             <BreadcrumbItem className="hidden md:block">
-                                <BreadcrumbLink href="/dashboard">Home</BreadcrumbLink>
+                                <BreadcrumbLink href={getLinkForDashboard()}>Home</BreadcrumbLink>
                             </BreadcrumbItem>
                             {breadcrumbLinks}
                         </BreadcrumbList>

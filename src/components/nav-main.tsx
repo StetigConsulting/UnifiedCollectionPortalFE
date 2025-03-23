@@ -39,6 +39,9 @@ export function NavMain({
   session: Session
 }) {
   const pathname = usePathname();
+
+  const defaultOpenPath = "/agency/";
+
   return (
     <SidebarMenu>
       {items.map((item) => {
@@ -56,11 +59,13 @@ export function NavMain({
           if (!hasAccessToParent) return null;
         }
 
+        const isDefaultOpen = pathname.includes(item.path) || item.title === 'Action';
+
         return (
           <Collapsible
             key={item.title}
             asChild
-            defaultOpen={pathname.includes(item.path)}
+            defaultOpen={isDefaultOpen}
             className="group/collapsible"
           >
             <SidebarMenuItem>
