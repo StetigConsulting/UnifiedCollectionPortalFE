@@ -55,30 +55,12 @@ const BillingReport = () => {
         { label: 'Bill Count', key: 'bill_count', sortable: true },
     ], []);
 
-    const handleDownloadPdf2 = async () => {
+    const handleExportFile = async (type = 'pdf') => {
         try {
-            setIsLoading(true);
-            const response = await downloadBillingReport('pdf');
-            console.log(response.headers['content-disposition']);
-            const rawDisposition = response.request.getResponseHeader('Content-Disposition');
-            console.log('Raw Content-Disposition:', rawDisposition);
-            const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
-            const pdfUrl = window.URL.createObjectURL(pdfBlob);
-
-            handleDownload(pdfUrl);
-        } catch (error) {
-            toast.error(getErrorMessage(error))
-        } finally {
-            setIsLoading(false);
-        }
-    }
-
-    const handleDownloadPdf = async () => {
-        try {
-            const response = await downloadBillingReport('pdf')
+            const response = await downloadBillingReport(type)
 
             const contentDisposition = response.headers["content-disposition"];
-            let filename = "report";
+            let filename = "BillingReport";
 
             if (contentDisposition) {
                 const matches = contentDisposition.match(/filename="(.+)"/);
@@ -88,34 +70,22 @@ const BillingReport = () => {
             }
 
             const contentType = response.headers["content-disposition"];
-            console.log(contentType)
-            let extension = "pdf";
+            let extension = type;
 
             const blob = new Blob([response.data], { type: contentType });
             const url = window.URL.createObjectURL(blob);
 
-            // Create a download link
             const a = document.createElement("a");
             a.href = url;
-            a.download = `report.${extension}`;
+            a.download = `${filename}.${extension}`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
 
-            // Clean up the URL
             window.URL.revokeObjectURL(url);
         } catch (error) {
             console.error("Error downloading the report:", error);
         }
-    };
-
-    const handleDownload = (contentUrl: any) => {
-        const link = document.createElement('a');
-        link.href = contentUrl;
-        link.download = `billing_report_${currentUserId}.pdf`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
     }
 
     const handlePageChange = (page: number) => {
@@ -133,7 +103,8 @@ const BillingReport = () => {
                     pageNumber={currentPage}
                     totalPageNumber={totalPages}
                     onPageChange={handlePageChange}
-                    downloadPdf={handleDownloadPdf}
+                    customExport={true}
+                    handleExportFile={handleExportFile}
                 />
             </div>
         </AuthUserReusableCode>

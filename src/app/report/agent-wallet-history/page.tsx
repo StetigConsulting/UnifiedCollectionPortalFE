@@ -7,7 +7,7 @@ import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
 import { getErrorMessage, tableDataPerPage } from '@/lib/utils';
-import { downloadBillingReport, getBillingReport } from '@/app/api-calls/report/api';
+import { downloadBillingReport, getAgentWalletHistory, getBillingReport } from '@/app/api-calls/report/api';
 import { useSession } from 'next-auth/react';
 
 const AgentWalletHistory = () => {
@@ -28,7 +28,10 @@ const AgentWalletHistory = () => {
     const getReportData = async (applyFilter = {}, page = 1) => {
         let payload = {
             page: currentPage,
-            page_size: tableDataPerPage
+            page_size: tableDataPerPage,
+            filter: {
+
+            }
         }
 
         payload = {
@@ -38,13 +41,14 @@ const AgentWalletHistory = () => {
 
         try {
             setIsLoading(true);
-            const response = await getBillingReport(payload, currentUserId);
+            const response = await getAgentWalletHistory(payload);
             setDataList(response.data.data);
             setCurrentPage(page);
             setTotalPages(response.data.totalPages)
-            setIsLoading(false);
         } catch (error) {
             console.log(getErrorMessage(error))
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -59,24 +63,36 @@ const AgentWalletHistory = () => {
         { label: 'Total', key: 'total', sortable: true },
     ], []);
 
-    const handleDownloadPdf = async () => {
+    const handleExportFile = async (type = 'pdf') => {
         try {
-            setIsLoading(true);
-            const response = await downloadBillingReport('pdf');
-            console.log(response);
-            const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
-            const pdfUrl = window.URL.createObjectURL(pdfBlob);
+            const response = await downloadBillingReport(type)
 
-            const link = document.createElement('a');
-            link.href = pdfUrl;
-            link.download = `billing_report_${currentUserId}.pdf`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            const contentDisposition = response.headers["content-disposition"];
+            let filename = "AgentWalletHistory";
+
+            if (contentDisposition) {
+                const matches = contentDisposition.match(/filename="(.+)"/);
+                if (matches && matches.length > 1) {
+                    filename = matches[1];
+                }
+            }
+
+            const contentType = response.headers["content-disposition"];
+            let extension = type;
+
+            const blob = new Blob([response.data], { type: contentType });
+            const url = window.URL.createObjectURL(blob);
+
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `${filename}.${extension}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            window.URL.revokeObjectURL(url);
         } catch (error) {
-            toast.error(getErrorMessage(error))
-        } finally {
-            setIsLoading(false);
+            console.error("Error downloading the report:", error);
         }
     }
 
@@ -95,7 +111,8 @@ const AgentWalletHistory = () => {
                     pageNumber={currentPage}
                     totalPageNumber={totalPages}
                     onPageChange={handlePageChange}
-                    downloadPdf={handleDownloadPdf}
+                    customExport={true}
+                    handleExportFile={handleExportFile}
                 />
             </div>
         </AuthUserReusableCode>

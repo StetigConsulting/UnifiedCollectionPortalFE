@@ -28,3 +28,29 @@ export const downloadBillingReport = async (type: any) => {
         throw error?.response?.data
     }
 };
+
+export const getAgentWalletHistory = async (data: any) => {
+    try {
+        const response = await api.post('/v1/common-reports/agent-wallet-history-report/fetch', data);
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+};
+
+export const downloadAgentWalletReport = async (type: any) => {
+    try {
+        const response = await api.post(`/v1//common-reports/agent-wallet-history-report/download/${type}`, {},
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                responseType: "blob",
+            }
+        );
+        return response;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+};
+

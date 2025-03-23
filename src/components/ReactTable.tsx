@@ -37,6 +37,8 @@ interface TableProps<T> {
     totalPageNumber?: number;
     onPageChange?: (newPage: number) => void;
     downloadPdf?: () => void;
+    customExport?: boolean;
+    handleExportFile?: (type: string) => void;
 }
 
 const ReactTable = <T extends Record<string, any>>({
@@ -63,7 +65,9 @@ const ReactTable = <T extends Record<string, any>>({
     pageNumber = 1,
     totalPageNumber = 1,
     onPageChange,
-    downloadPdf
+    downloadPdf,
+    customExport,
+    handleExportFile
 }: TableProps<T>) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [sortField, setSortField] = useState<keyof T | null>(defaultSortField || null);
@@ -198,9 +202,15 @@ const ReactTable = <T extends Record<string, any>>({
                         {customActionButton ? customActionButton :
                             <div className="flex space-x-2">
                                 <Button variant="default" onClick={handleCopy}>Copy</Button>
-                                <Button variant="default" onClick={exportToExcel}>Excel</Button>
-                                <Button variant="default" onClick={exportToCSV}>CSV</Button>
-                                <Button variant="default" onClick={downloadPdf && downloadPdf}>PDF</Button>
+                                <Button variant="default" onClick={() => {
+                                    customExport ? handleExportFile('xlsx') : exportToExcel()
+                                }}>Excel</Button>
+                                <Button variant="default" onClick={() => {
+                                    customExport ? handleExportFile('csv') : exportToCSV()
+                                }}>CSV</Button>
+                                <Button variant="default" onClick={() => {
+                                    customExport ? handleExportFile('pdf') : downloadPdf()
+                                }}>PDF</Button>
                             </div>
                         }
                         {isSelectable && selectedRow !== null && (
@@ -275,7 +285,8 @@ const ReactTable = <T extends Record<string, any>>({
                     </tbody>
                 </table>
             </div>
-            {totalPages > 1 && !noPagination &&
+            {
+                totalPages > 1 && !noPagination &&
                 <div style={{ marginTop: '10px', textAlign: 'center' }}>
                     <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
                         Previous
@@ -284,17 +295,20 @@ const ReactTable = <T extends Record<string, any>>({
                     <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
                         Next
                     </button>
-                </div>}
-            {dynamicPagination && <div style={{ marginTop: '10px', textAlign: 'center' }}>
-                <button onClick={() => onPageChange(pageNumber - 1)} disabled={pageNumber === 1}>
-                    Previous
-                </button>
-                <span style={{ margin: '0 10px' }}>{pageNumber}</span>
-                <button onClick={() => onPageChange(pageNumber + 1)} disabled={totalPageNumber == pageNumber}>
-                    Next
-                </button>
-            </div>}
-        </div>
+                </div>
+            }
+            {
+                dynamicPagination && <div style={{ marginTop: '10px', textAlign: 'center' }}>
+                    <button onClick={() => onPageChange(pageNumber - 1)} disabled={pageNumber === 1}>
+                        Previous
+                    </button>
+                    <span style={{ margin: '0 10px' }}>{pageNumber}</span>
+                    <button onClick={() => onPageChange(pageNumber + 1)} disabled={totalPageNumber == pageNumber}>
+                        Next
+                    </button>
+                </div>
+            }
+        </div >
     );
 };
 
