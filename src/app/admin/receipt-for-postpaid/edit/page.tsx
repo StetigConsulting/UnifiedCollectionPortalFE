@@ -279,7 +279,7 @@ const EditReceiptsForPostpaid = () => {
         }
     }
 
-    console.log(errors)
+    console.log(errors, receipts)
 
     return (
         <AuthUserReusableCode pageTitle="Receipts for Postpaid" isLoading={isLoading}>

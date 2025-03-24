@@ -947,7 +947,7 @@ export const editReceiptsSchema = z.object({
           code: z.ZodIssueCode.custom,
         });
       } else {
-        if (receipt.applicableLevel === receipt.levelMapWithId.SECTION) {
+        if (receipt.applicableLevel === receipt?.levelMapWithId?.SECTION) {
           if (!receipt.circle?.length) {
             ctx.addIssue({
               path: [`receipts`, index, 'circle'],
@@ -977,7 +977,7 @@ export const editReceiptsSchema = z.object({
             });
           }
         }
-        else if (receipt.applicableLevel === receipt.levelMapWithId.SUB_DIVISION) {
+        else if (receipt.applicableLevel === receipt?.levelMapWithId?.SUB_DIVISION) {
           if (!receipt.circle?.length) {
             ctx.addIssue({
               path: [`receipts`, index, 'circle'],
@@ -999,7 +999,7 @@ export const editReceiptsSchema = z.object({
               code: z.ZodIssueCode.custom,
             });
           }
-        } else if (receipt.applicableLevel === receipt.levelMapWithId.DIVISION) {
+        } else if (receipt.applicableLevel === receipt?.levelMapWithId?.DIVISION) {
           if (!receipt.circle?.length) {
             ctx.addIssue({
               path: [`receipts`, index, 'circle'],
@@ -1014,7 +1014,7 @@ export const editReceiptsSchema = z.object({
               code: z.ZodIssueCode.custom,
             });
           }
-        } else if (receipt.applicableLevel === receipt.levelMapWithId.CIRCLE) {
+        } else if (receipt.applicableLevel === receipt?.levelMapWithId?.CIRCLE) {
           if (!receipt.circle?.length) {
             ctx.addIssue({
               path: [`receipts`, index, 'circle'],
