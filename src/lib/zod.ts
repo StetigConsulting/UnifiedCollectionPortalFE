@@ -1,5 +1,5 @@
 import { z, object } from "zod";
-import { addIncentiveOnKeyValue, levelWIthId } from "./utils";
+import { addIncentiveOnKeyValue } from "./utils";
 
 export const signinSchema = object({
   mobileNumber: z
@@ -924,7 +924,7 @@ export const editReceiptsSchema = z.object({
   configRule: z.string().min(1, 'Config rule is required'),
   receipts: z.array(
     z.object({
-      applicableLevel: z.string().optional(),
+      applicableLevel: z.any().optional(),
       circle: z.array(z.number()).optional(),
       division: z.array(z.number()).optional(),
       subDivision: z.array(z.number()).optional(),
@@ -932,6 +932,7 @@ export const editReceiptsSchema = z.object({
       receiptsPerMonth: z.number().optional(),
       receiptsPerDay: z.number().optional(),
       allowSecondReceipt: z.boolean(),
+      levelMapWithId: z.any(),
     })
   ).nonempty('At least one receipt entry must be added')
 }).superRefine((data, ctx) => {
@@ -946,7 +947,7 @@ export const editReceiptsSchema = z.object({
           code: z.ZodIssueCode.custom,
         });
       } else {
-        if (receipt.applicableLevel === levelWIthId.SECTION) {
+        if (receipt.applicableLevel === receipt.levelMapWithId.SECTION) {
           if (!receipt.circle?.length) {
             ctx.addIssue({
               path: [`receipts`, index, 'circle'],
@@ -976,7 +977,7 @@ export const editReceiptsSchema = z.object({
             });
           }
         }
-        else if (receipt.applicableLevel === levelWIthId.SUB_DIVISION) {
+        else if (receipt.applicableLevel === receipt.levelMapWithId.SUB_DIVISION) {
           if (!receipt.circle?.length) {
             ctx.addIssue({
               path: [`receipts`, index, 'circle'],
@@ -998,7 +999,7 @@ export const editReceiptsSchema = z.object({
               code: z.ZodIssueCode.custom,
             });
           }
-        } else if (receipt.applicableLevel === levelWIthId.DIVISION) {
+        } else if (receipt.applicableLevel === receipt.levelMapWithId.DIVISION) {
           if (!receipt.circle?.length) {
             ctx.addIssue({
               path: [`receipts`, index, 'circle'],
@@ -1013,7 +1014,7 @@ export const editReceiptsSchema = z.object({
               code: z.ZodIssueCode.custom,
             });
           }
-        } else if (receipt.applicableLevel === levelWIthId.CIRCLE) {
+        } else if (receipt.applicableLevel === receipt.levelMapWithId.CIRCLE) {
           if (!receipt.circle?.length) {
             ctx.addIssue({
               path: [`receipts`, index, 'circle'],

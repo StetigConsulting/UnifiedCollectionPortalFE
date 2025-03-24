@@ -29,16 +29,6 @@ export const formatDate = (dateString: string): string => {
   return new Date(dateString).toLocaleString('en-US', options);
 };
 
-export const levelWIthId = {
-  "CIRCLE": '65',
-  "DIVISION": '66',
-  "SUB_DIVISION": '67',
-  "SECTION": '68',
-  "BINDER": '21',
-  "MRU": '20',
-  "Pratik Test": '50'
-}
-
 export function numberToWords(num: number): string {
   if (num === 0 || Number.isNaN(num)) return "zero";
 

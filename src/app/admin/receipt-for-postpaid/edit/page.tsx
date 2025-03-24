@@ -13,7 +13,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { editReceiptsSchema } from '@/lib/zod';
 import { getLevels, getLevelsDiscomId } from '@/app/api-calls/department/api';
-import { getErrorMessage, levelWIthId } from '@/lib/utils';
+import { getErrorMessage } from '@/lib/utils';
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
 import { ReceiptForPostpaid } from '@/lib/interface';
 import { editReceiptForPostpaid, getReceiptForPostpaidById } from '@/app/api-calls/admin/api';
@@ -38,7 +38,7 @@ const EditReceiptsForPostpaid = () => {
             configRule: 'Levelwise',
             receipts: [
                 {
-                    applicableLevel: '',
+                    applicableLevel: null,
                     circle: [],
                     division: [],
                     subDivision: [],
@@ -63,13 +63,13 @@ const EditReceiptsForPostpaid = () => {
                     discom_id: session?.user?.discomId,
                     rule_level: data.configRule,
                     ...data.configRule == 'Levelwise' && {
-                        office_structure_id: receipt.applicableLevel === levelWIthId.CIRCLE
+                        office_structure_id: receipt.applicableLevel === levelNameMappedWithId.CIRCLE
                             ? receipt.circle.map(Number)?.[0]
-                            : receipt.applicableLevel === levelWIthId.DIVISION
+                            : receipt.applicableLevel === levelNameMappedWithId.DIVISION
                                 ? receipt.division.map(Number)?.[0]
-                                : receipt.applicableLevel === levelWIthId.SUB_DIVISION
+                                : receipt.applicableLevel === levelNameMappedWithId.SUB_DIVISION
                                     ? receipt.subDivision.map(Number)?.[0]
-                                    : receipt.applicableLevel === levelWIthId.SECTION ? receipt.section.map(Number)?.[0] : null,
+                                    : receipt.applicableLevel === levelNameMappedWithId.SECTION ? receipt.section.map(Number)?.[0] : null,
                     },
                     ...data.configRule == 'Discomwise' && {
                         office_structure_id: session?.user?.discomId,
@@ -128,6 +128,7 @@ const EditReceiptsForPostpaid = () => {
                     return acc;
                 }, {});
             setLevelNameMappedWithId(levelIdMap)
+            setValue(`receipts.0.levelMapWithId`, levelIdMap);
         })
     }
 
@@ -178,30 +179,30 @@ const EditReceiptsForPostpaid = () => {
         }
     };
 
-    const handleCircleChange = async (index: number, value: number[], levelValue: string) => {
+    const handleCircleChange = async (index: number, value: number[], levelValue: number) => {
         setValue(`receipts.${index}.circle`, value);
         setValue(`receipts.${index}.division`, []);
         setValue(`receipts.${index}.subDivision`, []);
         setValue(`receipts.${index}.section`, []);
-        if (value && levelValue != levelWIthId.CIRCLE) {
+        if (value && levelValue != levelNameMappedWithId.CIRCLE) {
             await getPicklistFromList({ id: value, type: 'division', index });
         }
     };
 
-    const handleDivisionChange = async (index: number, value: number[], levelValue: string) => {
+    const handleDivisionChange = async (index: number, value: number[], levelValue: number) => {
         setValue(`receipts.${index}.division`, value);
         setValue(`receipts.${index}.subDivision`, []);
         setValue(`receipts.${index}.section`, []);
-        if (value && (levelValue == levelWIthId.SECTION
-            || levelValue == levelWIthId.SUB_DIVISION)) {
+        if (value && (levelValue == levelNameMappedWithId.SECTION
+            || levelValue == levelNameMappedWithId.SUB_DIVISION)) {
             await getPicklistFromList({ id: value, type: 'subDivision', index });
         }
     };
 
-    const handleSubDivisionChange = async (index: number, value: number[], levelValue: string) => {
+    const handleSubDivisionChange = async (index: number, value: number[], levelValue: number) => {
         setValue(`receipts.${index}.subDivision`, value);
         setValue(`receipts.${index}.section`, []);
-        if (value && levelValue == levelWIthId.SECTION) {
+        if (value && levelValue == levelNameMappedWithId.SECTION) {
             await getPicklistFromList({ id: value, type: 'section', index });
         }
     };
@@ -291,7 +292,7 @@ const EditReceiptsForPostpaid = () => {
                                     <CustomizedSelectInputWithLabel
                                         label="Applicable Level"
                                         list={listOfApplicableLevel}
-                                        {...register(`receipts.${index}.applicableLevel`)}
+                                        {...register(`receipts.${index}.applicableLevel`, { valueAsNumber: true })}
                                         errors={errors?.receipts?.[index]?.applicableLevel}
                                         onChange={(e) => handleLevelChange(index, e.target.value)}
                                     />
@@ -305,10 +306,10 @@ const EditReceiptsForPostpaid = () => {
                                             value={watch(`receipts.${index}.circle`) || []}
                                             // onChange={(selectedValues) => setValue(`receipts.${index}.circle`, selectedValues)}
                                             onChange={(selectedValues) => handleCircleChange(index, selectedValues, receipts[index].applicableLevel)}
-                                        // multi={receipts[index].applicableLevel == levelWIthId.CIRCLE}
+                                        // multi={receipts[index].applicableLevel == levelNameMappedWithId.CIRCLE}
                                         />
                                     }
-                                    {receipts[index].applicableLevel && receipts[index].applicableLevel != levelWIthId.CIRCLE && (
+                                    {receipts[index].applicableLevel && receipts[index].applicableLevel != levelNameMappedWithId.CIRCLE && (
                                         <CustomizedMultipleSelectInputWithLabelNumber
                                             label="Division"
                                             required={true}
@@ -317,12 +318,12 @@ const EditReceiptsForPostpaid = () => {
                                             value={watch(`receipts.${index}.division`) || []}
                                             // onChange={(selectedValues) => setValue(`receipts.${index}.division`, selectedValues)}
                                             onChange={(selectedValues) => handleDivisionChange(index, selectedValues, receipts[index].applicableLevel)}
-                                            // multi={receipts[index].applicableLevel == levelWIthId.DIVISION}
+                                            // multi={receipts[index].applicableLevel == levelNameMappedWithId.DIVISION}
                                             errors={errors?.receipts?.[index]?.division}
                                         />
                                     )}
-                                    {receipts[index].applicableLevel && (receipts[index].applicableLevel == levelWIthId.SECTION
-                                        || receipts[index].applicableLevel == levelWIthId.SUB_DIVISION) && (
+                                    {receipts[index].applicableLevel && (receipts[index].applicableLevel == levelNameMappedWithId.SECTION
+                                        || receipts[index].applicableLevel == levelNameMappedWithId.SUB_DIVISION) && (
                                             <CustomizedMultipleSelectInputWithLabelNumber
                                                 label="Sub Division"
                                                 required={true}
@@ -331,12 +332,12 @@ const EditReceiptsForPostpaid = () => {
                                                 value={watch(`receipts.${index}.subDivision`) || []}
                                                 onChange={(selectedValues) => handleSubDivisionChange(index, selectedValues, receipts[index].applicableLevel)}
                                                 // onChange={(selectedValues) => setValue(`receipts.${index}.subDivision`, selectedValues)}
-                                                // multi={receipts[index].applicableLevel == levelWIthId.DIVISION}
+                                                // multi={receipts[index].applicableLevel == levelNameMappedWithId.DIVISION}
                                                 errors={errors?.receipts?.[index]?.subDivision}
                                             />
                                         )}
                                     {
-                                        receipts[index].applicableLevel && receipts[index].applicableLevel == levelWIthId.SECTION && (
+                                        receipts[index].applicableLevel && receipts[index].applicableLevel == levelNameMappedWithId.SECTION && (
                                             <CustomizedMultipleSelectInputWithLabelNumber
                                                 label="Section"
                                                 containerClass='col-span-2'
@@ -346,7 +347,7 @@ const EditReceiptsForPostpaid = () => {
                                                 required={true}
                                                 disabled={receipts[index]?.subDivision?.length == 0}
                                                 value={watch(`receipts.${index}.section`) || []}
-                                                // multi={receipts[index]?.applicableLevel == levelWIthId.SECTION}
+                                                // multi={receipts[index]?.applicableLevel == levelNameMappedWithId.SECTION}
                                                 onChange={(selectedValues) => setValue(`receipts.${index}.section`, selectedValues)}
                                             />
                                         )
