@@ -10,8 +10,7 @@ const AgencyDashboard = () => {
 
     return (
         <AuthUserReusableCode pageTitle="Dashboard" isLoading={isloading || isSubmitting}>
-            <p className="mb-4">Quick Links</p>
-            <p>Closing (Jun 1 2024 12:00 PM) - Please ensure 100% sync out.</p>
+            <></>
         </AuthUserReusableCode>
     );
 };
