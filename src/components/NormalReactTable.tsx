@@ -43,7 +43,7 @@ const NormalReactTable = <T extends Record<string, any>>({
                     </thead>
                     {/* Scrollable Body: Applied max-height and overflow-y-auto to the table body */}
                     <tbody className="max-h-[300px] overflow-y-auto">
-                        {data.length > 0 ? (
+                        {data?.length > 0 ? (
                             data.map((item, index) => (
                                 <tr
                                     key={index}

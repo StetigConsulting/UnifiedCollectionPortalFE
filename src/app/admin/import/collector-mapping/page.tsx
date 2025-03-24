@@ -114,7 +114,7 @@ const ConsumerToCollectorMapping: React.FC = () => {
             setSelectedFile(null)
             setErrorMessage(error.error)
             console.log(flattenedErrors);
-            setErrorValidationIssues(flattenedErrors);
+            setErrorValidationIssues(flattenedErrors || []);
             // toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
@@ -205,7 +205,7 @@ const ConsumerToCollectorMapping: React.FC = () => {
                 message="Data Upload Successfully!" type="success" />
             <SuccessErrorModal isOpen={isErrorModalOpen} onClose={() => setIsErrorModalOpen(false)}
                 message={errorMessage} type="error"
-                errorTable={<NormalReactTable
+                errorTable={errorValidationIssues.length > 0 && <NormalReactTable
                     data={errorValidationIssues}
                     columns={columns}
                 />} />
