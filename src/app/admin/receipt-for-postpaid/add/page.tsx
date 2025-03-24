@@ -235,6 +235,8 @@ const AddReceiptsForPostpaid = () => {
         })
     }
 
+    console.log(receipts, configRule, errors)
+
     return (
         <AuthUserReusableCode pageTitle="Receipts for Postpaid" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

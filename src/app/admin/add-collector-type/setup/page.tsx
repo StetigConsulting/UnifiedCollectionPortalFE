@@ -85,7 +85,7 @@ const AddCollectorTypeSetup = () => {
         try {
             setIsLoading(true)
             const response = await getAllGlobalCollectorTypes();
-            setCollectorTypeList(response.data?.map((item) => ({ label: item.name, value: item.id })));
+            setCollectorTypeList(response.data?.map((item) => ({ label: item.name, value: item.id })) || []);
         } catch (error) {
             console.error(error);
         } finally {
@@ -97,7 +97,7 @@ const AddCollectorTypeSetup = () => {
         setIsLoading(true);
         try {
             const response = await getCollectorTypes();
-            setValue('collectorType', response.data.map((item => item?.id)));
+            setValue('collectorType', response.data.map((item => item?.id)) || []);
         } catch (error) {
             console.error('Failed to fetch payment methods:', error);
         } finally {

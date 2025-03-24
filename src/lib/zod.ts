@@ -802,7 +802,7 @@ export const addReceiptsSchema = z.object({
   configRule: z.string().min(1, 'Config rule is required'),
   receipts: z.array(
     z.object({
-      applicableLevel: z.number().optional(),
+      applicableLevel: z.any().optional(),
       circle: z.array(z.number()).optional(),
       division: z.array(z.number()).optional(),
       subDivision: z.array(z.number()).optional(),
@@ -815,7 +815,6 @@ export const addReceiptsSchema = z.object({
   ).nonempty('At least one receipt entry must be added')
 }).superRefine((data, ctx) => {
   const configRule = data.configRule;
-
   data.receipts.forEach((receipt, index) => {
     if (configRule === 'Levelwise') {
       if (!receipt.applicableLevel) {
