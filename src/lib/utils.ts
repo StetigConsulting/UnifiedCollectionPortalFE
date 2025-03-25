@@ -231,6 +231,11 @@ export const agentWorkingType = [
   { label: 'Offline', value: 'Offline' }
 ]
 
+export const collectionTypePickList = [
+  { label: 'Energy', value: 'Energy' },
+  { label: 'Non Energy', value: 'Non Energy' }
+]
+
 export const getErrorMessage = (error: any) => {
   let errorMessage = error?.data ? error?.data[Object.keys(error?.data)[0]] : error?.error ? error?.error : error?.message;
   return errorMessage

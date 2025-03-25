@@ -14,8 +14,9 @@ import { createCounterCollector, getCollectorTypes } from '@/app/api-calls/agenc
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
 import { Loader2 } from 'lucide-react';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
-import { agentWorkingType, collectorRolePicklist } from '@/lib/utils';
+import { agentWorkingType, collectionTypePickList, collectorRolePicklist } from '@/lib/utils';
 import { useSession } from 'next-auth/react';
+import SuccessErrorModal from '@/components/SuccessErrorModal';
 
 const AddCounterCollector = () => {
     const { data: session } = useSession()
@@ -44,6 +45,8 @@ const AddCounterCollector = () => {
     const [sections, setSections] = useState([]);
 
     const [agencyData, setAgencyData] = useState({ working_level: null })
+
+    const [collectionTypeList, setCollectionTypeList] = useState(collectionTypePickList)
 
     const [agencyWorkingLevel, setAgencyWorkingLevel] = useState<number>() // maintains the working level of agency
     const [workingLevelActualLists, setWorkingLevelActualLists] = useState([]) //this is total list of working level
@@ -155,6 +158,17 @@ const AddCounterCollector = () => {
                     };
                 }))
 
+            let allowedCollectionType = collectionTypeList;
+
+            if (agencyData?.collection_type_energy != true) {
+                allowedCollectionType = allowedCollectionType.filter((item) => item?.value != 'Energy')
+            }
+
+            if (agencyData?.collection_type_non_energy != true) {
+                allowedCollectionType = allowedCollectionType.filter((item) => item?.value != 'Non Energy')
+            }
+            setCollectionTypeList(allowedCollectionType)
+
             setNonEnergyTypes(
                 agencyData?.non_energy_types?.map((ite) => {
                     return {
@@ -172,6 +186,11 @@ const AddCounterCollector = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const onSubmit = async (data: AddCounterCollectorFormData) => {
+        if (formData.workingType === 'Offline' && formData?.collectionType?.includes('Non Energy')) {
+            setErrorMessage('Error: Non Energy Collection Type can only be assigned to Online Work Type Agents')
+            setIsErrorModalOpen(true)
+            return
+        }
         setIsSubmitting(true)
         try {
             let payload = {
@@ -185,7 +204,7 @@ const AddCounterCollector = () => {
                 "collection_payment_modes": data.permission,
                 "working_level": data.workingLevel,
                 "collection_type_energy": data.collectionType.includes('Energy'),
-                "collection_type_non_energy": data.collectionType.includes('Non-Energy'),
+                "collection_type_non_energy": data.collectionType.includes('Non Energy'),
                 "is_active": true,
                 "non_energy_types": data.nonEnergy,
                 "working_level_office": data.workingLevel === levelNameMappedWithId.CIRCLE
@@ -318,7 +337,16 @@ const AddCounterCollector = () => {
         })
     }
 
-    console.log(formData)
+    useEffect(() => {
+        console.log(formData)
+        if (formData.workingType === 'Offline' && formData?.collectionType?.includes('Non Energy')) {
+            setErrorMessage('Error: Non Energy Collection Type can only be assigned to Online Work Type Agents')
+            setIsErrorModalOpen(true)
+        }
+    }, [formData.workingType, formData.collectionType, setValue]);
+
+    const [isErrorModalOpen, setIsErrorModalOpen] = useState<boolean>(false);
+    const [errorMessage, setErrorMessage] = useState('')
 
     return (
         <AuthUserReusableCode pageTitle="Add Collector" isLoading={isLoading}>
@@ -502,16 +530,13 @@ const AddCounterCollector = () => {
                         label="Collection Type"
                         errors={errors.collectionType}
                         placeholder="Select Collection"
-                        list={[
-                            { label: "Energy", value: "Energy" },
-                            { label: "Non-Energy", value: "Non-Energy" },
-                        ]}
+                        list={collectionTypeList}
                         required={true}
                         value={watch('collectionType') || []}
                         multi={true}
                         onChange={(selectedValues) => setValue('collectionType', selectedValues)}
                     />
-                    {watch("collectionType")?.includes("Non-Energy") && (
+                    {watch("collectionType")?.includes("Non Energy") && (
                         <CustomizedMultipleSelectInputWithLabelNumber
                             label="Non Energy"
                             list={nonEnergyTypes}
@@ -536,6 +561,8 @@ const AddCounterCollector = () => {
                     </Button>
                 </div>
             </form>
+            <SuccessErrorModal isOpen={isErrorModalOpen} onClose={() => setIsErrorModalOpen(false)}
+                message={errorMessage} type="error" />
         </AuthUserReusableCode>
     );
 };

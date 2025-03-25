@@ -503,6 +503,16 @@ export const addCounterCollectorSchema = z.object({
     .min(1, { message: "At least one collection type is required" }),
 
   nonEnergy: z.array(z.number()).optional(),
+}).superRefine((data, ctx) => {
+  console.log(data)
+  if (data.collectionType.includes('Non Energy') && data?.nonEnergy?.length == 0) {
+    ctx.addIssue({
+      path: [`nonEnergy`],
+      message: 'Non Energy is required',
+      code: z.ZodIssueCode.custom,
+    });
+  }
+
 });
 
 export type AddCounterCollectorFormData = z.infer<typeof addCounterCollectorSchema>;
