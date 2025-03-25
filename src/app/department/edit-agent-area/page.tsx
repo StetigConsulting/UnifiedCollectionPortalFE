@@ -150,7 +150,7 @@ const EditAgentAreaRoleForm = () => {
 
     const handleGetAgentData = async () => {
         console.log(formData)
-        const mobileNumber = formData.agentMobileNumber;
+        const mobileNumber = Number(formData.agentMobileNumber);
         if (!isNaN(mobileNumber) && mobileNumber.toString().length === 10) {
             try {
                 setIsLoading(true);
