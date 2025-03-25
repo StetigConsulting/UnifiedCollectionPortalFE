@@ -52,6 +52,13 @@ const EditAgentAreaRoleForm = () => {
 
     const [showRestFields, setShowRestFields] = useState(false);
 
+    const handleWorkingLevelChange = (e) => {
+        setValue("circle", []);
+        setValue("division", []);
+        setValue("subDivision", []);
+        setValue("section", []);
+    }
+
     const getCircles = async (id) => {
         setIsLoading(true)
         await getLevelsDiscomId(id).then((data) => {
@@ -142,7 +149,8 @@ const EditAgentAreaRoleForm = () => {
     };
 
     const handleGetAgentData = async () => {
-        const mobileNumber = Number(watch('agentMobileNumber'));
+        console.log(formData)
+        const mobileNumber = formData.agentMobileNumber;
         if (!isNaN(mobileNumber) && mobileNumber.toString().length === 10) {
             try {
                 setIsLoading(true);
@@ -151,8 +159,8 @@ const EditAgentAreaRoleForm = () => {
                 setValue('agentId', response.data.id)
                 setValue('agentRole', response.data.collector_role)
                 setValue('workingLevel', (response.data.working_level))
-                getAgencyData(response?.data?.agency?.id)
-                handleSetAllLevelData(response.data)
+                await getAgencyData(response?.data?.agency?.id)
+                await handleSetAllLevelData(response.data)
                 setShowRestFields(true)
             } catch (error) {
                 console.log(error);
@@ -173,13 +181,14 @@ const EditAgentAreaRoleForm = () => {
 
     const handleSetAllLevelData = async (data) => {
         try {
+            console.log('working level', agencyData, data)
             handleWorkingLevelChange('')
             setIsLoading(true)
-            let workingLevelId = data?.working_level;
-            let workingLevelOffices = data?.working_level_offices?.map(item => item.id) || []
+            let workingLevelOfficeId = data?.working_level_office?.id
+            let workingLevelOffices = workingLevelOfficeId ? [workingLevelOfficeId] : []
             let parentOfficeList = data?.parent_office_structure_hierarchy
 
-            console.log(parentOfficeList, workingLevelOffices)
+            console.log('parent', parentOfficeList, workingLevelOffices)
 
             let circleId = parentOfficeList.filter(item => item?.office_structure_level_id === levelIdMapWithLevelName.CIRCLE)
             if (circleId.length > 0) {
@@ -197,8 +206,10 @@ const EditAgentAreaRoleForm = () => {
                         setValue('subDivision', [subDivisionId[0].id])
                         setIsLoading(true)
                         await getSections(subDivisionId[0].id)
+                        console.log('in section', workingLevelOffices)
                         setValue('section', workingLevelOffices)
                     } else {
+                        console.log('in subdivision')
                         setValue('subDivision', workingLevelOffices)
                     }
                 } else {
@@ -214,57 +225,9 @@ const EditAgentAreaRoleForm = () => {
         }
     }
 
-    const getWorkingLevel = () => {
-        getLevels(session?.user?.discomId).then((data) => {
+    const getWorkingLevel = async () => {
+        await getLevels(session?.user?.discomId).then((data) => {
             let levelIdMap = data?.data
-                ?.filter((item) => item.levelType === "MAIN")
-                .reduce((acc, item) => {
-                    acc[item.levelName] = item.id;
-                    return acc;
-                }, {});
-
-            setLevelIdMapWithLevelName(levelIdMap)
-            console.log(levelIdMap)
-            setWorkingLevel(
-                data?.data
-                    ?.filter((ite) => ite.levelType == "MAIN")
-                    ?.map((ite) => {
-                        return {
-                            value: ite.id,
-                            label: ite.levelName,
-                        };
-                    })
-            );
-        })
-    }
-
-    const handleWorkingLevelChange = (e) => {
-        setValue("circle", []);
-        setValue("division", []);
-        setValue("subDivision", []);
-        setValue("section", []);
-    }
-
-    const [agencyData, setAgencyData] = useState({ working_level: null, working_level_offices: [] })
-
-    const [agencyWorkingLevel, setAgencyWorkingLevel] = useState()
-    const [workingLevelActualLists, setWorkingLevelActualLists] = useState([])
-
-    const getAgencyData = async (id: number) => {
-        try {
-            const agencyResponse = await getAgencyById(String(id));
-            const agencyData = agencyResponse.data;
-            setAgencyData(agencyData);
-
-            const levelsResponse = await getLevels(session?.user?.discomId);
-            let levels = levelsResponse?.data
-                ?.filter((ite) => ite.levelType === "MAIN")
-                ?.map((ite) => ({
-                    value: ite.id,
-                    label: ite.levelName,
-                }));
-
-            let levelIdMap = levelsResponse?.data
                 ?.filter((item) => item.levelType === "MAIN")
                 .reduce((acc, item) => {
                     let levelName = item.levelName.replace(' ', "_");
@@ -272,15 +235,38 @@ const EditAgentAreaRoleForm = () => {
                     return acc;
                 }, {});
 
-            setWorkingLevelActualLists(levels);
-            setAgencyWorkingLevel(agencyData?.working_level);
+            setLevelIdMapWithLevelName(levelIdMap)
+            console.log(levelIdMap)
+            let levelsList = data?.data
+                ?.filter((ite) => ite.levelType == "MAIN")
+                ?.map((ite) => {
+                    return {
+                        value: ite.id,
+                        label: ite.levelName,
+                    };
+                })
+            setWorkingLevel(levelsList);
+            setWorkingLevelActualLists(levelsList)
+        })
+    }
 
-            const agencyWorkingLevel = agencyData?.working_level;
+    const [agencyData, setAgencyData] = useState({ working_level: null, working_level_offices: [] })
 
-            console.log(levels)
+    const [workingLevelActualLists, setWorkingLevelActualLists] = useState([])
 
-            handleDisplayWorkingLevel(levels, agencyWorkingLevel)
-            const agencyLevel = levels.find((lvl) => lvl.value === agencyWorkingLevel);
+    const getAgencyData = async (id: number) => {
+        try {
+            const agencyResponse = await getAgencyById(String(id));
+            const agencyData = agencyResponse.data;
+            setAgencyData({
+                working_level: agencyData?.working_level,
+                working_level_offices: agencyData?.working_level_offices
+            });
+
+            const workingLevel = agencyData?.working_level;
+
+            handleDisplayWorkingLevel(workingLevelActualLists, workingLevel)
+            const agencyLevel = workingLevelActualLists.find((lvl) => lvl.value === workingLevel);
 
             let levelData = agencyData?.working_level_offices.map((ite) => {
                 return {
@@ -289,13 +275,13 @@ const EditAgentAreaRoleForm = () => {
                 };
             })
 
-            if (agencyLevel.value == levelIdMap.CIRCLE) {
+            if (agencyLevel.value == levelIdMapWithLevelName.CIRCLE) {
                 setCircles(levelData)
-            } else if (agencyLevel.value == levelIdMap.DIVISION) {
+            } else if (agencyLevel.value == levelIdMapWithLevelName.DIVISION) {
                 setDivisions(levelData)
-            } else if (agencyLevel.value == levelIdMap.SUB_DIVISION) {
+            } else if (agencyLevel.value == levelIdMapWithLevelName.SUB_DIVISION) {
                 setSubDivisions(levelData)
-            } else if (agencyLevel.value == levelIdMap.SECTION) {
+            } else if (agencyLevel.value == levelIdMapWithLevelName.SECTION) {
                 setSections(levelData)
             }
 
@@ -324,7 +310,7 @@ const EditAgentAreaRoleForm = () => {
 
     useEffect(() => {
         if (formData.agentRole) {
-            handleDisplayWorkingLevel(workingLevelActualLists, agencyWorkingLevel);
+            handleDisplayWorkingLevel(workingLevelActualLists, agencyData?.working_level);
         }
     }, [formData.agentRole]);
 

@@ -21,6 +21,14 @@ const AgentWalletHistory = () => {
 
     const [dataList, setDataList] = useState([])
 
+    const [fromDate, setFromDate] = useState('');
+    const [toDate, setToDate] = useState('');
+    const [agencyName, setAgencyName] = useState('');
+    const [agentName, setAgentName] = useState('');
+    const [agentMobile, setAgentMobile] = useState('');
+    const [transactionType, setTransactionType] = useState('');
+    const [transactionId, setTransactionId] = useState('');
+
     useEffect(() => {
         getReportData();
     }, []);
@@ -30,9 +38,17 @@ const AgentWalletHistory = () => {
             page: currentPage,
             page_size: tableDataPerPage,
             filter: {
-
+                transaction_date_range: {
+                    from_date: fromDate,
+                    to_date: toDate,
+                },
+                agent_name: agentName,
+                agent_mobile: agentMobile,
+                transaction_id: transactionId,
+                transaction_type: transactionType,
+                agency_name: agencyName,
             }
-        }
+        };
 
         payload = {
             ...payload,
@@ -41,7 +57,7 @@ const AgentWalletHistory = () => {
 
         try {
             setIsLoading(true);
-            const response = await getAgentWalletHistory(payload);
+            const response = await getAgentWalletHistory(payload, session?.user?.userId);
             setDataList(response.data.data);
             setCurrentPage(page);
             setTotalPages(response.data.totalPages)
@@ -102,6 +118,64 @@ const AgentWalletHistory = () => {
 
     return (
         <AuthUserReusableCode pageTitle="Agent Wallet History" isLoading={isLoading}>
+            <div className="grid grid-cols-10 gap-4">
+                <CustomizedInputWithLabel
+                    label="From Date"
+                    type="date"
+                    value={fromDate}
+                    onChange={(e) => setFromDate(e.target.value)}
+                />
+
+                <CustomizedInputWithLabel
+                    label="To Date"
+                    type="date"
+                    value={toDate}
+                    onChange={(e) => setToDate(e.target.value)}
+                />
+
+                <CustomizedInputWithLabel
+                    label="Agency Name"
+                    value={agencyName}
+                    onChange={(e) => setAgencyName(e.target.value)}
+                />
+
+                <CustomizedInputWithLabel
+                    label="Agent Name"
+                    value={agentName}
+                    onChange={(e) => setAgentName(e.target.value)}
+                />
+                <CustomizedInputWithLabel
+                    label="Agent Mobile no"
+                    value={agentMobile}
+                    onChange={(e) => setAgentMobile(e.target.value)}
+                />
+
+                <CustomizedInputWithLabel
+                    label="Transaction Type"
+                    value={transactionType}
+                    onChange={(e) => setTransactionType(e.target.value)}
+                />
+
+                <CustomizedInputWithLabel
+                    label="Transaction ID"
+                    value={transactionId}
+                    onChange={(e) => setTransactionId(e.target.value)}
+                />
+                <CustomizedInputWithLabel
+                    label="Page Size"
+                    value={transactionId}
+                    onChange={(e) => setTransactionId(e.target.value)}
+                />
+                <div className="flex justify-end mt-4">
+                    <Button onClick={() => getReportData()} disabled={isLoading}>Search</Button>
+                </div>
+                <CustomizedInputWithLabel
+                    label="Page Size"
+                    value={transactionId}
+                    onChange={(e) => setTransactionId(e.target.value)}
+                />
+            </div>
+
             <div className="overflow-x-auto">
                 <ReactTable
                     data={dataList}
@@ -115,7 +189,7 @@ const AgentWalletHistory = () => {
                     handleExportFile={handleExportFile}
                 />
             </div>
-        </AuthUserReusableCode>
+        </AuthUserReusableCode >
     );
 };
 
