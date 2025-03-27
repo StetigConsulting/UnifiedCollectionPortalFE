@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { getErrorMessage, tableDataPerPage } from '@/lib/utils';
 import { downloadBillingReport, getAgentWalletHistory, getBillingReport } from '@/app/api-calls/report/api';
 import { useSession } from 'next-auth/react';
+import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
 
 const AgentWalletHistory = () => {
 
@@ -28,31 +29,51 @@ const AgentWalletHistory = () => {
     const [agentMobile, setAgentMobile] = useState('');
     const [transactionType, setTransactionType] = useState('');
     const [transactionId, setTransactionId] = useState('');
+    const [pageSize, setPageSize] = useState(tableDataPerPage);
 
     useEffect(() => {
-        getReportData();
+        const today = new Date();
+        const last30Days = new Date();
+        last30Days.setDate(today.getDate() - 30);
+
+        const formattedToday = today.toISOString().split('T')[0];
+        const formattedLast30Days = last30Days.toISOString().split('T')[0];
+
+        setFromDate(formattedLast30Days);
+        setToDate(formattedToday);
+
+        getReportData({
+            transaction_date_range: {
+                from_date: formattedLast30Days,
+                to_date: formattedToday,
+            },
+        });
     }, []);
 
     const getReportData = async (applyFilter = {}, page = 1) => {
         let payload = {
             page: currentPage,
-            page_size: tableDataPerPage,
+            page_size: pageSize,
             filter: {
                 transaction_date_range: {
                     from_date: fromDate,
                     to_date: toDate,
                 },
-                agent_name: agentName,
-                agent_mobile: agentMobile,
-                transaction_id: transactionId,
-                transaction_type: transactionType,
-                agency_name: agencyName,
+                ...agentName && { agent_name: agentName },
+                ...agentMobile && { agent_mobile: agentMobile },
+                ...transactionId && { transaction_id: transactionId },
+                ...transactionType && { transaction_type: transactionType },
+                ...agencyName && { agency_name: agencyName },
             }
         };
 
         payload = {
             ...payload,
-            page
+            page,
+            filter: {
+                ...payload.filter,
+                ...applyFilter
+            }
         }
 
         try {
@@ -163,20 +184,21 @@ const AgentWalletHistory = () => {
                 />
                 <CustomizedInputWithLabel
                     label="Page Size"
-                    value={transactionId}
+                    value={pageSize}
                     onChange={(e) => setTransactionId(e.target.value)}
                 />
-                <div className="flex justify-end mt-4">
+                <div className="flex self-end mb-1">
                     <Button onClick={() => getReportData()} disabled={isLoading}>Search</Button>
                 </div>
-                <CustomizedInputWithLabel
-                    label="Page Size"
+                <CustomizedSelectInputWithLabel
+                    label="Export"
+                    list={[]}
                     value={transactionId}
                     onChange={(e) => setTransactionId(e.target.value)}
                 />
             </div>
 
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto mt-4">
                 <ReactTable
                     data={dataList}
                     columns={columns}
@@ -187,6 +209,7 @@ const AgentWalletHistory = () => {
                     onPageChange={handlePageChange}
                     customExport={true}
                     handleExportFile={handleExportFile}
+                    hideSearchAndOtherButtons
                 />
             </div>
         </AuthUserReusableCode >
