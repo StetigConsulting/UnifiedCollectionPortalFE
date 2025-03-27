@@ -22,6 +22,7 @@ export const listOfUrlForScopes = [
   { url: "/admin/office-structure", backendScopeName: "TPCollectionWebPortal:office_structure:ALL" },
   { url: "/agency/binder-mapping", backendScopeName: "TPCollectionWebPortal:agent_pseudo_mapping:ALL" },
   { url: "/admin/receipt-for-postpaid", backendScopeName: "TPCollectionWebPortal:business_rules:ALL" },
+  { url: "/admin/color-coding", backendScopeName: "TPCollectionWebPortal:business_rules:ALL" },
   { url: "/admin/color-coding/logic", backendScopeName: "TPCollectionWebPortal:business_rules:ALL" },
   { url: "/admin/color-coding/bill-basis", backendScopeName: "TPCollectionWebPortal:business_rules:ALL" },
   { url: "/admin/color-coding/ecl-flag-customer", backendScopeName: "TPCollectionWebPortal:business_rules:ALL" },

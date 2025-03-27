@@ -289,7 +289,11 @@ const AddCounterCollector = () => {
     }
 
     useEffect(() => {
-        if (formData.collectorRole) {
+        if (formData.collectorRole === 'Door To Door' && agencyData?.working_level === levelNameMappedWithId.SECTION) {
+            setErrorMessage('Error: Agency working at Section level can only create Counter Collector')
+            setIsErrorModalOpen(true)
+            setValue('collectorRole', '')
+        } else if (formData.collectorRole) {
             handleDisplayWorkingLevel(workingLevelActualLists, agencyWorkingLevel);
             setValue('workingLevel', null)
             setValue('circle', [])
@@ -342,6 +346,8 @@ const AddCounterCollector = () => {
         if (formData.workingType === 'Offline' && formData?.collectionType?.includes('Non Energy')) {
             setErrorMessage('Error: Non Energy Collection Type can only be assigned to Online Work Type Agents')
             setIsErrorModalOpen(true)
+            let filterList = formData?.collectionType?.filter(item => item !== 'Non Energy')
+            setValue('collectionType', filterList || [])
         }
     }, [formData.workingType, formData.collectionType, setValue]);
 

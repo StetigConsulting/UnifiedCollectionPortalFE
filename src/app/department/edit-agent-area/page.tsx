@@ -16,6 +16,7 @@ import { toast } from 'sonner';
 import AlertPopupWithState from '@/components/Agency/ViewAgency/AlertPopupWithState';
 import { Loader2 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
+import SuccessErrorModal from '@/components/SuccessErrorModal';
 
 const EditAgentAreaRoleForm = () => {
     const { data: session } = useSession()
@@ -149,7 +150,7 @@ const EditAgentAreaRoleForm = () => {
     };
 
     const handleGetAgentData = async () => {
-        console.log(formData)
+        console.log(formData.agentMobileNumber, !isNaN(formData.agentMobileNumber), formData.agentMobileNumber.toString().length)
         const mobileNumber = Number(formData.agentMobileNumber);
         if (!isNaN(mobileNumber) && mobileNumber.toString().length === 10) {
             try {
@@ -159,8 +160,9 @@ const EditAgentAreaRoleForm = () => {
                 setValue('agentId', response.data.id)
                 setValue('agentRole', response.data.collector_role)
                 setValue('workingLevel', (response.data.working_level))
-                await getAgencyData(response?.data?.agency?.id)
+                await getAgencyData(response?.data?.agency?.id, response?.data?.collector_role)
                 await handleSetAllLevelData(response.data)
+                setValue('agentRole', response.data.collector_role)
                 setShowRestFields(true)
             } catch (error) {
                 console.log(error);
@@ -254,7 +256,7 @@ const EditAgentAreaRoleForm = () => {
 
     const [workingLevelActualLists, setWorkingLevelActualLists] = useState([])
 
-    const getAgencyData = async (id: number) => {
+    const getAgencyData = async (id: number, role: string) => {
         try {
             const agencyResponse = await getAgencyById(String(id));
             const agencyData = agencyResponse.data;
@@ -265,7 +267,9 @@ const EditAgentAreaRoleForm = () => {
 
             const workingLevel = agencyData?.working_level;
 
-            handleDisplayWorkingLevel(workingLevelActualLists, workingLevel)
+            console.log(workingLevel, workingLevelActualLists)
+
+            handleDisplayWorkingLevel(workingLevelActualLists, agencyData?.working_level, role)
             const agencyLevel = workingLevelActualLists.find((lvl) => lvl.value === workingLevel);
 
             let levelData = agencyData?.working_level_offices.map((ite) => {
@@ -290,13 +294,16 @@ const EditAgentAreaRoleForm = () => {
         }
     };
 
-    const handleDisplayWorkingLevel = (levels, agencyWorkingLevel) => {
+    const handleDisplayWorkingLevel = (levels, agencyWorkingLevel, role = formData?.agentRole) => {
         const agencyLevel = levels.find((lvl) => lvl.value === agencyWorkingLevel);
+        console.log(levels, agencyWorkingLevel, formData.agentRole, agencyLevel)
 
         if (agencyLevel) {
-            if (formData.agentRole === 'Door To Door') {
+            if (role === 'Door To Door') {
+                console.log('setting door to door')
                 levels = levels.filter((lvl) => lvl.value > agencyLevel.value);
             } else {
+                console.log('setting ohter')
                 levels = levels.filter((lvl) => lvl.value >= agencyLevel.value);
             }
         }
@@ -316,6 +323,9 @@ const EditAgentAreaRoleForm = () => {
 
     const [stateForConfirmationPopup, setStateForConfirmationPopup] = useState(false);
 
+    const [isErrorModalOpen, setIsErrorModalOpen] = useState<boolean>(false);
+    const [errorMessage, setErrorMessage] = useState('')
+
     return (
         <AuthUserReusableCode pageTitle="Edit Agent Area & Role" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -323,8 +333,7 @@ const EditAgentAreaRoleForm = () => {
                     <div className="col-span-2">
                         <CustomizedInputWithLabel
                             label="Agent Mobile Number"
-                            type="text"
-                            {...register('agentMobileNumber', { valueAsNumber: true })}
+                            type="number"
                             onChange={() => {
                                 clearErrors("agentMobileNumber")
                                 setValue('agentName', '')
@@ -332,6 +341,7 @@ const EditAgentAreaRoleForm = () => {
                                 setValue('agentRole', '')
                                 setShowRestFields(false)
                             }}
+                            {...register('agentMobileNumber', { valueAsNumber: true })}
                             errors={errors.agentMobileNumber}
                         />
                     </div>
@@ -476,6 +486,8 @@ const EditAgentAreaRoleForm = () => {
                     </div>
                 }
             </form>
+            <SuccessErrorModal isOpen={isErrorModalOpen} onClose={() => setIsErrorModalOpen(false)}
+                message={errorMessage} type="error" />
         </AuthUserReusableCode >
     );
 };

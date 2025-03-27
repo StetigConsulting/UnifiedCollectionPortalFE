@@ -12,6 +12,7 @@ import AuthUserReusableCode from "@/components/AuthUserReusableCode";
 import { Loader2 } from "lucide-react";
 import { extendAgentValidityById, getAllAgentByAgencyId } from "@/app/api-calls/agency/api";
 import { useSession } from "next-auth/react";
+import SuccessErrorModal from "@/components/SuccessErrorModal";
 
 const ExtendValidity = () => {
 
@@ -86,13 +87,19 @@ const ExtendValidity = () => {
     useEffect(() => {
         if (selectedAgency) {
             const agency = agencies.find((item) => item.id === Number(selectedAgency));
-            if (agency) {
+            if (agency && agency?.is_active === true) {
                 setValue('collectorId', agency.id || null);
                 setValue('currentValidityFrom', agency.validity_from_date || '');
                 setValue('currentValidityTo', agency.validity_to_date || '');
+            } else if (agency && agency?.is_active === false) {
+                setIsErrorModalOpen(true)
+                setErrorMessage('Please activate the agent before extending validity')
             }
         }
     }, [selectedAgency, agencies, setValue]);
+
+    const [isErrorModalOpen, setIsErrorModalOpen] = useState<boolean>(false);
+    const [errorMessage, setErrorMessage] = useState('')
 
     return (
         <AuthUserReusableCode pageTitle="Extend Validity" isLoading={isLoading}>
@@ -161,6 +168,8 @@ const ExtendValidity = () => {
                     </Button>
                 </div>
             </form>
+            <SuccessErrorModal isOpen={isErrorModalOpen} onClose={() => setIsErrorModalOpen(false)}
+                message={errorMessage} type="error" />
         </AuthUserReusableCode>
     );
 };
