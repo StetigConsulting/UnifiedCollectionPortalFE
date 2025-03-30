@@ -235,6 +235,24 @@ export const getAgencyBankDepositHistory = async (data: AgencyBankHistoryPaginat
   }
 }
 
+export const getListOfAllSupervisor = async (id: number) => {
+  try {
+    const response = await api.get(`/v1/supervisors/agency/${id}`)
+    return response.data;
+  } catch (error) {
+    throw error?.response?.data
+  }
+}
+
+export const createSupervisor = async (data: any) => {
+  try {
+    const response = await api.post(`/v1/supervisors/`, data)
+    return response.data;
+  } catch (error) {
+    throw error?.response?.data
+  }
+}
+
 export {
   getAllPaymentModes,
   getAllNonEnergyTypes,

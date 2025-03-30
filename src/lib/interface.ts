@@ -138,6 +138,7 @@ export interface AddCounterCollector {
     collector_type: number;
     work_type: string;
     collector_role: string;
+    supervisor_id: number;
 }
 
 export interface ChangeCounterCollector {
@@ -198,6 +199,7 @@ export interface EditCollector {
     non_energy_types: number[];
     collector_type: number;
     work_type: string;
+    supervisor_id: number
 }
 
 export interface AddAgentBankDeposit {

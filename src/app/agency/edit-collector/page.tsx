@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import CustomizedMultipleSelectInputWithLabelString from "@/components/CustomizedMultipleSelectInputWithLabelString";
 import AuthUserReusableCode from "@/components/AuthUserReusableCode";
-import { getAgencyById, getAgentByPhoneNumber } from "@/app/api-calls/department/api";
+import { getAgencyById, getAgentByPhoneNumber, getListOfAllSupervisor } from "@/app/api-calls/department/api";
 import { agentWorkingType, getErrorMessage } from "@/lib/utils";
 import { editCollectorData, getCollectorTypes } from "@/app/api-calls/agency/api";
 import CustomizedMultipleSelectInputWithLabelNumber from "@/components/CustomizedMultipleSelectInputWithLabelNumber";
@@ -37,6 +37,8 @@ const EditCollector = () => {
         ]);
     const [nonEnergyTypes, setNonEnergyTypes] = useState([]);
 
+    const [supervisorList, setSupervisorList] = useState([])
+
     useEffect(() => {
         getCollectorTypes().then((data) => {
             setCollectorTypes(
@@ -50,6 +52,13 @@ const EditCollector = () => {
             );
             setIsLoading(false)
         })
+        getListOfAllSupervisor(session?.user?.userId).then((res) => {
+            setSupervisorList(res?.data?.map(item => ({
+                ...item,
+                label: item?.supervisor_name,
+                value: item?.id
+            })))
+        }).catch(err => console.error(err))
     }, []);
 
     const onSubmit = async (data: EditCollectorFormData) => {
@@ -62,7 +71,8 @@ const EditCollector = () => {
                 "collection_type_non_energy": data.collectionType.includes("Non Energy") ? true : false,
                 "non_energy_types": data.collectionType.includes("Non Energy") ? data.nonEnergy : [],
                 "collector_type": data.collectorType,
-                "work_type": data.workingType
+                "work_type": data.workingType,
+                "supervisor_id": data?.supervisor?.[0]
             }
             await editCollectorData(payload, currentUserId);
             toast.success('Agent edited successfully!');
@@ -89,6 +99,7 @@ const EditCollector = () => {
                 setValue('collectorType', response.data.collector_type.id)
                 setValue('workingType', response.data.work_type)
                 setValue('agentId', response.data.id)
+                setValue('supervisor', [response.data.supervisor?.id])
                 getAgencyData(response.data.agency.id)
                 setValue('permission', response.data.collection_payment_modes.map((ite) => ite.id))
                 let collectionType = []
@@ -237,6 +248,16 @@ const EditCollector = () => {
                             onChange={(selectedValues) => setValue('nonEnergy', selectedValues)}
                         />
                     )}
+
+                    <CustomizedMultipleSelectInputWithLabelNumber
+                        label="Select Supervisor"
+                        errors={errors.supervisor}
+                        placeholder="Select Supervisor"
+                        list={supervisorList}
+                        required={true}
+                        value={watch('supervisor') || []}
+                        onChange={(selectedValues) => setValue('supervisor', selectedValues)}
+                    />
                 </div>
                 <div className="flex justify-end mt-4">
                     <Button type="submit" variant="default" disabled={isSubmitting}>
