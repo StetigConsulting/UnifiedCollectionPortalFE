@@ -110,9 +110,9 @@ export function NavMain({
                             className={cn(pathname === subItem.url && "bg-lightThemeColor")}
                             asChild
                           >
-                            <a href={subItem.url}>
+                            <a className='min-h-7 h-auto' href={subItem.url}>
                               {subItem.icon && <subItem.icon />}
-                              <span>{subItem.title}</span>
+                              <p>{subItem.title}</p>
                             </a>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
