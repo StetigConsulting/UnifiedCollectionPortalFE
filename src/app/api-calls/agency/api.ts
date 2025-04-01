@@ -195,3 +195,21 @@ export const getRegisteredDevices = async (id: number) => {
         throw error?.response?.data
     }
 }
+
+export const getResetHistoryByAgencyId = async (id: number) => {
+    try {
+        const response = await api.get(`/v1/device-change-logs/history/${id}`)
+        return response?.data
+    } catch (error) {
+        throw error?.response?.data
+    }
+}
+
+export const resetDeviceById = async (id: number) => {
+    try {
+        const response = await api.delete(`/v1/registered-devices/reset/${id}`)
+        return response?.data
+    } catch (error) {
+        throw error?.response?.data
+    }
+}

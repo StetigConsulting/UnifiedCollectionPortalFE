@@ -366,9 +366,9 @@ export const extendValiditySchema = z.object({
 });
 
 export const resetDeviceSchema = z.object({
-  mobileNumber: z.string()
-    .min(10, { message: "Mobile number must be at least 10 digits" })
-    .max(10, { message: "Mobile number cannot exceed 10 digits" }),
+  mobileNumber: z.number({
+    invalid_type_error: 'Mobile number required'
+  }).min(10, 'Mobile number must be at least 10 digits'),
   collectorName: z.string().optional(),
   agencyName: z.string().optional(),
   collectorType: z.any().optional(),

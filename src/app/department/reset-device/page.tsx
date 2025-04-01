@@ -9,24 +9,17 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { number, z } from "zod";
 import { useSession } from "next-auth/react";
-import { getRegisteredDevices } from "@/app/api-calls/agency/api";
+import { getRegisteredDevices, getResetHistoryByAgencyId, resetDeviceById } from "@/app/api-calls/agency/api";
 import { getAgentByPhoneNumber } from "@/app/api-calls/department/api";
 import CustomizedSelectInputWithLabel from "@/components/CustomizedSelectInputWithLabel";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { getErrorMessage } from "@/lib/utils";
+import { formatDate, getErrorMessage } from "@/lib/utils";
+import ReactTable from "@/components/ReactTable";
+import moment from "moment";
 
 type FormData = z.infer<typeof resetDeviceSchema>;
 
-const mockRegisteredDeviceData = [
-    {
-        mobileNumber: "7738414900",
-        collectorName: "Satyam Aryaan Kumar",
-        collectorId: "2001100110029",
-        status: "Active",
-        lastSyncedDate: "06-01-2024",
-    },
-];
 
 const mockPreviousHistoryData = [
     {
@@ -43,58 +36,131 @@ const ResetDeviceCollector = () => {
 
     const { data: session } = useSession()
 
-    const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm<FormData>({
+    const { register, handleSubmit, formState: { errors }, setValue, watch, setError, clearErrors } = useForm<FormData>({
         resolver: zodResolver(resetDeviceSchema),
         defaultValues: {
-            mobileNumber: "",
+            mobileNumber: null,
             collectorName: "",
             agencyName: "",
             collectorType: null,
         },
     });
 
-    const onSubmit = (data: FormData) => {
-        console.log("Resetting device with data:", data);
+    const onSubmit = async (data: FormData) => {
+        console.log(collectorId)
+        setIsLoading(true)
+        try {
+            const response = await resetDeviceById(collectorId)
+            toast.success('Device Reset done Successfully')
+        } catch (error) {
+            toast.error('Error: ' + getErrorMessage(error))
+        } finally {
+            setIsLoading(false)
+        }
     };
 
     const formData = watch()
 
     const [collectorType, setCollectorType] = useState([])
+    const [collectorId, setCollectorId] = useState(null)
     const [deviceData, setDeviceData] = useState([])
+    const [historyLog, setHistoryLog] = useState([])
+    const [isLoading, setIsLoading] = useState(false)
+
+    const deviceDataColumn = useMemo(() => [
+        { label: 'Collector Name', key: 'user_name', sortable: true },
+        { label: 'Mobile Number', key: 'mobile_number', sortable: true },
+        { label: 'Device ID', key: 'device_id', sortable: true },
+        { label: 'Device Name', key: 'device_name', sortable: true },
+        { label: 'Status', key: 'deviceStatus', sortable: true },
+        { label: 'App Version', key: 'app_version', sortable: true },
+    ], []);
+
+    const historyLogColumn = useMemo(() => [
+        { label: 'Collector Name', key: 'user_name', sortable: true },
+        { label: 'Mobile Number', key: 'mobile_number', sortable: true },
+        { label: 'Device ID', key: 'device_id', sortable: true },
+        { label: 'Device Name', key: 'device_name', sortable: true },
+        { label: 'Reason', key: 'reason', sortable: true },
+        { label: 'Status', key: 'status', sortable: true },
+        { label: 'Date', key: 'date', sortable: true },
+    ], []);
+
+    const [showTable, setShowTable] = useState(false)
 
     const handleSearch = async () => {
-        try {
-            const mobileNumber = Number(formData?.mobileNumber)
-            const response = await getAgentByPhoneNumber(mobileNumber)
-            setValue("collectorName", response?.data?.agent_name);
-            setValue("agencyName", response?.data?.agent_name);
-            setCollectorType([{ id: response?.data?.collector_type?.id, label: response?.data?.collector_type?.name }]);
-            const registeredResponse = await getRegisteredDevices(response?.data?.id);
-            let arrData = [];
-            arrData.push(registeredResponse.data)
-            setDeviceData(arrData || [])
-            setValue('collectorType', response?.data?.collector_type?.id);
-        } catch (error) {
-            toast.error('Error: ' + getErrorMessage(error))
-            setValue("collectorName", '');
-            setValue("agencyName", '');
-            setValue('collectorType', null);
+        const mobileNumber = Number(watch('mobileNumber'));
+        if (!isNaN(mobileNumber) && mobileNumber.toString().length === 10) {
+            setIsLoading(true)
+            try {
+                const response = await getAgentByPhoneNumber(mobileNumber)
+                setCollectorType([{ id: response?.data?.collector_type?.id, label: response?.data?.collector_type?.name }]);
+                const registeredResponse = await getRegisteredDevices(response?.data?.id);
+                const historyResponse = await loadHistoryLog(response?.data?.id)
+                console.log(historyResponse)
+                setCollectorId(response?.data?.id)
+                setValue("collectorName", response?.data?.agent_name);
+                setValue("agencyName", response?.data?.agent_name);
+                setShowTable(true)
+                let arrData = [];
+                arrData.push(registeredResponse.data)
+                arrData = arrData.map(item => ({
+                    ...item,
+                    deviceStatus: item?.is_device_active ? 'Active' : 'Inactive'
+                }))
+                setDeviceData(arrData || [])
+                setValue('collectorType', response?.data?.collector_type?.id);
+            } catch (error) {
+                toast.error('Error: ' + getErrorMessage(error))
+                setValue("collectorName", '');
+                setValue("agencyName", '');
+                setValue('collectorType', null);
+                setShowTable(false)
+            } finally {
+                setIsLoading(false)
+            }
+        } else {
+            setError("mobileNumber", {
+                type: "manual",
+                message: "Please enter a valid 10-digit mobile number.",
+            });
+            return;
         }
     };
 
-    console.log(collectorType)
+    const loadHistoryLog = async (id: number) => {
+        setIsLoading(true)
+        try {
+            const response = await getResetHistoryByAgencyId(id)
+
+            setHistoryLog(response?.data.map(item => ({
+                ...item,
+                deviceStatus: item?.status ? 'Active' : 'Inactive',
+                date: moment(item?.created_on).format('DD-MM-YYYY')
+            })))
+        } catch (error) {
+            console.log('Error: ' + getErrorMessage(error))
+        } finally {
+            setIsLoading(false)
+        }
+    }
 
     return (
-        <AuthUserReusableCode pageTitle="Reset Device (Collector)">
+        <AuthUserReusableCode pageTitle="Reset Device (Collector)" isLoading={isLoading}>
             <form className="space-y-4 p-4" onSubmit={handleSubmit(onSubmit)}>
                 <div className="grid grid-cols-2 gap-4">
                     <CustomizedInputWithLabel
-                        label="Collector Mobile Number"
-                        placeholder="Enter Mobile Number"
-                        {...register("mobileNumber")}
+                        label="Collector Mobile"
+                        type="text"
+                        required
+                        {...register('mobileNumber', { valueAsNumber: true })}
+                        onChange={() => {
+                            clearErrors("mobileNumber")
+                        }}
                         errors={errors.mobileNumber}
                     />
-                    <Button type="button" variant="default" className={`self-end ${errors?.mobileNumber && 'mb-5'}`} onClick={handleSearch}>
+                    <Button type="button" variant="default"
+                        className={`self-end ${errors?.mobileNumber && 'mb-5'}`} onClick={handleSearch}>
                         Search
                     </Button>
                     <CustomizedInputWithLabel
@@ -118,70 +184,34 @@ const ResetDeviceCollector = () => {
                         disabled
                     />
 
-                    <Button type="submit" variant="default" className={`self-end`}>
+                    <Button type="submit" variant="default" disabled={!formData?.collectorName} className={`self-end`}>
                         Reset
                     </Button>
                 </div>
 
             </form>
+            {
+                showTable && <div className="p-4">
+                    <h2 className="text-lg font-bold">Registered Mobile Number With This Device</h2>
+                    <div className="overflow-x-auto mt-4">
+                        <ReactTable
+                            data={deviceData}
+                            columns={deviceDataColumn}
+                            hideSearchAndOtherButtons
+                        />
+                    </div>
 
-            <div className="p-4">
-                <h2 className="text-lg font-bold">Registered Mobile Number With This Device</h2>
-                <div className="overflow-x-auto mt-4">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Collector Name</TableHead>
-                                <TableHead>Mobile Number</TableHead>
-                                <TableHead>Device ID</TableHead>
-                                <TableHead>Device Name</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead>App Version</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {deviceData.map((item, index) => (
-                                <TableRow key={index}>
-                                    <TableCell>{item.user_name}</TableCell>
-                                    <TableCell>{item.mobile_number}</TableCell>
-                                    <TableCell>{item.device_id}</TableCell>
-                                    <TableCell>{item.device_name}</TableCell>
-                                    <TableCell>{item.is_device_active ? 'Active' : 'Inactive'}</TableCell>
-                                    <TableCell>{item.app_version}</TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                    <h2 className="text-lg font-bold mt-8">Previous Mobile History Reset Data</h2>
+                    <div className="overflow-x-auto mt-4">
+                        <ReactTable
+                            data={historyLog}
+                            columns={historyLogColumn}
+                            hideSearchAndOtherButtons
+                        />
+                    </div>
                 </div>
+            }
 
-                <h2 className="text-lg font-bold mt-8">Previous Mobile History Reset Data</h2>
-                <div className="overflow-x-auto mt-4">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>User Name</TableHead>
-                                <TableHead>Collector Name</TableHead>
-                                <TableHead>Mobile Number</TableHead>
-                                <TableHead>Device Info</TableHead>
-                                <TableHead>Reason</TableHead>
-                                <TableHead>Date</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {mockPreviousHistoryData.map((item, index) => (
-                                <TableRow key={index}>
-                                    <TableCell>{item.userName}</TableCell>
-                                    <TableCell>{item.collectorName}</TableCell>
-                                    <TableCell>{item.mobileNumber}</TableCell>
-                                    <TableCell>{item.deviceInfo}</TableCell>
-                                    <TableCell>{item.reason}</TableCell>
-                                    <TableCell>{item.date}</TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </div>
-            </div>
         </AuthUserReusableCode>
     );
 };
