@@ -69,7 +69,7 @@ export const getDepositAcknowledgementReport = async (data: any) => {
 
 export const getAgentBankDepositReport = async (data: any) => {
     try {
-        const response = await api.post('/v1/agent-deposit-acknowledgements/fetch', data);
+        const response = await api.post('/v1/agent-bank-deposits/fetch', data);
         return response.data;
     } catch (error) {
         throw error?.response?.data

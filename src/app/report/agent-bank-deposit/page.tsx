@@ -7,7 +7,7 @@ import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
 import { tableDataPerPage } from '@/lib/utils';
-import { getDepositAcknowledgementReport } from '@/app/api-calls/report/api';
+import { getAgentBankDepositReport, getDepositAcknowledgementReport } from '@/app/api-calls/report/api';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
 
 const AgentDepositAcknowledgementReport = () => {
@@ -28,7 +28,17 @@ const AgentDepositAcknowledgementReport = () => {
         let payload = {
             page: page,
             page_size: pageSize,
-            filter: {}
+            filter: {
+                ...(dateFrom && dateTo) && {
+                    deposit_date_range: {
+                        "from_date": dateFrom,
+                        "to_date": dateTo
+                    }
+                },
+                ...agencyName && {
+                    agency_name: agencyName
+                }
+            }
         }
 
         payload = {
@@ -41,7 +51,7 @@ const AgentDepositAcknowledgementReport = () => {
         }
         setIsLoading(true);
         try {
-            const response = await getDepositAcknowledgementReport(payload)
+            const response = await getAgentBankDepositReport(payload)
             setData(response?.data?.data);
             setCurrentPage(page);
             setTotalPages(response.data.totalPages)
@@ -59,8 +69,8 @@ const AgentDepositAcknowledgementReport = () => {
         { label: 'Supervisor ID', key: 'supervisor_id', sortable: true },
         { label: 'Supervisor Name', key: 'supervisor_name', sortable: true },
         { label: 'Deposit Date', key: 'deposit_date', sortable: true },
-        { label: 'Deposit Amount', key: 'deposit_amount', sortable: true },
-        { label: 'Bank Ref. No.', key: 'deposit_amount', sortable: true },
+        { label: 'Deposit Amount', key: 'amount', sortable: true },
+        { label: 'Bank Ref. No.', key: 'txn_ref_no', sortable: true },
         { label: 'Slip Image', key: 'slip' }
     ], []);
 
@@ -117,6 +127,11 @@ const AgentDepositAcknowledgementReport = () => {
                     data={data}
                     columns={columns}
                     hideSearchAndOtherButtons
+                    dynamicPagination
+                    itemsPerPage={pageSize}
+                    pageNumber={currentPage}
+                    totalPageNumber={totalPages}
+                    onPageChange={(e) => fetchReport({}, e)}
                 />
             </div>
 

@@ -320,7 +320,13 @@ const navData = {
           title: "CC wallet history",
           icon: UserPlus2,
           url: "/report/cc-wallet-history",
-        }
+        },
+        {
+          title: 'Agent Bank Deposit',
+          icon: UserPlus2,
+          url: "/report/agent-bank-deposit",
+        },
+
       ]
     },
     {
