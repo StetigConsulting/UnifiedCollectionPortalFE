@@ -186,3 +186,12 @@ export const updateDepositAcknowlegment = async (data: any) => {
         throw error?.response?.data
     }
 }
+
+export const getRegisteredDevices = async (id: number) => {
+    try {
+        const response = await api.get(`/v1/registered-devices/${id}`)
+        return response.data;
+    } catch (error) {
+        throw error?.response?.data
+    }
+}

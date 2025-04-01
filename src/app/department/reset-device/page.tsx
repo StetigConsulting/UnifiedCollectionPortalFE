@@ -7,7 +7,14 @@ import AuthUserReusableCode from "@/components/AuthUserReusableCode";
 import CustomizedInputWithLabel from "@/components/CustomizedInputWithLabel";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { z } from "zod";
+import { number, z } from "zod";
+import { useSession } from "next-auth/react";
+import { getRegisteredDevices } from "@/app/api-calls/agency/api";
+import { getAgentByPhoneNumber } from "@/app/api-calls/department/api";
+import CustomizedSelectInputWithLabel from "@/components/CustomizedSelectInputWithLabel";
+import { useState } from "react";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/lib/utils";
 
 type FormData = z.infer<typeof resetDeviceSchema>;
 
@@ -33,15 +40,16 @@ const mockPreviousHistoryData = [
 ];
 
 const ResetDeviceCollector = () => {
-    const { register, handleSubmit, formState: { errors }, setValue } = useForm<FormData>({
+
+    const { data: session } = useSession()
+
+    const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm<FormData>({
         resolver: zodResolver(resetDeviceSchema),
         defaultValues: {
             mobileNumber: "",
             collectorName: "",
-            currentDevice: "Collector",
             agencyName: "",
-            collectorType: "",
-            reason: "",
+            collectorType: null,
         },
     });
 
@@ -49,11 +57,32 @@ const ResetDeviceCollector = () => {
         console.log("Resetting device with data:", data);
     };
 
-    const handleSearch = () => {
-        setValue("collectorName", "Bishnu Charan Pujari");
-        setValue("agencyName", "Agency Name");
-        console.log("Search executed");
+    const formData = watch()
+
+    const [collectorType, setCollectorType] = useState([])
+    const [deviceData, setDeviceData] = useState([])
+
+    const handleSearch = async () => {
+        try {
+            const mobileNumber = Number(formData?.mobileNumber)
+            const response = await getAgentByPhoneNumber(mobileNumber)
+            setValue("collectorName", response?.data?.agent_name);
+            setValue("agencyName", response?.data?.agent_name);
+            setCollectorType([{ id: response?.data?.collector_type?.id, label: response?.data?.collector_type?.name }]);
+            const registeredResponse = await getRegisteredDevices(response?.data?.id);
+            let arrData = [];
+            arrData.push(registeredResponse.data)
+            setDeviceData(arrData || [])
+            setValue('collectorType', response?.data?.collector_type?.id);
+        } catch (error) {
+            toast.error('Error: ' + getErrorMessage(error))
+            setValue("collectorName", '');
+            setValue("agencyName", '');
+            setValue('collectorType', null);
+        }
     };
+
+    console.log(collectorType)
 
     return (
         <AuthUserReusableCode pageTitle="Reset Device (Collector)">
@@ -61,55 +90,39 @@ const ResetDeviceCollector = () => {
                 <div className="grid grid-cols-2 gap-4">
                     <CustomizedInputWithLabel
                         label="Collector Mobile Number"
-                        containerClass=""
                         placeholder="Enter Mobile Number"
                         {...register("mobileNumber")}
                         errors={errors.mobileNumber}
                     />
-                    <Button type="button" variant="default" className="self-end" onClick={handleSearch}>
+                    <Button type="button" variant="default" className={`self-end ${errors?.mobileNumber && 'mb-5'}`} onClick={handleSearch}>
                         Search
                     </Button>
                     <CustomizedInputWithLabel
                         label="Collector Name"
                         placeholder="Collector Name"
-                        containerClass=""
                         {...register("collectorName")}
                         disabled
                     />
-                    <CustomizedInputWithLabel
-                        containerClass=""
-                        label="Current Device"
-                        placeholder="Current Device"
-                        {...register("currentDevice")}
+                    <CustomizedSelectInputWithLabel
+                        label="Collector Type"
+                        list={collectorType}
+                        // placeholder="Collector Type"
+                        {...register("collectorType")}
+                        errors={errors.collectorType}
                         disabled
                     />
                     <CustomizedInputWithLabel
-                        containerClass=""
                         label="Agency Name"
                         placeholder="Agency Name"
                         {...register("agencyName")}
                         disabled
                     />
-                    <CustomizedInputWithLabel
-                        label="Collector Type"
-                        containerClass=""
-                        placeholder="Collector Type"
-                        {...register("collectorType")}
-                        errors={errors.collectorType}
-                    />
-                </div>
-                <CustomizedInputWithLabel
-                    label="Reason"
-                    containerClass=""
-                    placeholder="Enter Reason"
-                    {...register("reason")}
-                    errors={errors.reason}
-                />
-                <div className="flex justify-end">
-                    <Button type="submit" variant="default">
+
+                    <Button type="submit" variant="default" className={`self-end`}>
                         Reset
                     </Button>
                 </div>
+
             </form>
 
             <div className="p-4">
@@ -118,21 +131,23 @@ const ResetDeviceCollector = () => {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Mobile Number</TableHead>
                                 <TableHead>Collector Name</TableHead>
-                                <TableHead>Collector ID</TableHead>
+                                <TableHead>Mobile Number</TableHead>
+                                <TableHead>Device ID</TableHead>
+                                <TableHead>Device Name</TableHead>
                                 <TableHead>Status</TableHead>
-                                <TableHead>Last Synced Date</TableHead>
+                                <TableHead>App Version</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {mockRegisteredDeviceData.map((item, index) => (
+                            {deviceData.map((item, index) => (
                                 <TableRow key={index}>
-                                    <TableCell>{item.mobileNumber}</TableCell>
-                                    <TableCell>{item.collectorName}</TableCell>
-                                    <TableCell>{item.collectorId}</TableCell>
-                                    <TableCell>{item.status}</TableCell>
-                                    <TableCell>{item.lastSyncedDate}</TableCell>
+                                    <TableCell>{item.user_name}</TableCell>
+                                    <TableCell>{item.mobile_number}</TableCell>
+                                    <TableCell>{item.device_id}</TableCell>
+                                    <TableCell>{item.device_name}</TableCell>
+                                    <TableCell>{item.is_device_active ? 'Active' : 'Inactive'}</TableCell>
+                                    <TableCell>{item.app_version}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>

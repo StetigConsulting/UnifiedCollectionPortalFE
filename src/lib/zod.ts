@@ -366,18 +366,12 @@ export const extendValiditySchema = z.object({
 });
 
 export const resetDeviceSchema = z.object({
-  mobileNumber: z
-    .string()
-    .nonempty("Mobile Number is required")
-    .regex(/^\d{10}$/, "Mobile Number must be 10 digits"),
+  mobileNumber: z.string()
+    .min(10, { message: "Mobile number must be at least 10 digits" })
+    .max(10, { message: "Mobile number cannot exceed 10 digits" }),
   collectorName: z.string().optional(),
-  currentDevice: z.string().optional(),
   agencyName: z.string().optional(),
-  collectorType: z.string().nonempty("Collector Type is required"),
-  reason: z
-    .string()
-    .nonempty("Reason is required")
-    .max(200, "Reason must be less than 200 characters"),
+  collectorType: z.any().optional(),
 });
 
 export const changeCollectorRoleSchema = z.object({
