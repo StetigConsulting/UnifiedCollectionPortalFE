@@ -82,7 +82,7 @@ const ResetDeviceCollector = () => {
         { label: 'Device ID', key: 'device_id', sortable: true },
         { label: 'Device Name', key: 'device_name', sortable: true },
         { label: 'Reason', key: 'reason', sortable: true },
-        { label: 'Status', key: 'status', sortable: true },
+        { label: 'Status', key: 'deviceStatus', sortable: true },
         { label: 'Date', key: 'date', sortable: true },
     ], []);
 
