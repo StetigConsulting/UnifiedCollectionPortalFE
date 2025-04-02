@@ -162,9 +162,54 @@ export const uploadAgentBankDepositSlip = async (file: FormData) => {
 export const addAgentBankDeposit = async (data: AddAgentBankDeposit) => {
     try {
         const response = await api.post(`/v1/agent-bank-deposits/`, data);
-        return response.data;
+        return response?.data;
     } catch (error) {
 
+        throw error?.response?.data
+    }
+}
+
+export const getAllAgentDepositAcknowledgement = async () => {
+    try {
+        const response = await api.get(`/v1/agent-deposit-acknowledgements/pending`);
+        return response?.data
+    } catch (error) {
+        throw error?.response?.data
+    }
+}
+
+export const updateDepositAcknowlegment = async (data: any) => {
+    try {
+        const response = await api.put(`/v1/agent-deposit-acknowledgements/`, data);
+        return response?.data
+    } catch (error) {
+        throw error?.response?.data
+    }
+}
+
+export const getRegisteredDevices = async (id: number) => {
+    try {
+        const response = await api.get(`/v1/registered-devices/${id}`)
+        return response.data;
+    } catch (error) {
+        throw error?.response?.data
+    }
+}
+
+export const getResetHistoryByAgencyId = async (id: number) => {
+    try {
+        const response = await api.get(`/v1/device-change-logs/history/${id}`)
+        return response?.data
+    } catch (error) {
+        throw error?.response?.data
+    }
+}
+
+export const resetDeviceById = async (id: number) => {
+    try {
+        const response = await api.delete(`/v1/registered-devices/reset/${id}`)
+        return response?.data
+    } catch (error) {
         throw error?.response?.data
     }
 }

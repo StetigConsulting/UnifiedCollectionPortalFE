@@ -20,12 +20,12 @@ const DeniedToPayConfiguration = () => {
 
     const deniedToPayColumns = [
         { label: 'Denied To Pay Reason', key: 'reason', sortable: true },
-        { label: 'Updated Date for Denied to Pay Reasons', key: 'deniedDate', sortable: true },
+        // { label: 'Updated Date for Denied to Pay Reasons', key: 'deniedDate', sortable: true },
     ];
 
     const paidReasonColumns = [
         { label: 'Denied To Pay Reason', key: 'reason', sortable: true },
-        { label: 'Updated Date for Denied to Pay Reasons', key: 'deniedDate', sortable: true },
+        // { label: 'Updated Date for Denied to Pay Reasons', key: 'deniedDate', sortable: true },
     ];
 
     const fetchDeniedToPay = async () => {

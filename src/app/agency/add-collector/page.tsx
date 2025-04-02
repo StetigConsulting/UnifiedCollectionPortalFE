@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import CustomizedMultipleSelectInputWithLabelString from '@/components/CustomizedMultipleSelectInputWithLabelString';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
-import { getAgencyById, getAllNonEnergyTypes, getAllPaymentModes, getLevels, getLevelsDiscomId } from '@/app/api-calls/department/api';
+import { getAgencyById, getAllNonEnergyTypes, getAllPaymentModes, getLevels, getLevelsDiscomId, getListOfAllSupervisor } from '@/app/api-calls/department/api';
 import { createCounterCollector, getCollectorTypes } from '@/app/api-calls/agency/api';
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
 import { Loader2 } from 'lucide-react';
@@ -51,6 +51,8 @@ const AddCounterCollector = () => {
     const [agencyWorkingLevel, setAgencyWorkingLevel] = useState<number>() // maintains the working level of agency
     const [workingLevelActualLists, setWorkingLevelActualLists] = useState([]) //this is total list of working level
 
+    const [supervisorList, setSupervisorList] = useState([])
+
     useEffect(() => {
         getWorkingLevel()
         getAgencyData()
@@ -91,6 +93,13 @@ const AddCounterCollector = () => {
             );
             setIsLoading(false)
         })
+        getListOfAllSupervisor(session?.user?.userId).then((res) => {
+            setSupervisorList(res?.data?.map(item => ({
+                ...item,
+                label: item?.supervisor_name,
+                value: item?.id
+            })))
+        }).catch(err => console.error(err))
         setValue('initialBalance', 0);
     }, []);
 
@@ -216,7 +225,8 @@ const AddCounterCollector = () => {
                             : data.workingLevel === levelNameMappedWithId.SECTION ? data.section?.[0] : null,
                 "collector_type": parseInt(data.collectorType),
                 "work_type": data.workingType,
-                "collector_role": data.collectorRole
+                "collector_role": data.collectorRole,
+                "supervisor_id": data?.supervisor?.[0]
             }
             await createCounterCollector(payload, currentUserId);
             toast.success('Agent added successfully!');
@@ -554,6 +564,15 @@ const AddCounterCollector = () => {
                             onChange={(selectedValues) => setValue('nonEnergy', selectedValues)}
                         />
                     )}
+                    <CustomizedMultipleSelectInputWithLabelNumber
+                        label="Select Supervisor"
+                        errors={errors.supervisor}
+                        placeholder="Select Supervisor"
+                        list={supervisorList}
+                        required={true}
+                        value={watch('supervisor') || []}
+                        onChange={(selectedValues) => setValue('supervisor', selectedValues)}
+                    />
                 </div>
                 <div className="flex justify-end mt-4">
                     <Button type="submit" variant="default" disabled={isSubmitting}>

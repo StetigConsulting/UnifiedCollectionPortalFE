@@ -11,7 +11,7 @@ export async function middleware(request: any) {
     const session = await auth();
     const isAuthenticated = !!session?.user;
 
-    console.log("Is Authenticated:", isAuthenticated);
+    console.log("Is Authenticated:", isAuthenticated, session);
 
     if (nextUrl.pathname === '/') {
         return NextResponse.redirect(new URL(SIGNIN, nextUrl));

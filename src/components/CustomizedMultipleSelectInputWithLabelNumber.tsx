@@ -70,6 +70,12 @@ const CustomizedMultipleSelectInputWithLabelNumber: React.FC<SelectProps> = ({
         }
     }, [value]);
 
+    const handleRemoveSelectedValue = (optionValue: number) => {
+        const newSelectedValues = selectedValues.filter((value) => value !== optionValue);
+        setSelectedValues(newSelectedValues);
+        onChange(newSelectedValues);
+    };
+
     return (
         <div className={`relative ${containerClass}`} ref={dropdownRef}>
             <label className="block text-sm font-medium text-gray-700 mb-1 text-capitalize">
@@ -88,8 +94,16 @@ const CustomizedMultipleSelectInputWithLabelNumber: React.FC<SelectProps> = ({
                                 <span
                                     key={selectedValue}
                                     className={`rounded-full text-sm bg-blue-100 px-2 py-1`}
+                                // onClick={() => handleRemoveSelectedValue(selectedValue)}
                                 >
                                     {selectedOption?.label}
+                                    <button
+                                        type="button"
+                                        onClick={() => handleRemoveSelectedValue(selectedValue)}
+                                        className="ml-2 text-red-500 hover:text-red-700"
+                                    >
+                                        &times;
+                                    </button>
                                 </span>
                             );
                         })}

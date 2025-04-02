@@ -164,6 +164,28 @@ const ReactTable = <T extends Record<string, any>>({
         XLSX.writeFile(workbook, filename);
     };
 
+    const convertToCSVString = (value: any): string => {
+        if (value === null || value === undefined) {
+            return '';
+        }
+
+        // Convert other types to string
+        let valueAsString = String(value);
+
+        // Escape double quotes and wrap the value in double quotes if it contains commas
+        if (valueAsString.includes('"')) {
+            valueAsString = `"${valueAsString.replace(/"/g, '""')}"`;
+        }
+
+        // Wrap the value in double quotes if it contains commas, line breaks, or double quotes
+        if (valueAsString.includes(',') || valueAsString.includes('\n')) {
+            valueAsString = `"${valueAsString}"`;
+        }
+
+        return valueAsString;
+    };
+
+
     const exportToCSV = () => {
         const now = new Date();
         const formattedDate = now.toLocaleDateString('en-GB').split('/').reverse().join('');
@@ -174,8 +196,11 @@ const ReactTable = <T extends Record<string, any>>({
         const filename = `${fileName}_${formattedDate}_${formattedTime}.csv`;
 
         const csvData = data.map((row) =>
-            visibleColumns.map((col) => row[col.key]).join(',')
+            visibleColumns
+                .map((col) => convertToCSVString(row[col.key]))  // Using the helper function
+                .join(',')
         );
+
         const csvString = [visibleColumns.map((col) => col.label).join(','), ...csvData].join('\n');
         const blob = new Blob([csvString], { type: 'text/csv' });
         const link = document.createElement('a');
@@ -273,7 +298,7 @@ const ReactTable = <T extends Record<string, any>>({
                                     {columns.map(column => (
                                         <td key={column.key as string}
                                             className='p-2 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] whitespace-nowrap'
-                                        >{item[column.key]}</td>
+                                        >{item[column.key] ? item[column.key] : '-'}</td>
                                     ))}
                                 </tr>
                             ))

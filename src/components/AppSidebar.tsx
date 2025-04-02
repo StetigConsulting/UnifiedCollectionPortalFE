@@ -200,6 +200,16 @@ const navData = {
           icon: UserPlus2,
           url: "/agency/bank-deposit",
         },
+        {
+          title: "Agent Deposit Acknowledgement",
+          icon: UserPlus2,
+          url: "/agency/agent-deposit-acknowledgement",
+        },
+        {
+          title: "Create Supervisor",
+          icon: UserPlus2,
+          url: "/agency/add-new-supervisor",
+        }
       ],
     },
     // {
@@ -226,6 +236,11 @@ const navData = {
       url: "#",
       path: '/report/',
       items: [
+        {
+          title: "Agent Deposit Acknowledgement report",
+          icon: UserPlus2,
+          url: "/report/agent-deposit-acknowledgement",
+        },
         {
           title: "Daily Collection",
           icon: UserPlus2,
@@ -305,7 +320,13 @@ const navData = {
           title: "CC wallet history",
           icon: UserPlus2,
           url: "/report/cc-wallet-history",
-        }
+        },
+        {
+          title: 'Agent Bank Deposit',
+          icon: UserPlus2,
+          url: "/report/agent-bank-deposit",
+        },
+
       ]
     },
     {
