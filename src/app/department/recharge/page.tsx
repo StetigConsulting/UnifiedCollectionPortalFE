@@ -108,6 +108,8 @@ const Recharge = () => {
                 setValue('phoneNumber', agency.phone || '');
                 setValue('currentBalance', agency.current_balance || 0);
             }
+        } else {
+            reset()
         }
     }, [selectedAgency, agencyList, setValue]);
 
@@ -145,6 +147,8 @@ const Recharge = () => {
             setIsLoading(false);
         }
     };
+
+    console.log(errors)
 
     return (
         <AuthUserReusableCode pageTitle={typeFromUrl == 'reverse' ? 'Reverse Agency Balance' : "Recharge"} isLoading={isLoading}>

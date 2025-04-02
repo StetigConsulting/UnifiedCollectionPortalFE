@@ -48,8 +48,8 @@ const AddCounterCollector = () => {
 
     const [collectionTypeList, setCollectionTypeList] = useState(collectionTypePickList)
 
-    const [agencyWorkingLevel, setAgencyWorkingLevel] = useState<number>() // maintains the working level of agency
-    const [workingLevelActualLists, setWorkingLevelActualLists] = useState([]) //this is total list of working level
+    const [agencyWorkingLevel, setAgencyWorkingLevel] = useState<number>()
+    const [workingLevelActualLists, setWorkingLevelActualLists] = useState([])
 
     const [supervisorList, setSupervisorList] = useState([])
 
@@ -226,7 +226,7 @@ const AddCounterCollector = () => {
                 "collector_type": parseInt(data.collectorType),
                 "work_type": data.workingType,
                 "collector_role": data.collectorRole,
-                "supervisor_id": data?.supervisor?.[0]
+                "supervisor_id": data?.supervisor?.[0] || null
             }
             await createCounterCollector(payload, currentUserId);
             toast.success('Agent added successfully!');
@@ -569,7 +569,6 @@ const AddCounterCollector = () => {
                         errors={errors.supervisor}
                         placeholder="Select Supervisor"
                         list={supervisorList}
-                        required={true}
                         value={watch('supervisor') || []}
                         onChange={(selectedValues) => setValue('supervisor', selectedValues)}
                     />

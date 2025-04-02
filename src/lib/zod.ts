@@ -189,7 +189,7 @@ export const rechargeSchema = z.object({
   amount: z
     .number({
       required_error: "Amount is required",
-      invalid_type_error: "Amount must be a number",
+      invalid_type_error: "Amount is required",
     })
     .positive("Amount must be greater than 0"),
   currentBalance: z.number().optional(),
@@ -450,7 +450,7 @@ export const editCollectorSchema = z.object({
     .array(z.string())
     .min(1, "At least one collection type is required"),
   nonEnergy: z.array(z.number()).optional(),
-  supervisor: z.array(z.number()).min(1, { message: "Supervisor is required" }),
+  supervisor: z.array(z.number()).optional(),
 });
 
 export type EditCollectorFormData = z.infer<typeof editCollectorSchema>;
@@ -498,7 +498,7 @@ export const addCounterCollectorSchema = z.object({
     .min(1, { message: "At least one collection type is required" }),
 
   nonEnergy: z.array(z.number()).optional(),
-  supervisor: z.array(z.number()).min(1, { message: "Supervisor is required" }),
+  supervisor: z.array(z.number()).optional(),
 }).superRefine((data, ctx) => {
   console.log(data)
   if (data.collectionType.includes('Non Energy') && data?.nonEnergy?.length == 0) {
@@ -1088,9 +1088,13 @@ export const agentBankDepositSchema = z.object({
 export type AgentBankDepositFormData = z.infer<typeof agentBankDepositSchema>;
 
 export const agencyBankDepositSchema = z.object({
-  agencyId: z.number().optional(),
+  agencyId: z.number({
+    invalid_type_error: 'Please select Agency'
+  }).optional(),
   depositAmount: z
-    .number()
+    .number({
+      invalid_type_error: 'Deposit amount is required'
+    })
     .min(1, 'Deposit amount must be at least 1')
     .positive('Deposit amount must be a positive number'),
   depositDate: z

@@ -254,7 +254,6 @@ const EditCollector = () => {
                         errors={errors.supervisor}
                         placeholder="Select Supervisor"
                         list={supervisorList}
-                        required={true}
                         value={watch('supervisor') || []}
                         onChange={(selectedValues) => setValue('supervisor', selectedValues)}
                     />

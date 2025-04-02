@@ -15,6 +15,7 @@ import { addAgencyBankDeposit, getAgenciesWithDiscom, getAgencyBankDepositHistor
 import { getAllBankList } from "@/app/api-calls/other/api";
 import { useSession } from "next-auth/react";
 import ReactTable from "@/components/ReactTable";
+import moment from "moment";
 
 const AgentBankDeposit = () => {
 
@@ -88,7 +89,7 @@ const AgentBankDeposit = () => {
             toast.success("Agency Bank deposit added successfully");
             console.log("API Response:", response);
             reset();
-
+            getDepositHistory()
         } catch (error) {
             let errorMessage = getErrorMessage(error);
             console.log(errorMessage)
@@ -169,6 +170,11 @@ const AgentBankDeposit = () => {
         getDepositHistory({}, page)
     }
 
+    const tableData = transactionHistory.map((item) => ({
+        ...item,
+        entryDate: moment(item.entry_date).format('DD-MM-YYYY')
+    }))
+
     return (
         <AuthUserReusableCode pageTitle="Agency Bank Deposit" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -227,7 +233,7 @@ const AgentBankDeposit = () => {
             </form>
             <ReactTable
                 className="mt-4"
-                data={transactionHistory}
+                data={tableData}
                 columns={columns}
                 hideSearchAndOtherButtons
                 dynamicPagination
