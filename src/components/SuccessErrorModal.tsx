@@ -9,7 +9,7 @@ interface ModalProps {
     isOpen: boolean;
     onClose: () => void;
     message: string;
-    type: 'success' | 'error';
+    type: 'success' | 'error' | any;
     errorTable?: any;
 }
 

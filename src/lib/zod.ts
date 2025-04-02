@@ -456,6 +456,7 @@ export const editCollectorSchema = z.object({
     .array(z.string())
     .min(1, "At least one collection type is required"),
   nonEnergy: z.array(z.number()).optional(),
+  supervisor: z.array(z.number()).min(1, { message: "Supervisor is required" }),
 });
 
 export type EditCollectorFormData = z.infer<typeof editCollectorSchema>;
@@ -503,6 +504,7 @@ export const addCounterCollectorSchema = z.object({
     .min(1, { message: "At least one collection type is required" }),
 
   nonEnergy: z.array(z.number()).optional(),
+  supervisor: z.array(z.number()).min(1, { message: "Supervisor is required" }),
 }).superRefine((data, ctx) => {
   console.log(data)
   if (data.collectionType.includes('Non Energy') && data?.nonEnergy?.length == 0) {
@@ -1124,3 +1126,16 @@ export const createUserSchema = z.object({
 });
 
 export type CreateUserFormData = z.infer<typeof createUserSchema>;
+
+export const addSupervisorSchema = z.object({
+  supervisorName: z
+    .string()
+    .min(1, { message: 'Supervisor Name is required' }),
+
+  mobileNumber: z
+    .string()
+    .length(10, { message: 'Mobile Number must be exactly 10 digits' })
+    .regex(/^[0-9]{10}$/, { message: 'Mobile Number must be numeric' }),
+});
+
+export type AddSupervisorFormData = z.infer<typeof addSupervisorSchema>;

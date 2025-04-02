@@ -58,3 +58,11 @@ export const downloadAgentWalletReport = async (type: any) => {
     }
 };
 
+export const getDepositAcknowledgementReport = async (data: any) => {
+    try {
+        const response = await api.post('/v1/agent-deposit-acknowledgements/fetch', data);
+        return response.data;
+    } catch (error) {
+        throw error?.response?.data
+    }
+}
