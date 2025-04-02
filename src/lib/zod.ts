@@ -178,12 +178,19 @@ export const addAgencySchema = z
   });
 
 export const rechargeSchema = z.object({
-  agency: z.union([z.string(), z.number()])
+  agency: z
+    .union([z.string(), z.number()])
+    .refine((val) => val !== "" && val !== null && val !== undefined, {
+      message: "Agency is required",
+    })
     .transform((val) => Number(val))
-    .refine((val) => !isNaN(val), { message: "Agency must be a valid number" }),
-  maxRecharge: z.number(),
+    .refine((val) => !isNaN(val), {
+      message: "Agency must be a valid number",
+    }),
+
+  maxRecharge: z.any(),
   agencyName: z.string().optional(),
-  agencyId: z.number().optional(),
+  agencyId: z.any().optional(),
   phoneNumber: z.string().optional(),
   transactionType: z.string().optional(),
   amount: z
@@ -192,7 +199,7 @@ export const rechargeSchema = z.object({
       invalid_type_error: "Amount is required",
     })
     .positive("Amount must be greater than 0"),
-  currentBalance: z.number().optional(),
+  currentBalance: z.any().optional(),
   remark: z
     .string()
     .max(255, "Remark must be less than 255 characters")

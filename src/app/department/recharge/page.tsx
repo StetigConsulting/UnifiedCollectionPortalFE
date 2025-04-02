@@ -109,9 +109,10 @@ const Recharge = () => {
                 setValue('currentBalance', agency.current_balance || 0);
             }
         } else {
-            reset()
+            if (!selectedAgency && formData?.agencyName)
+                reset()
         }
-    }, [selectedAgency, agencyList, setValue]);
+    }, [selectedAgency, agencyList]);
 
     const searchParams = useSearchParams();
     const idFromUrl = searchParams.get('id');
@@ -147,8 +148,6 @@ const Recharge = () => {
             setIsLoading(false);
         }
     };
-
-    console.log(errors)
 
     return (
         <AuthUserReusableCode pageTitle={typeFromUrl == 'reverse' ? 'Reverse Agency Balance' : "Recharge"} isLoading={isLoading}>
