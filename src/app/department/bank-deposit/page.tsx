@@ -128,7 +128,7 @@ const AgentBankDeposit = () => {
             { label: 'Deposit Date', key: 'deposit_date', sortable: true },
             { label: 'Amount', key: 'amount', sortable: true },
             { label: 'Bank Name', key: 'bank_name', sortable: true },
-            { label: 'UTR No.', key: 'utrNo', sortable: true },
+            { label: 'UTR No.', key: 'deposit_document', sortable: true },
             { label: 'Entry Date', key: 'entryDate', sortable: true },
         ],
         []

@@ -9,7 +9,7 @@ import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWi
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
-import { getAgentByPhoneNumber, getLevels } from '@/app/api-calls/department/api';
+import { getAgentByPhoneNumber, getLevels, getPseudoLevel } from '@/app/api-calls/department/api';
 import { getErrorMessage } from '@/lib/utils';
 import { useSession } from 'next-auth/react';
 import { getListOfAvailableBindersByAgentId, updateListOfBinder } from '@/app/api-calls/agency/api';
@@ -30,6 +30,9 @@ const BinderMapping = () => {
 
     const [workingLevelList, setWorkingLevelList] = useState([]);
     const [listOfAvailableBinders, setListOfAvailableBinders] = useState([]);
+    const [listOfOtherBinders, setListOfOtherBinders] = useState([])
+
+    const [pseudoLevelData, setPseudoLevelData] = useState(null)
 
     useEffect(() => {
 
@@ -44,6 +47,10 @@ const BinderMapping = () => {
                         };
                     })
             );
+        })
+
+        getPseudoLevel(session?.user?.discomId).then((res) => {
+            setPseudoLevelData(res?.data?.levelName)
         })
 
     }, []);
@@ -112,11 +119,12 @@ const BinderMapping = () => {
             setValue('binder', officeStructureIds)
 
             let unallocated = response.data.unallocated_pseudo_office_structure
-            let other = response.data.other_agent_allocated_pseudo_office_structure
 
-            let binderList = [...allocated, ...unallocated, ...other]
+            let binderList = [...allocated, ...unallocated]
 
             setListOfAvailableBinders(binderList)
+
+            setListOfOtherBinders(response.data.other_agent_allocated_pseudo_office_structure)
         } catch (error) {
             console.error(error)
         }
@@ -195,45 +203,50 @@ const BinderMapping = () => {
                         {...register('division')}
                         errors={errors.division}
                     />
-                    <div className="col-span-2">
-                        <label className="block text-sm font-medium">Binder:</label>
-                        {errors?.binder && <span className="text-red-500">{errors.binder.message}</span>}
-                        <div className="grid grid-cols-12 gap-4 mt-2">
-                            {listOfAvailableBinders?.map((binder) => (
-                                <div key={binder.office_structure_id} className="flex items-center">
-                                    <input
-                                        type="checkbox"
-                                        id={binder.office_structure_id}
-                                        value={binder.office_structure_id}
-                                        className="mr-2"
-                                        checked={selectedBinder.includes(binder.office_structure_id)}
-                                        onChange={() => handleBinderChange(binder.office_structure_id)}
+                    {listOfAvailableBinders.length > 0 &&
+                        <div className="col-span-2">
+                            <label className="block text-sm font-medium">{pseudoLevelData}</label>
+                            {errors?.binder && <span className="text-red-500">{errors.binder.message}</span>}
+                            <div className="grid grid-cols-12 gap-4 mt-2">
+                                {listOfAvailableBinders?.map((binder, index) => (
+                                    <div key={`${binder.office_structure_id}_${index}`} className="flex items-center">
+                                        <input
+                                            type="checkbox"
+                                            id={binder.office_structure_id}
+                                            value={binder.office_structure_id}
+                                            className="mr-2"
+                                            checked={selectedBinder.includes(binder.office_structure_id)}
+                                            onChange={() => handleBinderChange(binder.office_structure_id)}
 
-                                    />
-                                    <label htmlFor={binder.office_structure_id} className="text-sm">{binder.office_structure_description}</label>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+                                        />
+                                        <label htmlFor={binder.office_structure_id} className="text-sm">{binder.office_structure_description}</label>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>}
 
-                    <div className="col-span-2">
-                        <label className="block text-sm font-medium">Binder Allocated To Agent 1:</label>
-                        <div className="grid grid-cols-12 gap-4 mt-2">
-                            {listOfAvailableBinders?.map((binder) => (
-                                <div key={binder.office_structure_id} className="flex items-center">
-                                    <input
-                                        type="checkbox"
-                                        id={binder.office_structure_id}
-                                        value={binder.office_structure_id}
-                                        className="mr-2"
-                                        disabled
-                                        {...register('binder')}
-                                    />
-                                    <label htmlFor={`allocated-${binder.office_structure_id}`} className="text-sm">{binder.office_structure_description}</label>
+                    {
+                        listOfOtherBinders?.map(item => (
+                            <div className="col-span-2" key={item?.agency_id}>
+                                <label className="block text-sm font-medium">Binder Allocated To {item?.agent_name}</label>
+                                <div className="grid grid-cols-12 gap-4 mt-2">
+                                    {item?.allocated_pseudo_office_structure?.map((binder) => (
+                                        <div key={binder.office_structure_id} className="flex items-center">
+                                            <input
+                                                type="checkbox"
+                                                id={binder.office_structure_id}
+                                                value={binder.office_structure_id}
+                                                className="mr-2"
+                                                disabled
+                                                {...register('binder')}
+                                            />
+                                            <label htmlFor={`allocated-${binder.office_structure_id}`} className="text-sm">{binder.office_structure_description}</label>
+                                        </div>
+                                    ))}
                                 </div>
-                            ))}
-                        </div>
-                    </div>
+                            </div>
+                        ))
+                    }
                 </div>
                 <div className="flex justify-end mt-4">
                     <Button type="submit" variant="default" disabled={isSubmitting || !showRestFields}>

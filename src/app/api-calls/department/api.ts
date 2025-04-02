@@ -61,6 +61,16 @@ const getLevels = async (id: number) => {
   }
 };
 
+export const getPseudoLevel = async (id: number) => {
+  try {
+    const response = await api.get(`/v1/pseudo-level-mapping/${id}`);
+    return response.data;
+  } catch (error: any) {
+
+    throw error?.response?.data
+  }
+};
+
 const createAgency = async (agencyData: AgencyDataInterface) => {
   try {
     const response = await api.post('/agencies/', agencyData);
