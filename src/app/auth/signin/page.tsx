@@ -111,7 +111,8 @@ const SignUpForm = () => {
 							<label htmlFor="captcha" className="block text-sm font-medium text-gray-700">Captcha</label>
 							<div className="flex items-center space-x-2">
 								<div className="flex space-x-2 w-1/2 flex-1">
-									<p className="text-lg font-semibold text-gray-700 whitespace-nowrap">{captcha}</p>
+									<p className="text-lg font-semibold text-gray-700 whitespace-nowrap select-none pointer-events-none"
+									>{captcha}</p>
 									<RefreshCcw className='cursor-pointer' onClick={generateNewCaptcha} />
 								</div>
 								<input
@@ -120,6 +121,7 @@ const SignUpForm = () => {
 									className="mt-1 block w-full border border-gray-300 p-2 rounded-md w-1/2"
 									value={enteredCaptcha}
 									onChange={(e) => handleCaptchaChange(e)}
+									onPaste={(e) => e.preventDefault()}
 									placeholder="Enter the Captcha"
 								/>
 							</div>
