@@ -99,7 +99,8 @@ const EditCollector = () => {
                 setValue('collectorType', response.data.collector_type.id)
                 setValue('workingType', response.data.work_type)
                 setValue('agentId', response.data.id)
-                setValue('supervisor', [response.data.supervisor?.id])
+                let supervisorData = response.data.supervisor?.id ? [response.data.supervisor?.id] : []
+                setValue('supervisor', supervisorData)
                 getAgencyData(response.data.agency.id)
                 setValue('permission', response.data.collection_payment_modes.map((ite) => ite.id))
                 let collectionType = []
