@@ -269,3 +269,9 @@ export const addIncentiveOnKeyValue = {
   arrearAmount: 'Arrear Amount',
   bothAmount: 'Current Amount,Arrear Amount'
 }
+
+export const exportPicklist = [
+  { value: 'csv', label: 'CSV' },
+  { value: 'xlsx', label: 'Excel' },
+  { value: 'pdf', label: 'PDF' }
+]

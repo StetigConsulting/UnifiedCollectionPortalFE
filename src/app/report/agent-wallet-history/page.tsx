@@ -6,8 +6,8 @@ import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
-import { getErrorMessage, tableDataPerPage } from '@/lib/utils';
-import { downloadBillingReport, getAgentWalletHistory, getBillingReport } from '@/app/api-calls/report/api';
+import { exportPicklist, getErrorMessage, tableDataPerPage } from '@/lib/utils';
+import { downloadAgentWalletReport, downloadBillingReport, getAgentWalletHistory, getBillingReport } from '@/app/api-calls/report/api';
 import { useSession } from 'next-auth/react';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
 
@@ -102,7 +102,13 @@ const AgentWalletHistory = () => {
 
     const handleExportFile = async (type = 'pdf') => {
         try {
-            const response = await downloadBillingReport(type)
+            let payload = {
+                "transaction_date_range": {
+                    "from_date": fromDate,
+                    "to_date": toDate
+                }
+            }
+            const response = await downloadAgentWalletReport(payload, type, session?.user?.userId)
 
             const contentDisposition = response.headers["content-disposition"];
             let filename = "AgentWalletHistory";
@@ -192,9 +198,9 @@ const AgentWalletHistory = () => {
                 </div>
                 <CustomizedSelectInputWithLabel
                     label="Export"
-                    list={[]}
-                    value={transactionId}
-                    onChange={(e) => setTransactionId(e.target.value)}
+                    list={exportPicklist}
+                    // value={transactionId}
+                    onChange={(e) => handleExportFile(e.target.value)}
                 />
             </div>
 

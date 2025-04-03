@@ -42,12 +42,13 @@ export const getAgentWalletHistory = async (data: any, user_id: number) => {
     }
 };
 
-export const downloadAgentWalletReport = async (type: any) => {
+export const downloadAgentWalletReport = async (payload: any, type: any, user_id: number) => {
     try {
-        const response = await api.post(`/v1//common-reports/agent-wallet-history-report/download/${type}`, {},
+        const response = await api.post(`/v1/common-reports/agent-wallet-history-report/download/${type}`, payload,
             {
                 headers: {
                     "Content-Type": "application/json",
+                    'user-id': user_id
                 },
                 responseType: "blob",
             }
