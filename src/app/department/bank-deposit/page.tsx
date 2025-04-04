@@ -81,7 +81,7 @@ const AgentBankDeposit = () => {
                 "bank_name": data.bank,
                 "deposit_date": data.depositDate,
                 "amount": data.depositAmount,
-                "deposit_document": "eterterret"
+                "deposit_document": data?.txnRefNo
             }
 
             const response = await addAgencyBankDeposit(payload);
