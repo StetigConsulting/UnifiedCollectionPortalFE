@@ -7,11 +7,11 @@ import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
 import { exportPicklist, getErrorMessage, tableDataPerPage } from '@/lib/utils';
-import { downloadAgentWalletReport, downloadBillingReport, getAgentWalletHistory, getBillingReport } from '@/app/api-calls/report/api';
+import { downloadAgencyWalletReport, downloadAgentWalletReport, downloadBillingReport, getAgencyWalletHistory, getAgentWalletHistory, getBillingReport } from '@/app/api-calls/report/api';
 import { useSession } from 'next-auth/react';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
 
-const AgentWalletHistory = () => {
+const AgencyWalletHistory = () => {
 
     const { data: session } = useSession()
     const currentUserId = session?.user?.userId
@@ -25,8 +25,7 @@ const AgentWalletHistory = () => {
     const [fromDate, setFromDate] = useState('');
     const [toDate, setToDate] = useState('');
     const [agencyName, setAgencyName] = useState('');
-    const [agentName, setAgentName] = useState('');
-    const [agentMobile, setAgentMobile] = useState('');
+    const [agencyMobile, setAgencyMobile] = useState('');
     const [transactionType, setTransactionType] = useState('');
     const [transactionId, setTransactionId] = useState('');
     const [pageSize, setPageSize] = useState(tableDataPerPage);
@@ -59,11 +58,10 @@ const AgentWalletHistory = () => {
                     from_date: fromDate,
                     to_date: toDate,
                 },
-                ...agentName && { agent_name: agentName },
-                ...agentMobile && { agent_mobile: agentMobile },
+                ...agencyName && { agent_name: agencyName },
+                ...agencyMobile && { agent_mobile: agencyMobile },
                 ...transactionId && { transaction_id: transactionId },
                 ...transactionType && { transaction_type: transactionType },
-                ...agencyName && { agency_name: agencyName },
             }
         };
 
@@ -78,7 +76,7 @@ const AgentWalletHistory = () => {
 
         try {
             setIsLoading(true);
-            const response = await getAgentWalletHistory(payload, session?.user?.userId);
+            const response = await getAgencyWalletHistory(payload, session?.user?.userId);
             setDataList(response.data.data);
             setCurrentPage(page);
             setTotalPages(response.data.totalPages)
@@ -90,28 +88,28 @@ const AgentWalletHistory = () => {
     }
 
     const columns = useMemo(() => [
-        { label: 'User ID', key: 'userId', sortable: true },
-        { label: 'Mobile Number', key: 'mobileNumber', sortable: true },
-        { label: 'Franchise Name', key: 'franchiseName', sortable: true },
-        { label: 'Collector Name', key: 'collectorName', sortable: true },
-        { label: 'Current Balance', key: 'currentBalance', sortable: true },
-        { label: 'Total Recharge', key: 'totalRecharge', sortable: true },
-        { label: 'Total Collection', key: 'totalCollection', sortable: true },
-        { label: 'Total', key: 'total', sortable: true },
+        { label: 'Agency Name', key: 'agency_name', sortable: true },
+        { label: 'Agency Mobile', key: 'agency_mobile', sortable: true },
+        { label: 'TXN type', key: 'transaction_type', sortable: true },
+        { label: 'Top Up / Reverse', key: 'transaction_amount', sortable: true },
+        { label: 'Current Balance', key: 'balance_after_txn', sortable: true },
+        { label: 'Previous Balance', key: 'balance_before_txn', sortable: true },
+        { label: 'TXN Date', key: 'transaction_date', sortable: true },
     ], []);
 
     const handleExportFile = async (type = 'pdf') => {
         try {
+            setIsLoading(true);
             let payload = {
                 "transaction_date_range": {
                     "from_date": fromDate,
                     "to_date": toDate
                 }
             }
-            const response = await downloadAgentWalletReport(payload, type, session?.user?.userId)
+            const response = await downloadAgencyWalletReport(payload, type, session?.user?.userId)
 
             const contentDisposition = response.headers["content-disposition"];
-            let filename = "AgentWalletHistory";
+            let filename = "AgencyWalletHistory";
 
             if (contentDisposition) {
                 const matches = contentDisposition.match(/filename="(.+)"/);
@@ -146,8 +144,8 @@ const AgentWalletHistory = () => {
     };
 
     return (
-        <AuthUserReusableCode pageTitle="Agent Wallet History" isLoading={isLoading}>
-            <div className="grid grid-cols-10 gap-4">
+        <AuthUserReusableCode pageTitle="Agency Wallet History" isLoading={isLoading}>
+            <div className="grid grid-cols-9 gap-4">
                 <CustomizedInputWithLabel
                     label="From Date"
                     type="date"
@@ -169,14 +167,9 @@ const AgentWalletHistory = () => {
                 />
 
                 <CustomizedInputWithLabel
-                    label="Agent Name"
-                    value={agentName}
-                    onChange={(e) => setAgentName(e.target.value)}
-                />
-                <CustomizedInputWithLabel
-                    label="Agent Mobile no"
-                    value={agentMobile}
-                    onChange={(e) => setAgentMobile(e.target.value)}
+                    label="Agency Mobile No."
+                    value={agencyMobile}
+                    onChange={(e) => setAgencyMobile(e.target.value)}
                 />
 
                 <CustomizedInputWithLabel
@@ -224,4 +217,4 @@ const AgentWalletHistory = () => {
     );
 };
 
-export default AgentWalletHistory;
+export default AgencyWalletHistory;

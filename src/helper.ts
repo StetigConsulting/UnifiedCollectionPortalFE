@@ -32,7 +32,7 @@ export const listOfUrlForScopes = [
   { url: "/admin/add-collector-type", backendScopeName: "TPCollectionWebPortal:collector_types:WRITE" },
   { url: "/admin/incentive", backendScopeName: "TPCollectionWebPortal:business_rules:ALL" },
   { url: "/admin/import", backendScopeName: "TPCollectionWebPortal:business_rules:ALL" },
-  { url: "/report/agency-wallet-history-report", backendScopeName: "TPCollectionWebPortal:agency_wallet_history_report:READ" },
+  { url: "/report/agency-wallet-history", backendScopeName: "TPCollectionWebPortal:agency_wallet_history_report:READ" },
   { url: "/report/agent-wallet-history", backendScopeName: "TPCollectionWebPortal:agent_wallet_history_report:READ" },
   { url: "/agency/add-collector", backendScopeName: "TPCollectionWebPortal:agent:CREATE" },
   { url: "/agency/view-collector", backendScopeName: "TPCollectionWebPortal:agent:VIEW" },

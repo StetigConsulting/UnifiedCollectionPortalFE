@@ -59,6 +59,36 @@ export const downloadAgentWalletReport = async (payload: any, type: any, user_id
     }
 };
 
+export const getAgencyWalletHistory = async (data: any, user_id: number) => {
+    try {
+        const response = await api.post('/v1/common-reports/agency-wallet-history-report/fetch', data, {
+            headers: {
+                "user-id": user_id,
+            }
+        });
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+};
+
+export const downloadAgencyWalletReport = async (payload: any, type: any, user_id: number) => {
+    try {
+        const response = await api.post(`/v1/common-reports/agency-wallet-history-report/download/${type}`, payload,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    'user-id': user_id
+                },
+                responseType: "blob",
+            }
+        );
+        return response;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+};
+
 export const getDepositAcknowledgementReport = async (data: any) => {
     try {
         const response = await api.post('/v1/agent-deposit-acknowledgements/fetch', data);
