@@ -237,7 +237,7 @@ const navData = {
       path: '/report/',
       items: [
         {
-          title: "Agent Deposit Acknowledgement report",
+          title: "Agent Deposit Acknowledgement",
           icon: UserPlus2,
           url: "/report/agent-deposit-acknowledgement",
         },
