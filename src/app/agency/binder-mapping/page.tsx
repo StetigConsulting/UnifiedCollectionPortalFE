@@ -66,6 +66,7 @@ const BinderMapping = () => {
             await updateListOfBinder(payload);
             toast.success('Binder Mapping added successfully!');
             reset()
+            setShowRestFields(false)
             setListOfAvailableBinders([])
         } catch (error) {
             let errorMessage = getErrorMessage(error);

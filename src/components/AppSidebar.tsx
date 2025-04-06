@@ -252,6 +252,11 @@ const navData = {
           url: "/report/agent-wallet-history",
         },
         {
+          title: "Agency Wallet History",
+          icon: UserPlus2,
+          url: "/report/agency-wallet-history",
+        },
+        {
           title: "Billing Report",
           icon: UserPlus2,
           url: "/report/billing-report",

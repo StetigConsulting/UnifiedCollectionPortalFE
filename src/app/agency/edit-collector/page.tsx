@@ -207,7 +207,7 @@ const EditCollector = () => {
                     <CustomizedSelectInputWithLabel
                         label="Collector Type"
                         list={collectorTypes}
-                        {...register("collectorType")}
+                        {...register("collectorType", { valueAsNumber: true })}
                         errors={errors.collectorType}
                     />
                     <CustomizedSelectInputWithLabel

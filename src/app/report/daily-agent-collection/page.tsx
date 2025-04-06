@@ -5,136 +5,104 @@ import { toast } from 'sonner';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import ReactTable from '@/components/ReactTable';
+import { Button } from '@/components/ui/button';
+import { getErrorMessage, tableDataPerPage } from '@/lib/utils';
+import { getDailyNonEnergyCollectionReport } from '@/app/api-calls/report/api';
 
 const DailyAgentCollection = () => {
-    const [dateFrom, setDateFrom] = useState('');
-    const [dateTo, setDateTo] = useState('');
-    const [division, setDivision] = useState('');
-    const [collectorType, setCollectorType] = useState('');
-    const [data, setData] = useState([]);
-    const [filteredData, setFilteredData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1)
+    const [totalPages, setTotalPages] = useState(1)
+    const [fromDate, setFromDate] = useState('');
+    const [toDate, setToDate] = useState('');
+    const [pageSize, setPageSize] = useState(tableDataPerPage);
+    const [dataList, setDataList] = useState([]);
 
     useEffect(() => {
-        fetchData();
+        getReportData();
     }, []);
 
-    const fetchData = async () => {
-        setIsLoading(true);
+    const getReportData = async (applyFilter = {}, page = 1) => {
+        let payload = {
+            page: currentPage,
+            page_size: pageSize,
+            filter: {
+                transaction_date_range: {
+                    from_date: fromDate,
+                    to_date: toDate,
+                },
+            }
+        };
+
+        payload = {
+            ...payload,
+            page,
+            filter: {
+                ...payload.filter,
+                ...applyFilter
+            }
+        }
+
         try {
-            const response = [
-                {
-                    agencyName: 'MBC Pace Computer BED-1',
-                    agencyId: '21100100229012',
-                    consumerNo: '10220766184662150818',
-                    txnId: '10220766184662150818',
-                    txnTime: '06-12-2024 16:43',
-                    division: 'AED ASKA-I',
-                    subDivision: 'ASKA-I',
-                    amount: '₹ 786',
-                    currentAmount: '₹ 786',
-                    arrearAmount: '₹ 786',
-                    collectorType: 'ART',
-                    collectionModes: 'NRML',
-                    updateDate: '06-12-2024',
-                },
-                {
-                    agencyName: 'MBC Pace Computer BED-1',
-                    agencyId: '21100100229012',
-                    consumerNo: '10220766184662150819',
-                    txnId: '10220766184662150819',
-                    txnTime: '06-12-2024 16:45',
-                    division: 'AED ASKA-I',
-                    subDivision: 'ASKA-I',
-                    amount: '₹ 900',
-                    currentAmount: '₹ 900',
-                    arrearAmount: '₹ 900',
-                    collectorType: 'ART',
-                    collectionModes: 'NRML',
-                    updateDate: '06-12-2024',
-                },
-            ];
-            setData(response);
-            setFilteredData(response);
+            setIsLoading(true);
+            const response = await getDailyNonEnergyCollectionReport(payload);
+            setDataList(response.data.data);
+            setCurrentPage(page);
+            setTotalPages(response.data.totalPages)
         } catch (error) {
-            console.error('Error fetching data:', error);
-            toast.error('Failed to load data.');
+            console.log(getErrorMessage(error))
         } finally {
             setIsLoading(false);
         }
-    };
+    }
 
     const columns = useMemo(() => [
-        { label: 'Agency Name', key: 'agencyName', sortable: true },
-        { label: 'Agency ID', key: 'agencyId', sortable: true },
-        { label: 'Consumer No.', key: 'consumerNo', sortable: true },
-        { label: 'TXN ID', key: 'txnId', sortable: true },
-        { label: 'Txn Time', key: 'txnTime', sortable: true },
-        { label: 'Division', key: 'division', sortable: true },
-        { label: 'Sub Division', key: 'subDivision', sortable: true },
-        { label: 'Amount', key: 'amount', sortable: true },
-        { label: 'Current Amount', key: 'currentAmount', sortable: true },
-        { label: 'Arrear Amount', key: 'arrearAmount', sortable: true },
-        { label: 'Collector Type', key: 'collectorType', sortable: true },
-        { label: 'Collection Modes', key: 'collectionModes', sortable: true },
-        { label: 'Update Date', key: 'updateDate', sortable: true },
+        { label: 'Circle', key: 'level_1_name', sortable: true },
+        { label: 'Division', key: 'level_2_name', sortable: true },
+        { label: 'Sub Division', key: 'level_3_name', sortable: true },
+        { label: 'Section', key: 'level_4_name', sortable: true },
+        { label: 'Binder', key: 'binder', sortable: true },
+        { label: 'MRU', key: 'mru', sortable: true },
+        {
+            label: 'Agency Name', key: 'agency_name', sortable: true
+        },
+        { label: 'Agent Name', key: 'agent_name', sortable: true },
+        { label: 'Agent Mobile No', key: 'agentMobileNo', sortable: true },
+        { label: 'MPOS Serial no', key: 'MposSerialNo', sortable: true },
+        { label: 'Module Name', key: 'module_name', sortable: true },
     ], []);
-
-    const handleSearch = () => {
-        const filtered = data.filter(item => {
-            const itemDate = new Date(item.txnTime);
-            const fromDate = new Date(dateFrom);
-            const toDate = new Date(dateTo);
-            const isDateInRange =
-                (!dateFrom || itemDate >= fromDate) && (!dateTo || itemDate <= toDate);
-
-            return isDateInRange &&
-                (division ? item.division.includes(division) : true) &&
-                (collectorType ? item.collectorType.includes(collectorType) : true);
-        });
-        setFilteredData(filtered);
-    };
 
     return (
         <AuthUserReusableCode pageTitle="Daily Agent Collection" isLoading={isLoading}>
             <div className="flex items-center gap-4">
-                <div className="grid grid-cols-4 gap-4 flex-grow">
+                <div className="grid grid-cols-6 gap-4 flex-grow">
                     <CustomizedInputWithLabel
                         label="From Date"
                         type="date"
-                        value={dateFrom}
-                        onChange={(e) => setDateFrom(e.target.value)}
+                        value={fromDate}
+                        onChange={(e) => setFromDate(e.target.value)}
                     />
                     <CustomizedInputWithLabel
                         label="To Date"
                         type="date"
-                        value={dateTo}
-                        onChange={(e) => setDateTo(e.target.value)}
+                        value={toDate}
+                        onChange={(e) => setToDate(e.target.value)}
                     />
-                    <CustomizedInputWithLabel
-                        label="Division"
-                        type="text"
-                        value={division}
-                        onChange={(e) => setDivision(e.target.value)}
-                    />
-                    <CustomizedInputWithLabel
-                        label="Collector Type"
-                        type="text"
-                        value={collectorType}
-                        onChange={(e) => setCollectorType(e.target.value)}
-                    />
+                    <CustomizedInputWithLabel label='Date type' />
+                    <CustomizedInputWithLabel label='Agent role' />
+                    <CustomizedInputWithLabel label='Working level' />
+                    <CustomizedInputWithLabel label='Circle' />
                 </div>
-                <button
-                    onClick={handleSearch}
-                    className="bg-blue-500 text-white py-2 px-4 rounded-md self-end"
+                <Button
+                // onClick={handleSearch}
                 >
                     Search
-                </button>
+                </Button>
             </div>
 
             <div className="overflow-x-auto mb-4">
                 <ReactTable
-                    data={filteredData}
+                    data={dataList}
                     columns={columns}
                 />
             </div>

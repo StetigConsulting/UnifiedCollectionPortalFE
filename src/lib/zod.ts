@@ -447,7 +447,7 @@ export const editCollectorSchema = z.object({
   collectorMobile: z.number().min(10, 'Mobile number must be at least 10 digits'),
   name: z.string().min(1, "Name is required"),
   agentId: z.number(),
-  phoneNumber: z.string().min(1, "Phone Number is required"),
+  phoneNumber: z.string().optional(),
   collectorType: z.number().min(1, { message: "Collector type is required" }),
   workingType: z.string().min(1, { message: "Working type is required" }),
   permission: z

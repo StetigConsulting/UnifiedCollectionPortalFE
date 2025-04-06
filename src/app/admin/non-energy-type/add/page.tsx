@@ -46,7 +46,7 @@ const NonEnergyType = () => {
                 non_energy_types: data.nonEnergyType
             }
             const response = await updateNonEnergyType(payload);
-            toast.success('Payment Modes Updated Successfully!');
+            toast.success('Non energy types Updated Successfully!');
             router.push(urlsListWithTitle.nonEnergyTypeTable.url);
         } catch (error) {
             const flattenedErrors = error?.data?.validation_errors?.flatMap(item => {
