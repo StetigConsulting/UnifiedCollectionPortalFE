@@ -29,7 +29,11 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
 
     const memoizedLogoLink = useMemo(() => logoLink, [logoLink]);
 
-    const [loadingSession, setLoadingSession] = useState(true)
+    React.useEffect(() => {
+        if (session?.user) {
+            getHeaderDetails()
+        }
+    }, [])
 
     const getHeaderDetails = async () => {
         setIsFetchingResource(true)
@@ -47,18 +51,13 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
     }
 
     useEffect(() => {
-        console.log('session', session, status)
-        if (status === 'loading') return;
-        if (session?.user) {
-            setLoadingSession(false)
-            getHeaderDetails()
-        } else {
-            console.log('session expired', session)
+        if (session == null) {
+            console.log('session expired', session, status)
             toast.error('Session Expired')
-            handleSignOut();
-            router.push('/auth/signin');
+            // handleSignOut();
+            // router.push('/auth/signin');
         }
-    }, [session, status])
+    }, [session])
 
     const onSignOut = async (event: React.MouseEvent) => {
         event.preventDefault();
@@ -72,7 +71,7 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
         }}>
             <AppSidebar logoLink={memoizedLogoLink} onSignOut={onSignOut} />
             {
-                loadingSession || isLoading &&
+                isLoading &&
                 <div className="absolute inset-0 flex items-center justify-center z-50"
                     style={{
                         backdropFilter: 'blur(1px)'
