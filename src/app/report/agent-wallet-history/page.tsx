@@ -147,7 +147,7 @@ const AgentWalletHistory = () => {
 
     return (
         <AuthUserReusableCode pageTitle="Agent Wallet History" isLoading={isLoading}>
-            <div className="grid grid-cols-10 gap-4">
+            <div className="grid grid-cols-5 gap-4">
                 <CustomizedInputWithLabel
                     label="From Date"
                     type="date"
@@ -195,7 +195,7 @@ const AgentWalletHistory = () => {
                     value={pageSize}
                     onChange={(e) => setPageSize(e.target.value)}
                 />
-                <div className="flex self-end mb-1">
+                <div className="flex self-end mb-1 self-end">
                     <Button onClick={() => getReportData()} disabled={isLoading}>Search</Button>
                 </div>
                 <CustomizedSelectInputWithLabel
