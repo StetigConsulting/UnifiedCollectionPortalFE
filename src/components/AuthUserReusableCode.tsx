@@ -54,8 +54,8 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
         if (session == null) {
             console.log('session expired', session)
             toast.error('Session Expired')
-            handleSignOut();
-            router.push('/auth/signin');
+            // handleSignOut();
+            // router.push('/auth/signin');
         }
     }, [session])
 
