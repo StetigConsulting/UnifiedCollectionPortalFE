@@ -3,7 +3,7 @@ import { SidebarInset, SidebarProvider } from './ui/sidebar'
 import { AppSidebar } from './AppSidebar'
 import CustomBreadcrumb from './CustomBreadcrumb'
 import Image from 'next/image'
-import { getSession, useSession } from 'next-auth/react'
+import { useSession } from 'next-auth/react'
 import { getRosourceByDiscomId } from '@/app/api-calls/other/api'
 import { getAgencyRechargeableBalance } from '@/app/api-calls/department/api'
 import { handleSignOut } from '@/app/actions/authActions'
@@ -17,7 +17,7 @@ interface AuthUserReusableCodeProps {
 }
 
 function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUserReusableCodeProps) {
-    const { data: session } = useSession()
+    const { data: session, status } = useSession()
 
     const router = useRouter()
 
@@ -28,6 +28,8 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
     const [isFetchingResource, setIsFetchingResource] = useState(false)
 
     const memoizedLogoLink = useMemo(() => logoLink, [logoLink]);
+
+    const [loadingSession, setLoadingSession] = useState(true)
 
     const getHeaderDetails = async () => {
         setIsFetchingResource(true)
@@ -45,21 +47,18 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
     }
 
     useEffect(() => {
-        handleUserDetails()
-    }, [session])
-
-    const handleUserDetails = async () => {
-        const currentSession = await getSession()
-        console.log('currentSession', currentSession, session)
-        if (currentSession?.user) {
+        console.log('session', session, status)
+        if (status === 'loading') return;
+        if (session?.user) {
+            setLoadingSession(false)
             getHeaderDetails()
-        } else if (currentSession == null) {
-            console.log('session expired', currentSession, session)
+        } else {
+            console.log('session expired', session)
             toast.error('Session Expired')
             handleSignOut();
             router.push('/auth/signin');
         }
-    }
+    }, [session, status])
 
     const onSignOut = async (event: React.MouseEvent) => {
         event.preventDefault();
@@ -73,7 +72,7 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
         }}>
             <AppSidebar logoLink={memoizedLogoLink} onSignOut={onSignOut} />
             {
-                isLoading &&
+                loadingSession || isLoading &&
                 <div className="absolute inset-0 flex items-center justify-center z-50"
                     style={{
                         backdropFilter: 'blur(1px)'
