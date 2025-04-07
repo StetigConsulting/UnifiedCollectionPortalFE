@@ -282,9 +282,9 @@ const navData = {
           url: "/report/login-history",
         },
         {
-          title: "Daily Agent Collection",
+          title: "Daily Non Energy Collection",
           icon: UserPlus2,
-          url: "/report/daily-agent-collection",
+          url: "/report/daily-non-energy-collection",
         },
         {
           title: "Agent wise Collection",

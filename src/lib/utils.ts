@@ -280,3 +280,8 @@ export const dateTypePicklist = [
   { label: 'Transaction Date', value: 'transaction_date' },
   { label: 'Upload Date', value: 'upload_date' }
 ]
+
+export const agentRolePicklist = [
+  { label: 'Door To Door', value: 'Door To Door' },
+  { label: 'Counter Collector', value: 'Counter Collector' }
+]

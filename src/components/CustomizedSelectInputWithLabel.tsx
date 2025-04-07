@@ -35,7 +35,7 @@ const CustomizedSelectInputWithLabel: React.FC<CustomizedSelectInputWithLabelPro
             <select
                 {...props}
                 id={props.id || 'select-input'}
-                className={`bg-white border border-gray-300 rounded-md shadow-sm w-full px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-500 focus:border-blue-500 transition-all ease-in-out disabled:bg-gray-100 disabled:cursor-not-allowed`}
+                className={`bg-white border border-gray-300 rounded-md shadow-sm w-full px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-500 focus:border-blue-500 transition-all ease-in-out disabled:bg-gray-100 disabled:cursor-not-allowed h-[40px]`}
             >
                 {!removeDefaultOption && <option value="">{placeholder || 'Select an option'}</option>}
                 {list.map((data) => (

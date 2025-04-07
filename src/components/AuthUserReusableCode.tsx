@@ -65,7 +65,7 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
         //     // handleSignOut();
         //     // router.push('/auth/signin');
         // }
-    }, [status])
+    }, [session])
 
     const onSignOut = async (event: React.MouseEvent) => {
         event.preventDefault();

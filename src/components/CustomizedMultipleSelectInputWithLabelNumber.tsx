@@ -115,7 +115,7 @@ const CustomizedMultipleSelectInputWithLabelNumber: React.FC<SelectProps> = ({
 
             {isOpen && !disabled && (
                 <div
-                    className="absolute z-10 bg-white border rounded-md mt-2 shadow-lg w-full max-h-48 overflow-y-auto"
+                    className="absolute z-[1000] bg-white border rounded-md mt-2 shadow-lg w-full max-h-48 overflow-y-auto"
                     onClick={(e) => e.stopPropagation()}
                 >
                     {list?.length > 0 ? <>
