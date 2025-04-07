@@ -17,7 +17,14 @@ interface AuthUserReusableCodeProps {
 }
 
 function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUserReusableCodeProps) {
-    const { data: session, status } = useSession()
+    const { data: session, status } = useSession({
+        required: true,
+        onUnauthenticated() {
+            toast.error('Session Expired')
+            handleSignOut();
+            router.push('/auth/signin');
+        }
+    })
 
     const router = useRouter()
 
@@ -51,13 +58,14 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
     }
 
     useEffect(() => {
-        if (session == null) {
-            console.log('session expired', session, status)
-            toast.error('Session Expired')
-            // handleSignOut();
-            // router.push('/auth/signin');
-        }
-    }, [session])
+        console.log('session expired', session, status)
+        // if (session == null) {
+        //     console.log('session expired', session, status)
+        //     toast.error('Session Expired')
+        //     // handleSignOut();
+        //     // router.push('/auth/signin');
+        // }
+    }, [status])
 
     const onSignOut = async (event: React.MouseEvent) => {
         event.preventDefault();
