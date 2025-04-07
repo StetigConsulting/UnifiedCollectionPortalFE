@@ -91,10 +91,10 @@ const AgentWalletHistory = () => {
 
     const columns = useMemo(() => [
         { label: 'User ID', key: 'userId', sortable: true },
-        { label: 'Mobile Number', key: 'mobileNumber', sortable: true },
+        { label: 'Mobile Number', key: 'agent_mobile', sortable: true },
         { label: 'Franchise Name', key: 'franchiseName', sortable: true },
-        { label: 'Collector Name', key: 'collectorName', sortable: true },
-        { label: 'Current Balance', key: 'currentBalance', sortable: true },
+        { label: 'Collector Name', key: 'agency_name', sortable: true },
+        { label: 'Current Balance', key: 'balance_after_txn', sortable: true },
         { label: 'Total Recharge', key: 'totalRecharge', sortable: true },
         { label: 'Total Collection', key: 'totalCollection', sortable: true },
         { label: 'Total', key: 'total', sortable: true },
