@@ -275,3 +275,8 @@ export const exportPicklist = [
   { value: 'xlsx', label: 'Excel' },
   { value: 'pdf', label: 'PDF' }
 ]
+
+export const dateTypePicklist = [
+  { label: 'Transaction Date', value: 'transaction_date' },
+  { label: 'Upload Date', value: 'upload_date' }
+]

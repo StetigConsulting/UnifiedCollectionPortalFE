@@ -102,6 +102,7 @@ const AgentWalletHistory = () => {
 
     const handleExportFile = async (type = 'pdf') => {
         try {
+            setIsLoading(true);
             let payload = {
                 "transaction_date_range": {
                     "from_date": fromDate,

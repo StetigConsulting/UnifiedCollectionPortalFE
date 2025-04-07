@@ -6,8 +6,9 @@ import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
-import { getErrorMessage, tableDataPerPage } from '@/lib/utils';
+import { dateTypePicklist, getErrorMessage, tableDataPerPage } from '@/lib/utils';
 import { getDailyNonEnergyCollectionReport } from '@/app/api-calls/report/api';
+import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
 
 const DailyAgentCollection = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -88,7 +89,7 @@ const DailyAgentCollection = () => {
                         value={toDate}
                         onChange={(e) => setToDate(e.target.value)}
                     />
-                    <CustomizedInputWithLabel label='Date type' />
+                    <CustomizedSelectInputWithLabel label='Date type' list={dateTypePicklist} />
                     <CustomizedInputWithLabel label='Agent role' />
                     <CustomizedInputWithLabel label='Working level' />
                     <CustomizedInputWithLabel label='Circle' />
