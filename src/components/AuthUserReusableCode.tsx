@@ -3,7 +3,7 @@ import { SidebarInset, SidebarProvider } from './ui/sidebar'
 import { AppSidebar } from './AppSidebar'
 import CustomBreadcrumb from './CustomBreadcrumb'
 import Image from 'next/image'
-import { useSession } from 'next-auth/react'
+import { getSession, useSession } from 'next-auth/react'
 import { getRosourceByDiscomId } from '@/app/api-calls/other/api'
 import { getAgencyRechargeableBalance } from '@/app/api-calls/department/api'
 import { handleSignOut } from '@/app/actions/authActions'
@@ -29,12 +29,6 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
 
     const memoizedLogoLink = useMemo(() => logoLink, [logoLink]);
 
-    React.useEffect(() => {
-        if (session?.user) {
-            getHeaderDetails()
-        }
-    }, [])
-
     const getHeaderDetails = async () => {
         setIsFetchingResource(true)
         await getRosourceByDiscomId(session?.user?.discomId).then((res) => {
@@ -51,13 +45,21 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
     }
 
     useEffect(() => {
-        if (session == null) {
-            console.log('session expired', session)
-            toast.error('Session Expired')
-            // handleSignOut();
-            // router.push('/auth/signin');
-        }
+        handleUserDetails()
     }, [session])
+
+    const handleUserDetails = async () => {
+        const currentSession = await getSession()
+        console.log('currentSession', currentSession, session)
+        if (currentSession?.user) {
+            getHeaderDetails()
+        } else if (currentSession == null) {
+            console.log('session expired', currentSession, session)
+            toast.error('Session Expired')
+            handleSignOut();
+            router.push('/auth/signin');
+        }
+    }
 
     const onSignOut = async (event: React.MouseEvent) => {
         event.preventDefault();
