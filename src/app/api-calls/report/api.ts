@@ -122,7 +122,31 @@ export const downloadDailyNonEnergyCollectionReport = async (data: any, type: an
             {
                 headers: {
                     "Content-Type": "application/json",
-                    // 'user-id': user_id
+                },
+                responseType: "blob",
+            }
+        );
+        return response;
+    } catch (error) {
+        throw error?.response?.data
+    }
+}
+
+export const getDailyEnergyCollectionReport = async (data: any) => {
+    try {
+        const response = await api.post('/v1/energy-reports/daily-collection-report/fetch', data);
+        return response.data;
+    } catch (error) {
+        throw error?.response?.data
+    }
+}
+
+export const downloadDailyEnergyCollectionReport = async (data: any, type: any) => {
+    try {
+        const response = await api.post(`/v1/energy-reports/daily-collection-report/download/${type}`, data,
+            {
+                headers: {
+                    "Content-Type": "application/json",
                 },
                 responseType: "blob",
             }

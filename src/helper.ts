@@ -46,6 +46,8 @@ export const listOfUrlForScopes = [
   { url: "/report/agent-deposit-acknowledgement", backendScopeName: "TPCollectionWebPortal:agent_deposit_acknowledgement:READ" },
   { url: "/report/agent-bank-deposit", backendScopeName: "TPCollectionWebPortal:agent_bank_deposit:READ" },
   { url: "/agency/add-new-supervisor", backendScopeName: "TPCollectionWebPortal:supervisor:CREATE" },
+  { url: "/report/daily-non-energy-collection", backendScopeName: "TPCollectionWebPortal:non_energy_daily_collection_report:READ" },
+  { url: "/report/daily-energy-collection", backendScopeName: "TPCollectionWebPortal:energy_daily_collection_report:READ" },
 ];
 
 

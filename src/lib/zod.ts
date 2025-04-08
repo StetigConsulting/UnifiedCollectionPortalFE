@@ -1145,6 +1145,23 @@ export const addSupervisorSchema = z.object({
 
 export type AddSupervisorFormData = z.infer<typeof addSupervisorSchema>;
 
+export const dailyCollectionEnergySheet = z.object({
+  fromDate: z.string().optional(),
+  toDate: z.string().optional(),
+  dateType: z.string().optional(),
+  agentRole: z.string().optional(),
+  agentMode: z.string().optional(),
+  collectionMode: z.string().optional(),
+  workingLevel: z.number().optional(),
+  circle: z.array(z.number()).optional(),
+  division: z.array(z.number()).optional(),
+  subDivision: z.array(z.number()).optional(),
+  section: z.array(z.number()).optional(),
+  agencyName: z.string().optional(),
+});
+
+export type DailyCollectionEnergyFormData = z.infer<typeof dailyCollectionEnergySheet>;
+
 export const dailyCollectionNonEnergySheet = z.object({
   fromDate: z.string().optional(),
   toDate: z.string().optional(),

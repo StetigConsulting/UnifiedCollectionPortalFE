@@ -6,18 +6,18 @@ import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
-import { agentRolePicklist, dateTypePicklist, exportPicklist, getErrorMessage, tableDataPerPage } from '@/lib/utils';
-import { downloadDailyNonEnergyCollectionReport, getDailyNonEnergyCollectionReport } from '@/app/api-calls/report/api';
+import { agentRolePicklist, agentWorkingType, dateTypePicklist, exportPicklist, getErrorMessage, tableDataPerPage } from '@/lib/utils';
+import { downloadDailyEnergyCollectionReport, getDailyEnergyCollectionReport } from '@/app/api-calls/report/api';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
-import { getAgenciesWithDiscom, getLevels, getLevelsDiscomId } from '@/app/api-calls/department/api';
+import { getAgenciesWithDiscom, getAllPaymentModes, getLevels, getLevelsDiscomId } from '@/app/api-calls/department/api';
 import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { DailyCollectionNonEnergyFormData, dailyCollectionNonEnergySheet } from '@/lib/zod';
+import { DailyCollectionEnergyFormData, dailyCollectionEnergySheet } from '@/lib/zod';
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
 
-const DailyAgentCollection = () => {
+const DailyEnergyCollection = () => {
     const { data: session } = useSession()
 
     const [isLoading, setIsLoading] = useState(false);
@@ -26,8 +26,8 @@ const DailyAgentCollection = () => {
     const [pageSize, setPageSize] = useState(tableDataPerPage);
     const [dataList, setDataList] = useState([]);
 
-    const { register, control, handleSubmit, formState: { errors }, watch, setValue } = useForm<DailyCollectionNonEnergyFormData>({
-        resolver: zodResolver(dailyCollectionNonEnergySheet),
+    const { register, control, handleSubmit, formState: { errors }, watch, setValue } = useForm<DailyCollectionEnergyFormData>({
+        resolver: zodResolver(dailyCollectionEnergySheet),
         defaultValues: {
             workingLevel: null,
             circle: [],
@@ -37,16 +37,29 @@ const DailyAgentCollection = () => {
         }
     });
 
+    const [permissions, setPermissions] = useState([])
+
     useEffect(() => {
         getWorkingLevel()
-        getAgencyList()
         getReportData();
         getCircles(session?.user?.discomId)
+        getAllPaymentModes().then((data) => {
+            setPermissions(
+                data?.data
+                    ?.filter((ite) => ite.mode_type == "Collection")
+                    ?.map((ite) => {
+                        return {
+                            label: ite.mode_name,
+                            value: ite.id,
+                        };
+                    })
+            );
+        }).catch((err) => { })
     }, []);
 
     const [levelNameMappedWithId, setLevelNameMappedWithId] = useState<Record<string, number>>({})
     const [workingLevelList, setWorkingLevelList] = useState([]);
-    const [agencyList, setAgencyList] = useState([]);
+    const [exportType, setExportType] = useState('')
 
     const getWorkingLevel = async () => {
         setIsLoading(true)
@@ -71,17 +84,6 @@ const DailyAgentCollection = () => {
         setIsLoading(false)
     }
 
-    const getAgencyList = async () => {
-        setIsLoading(true)
-        await getAgenciesWithDiscom(session?.user?.discomId).then(data => {
-            setAgencyList(data?.data?.map((item) => ({
-                label: item.agency_name,
-                value: item.id,
-            })))
-        })
-        setIsLoading(false)
-    }
-
     const getReportData = async (applyFilter = {}, page = 1) => {
         let payload = {
             page: currentPage,
@@ -100,7 +102,7 @@ const DailyAgentCollection = () => {
 
         try {
             setIsLoading(true);
-            const response = await getDailyNonEnergyCollectionReport(payload);
+            const response = await getDailyEnergyCollectionReport(payload);
             setDataList(response.data.data);
             setCurrentPage(page);
             setTotalPages(response.data.totalPages)
@@ -120,9 +122,14 @@ const DailyAgentCollection = () => {
         { label: 'MRU', key: 'level_6_name', sortable: true },
         { label: 'Agency Name', key: 'agency_name', sortable: true },
         { label: 'Agent Name', key: 'agent_name', sortable: true },
-        { label: 'Agent Mobile No', key: 'agentMobileNo', sortable: true },
-        { label: 'MPOS Serial no', key: 'MposSerialNo', sortable: true },
-        { label: 'Module Name', key: 'module_name', sortable: true },
+        { label: 'Agent Mobile No', key: 'agent_mobile', sortable: true },
+        { label: 'MPOS Serial no', key: 'm_pos_serial_no', sortable: true },
+        { label: 'Consumer No', key: 'consumer_no', sortable: true },
+        { label: 'Consumer Id', key: 'consumer_id', sortable: true },
+        { label: 'Consumer Name', key: 'consumer_name', sortable: true },
+        { label: 'Money Receipt No', key: 'money_receipt_no', sortable: true },
+        { label: 'Txn ID', key: 'transaction_id', sortable: true },
+        { label: 'Txn Date', key: 'transaction_date', sortable: true },
     ], []);
 
     const onSubmit = (data) => {
@@ -139,17 +146,20 @@ const DailyAgentCollection = () => {
                     to_date: data.toDate
                 }
             },
-            ...data?.agencyName && { agency_name: data?.agencyName },
             ...data?.agent_role && { agent_role: data?.agentRole },
-            office_structure_id: data.workingLevel === levelNameMappedWithId.CIRCLE
-                ? data?.circle?.map(Number)?.[0]
-                : data.workingLevel === levelNameMappedWithId.DIVISION
-                    ? data?.division?.map(Number)?.[0]
-                    : data.workingLevel === levelNameMappedWithId.SUB_DIVISION
-                        ? data?.subDivision?.map(Number)?.[0]
-                        : data.workingLevel === levelNameMappedWithId.SECTION
-                            ? data?.section?.map(Number)?.[0]
-                            : null,
+            ...data?.agent_mode && { agent_mode: data?.agentMode },
+            ...data?.collection_mode && { collection_mode: data?.collectionMode },
+            ...data.workingLevel && {
+                office_structure_id: data.workingLevel === levelNameMappedWithId.CIRCLE
+                    ? data?.circle?.map(Number)?.[0]
+                    : data.workingLevel === levelNameMappedWithId.DIVISION
+                        ? data?.division?.map(Number)?.[0]
+                        : data.workingLevel === levelNameMappedWithId.SUB_DIVISION
+                            ? data?.subDivision?.map(Number)?.[0]
+                            : data.workingLevel === levelNameMappedWithId.SECTION
+                                ? data?.section?.map(Number)?.[0]
+                                : null,
+            }
         }
         getReportData(filter, 1);
     };
@@ -267,13 +277,14 @@ const DailyAgentCollection = () => {
     }
 
     const handleExportFile = async (type = 'pdf') => {
+        setExportType(type)
         try {
             setIsLoading(true);
             let payload = {}
-            const response = await downloadDailyNonEnergyCollectionReport(payload, type)
+            const response = await downloadDailyEnergyCollectionReport(payload, type)
 
             const contentDisposition = response.headers["content-disposition"];
-            let filename = "DailyNonEnergyCollectionReport";
+            let filename = "DailyEnergyCollectionReport";
 
             if (contentDisposition) {
                 const matches = contentDisposition.match(/filename="(.+)"/);
@@ -300,6 +311,7 @@ const DailyAgentCollection = () => {
             console.error("Error downloading the report:", error);
         } finally {
             setIsLoading(false);
+            setExportType('')
         }
     }
 
@@ -308,8 +320,9 @@ const DailyAgentCollection = () => {
         getReportData({}, page)
     }
 
+
     return (
-        <AuthUserReusableCode pageTitle="Daily Non Energy Collection" isLoading={isLoading}>
+        <AuthUserReusableCode pageTitle="Daily Energy Collection Sheet" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="flex items-center gap-4">
                 <div className="grid grid-cols-6 gap-4 flex-grow">
                     <CustomizedInputWithLabel
@@ -322,10 +335,14 @@ const DailyAgentCollection = () => {
                         type="date"
                         {...register('toDate')}
                     />
-                    <CustomizedSelectInputWithLabel label='Date type' list={dateTypePicklist}
+                    <CustomizedSelectInputWithLabel label='Date Type' list={dateTypePicklist}
                         {...register('dateType')} />
-                    <CustomizedSelectInputWithLabel label='Agent role' list={agentRolePicklist}
+                    <CustomizedSelectInputWithLabel label='Agent Role' list={agentRolePicklist}
                         {...register('agentRole')} />
+                    <CustomizedSelectInputWithLabel label='Agent Mode' list={agentWorkingType}
+                        {...register('agentMode')} />
+                    <CustomizedSelectInputWithLabel label='Collection Mode' list={permissions}
+                        {...register('collectionMode')} />
                     <CustomizedSelectInputWithLabel label='Working level' list={workingLevelList}
                         {...register('workingLevel')} onChange={(e) => handleWorkingLevelChange(e)} />
                     {formData.workingLevel != null && !isNaN(formData?.workingLevel) &&
@@ -382,14 +399,14 @@ const DailyAgentCollection = () => {
                         </>
                     }
 
-                    <CustomizedSelectInputWithLabel label='Agency Name' list={agencyList} {...register('agencyName')} />
                     <div className='self-end mb-1'>
                         <Button variant='default' type='submit'>Search</Button>
                     </div>
                     <CustomizedSelectInputWithLabel
                         label="Export"
+                        placeholder='Export to'
                         list={exportPicklist}
-                        // value={transactionId}
+                        value={exportType}
                         onChange={(e) => handleExportFile(e.target.value)}
                     />
                 </div>
@@ -406,10 +423,11 @@ const DailyAgentCollection = () => {
                     pageNumber={currentPage}
                     onPageChange={handlePageChange}
                     totalPageNumber={totalPages}
+                // handleExportFile={handleExportFile}
                 />
             </div>
         </AuthUserReusableCode>
     );
 };
 
-export default DailyAgentCollection;
+export default DailyEnergyCollection;

@@ -282,6 +282,11 @@ const navData = {
           url: "/report/login-history",
         },
         {
+          title: "Daily Energy Collection",
+          icon: UserPlus2,
+          url: "/report/daily-energy-collection",
+        },
+        {
           title: "Daily Non Energy Collection",
           icon: UserPlus2,
           url: "/report/daily-non-energy-collection",
