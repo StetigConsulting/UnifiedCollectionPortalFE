@@ -1176,3 +1176,32 @@ export const dailyCollectionNonEnergySheet = z.object({
 });
 
 export type DailyCollectionNonEnergyFormData = z.infer<typeof dailyCollectionNonEnergySheet>;
+
+
+export const deniedEnergyConsumerReport = z.object({
+  fromDate: z.string().optional(),
+  toDate: z.string().optional(),
+  deniedToPay: z.string().optional(),
+  workingLevel: z.any().optional(),
+  circle: z.array(z.number()).optional(),
+  division: z.array(z.number()).optional(),
+  subDivision: z.array(z.number()).optional(),
+  section: z.array(z.number()).optional(),
+});
+
+export type DeniedEnergyConsumerReportFormData = z.infer<typeof deniedEnergyConsumerReport>;
+
+// export const dailyCollectionNonEnergySheet = z.object({
+//   fromDate: z.string().optional(),
+//   toDate: z.string().optional(),
+//   dateType: z.string().optional(),
+//   agentRole: z.string().optional(),
+//   workingLevel: z.number().optional(),
+//   circle: z.array(z.number()).optional(),
+//   division: z.array(z.number()).optional(),
+//   subDivision: z.array(z.number()).optional(),
+//   section: z.array(z.number()).optional(),
+//   agencyName: z.string().optional(),
+// });
+
+// export type DailyCollectionNonEnergyFormData = z.infer<typeof dailyCollectionNonEnergySheet>;

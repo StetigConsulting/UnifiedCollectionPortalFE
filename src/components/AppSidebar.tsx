@@ -307,9 +307,14 @@ const navData = {
           url: "/report/cancel-wise-receipt",
         },
         {
-          title: "Denied consumer report",
+          title: "Denied Energy consumer",
           icon: UserPlus2,
-          url: "/report/denied-consumer",
+          url: "/report/denied-energy-consumer",
+        },
+        {
+          title: "Denied Non Energy consumer report",
+          icon: UserPlus2,
+          url: "/report/denied-non-energy-consumer",
         },
         {
           title: "Counter collector",

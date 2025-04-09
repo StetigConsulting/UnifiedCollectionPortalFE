@@ -93,7 +93,7 @@ const CustomizedMultipleSelectInputWithLabelNumber: React.FC<SelectProps> = ({
                             return (
                                 <span
                                     key={selectedValue}
-                                    className={`rounded-full text-sm bg-blue-100 px-2 py-1`}
+                                    className={`rounded-full text-xs bg-blue-100 px-2 py-1`}
                                 // onClick={() => handleRemoveSelectedValue(selectedValue)}
                                 >
                                     {selectedOption?.label}

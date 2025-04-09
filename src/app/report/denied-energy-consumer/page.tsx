@@ -7,15 +7,16 @@ import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
 import { agentRolePicklist, agentWorkingType, dateTypePicklist, exportPicklist, getErrorMessage, tableDataPerPage } from '@/lib/utils';
-import { downloadDailyEnergyCollectionReport, getDailyEnergyCollectionReport } from '@/app/api-calls/report/api';
+import { downloadDailyEnergyCollectionReport, getDailyEnergyCollectionReport, getDeniedEnergyConsumerReport } from '@/app/api-calls/report/api';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
 import { getAgenciesWithDiscom, getAllPaymentModes, getLevels, getLevelsDiscomId } from '@/app/api-calls/department/api';
 import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { DailyCollectionEnergyFormData, dailyCollectionEnergySheet } from '@/lib/zod';
+import { DeniedEnergyConsumerReportFormData, deniedEnergyConsumerReport } from '@/lib/zod';
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
+import { fetchDeniedToPayData } from '@/app/api-calls/admin/api';
 
 const DeniedEnergyConsumer = () => {
     const { data: session } = useSession()
@@ -25,9 +26,11 @@ const DeniedEnergyConsumer = () => {
     const [totalPages, setTotalPages] = useState(1)
     const [pageSize, setPageSize] = useState(tableDataPerPage);
     const [dataList, setDataList] = useState([]);
+    const [showTable, setShowTable] = useState(false)
+    const [deniedToPayReason, setDeniedToPayReason] = useState([])
 
-    const { register, control, handleSubmit, formState: { errors }, watch, setValue } = useForm<DailyCollectionEnergyFormData>({
-        resolver: zodResolver(dailyCollectionEnergySheet),
+    const { register, control, handleSubmit, formState: { errors }, watch, setValue } = useForm<DeniedEnergyConsumerReportFormData>({
+        resolver: zodResolver(deniedEnergyConsumerReport),
         defaultValues: {
             workingLevel: null,
             circle: [],
@@ -37,25 +40,22 @@ const DeniedEnergyConsumer = () => {
         }
     });
 
-    const [permissions, setPermissions] = useState([])
-
     useEffect(() => {
         getWorkingLevel()
-        getReportData();
+        // getReportData();
         getCircles(session?.user?.discomId)
-        getAllPaymentModes().then((data) => {
-            setPermissions(
-                data?.data
-                    ?.filter((ite) => ite.mode_type == "Collection")
-                    ?.map((ite) => {
-                        return {
-                            label: ite.mode_name,
-                            value: ite.id,
-                        };
-                    })
-            );
-        }).catch((err) => { })
+        getPicklistOfDeniedToPayReason()
     }, []);
+
+    const getPicklistOfDeniedToPayReason = async () => {
+        setIsLoading(true)
+        await fetchDeniedToPayData(session?.user?.discomId).then((data) => {
+            setDeniedToPayReason(data?.data?.[0]?.json_rule?.denied_to_pay_reasons?.map((item) => ({
+                label: item,
+                value: item,
+            })));
+        }).finally(() => { setIsLoading(false); })
+    }
 
     const [levelNameMappedWithId, setLevelNameMappedWithId] = useState<Record<string, number>>({})
     const [workingLevelList, setWorkingLevelList] = useState([]);
@@ -102,8 +102,9 @@ const DeniedEnergyConsumer = () => {
 
         try {
             setIsLoading(true);
-            const response = await getDailyEnergyCollectionReport(payload);
+            const response = await getDeniedEnergyConsumerReport(payload);
             setDataList(response.data.data);
+            setShowTable(true)
             setCurrentPage(page);
             setTotalPages(response.data.totalPages)
         } catch (error) {
@@ -123,32 +124,27 @@ const DeniedEnergyConsumer = () => {
         { label: 'Agency Name', key: 'agency_name', sortable: true },
         { label: 'Agent Name', key: 'agent_name', sortable: true },
         { label: 'Agent Mobile No', key: 'agent_mobile', sortable: true },
-        { label: 'MPOS Serial no', key: 'm_pos_serial_no', sortable: true },
         { label: 'Consumer No', key: 'consumer_no', sortable: true },
-        { label: 'Consumer Id', key: 'consumer_id', sortable: true },
         { label: 'Consumer Name', key: 'consumer_name', sortable: true },
-        { label: 'Money Receipt No', key: 'money_receipt_no', sortable: true },
-        { label: 'Txn ID', key: 'transaction_id', sortable: true },
-        { label: 'Txn Date', key: 'transaction_date', sortable: true },
+        { label: 'Bill Issue Date', key: 'bill_issue_date', sortable: true },
+        { label: 'Due Date', key: 'due_date', sortable: true },
+        { label: 'Amount', key: 'amount', sortable: true },
+        { label: 'Merchant Ref No', key: 'money_receipt_no', sortable: true },
+        { label: 'Reason', key: 'reason', sortable: true },
+        { label: 'Promise to pay date', key: 'promise_to_pay_date', sortable: true },
+        { label: 'Remarks', key: 'remarks', sortable: true },
+        { label: 'Entry Date', key: 'entry_date', sortable: true },
     ], []);
 
     const onSubmit = (data) => {
         let filter = {
-            ...data?.dateType === 'transaction_date' && {
-                transaction_date_range: {
+            ...(data?.fromDate && data?.toDate) && {
+                date_range: {
                     from_date: data.fromDate,
                     to_date: data.toDate
                 }
             },
-            ...data?.dateType === 'upload_date' && {
-                upload_date_range: {
-                    from_date: data.fromDate,
-                    to_date: data.toDate
-                }
-            },
-            ...data?.agent_role && { agent_role: data?.agentRole },
-            ...data?.agent_mode && { agent_mode: data?.agentMode },
-            ...data?.collection_mode && { collection_mode: data?.collectionMode },
+            ...data?.deniedToPay && { denied_reason: data?.deniedToPay },
             ...data.workingLevel && {
                 office_structure_id: data.workingLevel === levelNameMappedWithId.CIRCLE
                     ? data?.circle?.map(Number)?.[0]
@@ -228,20 +224,23 @@ const DeniedEnergyConsumer = () => {
     };
 
     const handleWorkingLevelChange = (selectedValue) => {
+        console.log("selectedValue", selectedValue.target.value)
         if (!selectedValue.target.value) {
+            console.log("selectedValuedd", selectedValue.target.value)
             setValue('workingLevel', null)
             setValue('circle', []);
             setValue('division', []);
             setValue('subDivision', []);
             setValue('section', []);
             return
+        } else {
+            console.log("selectedValuedd", selectedValue.target.value)
+            setValue('workingLevel', parseInt(selectedValue.target.value))
+            setValue('circle', []);
+            setValue('division', []);
+            setValue('subDivision', []);
+            setValue('section', []);
         }
-        setValue('workingLevel', parseInt(selectedValue.target.value))
-        setValue('circle', []);
-        setValue('division', []);
-        setValue('subDivision', []);
-        setValue('section', []);
-
         getCircles(session?.user?.discomId)
     }
 
@@ -284,7 +283,7 @@ const DeniedEnergyConsumer = () => {
             const response = await downloadDailyEnergyCollectionReport(payload, type)
 
             const contentDisposition = response.headers["content-disposition"];
-            let filename = "DailyEnergyCollectionReport";
+            let filename = "DeniedToPayConsumerEnergy";
 
             if (contentDisposition) {
                 const matches = contentDisposition.match(/filename="(.+)"/);
@@ -320,9 +319,10 @@ const DeniedEnergyConsumer = () => {
         getReportData({}, page)
     }
 
+    // console.log("dataList", errors)
 
     return (
-        <AuthUserReusableCode pageTitle="Daily Energy Collection Sheet" isLoading={isLoading}>
+        <AuthUserReusableCode pageTitle="Denied to Pay Consumer Energy Report" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="flex items-center gap-4">
                 <div className="grid grid-cols-6 gap-4 flex-grow">
                     <CustomizedInputWithLabel
@@ -335,12 +335,10 @@ const DeniedEnergyConsumer = () => {
                         type="date"
                         {...register('toDate')}
                     />
-                    <CustomizedSelectInputWithLabel label='Date Type' list={dateTypePicklist}
-                        {...register('dateType')} />
-                    <CustomizedSelectInputWithLabel label='Agent Role' list={agentRolePicklist}
-                        {...register('agentRole')} />
+                    <CustomizedSelectInputWithLabel label='Denied To Pay Reason' list={deniedToPayReason}
+                        {...register('deniedToPay')} />
                     <CustomizedSelectInputWithLabel label='Working level' list={workingLevelList}
-                        {...register('workingLevel')} onChange={(e) => handleWorkingLevelChange(e)} />
+                        {...register('workingLevel', { valueAsNumber: true })} onChange={(e) => handleWorkingLevelChange(e)} />
                     {formData.workingLevel != null && !isNaN(formData?.workingLevel) &&
                         <>
                             <CustomizedMultipleSelectInputWithLabelNumber
@@ -395,6 +393,12 @@ const DeniedEnergyConsumer = () => {
                         </>
                     }
 
+                    <CustomizedInputWithLabel
+                        label="Page Size"
+                        value={pageSize}
+                        onChange={(e) => setPageSize(e.target.value)}
+                    />
+
                     <div className='self-end mb-1'>
                         <Button variant='default' type='submit'>Search</Button>
                     </div>
@@ -410,7 +414,7 @@ const DeniedEnergyConsumer = () => {
             </form>
 
             <div className="overflow-x-auto mb-4 mt-4">
-                <ReactTable
+                {showTable && <ReactTable
                     data={dataList}
                     columns={columns}
                     hideSearchAndOtherButtons
@@ -420,7 +424,7 @@ const DeniedEnergyConsumer = () => {
                     onPageChange={handlePageChange}
                     totalPageNumber={totalPages}
                 // handleExportFile={handleExportFile}
-                />
+                />}
             </div>
         </AuthUserReusableCode>
     );

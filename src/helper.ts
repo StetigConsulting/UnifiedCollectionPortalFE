@@ -48,6 +48,8 @@ export const listOfUrlForScopes = [
   { url: "/agency/add-new-supervisor", backendScopeName: "TPCollectionWebPortal:supervisor:CREATE" },
   { url: "/report/daily-non-energy-collection", backendScopeName: "TPCollectionWebPortal:non_energy_daily_collection_report:READ" },
   { url: "/report/daily-energy-collection", backendScopeName: "TPCollectionWebPortal:energy_daily_collection_report:READ" },
+  { url: "/report/denied-non-energy-consumer", backendScopeName: "TPCollectionWebPortal:non_energy_denied_consumers_report:READ" },
+  { url: "/report/denied-energy-consumer", backendScopeName: "TPCollectionWebPortal:energy_denied_consumers_report:READ" },
 ];
 
 
