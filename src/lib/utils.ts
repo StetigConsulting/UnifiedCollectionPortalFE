@@ -1,6 +1,9 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
+export const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL_V2 || 'https://qasangrah.tptnd.com/portalbe/api';
+export const frontendUrl = 'https://qasangrah.tptnd.com/';
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }

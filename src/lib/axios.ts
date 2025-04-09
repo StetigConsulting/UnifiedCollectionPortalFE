@@ -3,9 +3,10 @@ import axios from "axios";
 import { getSession, signOut } from "next-auth/react";
 import { Router } from "next/router";
 import { toast } from "sonner";
+import { backendUrl } from "./utils";
 
 const api = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_BASE_URL_V2,
+    baseURL: backendUrl,
     headers: {
         "Content-Type": "application/json",
     },
@@ -14,7 +15,7 @@ const api = axios.create({
 // Function to refresh token
 const refreshAccessToken = async (refreshToken: string) => {
     try {
-        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/v1/auth/refresh-token`, {
+        const response = await axios.post(`${backendUrl}/v1/auth/refresh-token`, {
             grant_type: "refresh",
             refresh_token: refreshToken,
         });
