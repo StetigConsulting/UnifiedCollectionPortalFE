@@ -154,7 +154,7 @@ const Recharge = () => {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
 
-                    <CustomizedSelectInputWithLabel
+                    {!idFromUrl && <CustomizedSelectInputWithLabel
                         label="Select Agency"
                         errors={errors.agency}
                         containerClass=""
@@ -163,7 +163,7 @@ const Recharge = () => {
                         required
                         // disabled={idFromUrl != null}
                         {...register("agency")}
-                    />
+                    />}
                     <CustomizedInputWithLabel
                         label="Maximum Possible Recharge"
                         placeholder="Maximum Possible Recharge"
