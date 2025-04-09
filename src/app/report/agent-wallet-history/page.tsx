@@ -93,14 +93,17 @@ const AgentWalletHistory = () => {
     }
 
     const columns = useMemo(() => [
-        { label: 'User ID', key: 'userId', sortable: true },
-        { label: 'Mobile Number', key: 'agent_mobile', sortable: true },
-        { label: 'Franchise Name', key: 'franchiseName', sortable: true },
-        { label: 'Collector Name', key: 'agency_name', sortable: true },
+        { label: 'Date', key: 'userId', sortable: true },
+        { label: 'Agency Name', key: 'agency_name', sortable: true },
+        { label: 'Agent Name', key: 'agent_name', sortable: true },
+        { label: 'Agent Mobile No.', key: 'agent_mobile', sortable: true },
+        { label: 'Transaction Type', key: 'transaction_type', sortable: true },
+        { label: 'Transaction Amount', key: 'transaction_amount', sortable: true },
         { label: 'Current Balance', key: 'balance_after_txn', sortable: true },
-        { label: 'Total Recharge', key: 'totalRecharge', sortable: true },
-        { label: 'Total Collection', key: 'totalCollection', sortable: true },
-        { label: 'Total', key: 'total', sortable: true },
+        { label: 'Previous Balance', key: 'balance_before_txn', sortable: true },
+        { label: 'Transaction Date & Time', key: 'transaction_date', sortable: true },
+        { label: 'Remarks', key: 'remarks', sortable: true },
+        { label: 'Transaction By', key: 'created_by_user', sortable: true },
     ], []);
 
     const handleExportFile = async (type = 'pdf') => {
