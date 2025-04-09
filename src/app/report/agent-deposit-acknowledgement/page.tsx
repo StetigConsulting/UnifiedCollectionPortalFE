@@ -20,8 +20,10 @@ const AgentDepositAcknowledgementReport = () => {
     const [currentPage, setCurrentPage] = useState(1)
     const [totalPages, setTotalPages] = useState(1)
 
+    const [showTable, setShowTable] = useState(false)
+
     useEffect(() => {
-        fetchReport();
+        // fetchReport();
     }, []);
 
     const fetchReport = async (applyFilter = {}, page = 1) => {
@@ -42,6 +44,7 @@ const AgentDepositAcknowledgementReport = () => {
         setIsLoading(true);
         try {
             const response = await getDepositAcknowledgementReport(payload)
+            setShowTable(true)
             setData(response?.data?.data);
             setCurrentPage(page);
             setTotalPages(response.data.totalPages)
@@ -118,11 +121,11 @@ const AgentDepositAcknowledgementReport = () => {
             </div>
 
             <div className="overflow-x-auto mb-4 mt-4">
-                <ReactTable
+                {showTable && <ReactTable
                     data={data}
                     columns={columns}
                     hideSearchAndOtherButtons
-                />
+                />}
             </div>
 
             <div className="flex justify-between">

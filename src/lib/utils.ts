@@ -206,6 +206,10 @@ export const urlsListWithTitle = {
   agencyDashboard: {
     url: '/agency-dashboard',
     title: 'Home'
+  },
+  binderMapping: {
+    url: '/agency/binder-mapping',
+    title: 'MRU Mapping'
   }
 };
 

@@ -25,6 +25,7 @@ const DailyAgentCollection = () => {
     const [totalPages, setTotalPages] = useState(1)
     const [pageSize, setPageSize] = useState(tableDataPerPage);
     const [dataList, setDataList] = useState([]);
+    const [showTable, setShowTable] = useState(false)
 
     const { register, control, handleSubmit, formState: { errors }, watch, setValue } = useForm<DailyCollectionNonEnergyFormData>({
         resolver: zodResolver(dailyCollectionNonEnergySheet),
@@ -101,6 +102,7 @@ const DailyAgentCollection = () => {
         try {
             setIsLoading(true);
             const response = await getDailyNonEnergyCollectionReport(payload);
+            setShowTable(true)
             setDataList(response.data.data);
             setCurrentPage(page);
             setTotalPages(response.data.totalPages)
@@ -397,7 +399,7 @@ const DailyAgentCollection = () => {
             </form>
 
             <div className="overflow-x-auto mb-4 mt-4">
-                <ReactTable
+                {showTable && <ReactTable
                     data={dataList}
                     columns={columns}
                     hideSearchAndOtherButtons
@@ -406,7 +408,7 @@ const DailyAgentCollection = () => {
                     pageNumber={currentPage}
                     onPageChange={handlePageChange}
                     totalPageNumber={totalPages}
-                />
+                />}
             </div>
         </AuthUserReusableCode>
     );

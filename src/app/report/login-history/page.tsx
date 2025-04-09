@@ -12,9 +12,10 @@ const LoginHistory = () => {
     const [topUpData, setTopUpData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [showTable, setShowTable] = useState(false);
 
     useEffect(() => {
-        fetchTopUpHistory();
+        // fetchTopUpHistory();
     }, []);
 
     const fetchTopUpHistory = async () => {

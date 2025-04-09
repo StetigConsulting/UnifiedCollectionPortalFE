@@ -208,7 +208,7 @@ const BinderMapping = () => {
                         <div className="col-span-2">
                             <label className="block text-sm font-medium">{pseudoLevelData}</label>
                             {errors?.binder && <span className="text-red-500">{errors.binder.message}</span>}
-                            <div className="grid grid-cols-12 gap-4 mt-2">
+                            <div className="grid grid-cols-8 gap-4 mt-2">
                                 {listOfAvailableBinders?.map((binder, index) => (
                                     <div key={`${binder.office_structure_id}_${index}`} className="flex items-center">
                                         <input
@@ -230,7 +230,7 @@ const BinderMapping = () => {
                         listOfOtherBinders?.map(item => (
                             <div className="col-span-2" key={item?.agency_id}>
                                 <label className="block text-sm font-medium">Binder Allocated To {item?.agent_name}</label>
-                                <div className="grid grid-cols-12 gap-4 mt-2">
+                                <div className="grid grid-cols-8 gap-4 mt-2">
                                     {item?.allocated_pseudo_office_structure?.map((binder) => (
                                         <div key={binder.office_structure_id} className="flex items-center">
                                             <input

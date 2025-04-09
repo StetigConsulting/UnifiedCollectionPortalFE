@@ -13,13 +13,15 @@ const AgencyWiseCollection = () => {
     const [data, setData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [showTable, setShowTable] = useState(false);
 
     useEffect(() => {
-        fetchData();
+        // fetchData();
     }, []);
 
     const fetchData = async () => {
         setIsLoading(true);
+        setShowTable(true);
         try {
             const response = [
                 {
@@ -96,10 +98,12 @@ const AgencyWiseCollection = () => {
             </div>
 
             <div className="overflow-x-auto mb-4">
-                <ReactTable
-                    data={filteredData}
-                    columns={columns}
-                />
+                {showTable &&
+                    <ReactTable
+                        data={filteredData}
+                        columns={columns}
+                    />
+                }
             </div>
 
             <div className="flex justify-between">

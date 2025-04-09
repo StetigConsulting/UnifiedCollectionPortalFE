@@ -29,6 +29,7 @@ const AgencyWalletHistory = () => {
     const [transactionType, setTransactionType] = useState('');
     const [transactionId, setTransactionId] = useState('');
     const [pageSize, setPageSize] = useState(tableDataPerPage);
+    const [showTable, setShowTable] = useState(false);
 
     useEffect(() => {
         const today = new Date();
@@ -41,12 +42,12 @@ const AgencyWalletHistory = () => {
         setFromDate(formattedLast30Days);
         setToDate(formattedToday);
 
-        getReportData({
-            transaction_date_range: {
-                from_date: formattedLast30Days,
-                to_date: formattedToday,
-            },
-        });
+        // getReportData({
+        //     transaction_date_range: {
+        //         from_date: formattedLast30Days,
+        //         to_date: formattedToday,
+        //     },
+        // });
     }, []);
 
     const getReportData = async (applyFilter = {}, page = 1) => {
@@ -77,6 +78,7 @@ const AgencyWalletHistory = () => {
         try {
             setIsLoading(true);
             const response = await getAgencyWalletHistory(payload, session?.user?.userId);
+            setShowTable(true)
             setDataList(response.data.data);
             setCurrentPage(page);
             setTotalPages(response.data.totalPages)
@@ -193,6 +195,7 @@ const AgencyWalletHistory = () => {
                 </div>
                 <CustomizedSelectInputWithLabel
                     label="Export"
+                    placeholder='Export To'
                     list={exportPicklist}
                     // value={transactionId}
                     onChange={(e) => handleExportFile(e.target.value)}
@@ -200,18 +203,20 @@ const AgencyWalletHistory = () => {
             </div>
 
             <div className="overflow-x-auto mt-4">
-                <ReactTable
-                    data={dataList}
-                    columns={columns}
-                    dynamicPagination
-                    itemsPerPage={tableDataPerPage}
-                    pageNumber={currentPage}
-                    totalPageNumber={totalPages}
-                    onPageChange={handlePageChange}
-                    customExport={true}
-                    handleExportFile={handleExportFile}
-                    hideSearchAndOtherButtons
-                />
+                {showTable &&
+                    <ReactTable
+                        data={dataList}
+                        columns={columns}
+                        dynamicPagination
+                        itemsPerPage={tableDataPerPage}
+                        pageNumber={currentPage}
+                        totalPageNumber={totalPages}
+                        onPageChange={handlePageChange}
+                        customExport={true}
+                        handleExportFile={handleExportFile}
+                        hideSearchAndOtherButtons
+                    />
+                }
             </div>
         </AuthUserReusableCode >
     );

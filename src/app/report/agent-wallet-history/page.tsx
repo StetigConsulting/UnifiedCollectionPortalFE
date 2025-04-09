@@ -31,6 +31,8 @@ const AgentWalletHistory = () => {
     const [transactionId, setTransactionId] = useState('');
     const [pageSize, setPageSize] = useState(tableDataPerPage);
 
+    const [showTable, setShowTable] = useState(false)
+
     useEffect(() => {
         const today = new Date();
         const last30Days = new Date();
@@ -42,12 +44,12 @@ const AgentWalletHistory = () => {
         setFromDate(formattedLast30Days);
         setToDate(formattedToday);
 
-        getReportData({
-            transaction_date_range: {
-                from_date: formattedLast30Days,
-                to_date: formattedToday,
-            },
-        });
+        // getReportData({
+        //     transaction_date_range: {
+        //         from_date: formattedLast30Days,
+        //         to_date: formattedToday,
+        //     },
+        // });
     }, []);
 
     const getReportData = async (applyFilter = {}, page = 1) => {
@@ -79,6 +81,7 @@ const AgentWalletHistory = () => {
         try {
             setIsLoading(true);
             const response = await getAgentWalletHistory(payload, session?.user?.userId);
+            setShowTable(true)
             setDataList(response.data.data);
             setCurrentPage(page);
             setTotalPages(response.data.totalPages)
@@ -208,7 +211,7 @@ const AgentWalletHistory = () => {
             </div>
 
             <div className="overflow-x-auto mt-4">
-                <ReactTable
+                {showTable && <ReactTable
                     data={dataList}
                     columns={columns}
                     dynamicPagination
@@ -219,7 +222,7 @@ const AgentWalletHistory = () => {
                     customExport={true}
                     handleExportFile={handleExportFile}
                     hideSearchAndOtherButtons
-                />
+                />}
             </div>
         </AuthUserReusableCode >
     );
