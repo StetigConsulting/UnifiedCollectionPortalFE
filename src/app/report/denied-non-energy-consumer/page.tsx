@@ -136,7 +136,7 @@ const DeniedEnergyConsumer = () => {
         { label: 'Entry Date', key: 'entry_date', sortable: true },
     ], []);
 
-    const onSubmit = (data) => {
+    const getPayload = (data) => {
         let filter = {
             ...(data?.fromDate && data?.toDate) && {
                 date_range: {
@@ -157,7 +157,13 @@ const DeniedEnergyConsumer = () => {
                                 : null,
             }
         }
-        getReportData(filter, 1);
+
+        return filter
+    }
+
+    const onSubmit = (data) => {
+        const payload = getPayload(data)
+        getReportData(payload, 1);
     };
 
     const formData = watch();
@@ -279,7 +285,7 @@ const DeniedEnergyConsumer = () => {
         setExportType(type)
         try {
             setIsLoading(true);
-            let payload = {}
+            let payload = getPayload(formData)
             const response = await downloadDailyNonEnergyCollectionReport(payload, type)
 
             const contentDisposition = response.headers["content-disposition"];
@@ -316,7 +322,8 @@ const DeniedEnergyConsumer = () => {
 
     const handlePageChange = (page) => {
         setCurrentPage(page)
-        getReportData({}, page)
+        const payload = getPayload(formData)
+        getReportData(payload, page)
     }
 
     // console.log("dataList", errors)

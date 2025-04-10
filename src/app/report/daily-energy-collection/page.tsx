@@ -52,7 +52,7 @@ const DailyEnergyCollection = () => {
                     ?.map((ite) => {
                         return {
                             label: ite.mode_name,
-                            value: ite.id,
+                            value: ite.mode_name,
                         };
                     })
             );
@@ -135,7 +135,8 @@ const DailyEnergyCollection = () => {
         { label: 'Txn Date', key: 'transaction_date', sortable: true },
     ], []);
 
-    const onSubmit = (data) => {
+    const getPayload = (data) => {
+        console.log(data)
         let filter = {
             ...data?.dateType === 'transaction_date' && {
                 transaction_date_range: {
@@ -149,9 +150,9 @@ const DailyEnergyCollection = () => {
                     to_date: data.toDate
                 }
             },
-            ...data?.agent_role && { agent_role: data?.agentRole },
-            ...data?.agent_mode && { agent_mode: data?.agentMode },
-            ...data?.collection_mode && { collection_mode: data?.collectionMode },
+            ...data?.agentRole && { agent_role: data?.agentRole },
+            ...data?.agentMode && { agent_mode: data?.agentMode },
+            ...data?.collectionMode && { pay_mode: data?.collectionMode },
             ...data.workingLevel && {
                 office_structure_id: data.workingLevel === levelNameMappedWithId.CIRCLE
                     ? data?.circle?.map(Number)?.[0]
@@ -164,7 +165,12 @@ const DailyEnergyCollection = () => {
                                 : null,
             }
         }
-        getReportData(filter, 1);
+        return filter
+    }
+
+    const onSubmit = (data) => {
+        let payload = getPayload(data)
+        getReportData(payload, 1);
     };
 
     const formData = watch();
@@ -283,7 +289,7 @@ const DailyEnergyCollection = () => {
         setExportType(type)
         try {
             setIsLoading(true);
-            let payload = {}
+            let payload = getPayload(formData)
             const response = await downloadDailyEnergyCollectionReport(payload, type)
 
             const contentDisposition = response.headers["content-disposition"];
@@ -320,9 +326,11 @@ const DailyEnergyCollection = () => {
 
     const handlePageChange = (page) => {
         setCurrentPage(page)
-        getReportData({}, page)
+        let payload = getPayload(formData)
+        getReportData(payload, page)
     }
 
+    console.log(errors)
 
     return (
         <AuthUserReusableCode pageTitle="Daily Energy Collection Sheet" isLoading={isLoading}>
@@ -345,9 +353,9 @@ const DailyEnergyCollection = () => {
                     <CustomizedSelectInputWithLabel label='Agent Mode' list={agentWorkingType}
                         {...register('agentMode')} />
                     <CustomizedSelectInputWithLabel label='Collection Mode' list={permissions}
-                        {...register('collectionMode')} />
+                        {...register('collectionMode', {})} />
                     <CustomizedSelectInputWithLabel label='Working level' list={workingLevelList}
-                        {...register('workingLevel')} onChange={(e) => handleWorkingLevelChange(e)} />
+                        {...register('workingLevel', { valueAsNumber: true })} onChange={(e) => handleWorkingLevelChange(e)} />
                     {formData.workingLevel != null && !isNaN(formData?.workingLevel) &&
                         <>
                             <CustomizedMultipleSelectInputWithLabelNumber

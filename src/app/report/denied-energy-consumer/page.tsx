@@ -136,7 +136,7 @@ const DeniedEnergyConsumer = () => {
         { label: 'Entry Date', key: 'entry_date', sortable: true },
     ], []);
 
-    const onSubmit = (data) => {
+    const getPayload = (data) => {
         let filter = {
             ...(data?.fromDate && data?.toDate) && {
                 date_range: {
@@ -157,6 +157,11 @@ const DeniedEnergyConsumer = () => {
                                 : null,
             }
         }
+        return filter
+    }
+
+    const onSubmit = (data) => {
+        const filter = getPayload(data)
         getReportData(filter, 1);
     };
 
@@ -279,7 +284,7 @@ const DeniedEnergyConsumer = () => {
         setExportType(type)
         try {
             setIsLoading(true);
-            let payload = {}
+            let payload = getPayload(formData)
             const response = await downloadDailyEnergyCollectionReport(payload, type)
 
             const contentDisposition = response.headers["content-disposition"];
@@ -316,10 +321,9 @@ const DeniedEnergyConsumer = () => {
 
     const handlePageChange = (page) => {
         setCurrentPage(page)
-        getReportData({}, page)
+        let payload = getPayload(formData)
+        getReportData(payload, page)
     }
-
-    // console.log("dataList", errors)
 
     return (
         <AuthUserReusableCode pageTitle="Denied to Pay Consumer Energy Report" isLoading={isLoading}>

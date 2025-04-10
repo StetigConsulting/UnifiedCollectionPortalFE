@@ -41,7 +41,7 @@ const DailyAgentCollection = () => {
     useEffect(() => {
         getWorkingLevel()
         getAgencyList()
-        getReportData();
+        // getReportData();
         getCircles(session?.user?.discomId)
     }, []);
 
@@ -77,7 +77,7 @@ const DailyAgentCollection = () => {
         await getAgenciesWithDiscom(session?.user?.discomId).then(data => {
             setAgencyList(data?.data?.map((item) => ({
                 label: item.agency_name,
-                value: item.id,
+                value: item.agency_name,
             })))
         })
         setIsLoading(false)
@@ -127,7 +127,7 @@ const DailyAgentCollection = () => {
         { label: 'Module Name', key: 'module_name', sortable: true },
     ], []);
 
-    const onSubmit = (data) => {
+    const getPayload = (data) => {
         let filter = {
             ...data?.dateType === 'transaction_date' && {
                 transaction_date_range: {
@@ -142,7 +142,7 @@ const DailyAgentCollection = () => {
                 }
             },
             ...data?.agencyName && { agency_name: data?.agencyName },
-            ...data?.agent_role && { agent_role: data?.agentRole },
+            ...data?.agentRole && { agent_role: data?.agentRole },
             office_structure_id: data.workingLevel === levelNameMappedWithId.CIRCLE
                 ? data?.circle?.map(Number)?.[0]
                 : data.workingLevel === levelNameMappedWithId.DIVISION
@@ -153,7 +153,12 @@ const DailyAgentCollection = () => {
                             ? data?.section?.map(Number)?.[0]
                             : null,
         }
-        getReportData(filter, 1);
+        return filter
+    }
+
+    const onSubmit = (data) => {
+        let payload = getPayload(data)
+        getReportData(payload, 1);
     };
 
     const formData = watch();
@@ -271,7 +276,7 @@ const DailyAgentCollection = () => {
     const handleExportFile = async (type = 'pdf') => {
         try {
             setIsLoading(true);
-            let payload = {}
+            let payload = getPayload(formData)
             const response = await downloadDailyNonEnergyCollectionReport(payload, type)
 
             const contentDisposition = response.headers["content-disposition"];
@@ -307,7 +312,8 @@ const DailyAgentCollection = () => {
 
     const handlePageChange = (page) => {
         setCurrentPage(page)
-        getReportData({}, page)
+        let payload = getPayload(formData)
+        getReportData(payload, page)
     }
 
     return (
@@ -329,7 +335,7 @@ const DailyAgentCollection = () => {
                     <CustomizedSelectInputWithLabel label='Agent role' list={agentRolePicklist}
                         {...register('agentRole')} />
                     <CustomizedSelectInputWithLabel label='Working level' list={workingLevelList}
-                        {...register('workingLevel')} onChange={(e) => handleWorkingLevelChange(e)} />
+                        {...register('workingLevel', { valueAsNumber: true })} onChange={(e) => handleWorkingLevelChange(e)} />
                     {formData.workingLevel != null && !isNaN(formData?.workingLevel) &&
                         <>
                             <CustomizedMultipleSelectInputWithLabelNumber
