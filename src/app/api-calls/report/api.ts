@@ -181,3 +181,28 @@ export const downloadDeniedEnergyConsumerReport = async (data: any, type: any) =
         throw error?.response?.data
     }
 }
+
+export const getDeniedNonEnergyConsumerReport = async (data: any) => {
+    try {
+        const response = await api.post('/v1/non-energy-reports/denied-consumers-report/fetch', data);
+        return response.data;
+    } catch (error) {
+        throw error?.response?.data
+    }
+}
+
+export const downloadDeniedNonEnergyConsumerReport = async (data: any, type: any) => {
+    try {
+        const response = await api.post(`/v1/non-energy-reports/denied-consumers-report/download/${type}`, data,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                responseType: "blob",
+            }
+        );
+        return response;
+    } catch (error) {
+        throw error?.response?.data
+    }
+}
