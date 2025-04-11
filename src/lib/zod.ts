@@ -15,6 +15,22 @@ export const dashboardSchema = object({
     .refine((val) => !isNaN(Date.parse(val)), {
       message: "Invalid date format",
     }),
+  comparisionFromDate: z
+    .string()
+    .nonempty({ message: "Date is required" })
+    .refine((val) => !isNaN(Date.parse(val)), {
+      message: "Invalid date format",
+    }),
+  comparisionToDate: z
+    .string()
+    .nonempty({ message: "Date is required" })
+    .refine((val) => !isNaN(Date.parse(val)), {
+      message: "Invalid date format",
+    }),
+  currentYear: z.string().optional(),
+  currentMonth: z.string().optional(),
+  previousYear: z.string().optional(),
+  previousMonth: z.string().optional(),
 });
 
 export const addAgencySchema = z

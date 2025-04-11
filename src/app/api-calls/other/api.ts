@@ -35,3 +35,21 @@ export const getBillingDataUploadHistory = async (data: any) => {
         throw error?.response?.data
     }
 }
+
+export const getDateComparisionData = async (data: any) => {
+    try {
+        const response = await api.get(`/v1/dashboards/performance-summary/${data}`);
+        return response.data;
+    } catch (error) {
+        throw error?.response?.data
+    }
+}
+
+export const getTransactionSummary = async (data: any) => {
+    try {
+        const response = await api.get(`/v1/dashboards/transaction-summary/${data.month}/${data.year}`);
+        return response.data;
+    } catch (error) {
+        throw error?.response?.data
+    }
+}
