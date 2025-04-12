@@ -62,4 +62,16 @@ export const checkIfUserHasAccessToPage = ({ backendScope = [], currentUrl }) =>
   return backendScope?.includes(foundScope?.backendScopeName);
 };
 
-//write code for checking other than pages
+export const listOfActionScopes = [
+  { action: 'dashboardBillUploadHistory', backendScopeName: 'TPCollectionWebPortal:dashboard-bill-upload-history:READ' },
+  { action: 'dashboardTransactionSummary', backendScopeName: 'TPCollectionWebPortal:dashboard-transaction-summary:READ' },
+  { action: 'dashboardPerformanceSummary', backendScopeName: 'TPCollectionWebPortal:dashboard-performance-summary:READ' },
+]
+
+export const checkIfUserHasActionAccess = ({ backendScope = [], currentAction }) => {
+  const foundScope = listOfActionScopes.find((item) => item.action === currentAction);
+  // return true
+  if (!foundScope) return false;
+
+  return backendScope?.includes(foundScope?.backendScopeName);
+}

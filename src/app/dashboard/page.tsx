@@ -18,6 +18,7 @@ import moment from "moment";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Chart } from "react-google-charts";
 import CustomizedSelectInputWithLabel from "@/components/CustomizedSelectInputWithLabel";
+import { checkIfUserHasActionAccess } from "@/helper";
 
 type FormData = z.infer<typeof dashboardSchema>;
 
@@ -181,7 +182,7 @@ const dashboard = () => {
     { label: "December", value: "12" },
   ];
 
-  const mergeTransactionData = (previousData, currentData) => {
+  const mergeTransactionData = (currentData, previousData) => {
     const map = new Map();
 
     currentData.forEach((item) => {
@@ -291,134 +292,146 @@ const dashboard = () => {
   }, [])
 
   const fetchAllDataWithDefaultValues = async () => {
-    await getBillingUploadHistory()
-    await getComparisionData()
-    await getPerformanceSummaryForRange()
+    checkIfUserHasActionAccess({ backendScope: session?.user?.userScopes, currentAction: "dashboardBillUploadHistory" }) &&
+      await getBillingUploadHistory()
+    checkIfUserHasActionAccess({ backendScope: session?.user?.userScopes, currentAction: "dashboardTransactionSummary" }) &&
+      await getComparisionData()
+    checkIfUserHasActionAccess({ backendScope: session?.user?.userScopes, currentAction: "dashboardPerformanceSummary" }) &&
+      await getPerformanceSummaryForRange()
   }
 
   console.log("transactionData", formData)
 
   return (
-    <AuthUserReusableCode pageTitle="Dashboard" isLoading={isloading || isSubmitting} >
-      <div
-        className="grid grid-cols-2 gap-4 mb-4"
-      >
-        <div className="col-span-2 flex gap-4">
-          <CustomizedInputWithLabel
-            {...register("fromDate")}
-            errors={errors.fromDate}
-            containerClass="flex-1"
-            label="Date"
-            type="date"
-          />
-          <div className={`self-end ${errors.fromDate ? 'mb-5' : ''} text-end`}>
-            <Button variant="default" onClick={getBillingUploadHistory}>
-              Search
-            </Button>
+    <AuthUserReusableCode pageTitle="Dashboard" isLoading={isloading || isSubmitting}>
+      <div>
+        {checkIfUserHasActionAccess({ backendScope: session?.user?.userScopes, currentAction: "dashboardBillUploadHistory" }) &&
+          <div>
+            <div className="col-span-2 flex gap-4">
+              <CustomizedInputWithLabel
+                {...register("fromDate")}
+                errors={errors.fromDate}
+                containerClass="flex-1"
+                label="Date"
+                type="date"
+              />
+              <div className={`self-end ${errors.fromDate ? 'mb-5' : ''} text-end`}>
+                <Button variant="default" onClick={getBillingUploadHistory}>
+                  Search
+                </Button>
+              </div>
+            </div>
+            {
+              (showTable) &&
+              <div className="mt-4">
+                <ReactTable
+                  data={structureTableData}
+                  columns={columns}
+                  hideSearchAndOtherButtons
+                />
+              </div>
+            }
           </div>
-        </div>
-      </div>
-      {
-        (showTable) &&
-        <ReactTable
-          data={structureTableData}
-          columns={columns}
-          hideSearchAndOtherButtons
-        />
-      }
+        }
+        {checkIfUserHasActionAccess({ backendScope: session?.user?.userScopes, currentAction: "dashboardPerformanceSummary" }) &&
+          <div className="gap-4 mt-4">
+            <div className="flex gap-4 mt-4">
+              <h1>Select 2 Dates for Comparision</h1>
+            </div>
+            <div className="col-span-2 flex gap-4">
+              <CustomizedInputWithLabel
+                {...register("comparisionFromDate")}
+                errors={errors.comparisionFromDate}
+                containerClass="flex-1"
+                label="Date 1"
+                type="date"
+              />
+              <CustomizedInputWithLabel
+                {...register("comparisionToDate")}
+                errors={errors.comparisionToDate}
+                containerClass="flex-1"
+                label="Date 2"
+                type="date"
+              />
+              <div className={`self-end ${errors.comparisionFromDate || errors.comparisionToDate ? 'mb-5' : ''} text-end`}>
+                <Button variant="default" onClick={getComparisionData}>
+                  Search
+                </Button>
+              </div>
+            </div>
+            {comparisionData.length > 0 && <>
+              <div className="w-full h-[400px]">
+                <Chart
+                  chartType="ColumnChart"
+                  data={formulateTheResponse(comparisionData, formData?.comparisionFromDate, formData?.comparisionToDate)}
+                  options={getComparisonChartOptions(formData?.comparisionFromDate, formData?.comparisionToDate)}
+                  graph_id="Date_Comparision"
+                  width="100%"
+                  height="400px"
+                />
+              </div>
+            </>}
+          </div>
+        }
+        {checkIfUserHasActionAccess({ backendScope: session?.user?.userScopes, currentAction: "dashboardTransactionSummary" }) &&
+          <div>
+            <div className="flex gap-4 mt-4">
+              <h1>Current vs Previous</h1>
+            </div>
+            <div className="col-span-2 flex gap-4">
+              <CustomizedSelectInputWithLabel
+                label="Current Month"
+                containerClass="flex-1"
+                errors={errors.currentMonth}
+                {...register("currentMonth")}
+                list={months}
+              />
+              <CustomizedSelectInputWithLabel
+                label="Current Year"
+                containerClass="flex-1"
+                errors={errors.currentYear}
+                {...register("currentYear")}
+                list={years.map((y) => ({ label: y.toString(), value: y.toString() }))}
+              />
+              <CustomizedSelectInputWithLabel
+                label="Previous Month"
+                containerClass="flex-1"
+                errors={errors.previousMonth}
+                {...register("previousMonth")}
+                list={months}
+              />
+              <CustomizedSelectInputWithLabel
+                label="Previous Year"
+                containerClass="flex-1"
+                errors={errors.previousYear}
+                {...register("previousYear")}
+                list={years.map((y) => ({ label: y.toString(), value: y.toString() }))}
+              />
 
-      <div className="flex gap-4 mt-4">
-        <h1>Select 2 Dates for Comparision</h1>
+              <div className={`self-end ${errors.comparisionFromDate || errors.comparisionToDate ? 'mb-5' : ''} text-end`}>
+                <Button variant="default" onClick={getPerformanceSummaryForRange}>
+                  Search
+                </Button>
+              </div>
+            </div>
+            {transactionData.length > 0 && <>
+              <div className="w-full h-[400px]">
+                <Chart
+                  chartType="ColumnChart"
+                  data={formulateTheTransactionResponse(transactionData)}
+                  options={transactionChartOption(
+                    `${formData?.currentMonth}/${formData?.currentYear}`,
+                    `${formData?.previousMonth}/${formData?.previousYear}`
+                  )}
+                  graph_id="Transaction_Comparision"
+                  width="100%"
+                  height="400px"
+                />
+              </div>
+            </>}
+          </div>}
       </div>
-      <div className="col-span-2 flex gap-4">
-        <CustomizedInputWithLabel
-          {...register("comparisionFromDate")}
-          errors={errors.comparisionFromDate}
-          containerClass="flex-1"
-          label="Date 1"
-          type="date"
-        />
-        <CustomizedInputWithLabel
-          {...register("comparisionToDate")}
-          errors={errors.comparisionToDate}
-          containerClass="flex-1"
-          label="Date 2"
-          type="date"
-        />
-        <div className={`self-end ${errors.comparisionFromDate || errors.comparisionToDate ? 'mb-5' : ''} text-end`}>
-          <Button variant="default" onClick={getComparisionData}>
-            Search
-          </Button>
-        </div>
-      </div>
-      {comparisionData.length > 0 && <>
-        <div className="w-full h-[400px]">
-          <Chart
-            chartType="ColumnChart"
-            data={formulateTheResponse(comparisionData, formData?.comparisionFromDate, formData?.comparisionToDate)}
-            options={getComparisonChartOptions(formData?.comparisionFromDate, formData?.comparisionToDate)}
-            graph_id="Date_Comparision"
-            width="100%"
-            height="400px"
-          />
-        </div>
-      </>}
 
-      <div className="flex gap-4 mt-4">
-        <h1>Current vs Previous</h1>
-      </div>
-      <div className="col-span-2 flex gap-4">
-        <CustomizedSelectInputWithLabel
-          label="Current Month"
-          containerClass="flex-1"
-          errors={errors.currentMonth}
-          {...register("currentMonth")}
-          list={months}
-        />
-        <CustomizedSelectInputWithLabel
-          label="Current Year"
-          containerClass="flex-1"
-          errors={errors.currentYear}
-          {...register("currentYear")}
-          list={years.map((y) => ({ label: y.toString(), value: y.toString() }))}
-        />
-        <CustomizedSelectInputWithLabel
-          label="Previous Month"
-          containerClass="flex-1"
-          errors={errors.previousMonth}
-          {...register("previousMonth")}
-          list={months}
-        />
-        <CustomizedSelectInputWithLabel
-          label="Previous Year"
-          containerClass="flex-1"
-          errors={errors.previousYear}
-          {...register("previousYear")}
-          list={years.map((y) => ({ label: y.toString(), value: y.toString() }))}
-        />
-
-        <div className={`self-end ${errors.comparisionFromDate || errors.comparisionToDate ? 'mb-5' : ''} text-end`}>
-          <Button variant="default" onClick={getPerformanceSummaryForRange}>
-            Search
-          </Button>
-        </div>
-      </div>
-      {transactionData.length > 0 && <>
-        {/* <h2 className="text-center text-lg font-semibold mt-8 mb-2">Transaction Summary</h2> */}
-        <div className="w-full h-[400px]">
-          <Chart
-            chartType="ColumnChart"
-            data={formulateTheTransactionResponse(transactionData)}
-            options={transactionChartOption(
-              `${formData?.currentMonth}/${formData?.currentYear}`,
-              `${formData?.previousMonth}/${formData?.previousYear}`
-            )}
-            graph_id="Transaction_Comparision"
-            width="100%"
-            height="400px"
-          />
-        </div>
-      </>}
     </AuthUserReusableCode >
   );
 };

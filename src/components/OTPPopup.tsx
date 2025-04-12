@@ -79,19 +79,11 @@ const OTPPopup: React.FC<OTPPopupProps> = ({ sendOTP, setResendTimer, isOpen, se
                 })
                 const session = await getSession();
                 console.log("Sign-in successful:", session?.user);
-                if (checkIfUserHasAccessToPage({
-                    backendScope: session?.user?.userScopes,
-                    currentUrl: urlsListWithTitle.dashboard.url
-                }))
-                    router.push(urlsListWithTitle.dashboard.url);
-                else if (checkIfUserHasAccessToPage({
-                    backendScope: session?.user?.userScopes,
-                    currentUrl: urlsListWithTitle.viewCollectorList.url
-                }))
-                    router.push(urlsListWithTitle.agencyDashboard.url);
-                else {
-                    router.push(urlsListWithTitle.addCollectorForm.url);
-                }
+                // if (checkIfUserHasAccessToPage({
+                //     backendScope: session?.user?.userScopes,
+                //     currentUrl: urlsListWithTitle.dashboard.url
+                // }))
+                router.push(urlsListWithTitle.dashboard.url);
             } else {
                 toast.error(result.message)
             }
