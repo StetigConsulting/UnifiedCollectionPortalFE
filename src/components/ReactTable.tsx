@@ -10,6 +10,7 @@ interface ColumnConfig<T> {
     key: keyof T;
     sortable?: boolean;
     ignored?: boolean;
+    align?: string;
 }
 
 interface TableProps<T> {
@@ -297,8 +298,8 @@ const ReactTable = <T extends Record<string, any>>({
                                         <td>{index + 1}</td>}
                                     {columns.map(column => (
                                         <td key={column.key as string}
-                                            className='p-2 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] whitespace-nowrap'
-                                        >{item[column.key] || item[column.key] === 0 ? item[column.key] : '-'}</td>
+                                            className={`p-2 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] whitespace-nowrap ${column.align === 'right' ? 'text-right' : column.align === 'center' ? 'text-center' : 'text-left'}`}
+                                        > {item[column.key] || item[column.key] === 0 ? item[column.key] : '-'}</td>
                                     ))}
                                 </tr>
                             ))
