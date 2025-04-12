@@ -23,9 +23,9 @@ const ViewHistory = () => {
     const [currentPage, setCurrentPage] = useState(1)
 
     useEffect(() => {
-        let date = getDefaultDates()
-        setDateRange(date);
-        getBalanceHistory({ from_date: date.fromDate, to_date: date.toDate });
+        // let date = getDefaultDates()
+        // setDateRange(date);
+        // getBalanceHistory({ from_date: date.fromDate, to_date: date.toDate });
     }, []);
 
     const getDefaultDates = () => ({
@@ -103,40 +103,43 @@ const ViewHistory = () => {
 
     return (
         <AuthUserReusableCode pageTitle="View History" isLoading={isLoading}>
-            <ReactTable
-                additionalDataBetweenTableAndAction={<div className='px-4 py-2 mb-4 text-sm rounded-md bg-lightThemeColor' style={{
-                    background: 'rgba(197, 211, 233, 0.2)'
-                }}>
-                    Viewing History of Agency ID {idFromUrl} - {nameFromUrl}
-                </div>}
-                additionalData={<div className="grid grid-cols-7 gap-4">
-                    <CustomizedInputWithLabel
-                        label="From Date"
-                        containerClass='col-span-3'
-                        value={dateRange.fromDate}
-                        type='date'
-                        onChange={(e) => setDateRange((prev) => ({ ...prev, fromDate: e.target.value }))}
-                    />
-                    <CustomizedInputWithLabel
-                        label="To Date"
-                        containerClass='col-span-3'
-                        value={dateRange.toDate}
-                        type='date'
-                        onChange={(e) => setDateRange((prev) => ({ ...prev, toDate: e.target.value }))}
-                    />
-                    <Button className='self-end' onClick={() => getBalanceHistory({})}>
-                        Apply Filter
-                    </Button>
-                </div>}
-                data={tableData}
-                columns={columns}
-                fileName='ViewAgencyHistory'
-                dynamicPagination
-                itemsPerPage={tableDataPerPage}
-                pageNumber={currentPage}
-                onPageChange={handlePageChange}
-            />
-            {/* pagination to be added */}
+            <div className="grid grid-cols-7 gap-4">
+                <CustomizedInputWithLabel
+                    label="From Date"
+                    containerClass='col-span-3'
+                    value={dateRange.fromDate}
+                    type='date'
+                    onChange={(e) => setDateRange((prev) => ({ ...prev, fromDate: e.target.value }))}
+                />
+                <CustomizedInputWithLabel
+                    label="To Date"
+                    containerClass='col-span-3'
+                    value={dateRange.toDate}
+                    type='date'
+                    onChange={(e) => setDateRange((prev) => ({ ...prev, toDate: e.target.value }))}
+                />
+                <Button className='self-end' onClick={() => getBalanceHistory({})}>
+                    Apply Filter
+                </Button>
+            </div>
+            {tableData.length > 0 &&
+                <ReactTable
+                    additionalDataBetweenTableAndAction={<div className='px-4 py-2 mb-4 text-sm rounded-md bg-lightThemeColor' style={{
+                        background: 'rgba(197, 211, 233, 0.2)'
+                    }}>
+                        Viewing History of Agency ID {idFromUrl} - {nameFromUrl}
+                    </div>}
+                    // additionalData={ }
+                    data={tableData}
+                    columns={columns}
+                    fileName='ViewAgencyHistory'
+                    dynamicPagination
+                    itemsPerPage={tableDataPerPage}
+                    pageNumber={currentPage}
+                    onPageChange={handlePageChange}
+                />
+            }
+
         </AuthUserReusableCode >
     );
 };

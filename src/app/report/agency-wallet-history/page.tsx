@@ -32,15 +32,15 @@ const AgencyWalletHistory = () => {
     const [showTable, setShowTable] = useState(false);
 
     useEffect(() => {
-        const today = new Date();
-        const last30Days = new Date();
-        last30Days.setDate(today.getDate() - 30);
+        // const today = new Date();
+        // const last30Days = new Date();
+        // last30Days.setDate(today.getDate() - 30);
 
-        const formattedToday = today.toISOString().split('T')[0];
-        const formattedLast30Days = last30Days.toISOString().split('T')[0];
+        // const formattedToday = today.toISOString().split('T')[0];
+        // const formattedLast30Days = last30Days.toISOString().split('T')[0];
 
-        setFromDate(formattedLast30Days);
-        setToDate(formattedToday);
+        // setFromDate(formattedLast30Days);
+        // setToDate(formattedToday);
 
         // getReportData({
         //     transaction_date_range: {
@@ -147,7 +147,7 @@ const AgencyWalletHistory = () => {
 
     return (
         <AuthUserReusableCode pageTitle="Agency Wallet History" isLoading={isLoading}>
-            <div className="grid grid-cols-9 gap-4">
+            <div className="grid grid-cols-6 gap-4">
                 <CustomizedInputWithLabel
                     label="From Date"
                     type="date"

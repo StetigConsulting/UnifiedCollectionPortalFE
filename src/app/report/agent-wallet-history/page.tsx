@@ -34,15 +34,15 @@ const AgentWalletHistory = () => {
     const [showTable, setShowTable] = useState(false)
 
     useEffect(() => {
-        const today = new Date();
-        const last30Days = new Date();
-        last30Days.setDate(today.getDate() - 30);
+        // const today = new Date();
+        // const last30Days = new Date();
+        // last30Days.setDate(today.getDate() - 30);
 
-        const formattedToday = today.toISOString().split('T')[0];
-        const formattedLast30Days = last30Days.toISOString().split('T')[0];
+        // const formattedToday = today.toISOString().split('T')[0];
+        // const formattedLast30Days = last30Days.toISOString().split('T')[0];
 
-        setFromDate(formattedLast30Days);
-        setToDate(formattedToday);
+        // setFromDate(formattedLast30Days);
+        // setToDate(formattedToday);
 
         // getReportData({
         //     transaction_date_range: {
@@ -93,7 +93,7 @@ const AgentWalletHistory = () => {
     }
 
     const columns = useMemo(() => [
-        { label: 'Date', key: 'userId', sortable: true },
+        // { label: 'Date', key: 'userId', sortable: true },
         { label: 'Agency Name', key: 'agency_name', sortable: true },
         { label: 'Agent Name', key: 'agent_name', sortable: true },
         { label: 'Agent Mobile No.', key: 'agent_mobile', sortable: true },
@@ -207,6 +207,7 @@ const AgentWalletHistory = () => {
                 </div>
                 <CustomizedSelectInputWithLabel
                     label="Export"
+                    placeholder='Export To'
                     list={exportPicklist}
                     // value={transactionId}
                     onChange={(e) => handleExportFile(e.target.value)}

@@ -36,7 +36,7 @@ const ResetDeviceCollector = () => {
 
     const { data: session } = useSession()
 
-    const { register, handleSubmit, formState: { errors }, setValue, watch, setError, clearErrors } = useForm<FormData>({
+    const { register, handleSubmit, formState: { errors }, reset, setValue, watch, setError, clearErrors } = useForm<FormData>({
         resolver: zodResolver(resetDeviceSchema),
         defaultValues: {
             mobileNumber: null,
@@ -52,6 +52,8 @@ const ResetDeviceCollector = () => {
         try {
             const response = await resetDeviceById(collectorId)
             toast.success('Device Reset done Successfully')
+            setShowTable(false)
+            reset()
         } catch (error) {
             toast.error('Error: ' + getErrorMessage(error))
         } finally {
@@ -94,7 +96,7 @@ const ResetDeviceCollector = () => {
             setIsLoading(true)
             try {
                 const response = await getAgentByPhoneNumber(mobileNumber)
-                setCollectorType([{ id: response?.data?.collector_type?.id, label: response?.data?.collector_type?.name }]);
+                // setCollectorType([{ id: response?.data?.collector_type?.id, label: response?.data?.collector_type?.name }]);
                 const registeredResponse = await getRegisteredDevices(response?.data?.id);
                 const historyResponse = await loadHistoryLog(response?.data?.id)
                 console.log(historyResponse)
@@ -109,7 +111,7 @@ const ResetDeviceCollector = () => {
                     deviceStatus: item?.is_device_active ? 'Active' : 'Inactive'
                 }))
                 setDeviceData(arrData || [])
-                setValue('collectorType', response?.data?.collector_type?.id);
+                setValue('collectorType', response?.data?.collector_type?.name);
             } catch (error) {
                 toast.error('Error: ' + getErrorMessage(error))
                 setValue("collectorName", '');
@@ -135,7 +137,7 @@ const ResetDeviceCollector = () => {
 
             setHistoryLog(response?.data.map(item => ({
                 ...item,
-                deviceStatus: item?.status ? 'Active' : 'Inactive',
+                deviceStatus: 'Inactive',
                 date: moment(item?.created_on).format('DD-MM-YYYY')
             })))
         } catch (error) {
@@ -169,9 +171,9 @@ const ResetDeviceCollector = () => {
                         {...register("collectorName")}
                         disabled
                     />
-                    <CustomizedSelectInputWithLabel
+                    <CustomizedInputWithLabel
                         label="Collector Type"
-                        list={collectorType}
+                        // list={collectorType}
                         // placeholder="Collector Type"
                         {...register("collectorType")}
                         errors={errors.collectorType}

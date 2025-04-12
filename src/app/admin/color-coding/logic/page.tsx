@@ -33,7 +33,7 @@ const ColorCodingLogic = () => {
     const tableData = colorLogicEntries.map((item, index) => ({
         ...item,
         action: <div className='flex gap-2'>
-            {/* <Trash2 className='cursor-pointer h-5 w-5' onClick={() => handleDelete(item.id)} /> */}
+            <Trash2 className='cursor-pointer h-5 w-5' onClick={() => handleDelete(item.id)} />
             <Pencil className='cursor-pointer h-5 w-5' onClick={() => handleEdit(item.id)} />
         </div>
     }));

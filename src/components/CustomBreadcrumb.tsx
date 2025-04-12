@@ -5,7 +5,7 @@ import { SidebarTrigger } from './ui/sidebar'
 import { LogOut, User, Wallet } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { getTitleByUrl, urlsListWithTitle } from '@/lib/utils';
 import moment from 'moment';
 import { checkIfUserHasAccessToPage } from '@/helper';
@@ -27,6 +27,8 @@ const CustomBreadcrumb: React.FC<CustomBreadcrumbProps> = ({
     blacklist = ["agency", 'dashboard', 'agency-dashboard', 'admin', 'department']
 }) => {
     const router = usePathname();
+    const searchParams = useSearchParams()
+    const typeFromUrl = searchParams?.get('type');
     const pathSegments = router.split("/").filter((seg) => seg !== "");
 
     // const filteredSegments = pathSegments.filter((segment) => !blacklist.includes(segment));
@@ -40,7 +42,9 @@ const CustomBreadcrumb: React.FC<CustomBreadcrumbProps> = ({
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
                     {isLast ? (
-                        <BreadcrumbPage className='capitalize'>{getTitleByUrl(router)}</BreadcrumbPage>
+                        <BreadcrumbPage className='capitalize'>{
+                            typeFromUrl?.includes('reverse') ? 'Reverse' : getTitleByUrl(router)
+                        }</BreadcrumbPage>
                     ) : (
                         <BreadcrumbLink className='capitalize' href={href}>{getTitleByUrl(segment)}</BreadcrumbLink>
                     )}
