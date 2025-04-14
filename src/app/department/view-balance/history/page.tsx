@@ -12,6 +12,18 @@ import { Button } from '@/components/ui/button';
 import moment from 'moment';
 import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import { getErrorMessage, tableDataPerPage } from '@/lib/utils';
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ViewHistorySchemaData } from '@/lib/zod';
+
+export const viewHistorySchema = z.object({
+    fromDate: z.string().min(1, "From date is required"),
+    toDate: z.string().min(1, "To date is required"),
+}).refine(data => new Date(data.fromDate) <= new Date(data.toDate), {
+    message: "From date must be before or equal to To date",
+    path: ["toDate"]
+});
 
 const ViewHistory = () => {
     const [balanceList, setBalanceList] = useState([]);
@@ -21,6 +33,17 @@ const ViewHistory = () => {
         toDate: ''
     });
     const [currentPage, setCurrentPage] = useState(1)
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        setValue,
+        getValues,
+        watch
+    } = useForm<ViewHistorySchemaData>({
+        resolver: zodResolver(viewHistorySchema),
+    });
 
     useEffect(() => {
         // let date = getDefaultDates()
@@ -33,6 +56,12 @@ const ViewHistory = () => {
         toDate: moment().subtract(1, "months").endOf("month").format("YYYY-MM-DD"),
     });
 
+    const onSubmit = async (data: ViewHistorySchemaData) => {
+        await getBalanceHistory({}, 1)
+    }
+
+    const formData = watch()
+
     const getBalanceHistory = async (applyFilter = {}, page = 1) => {
         console.log(page)
         let payload = {
@@ -40,8 +69,8 @@ const ViewHistory = () => {
             page_size: tableDataPerPage,
             filter: {
                 entity_type: "Agency",
-                from_date: dateRange.fromDate,
-                to_date: dateRange.toDate,
+                from_date: formData?.fromDate,
+                to_date: formData?.toDate,
                 entity_id: idFromUrl
             }
         }
@@ -63,6 +92,7 @@ const ViewHistory = () => {
             setIsLoading(false);
         } catch (error) {
             console.log(getErrorMessage(error))
+            toast.error('Error: ' + getErrorMessage(error));
         }
     }
 
@@ -103,25 +133,25 @@ const ViewHistory = () => {
 
     return (
         <AuthUserReusableCode pageTitle="View History" isLoading={isLoading}>
-            <div className="grid grid-cols-7 gap-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-7 gap-4">
                 <CustomizedInputWithLabel
                     label="From Date"
                     containerClass='col-span-3'
-                    value={dateRange.fromDate}
                     type='date'
-                    onChange={(e) => setDateRange((prev) => ({ ...prev, fromDate: e.target.value }))}
+                    {...register("fromDate")}
+                    errors={errors.fromDate}
                 />
                 <CustomizedInputWithLabel
                     label="To Date"
                     containerClass='col-span-3'
-                    value={dateRange.toDate}
                     type='date'
-                    onChange={(e) => setDateRange((prev) => ({ ...prev, toDate: e.target.value }))}
+                    {...register("toDate")}
+                    errors={errors.toDate}
                 />
-                <Button className='self-end' onClick={() => getBalanceHistory({})}>
+                <Button className={`self-end ${errors.fromDate || errors.toDate ? 'mb-5' : ''}`} type='submit'>
                     Apply Filter
                 </Button>
-            </div>
+            </form>
             {tableData.length > 0 &&
                 <ReactTable
                     additionalDataBetweenTableAndAction={<div className='px-4 py-2 mb-4 text-sm rounded-md bg-lightThemeColor' style={{

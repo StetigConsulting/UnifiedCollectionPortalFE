@@ -9,12 +9,27 @@ import { Button } from '@/components/ui/button';
 import { tableDataPerPage } from '@/lib/utils';
 import { getDepositAcknowledgementReport } from '@/app/api-calls/report/api';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
+import { agentDepositReportSchema, AgentDepositReportSchemaData } from '@/lib/zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 const AgentDepositAcknowledgementReport = () => {
-    const [dateFrom, setDateFrom] = useState('');
-    const [dateTo, setDateTo] = useState('');
-    const [acknowledgementType, setAcknowledgementType] = useState('');
-    const [pageSize, setPageSize] = useState(tableDataPerPage)
+    const {
+        register,
+        handleSubmit,
+        setValue,
+        getValues,
+        watch,
+        formState: { errors },
+    } = useForm<AgentDepositReportSchemaData>({
+        resolver: zodResolver(agentDepositReportSchema),
+        defaultValues: {
+            dateFrom: "",
+            dateTo: "",
+            acknowledgementType: "",
+            pageSize: tableDataPerPage,
+        },
+    });
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1)
@@ -26,10 +41,12 @@ const AgentDepositAcknowledgementReport = () => {
         // fetchReport();
     }, []);
 
+    const formData = watch()
+
     const fetchReport = async (applyFilter = {}, page = 1) => {
         let payload = {
             page: page,
-            page_size: pageSize,
+            page_size: formData?.pageSize,
             filter: {}
         }
 
@@ -68,13 +85,17 @@ const AgentDepositAcknowledgementReport = () => {
         { label: 'Acknowledgement', key: 'acknowledgement', sortable: true },
     ], []);
 
-    const handleSearch = () => {
+    const onSubmit = async (data: AgentDepositReportSchemaData) => {
+        await handleSearch(data)
+    }
+
+    const handleSearch = (data: AgentDepositReportSchemaData) => {
         let payload = {
-            ...acknowledgementType && { acknowledgement: acknowledgementType },
-            ...(dateFrom && dateTo) && {
+            ...data?.acknowledgementType && { acknowledgement: data?.acknowledgementType },
+            ...(data?.dateFrom && data?.dateTo) && {
                 deposit_date_range: {
-                    "from_date": dateFrom,
-                    "to_date": dateTo
+                    "from_date": data?.dateFrom,
+                    "to_date": data?.dateTo
                 }
             },
         }
@@ -88,33 +109,33 @@ const AgentDepositAcknowledgementReport = () => {
                     <CustomizedInputWithLabel
                         label="From Date"
                         type="date"
-                        value={dateFrom}
-                        onChange={(e) => setDateFrom(e.target.value)}
+                        {...register("dateFrom")}
+                        errors={errors.dateFrom}
                     />
                     <CustomizedInputWithLabel
                         label="To Date"
                         type="date"
-                        value={dateTo}
-                        onChange={(e) => setDateTo(e.target.value)}
+                        {...register("dateTo")}
+                        errors={errors.dateTo}
                     />
                     <CustomizedSelectInputWithLabel
                         label="Status"
                         list={[{ label: 'Pending', value: 'Pending' },
                         { label: 'Yes', value: 'Yes' },
                         { label: 'No', value: 'No' }]}
-                        value={acknowledgementType}
-                        onChange={(e) => setAcknowledgementType(e.target.value)}
+                        {...register("acknowledgementType")}
+                        errors={errors.acknowledgementType}
                     />
                     <CustomizedInputWithLabel
                         label="Page Size"
                         type="number"
-                        value={pageSize}
-                        onChange={(e) => setPageSize(e.target.value)}
+                        {...register("pageSize", { valueAsNumber: true })}
+                        errors={errors.pageSize}
                     />
                 </div>
                 <Button
-                    onClick={handleSearch}
-                    className='mt-6'
+                    onClick={handleSubmit(onSubmit)}
+                    className={`self-end ${errors?.dateFrom || errors?.dateTo ? 'mb-5' : ''}`}
                 >
                     Search
                 </Button>

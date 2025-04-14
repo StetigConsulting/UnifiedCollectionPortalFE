@@ -1228,3 +1228,62 @@ export type DeniedEnergyConsumerReportFormData = z.infer<typeof deniedEnergyCons
 // });
 
 // export type DailyCollectionNonEnergyFormData = z.infer<typeof dailyCollectionNonEnergySheet>;
+
+export const viewHistorySchema = z.object({
+  fromDate: z.string().min(1, "From date is required"),
+  toDate: z.string().min(1, "To date is required"),
+}).refine(data => new Date(data.fromDate) <= new Date(data.toDate), {
+  message: "From date must be before or equal to To date",
+  path: ["toDate"]
+});
+
+export type ViewHistorySchemaData = z.infer<typeof viewHistorySchema>;
+
+export const agentDepositReportSchema = z.object({
+  dateFrom: z.string().min(1, "From date is required"),
+  dateTo: z.string().min(1, "To date is required"),
+  acknowledgementType: z.string().optional(),
+  pageSize: z.number(
+    { invalid_type_error: 'Page size is required' }
+  ).min(1, "Page size is required"),
+}).refine((data) => new Date(data.dateFrom) <= new Date(data.dateTo), {
+  message: "From date must be before or equal to To date",
+  path: ["dateTo"],
+});
+
+export type AgentDepositReportSchemaData = z.infer<typeof agentDepositReportSchema>;
+
+export const agentWalletSchema = z.object({
+  fromDate: z.string().min(1, "From date is required"),
+  toDate: z.string().min(1, "To date is required"),
+  agencyName: z.string().optional(),
+  agentName: z.string().optional(),
+  agentMobile: z.string().optional(),
+  transactionType: z.string().optional(),
+  transactionId: z.string().optional(),
+  pageSize: z.number(
+    { invalid_type_error: 'Page size is required' }
+  ).min(1, "Page size is required"),
+}).refine(data => new Date(data.fromDate) <= new Date(data.toDate), {
+  message: "From date must not be after To date",
+  path: ["toDate"],
+});
+
+export type AgentWalletSchemaData = z.infer<typeof agentWalletSchema>;
+
+export const agencyWalletSchema = z.object({
+  fromDate: z.string().min(1, "From date is required"),
+  toDate: z.string().min(1, "To date is required"),
+  agencyName: z.string().optional(),
+  agencyMobile: z.any().optional(),
+  transactionType: z.string().optional(),
+  transactionId: z.any().optional(),
+  pageSize: z.number(
+    { invalid_type_error: 'Page size is required' }
+  ).min(1, "Page size is required"),
+}).refine(data => new Date(data.fromDate) <= new Date(data.toDate), {
+  message: "From date must be before or equal to To date",
+  path: ["toDate"],
+});
+
+export type AgencyWalletSchemaData = z.infer<typeof agencyWalletSchema>;

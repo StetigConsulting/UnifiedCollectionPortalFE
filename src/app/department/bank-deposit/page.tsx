@@ -124,11 +124,12 @@ const AgentBankDeposit = () => {
 
     const columns = useMemo(
         () => [
-            { label: 'Franchise Id', key: 'agency_id', sortable: true },
+            { label: 'Agency Id', key: 'agency_id', sortable: true },
+            { label: 'Agency Name', key: 'agency_name', sortable: true },
             { label: 'Deposit Date', key: 'deposit_date', sortable: true },
-            { label: 'Amount', key: 'amount', sortable: true },
+            { label: 'Amount', key: 'amount', sortable: true, align: 'right' },
             { label: 'Bank Name', key: 'bank_name', sortable: true },
-            { label: 'Transaction Ref No (UTR)', key: 'deposit_document', sortable: true },
+            { label: 'UTR No.', key: 'deposit_document', sortable: true },
             { label: 'Entry Date', key: 'entryDate', sortable: true },
         ],
         []

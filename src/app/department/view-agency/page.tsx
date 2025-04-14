@@ -56,6 +56,7 @@ const ViewAgency = () => {
                     item.non_energy_types.map((mode) => data.push(mode.type_name))
 
                     return ({
+                        ...item,
                         id: item.id,
                         agencyName: item.agency_name,
                         agencyAddress: item.agency_address,
@@ -113,11 +114,13 @@ const ViewAgency = () => {
             { label: 'Agency ID', key: 'id', sortable: true },
             { label: 'Agency Name', key: 'agencyName', sortable: true },
             { label: 'Address', key: 'agencyAddress', sortable: true },
+            { label: 'Current Balance', key: 'current_balance', sortable: true, align: 'right' },
             { label: 'Contact Person', key: 'contactPerson', sortable: true },
             { label: 'Phone', key: 'phone', sortable: true },
             { label: 'Max Limit', key: 'maxLimit', sortable: true },
             { label: 'WO Number', key: 'woNumber', sortable: true },
-            { label: 'Validity', key: 'validity', sortable: true },
+            { label: 'Validity From', key: 'validity_start_date', sortable: true },
+            { label: 'Validity', key: 'validity_end_date', sortable: true },
             { label: 'Working Office', key: 'workingOffice', sortable: true },
             { label: 'Working Level Office', key: 'workingLevelOffice', sortable: true },
             { label: 'Permissions', key: 'permissions', sortable: true },
@@ -189,6 +192,8 @@ const ViewAgency = () => {
         <AuthUserReusableCode pageTitle="View Agency" isLoading={isLoading}>
             <ReactTable
                 additionalData={<div className="grid grid-cols-2 gap-4">
+                    {/* <CustomizedInputWithLabel label='' />
+                    <CustomizedInputWithLabel label='' /> */}
                     <CustomizedSelectInputWithLabel
                         label="Agency status"
                         list={listOfAgencyStatus}

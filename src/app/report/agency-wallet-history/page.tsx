@@ -10,6 +10,9 @@ import { exportPicklist, getErrorMessage, tableDataPerPage } from '@/lib/utils';
 import { downloadAgencyWalletReport, downloadAgentWalletReport, downloadBillingReport, getAgencyWalletHistory, getAgentWalletHistory, getBillingReport } from '@/app/api-calls/report/api';
 import { useSession } from 'next-auth/react';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { agencyWalletSchema, AgencyWalletSchemaData } from '@/lib/zod';
 
 const AgencyWalletHistory = () => {
 
@@ -22,14 +25,27 @@ const AgencyWalletHistory = () => {
 
     const [dataList, setDataList] = useState([])
 
-    const [fromDate, setFromDate] = useState('');
-    const [toDate, setToDate] = useState('');
-    const [agencyName, setAgencyName] = useState('');
-    const [agencyMobile, setAgencyMobile] = useState('');
-    const [transactionType, setTransactionType] = useState('');
-    const [transactionId, setTransactionId] = useState('');
-    const [pageSize, setPageSize] = useState(tableDataPerPage);
     const [showTable, setShowTable] = useState(false);
+
+
+    const {
+        register,
+        handleSubmit,
+        getValues,
+        watch,
+        formState: { errors },
+    } = useForm<AgencyWalletSchemaData>({
+        resolver: zodResolver(agencyWalletSchema),
+        defaultValues: {
+            fromDate: "",
+            toDate: "",
+            agencyName: "",
+            agencyMobile: "",
+            transactionType: "",
+            transactionId: "",
+            pageSize: tableDataPerPage,
+        },
+    });
 
     useEffect(() => {
         // const today = new Date();
@@ -50,19 +66,21 @@ const AgencyWalletHistory = () => {
         // });
     }, []);
 
+    const formData = watch()
+
     const getReportData = async (applyFilter = {}, page = 1) => {
         let payload = {
             page: currentPage,
-            page_size: pageSize,
+            page_size: formData?.pageSize,
             filter: {
                 transaction_date_range: {
-                    from_date: fromDate,
-                    to_date: toDate,
+                    from_date: formData?.fromDate,
+                    to_date: formData?.toDate,
                 },
-                ...agencyName && { agent_name: agencyName },
-                ...agencyMobile && { agent_mobile: agencyMobile },
-                ...transactionId && { transaction_id: transactionId },
-                ...transactionType && { transaction_type: transactionType },
+                ...formData?.agencyName && { agent_name: formData?.agencyName },
+                ...formData?.agencyMobile && { agent_mobile: formData?.agencyMobile },
+                ...formData?.transactionId && { transaction_id: formData?.transactionId },
+                ...formData?.transactionType && { transaction_type: formData?.transactionType },
             }
         };
 
@@ -104,8 +122,8 @@ const AgencyWalletHistory = () => {
             setIsLoading(true);
             let payload = {
                 "transaction_date_range": {
-                    "from_date": fromDate,
-                    "to_date": toDate
+                    "from_date": formData?.fromDate,
+                    "to_date": formData?.toDate
                 }
             }
             const response = await downloadAgencyWalletReport(payload, type, session?.user?.userId)
@@ -145,53 +163,59 @@ const AgencyWalletHistory = () => {
         getReportData({}, page)
     };
 
+    const onSubmit = async () => {
+        await getReportData()
+    }
+
     return (
         <AuthUserReusableCode pageTitle="Agency Wallet History" isLoading={isLoading}>
             <div className="grid grid-cols-6 gap-4">
                 <CustomizedInputWithLabel
                     label="From Date"
                     type="date"
-                    value={fromDate}
-                    onChange={(e) => setFromDate(e.target.value)}
+                    {...register("fromDate")}
+                    errors={errors.fromDate}
                 />
 
                 <CustomizedInputWithLabel
                     label="To Date"
                     type="date"
-                    value={toDate}
-                    onChange={(e) => setToDate(e.target.value)}
+                    {...register("toDate")}
+                    errors={errors.toDate}
                 />
 
                 <CustomizedInputWithLabel
                     label="Agency Name"
-                    value={agencyName}
-                    onChange={(e) => setAgencyName(e.target.value)}
+                    {...register("agencyName")}
+                    errors={errors.agencyName}
                 />
 
                 <CustomizedInputWithLabel
                     label="Agency Mobile No."
-                    value={agencyMobile}
-                    onChange={(e) => setAgencyMobile(e.target.value)}
+                    {...register("agencyMobile")}
+                    errors={errors.agencyMobile}
                 />
 
                 <CustomizedInputWithLabel
                     label="Transaction Type"
-                    value={transactionType}
-                    onChange={(e) => setTransactionType(e.target.value)}
+                    {...register("transactionType")}
+                    errors={errors.transactionType}
                 />
 
                 <CustomizedInputWithLabel
                     label="Transaction ID"
-                    value={transactionId}
-                    onChange={(e) => setTransactionId(e.target.value)}
+                    type='number'
+                    {...register("transactionId")}
+                    errors={errors.transactionId}
                 />
                 <CustomizedInputWithLabel
                     label="Page Size"
-                    value={pageSize}
-                    onChange={(e) => setPageSize(e.target.value)}
+                    type='number'
+                    {...register("pageSize", { valueAsNumber: true })}
+                    errors={errors.pageSize}
                 />
-                <div className="flex self-end mb-1">
-                    <Button onClick={() => getReportData()} disabled={isLoading}>Search</Button>
+                <div className={`flex self-end mb-1 ${errors?.pageSize ? 'mb-5' : ''}`}>
+                    <Button onClick={handleSubmit(onSubmit)} disabled={isLoading}>Search</Button>
                 </div>
                 <CustomizedSelectInputWithLabel
                     label="Export"
