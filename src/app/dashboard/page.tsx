@@ -15,7 +15,6 @@ import { getBillingDataUploadHistory, getDateComparisionData, getTransactionSumm
 import { toast } from "sonner";
 import { formatDate, getErrorMessage } from "@/lib/utils";
 import moment from "moment";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Chart } from "react-google-charts";
 import CustomizedSelectInputWithLabel from "@/components/CustomizedSelectInputWithLabel";
 import { checkIfUserHasActionAccess } from "@/helper";
@@ -25,7 +24,8 @@ type FormData = z.infer<typeof dashboardSchema>;
 const dashboard = () => {
   const {
     register,
-    handleSubmit,
+    clearErrors,
+    setError,
     formState: { errors },
     watch, reset, getValues
   } = useForm<FormData>({
@@ -43,7 +43,23 @@ const dashboard = () => {
 
   const [comparisionData, setComparisonData] = useState([])
 
+  useEffect(() => {
+    const subscription = watch((value, { name }) => {
+      if (name && errors[name]) {
+        clearErrors(name);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, clearErrors, errors]);
+
   const getBillingUploadHistory = async () => {
+    let date = getValues("fromDate")
+
+    if (!date) {
+      setError("fromDate", { type: "manual", message: "Date is required" });
+      return
+    }
+
     try {
       setIsSubmiting(true)
       let payload = {
@@ -112,10 +128,25 @@ const dashboard = () => {
   };
 
   const getComparisionData = async () => {
+    const date1 = getValues('comparisionFromDate')
+    const date2 = getValues('comparisionToDate');
+
+    let hasError = false;
+
+    if (!date1) {
+      setError("comparisionFromDate", { type: "manual", message: "Date 1 is required" });
+      hasError = true;
+    }
+
+    if (!date2) {
+      setError("comparisionToDate", { type: "manual", message: "Date 2 is required" });
+      hasError = true;
+    }
+
+    if (hasError) return;
+
     try {
       setIsSubmiting(true)
-      const date1 = getValues('comparisionFromDate')
-      const date2 = getValues('comparisionToDate');
       const responseDate1 = await getDateComparisionData(date1)
       const responseDate2 = await getDateComparisionData(date2)
       let data = mergeComparisionData(responseDate1?.data, responseDate2?.data, date1, date2)
@@ -144,7 +175,7 @@ const dashboard = () => {
   const getComparisonChartOptions = (date1, date2) => ({
     title: `Comparison: ${date1} vs ${date2}`,
     hAxis: {
-      title: 'Division',
+      title: 'Discomwise Performance',
       titleTextStyle: { italic: true, fontSize: 12 },
       textStyle: { fontSize: 12 },
     },
@@ -161,6 +192,7 @@ const dashboard = () => {
       0: { color: '#81ea81' },
       1: { color: '#c95d5d' },
     },
+    backgroundColor: 'transparent',
   });
 
   const [transactionData, setTransactionData] = useState([])
@@ -211,6 +243,48 @@ const dashboard = () => {
 
 
   const getPerformanceSummaryForRange = async () => {
+    const {
+      currentMonth,
+      currentYear,
+      previousMonth,
+      previousYear,
+    } = getValues();
+
+    let hasError = false;
+
+    if (!currentMonth) {
+      setError("currentMonth", { type: "manual", message: "Current month is required" });
+      hasError = true;
+    }
+
+    if (!currentYear) {
+      setError("currentYear", { type: "manual", message: "Current year is required" });
+      hasError = true;
+    }
+
+    if (!previousMonth) {
+      setError("previousMonth", { type: "manual", message: "Previous month is required" });
+      hasError = true;
+    }
+
+    if (!previousYear) {
+      setError("previousYear", { type: "manual", message: "Previous year is required" });
+      hasError = true;
+    }
+
+    if (hasError) return;
+
+    const curr = new Date(`${currentYear}-${currentMonth}-01`);
+    const prev = new Date(`${previousYear}-${previousMonth}-01`);
+
+    // if (curr > prev) {
+    //   setError("currentMonth", {
+    //     type: "manual",
+    //     message: "Current period must not be earlier than Previous",
+    //   });
+    //   return;
+    // }
+
     try {
       setIsSubmiting(true)
       const responseDate1 = await getTransactionSummary({
@@ -245,7 +319,8 @@ const dashboard = () => {
   };
 
   const transactionChartOption = (currentLabel, previousLabel) => ({
-    title: `Transaction Summary: ${currentLabel} vs ${previousLabel}`,
+    title: `Transactions Summary`,
+    // title: `Transaction Summary: ${currentLabel} vs ${previousLabel}`,
     bars: 'vertical',
     hAxis: {
       title: 'Upload Date',
@@ -266,6 +341,7 @@ const dashboard = () => {
       0: { color: '#81ea81' },
       1: { color: '#c95d5d' },
     },
+    backgroundColor: 'transparent',
   })
 
   useEffect(() => {
@@ -304,41 +380,72 @@ const dashboard = () => {
 
   return (
     <AuthUserReusableCode pageTitle="Dashboard" isLoading={isloading || isSubmitting}>
-      <div>
-        {checkIfUserHasActionAccess({ backendScope: session?.user?.userScopes, currentAction: "dashboardBillUploadHistory" }) &&
-          <div>
-            <div className="col-span-2 flex gap-4">
-              <CustomizedInputWithLabel
-                {...register("fromDate")}
-                errors={errors.fromDate}
+      <div className="">
+        {checkIfUserHasActionAccess({ backendScope: session?.user?.userScopes, currentAction: "dashboardTransactionSummary" }) &&
+          <div className="bg-gray-100 p-4 rounded-md">
+            <div className="flex gap-4">
+              <h1>Current vs Previous</h1>
+            </div>
+            <div className="col-span-2 flex gap-4 mt-4">
+              <CustomizedSelectInputWithLabel
+                label="Current Month"
                 containerClass="flex-1"
-                label="Date"
-                type="date"
+                errors={errors.currentMonth}
+                {...register("currentMonth")}
+                list={months}
               />
-              <div className={`self-end ${errors.fromDate ? 'mb-5' : ''} text-end`}>
-                <Button variant="default" onClick={getBillingUploadHistory}>
+              <CustomizedSelectInputWithLabel
+                label="Current Year"
+                containerClass="flex-1"
+                errors={errors.currentYear}
+                {...register("currentYear")}
+                list={years.map((y) => ({ label: y.toString(), value: y.toString() }))}
+              />
+              <CustomizedSelectInputWithLabel
+                label="Previous Month"
+                containerClass="flex-1"
+                errors={errors.previousMonth}
+                {...register("previousMonth")}
+                list={months}
+              />
+              <CustomizedSelectInputWithLabel
+                label="Previous Year"
+                containerClass="flex-1"
+                errors={errors.previousYear}
+                {...register("previousYear")}
+                list={years.map((y) => ({ label: y.toString(), value: y.toString() }))}
+              />
+
+              <div className={`self-end 
+                ${(errors.previousMonth || errors.previousYear || errors.currentMonth || errors.currentYear) ? 'mb-5' : ''} text-end`}>
+                <Button variant="default" onClick={getPerformanceSummaryForRange}>
                   Search
                 </Button>
               </div>
             </div>
-            {
-              (showTable) &&
-              <div className="mt-4">
-                <ReactTable
-                  data={structureTableData}
-                  columns={columns}
-                  hideSearchAndOtherButtons
+            {transactionData.length > 0 && <>
+              <div className="w-full h-[400px]">
+                <Chart
+                  chartType="ColumnChart"
+                  data={formulateTheTransactionResponse(transactionData)}
+                  options={transactionChartOption(
+                    `${formData?.currentMonth}/${formData?.currentYear}`,
+                    `${formData?.previousMonth}/${formData?.previousYear}`
+                  )}
+                  graph_id="Transaction_Comparision"
+                  width="100%"
+                  height="400px"
                 />
               </div>
-            }
-          </div>
-        }
+            </>}
+          </div>}
+
         {checkIfUserHasActionAccess({ backendScope: session?.user?.userScopes, currentAction: "dashboardPerformanceSummary" }) &&
-          <div className="gap-4 mt-4">
-            <div className="flex gap-4 mt-4">
+          <div className="bg-gray-100 p-4 rounded-md gap-4 mt-4">
+            <div className="flex gap-4">
               <h1>Select 2 Dates for Comparision</h1>
             </div>
-            <div className="col-span-2 flex gap-4">
+            <div className="col-span-2 flex gap-4 mt-4">
               <CustomizedInputWithLabel
                 {...register("comparisionFromDate")}
                 errors={errors.comparisionFromDate}
@@ -373,65 +480,38 @@ const dashboard = () => {
             </>}
           </div>
         }
-        {checkIfUserHasActionAccess({ backendScope: session?.user?.userScopes, currentAction: "dashboardTransactionSummary" }) &&
-          <div>
-            <div className="flex gap-4 mt-4">
-              <h1>Current vs Previous</h1>
-            </div>
-            <div className="col-span-2 flex gap-4">
-              <CustomizedSelectInputWithLabel
-                label="Current Month"
-                containerClass="flex-1"
-                errors={errors.currentMonth}
-                {...register("currentMonth")}
-                list={months}
-              />
-              <CustomizedSelectInputWithLabel
-                label="Current Year"
-                containerClass="flex-1"
-                errors={errors.currentYear}
-                {...register("currentYear")}
-                list={years.map((y) => ({ label: y.toString(), value: y.toString() }))}
-              />
-              <CustomizedSelectInputWithLabel
-                label="Previous Month"
-                containerClass="flex-1"
-                errors={errors.previousMonth}
-                {...register("previousMonth")}
-                list={months}
-              />
-              <CustomizedSelectInputWithLabel
-                label="Previous Year"
-                containerClass="flex-1"
-                errors={errors.previousYear}
-                {...register("previousYear")}
-                list={years.map((y) => ({ label: y.toString(), value: y.toString() }))}
-              />
 
-              <div className={`self-end ${errors.comparisionFromDate || errors.comparisionToDate ? 'mb-5' : ''} text-end`}>
-                <Button variant="default" onClick={getPerformanceSummaryForRange}>
+        {checkIfUserHasActionAccess({ backendScope: session?.user?.userScopes, currentAction: "dashboardBillUploadHistory" }) &&
+          <div className="bg-gray-100 p-4 rounded-md mt-4">
+            <p className="text-2xl text-center">Billing Data Upload History</p>
+            <div className="col-span-2 flex gap-4 mt-4">
+              <CustomizedInputWithLabel
+                {...register("fromDate")}
+                errors={errors.fromDate}
+                containerClass="flex-1"
+                label="Date"
+                type="date"
+              />
+              <div className={`self-end ${errors.fromDate ? 'mb-5' : ''} text-end`}>
+                <Button variant="default" onClick={getBillingUploadHistory}>
                   Search
                 </Button>
               </div>
             </div>
-            {transactionData.length > 0 && <>
-              <div className="w-full h-[400px]">
-                <Chart
-                  chartType="ColumnChart"
-                  data={formulateTheTransactionResponse(transactionData)}
-                  options={transactionChartOption(
-                    `${formData?.currentMonth}/${formData?.currentYear}`,
-                    `${formData?.previousMonth}/${formData?.previousYear}`
-                  )}
-                  graph_id="Transaction_Comparision"
-                  width="100%"
-                  height="400px"
+            {
+              (showTable) &&
+              <div className="mt-4">
+                <ReactTable
+                  data={structureTableData}
+                  columns={columns}
+                  hideSearchAndOtherButtons
                 />
               </div>
-            </>}
-          </div>}
-      </div>
+            }
+          </div>
+        }
 
+      </div>
     </AuthUserReusableCode >
   );
 };
