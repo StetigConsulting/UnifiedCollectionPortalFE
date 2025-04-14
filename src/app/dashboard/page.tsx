@@ -294,9 +294,9 @@ const dashboard = () => {
   const fetchAllDataWithDefaultValues = async () => {
     checkIfUserHasActionAccess({ backendScope: session?.user?.userScopes, currentAction: "dashboardBillUploadHistory" }) &&
       await getBillingUploadHistory()
-    checkIfUserHasActionAccess({ backendScope: session?.user?.userScopes, currentAction: "dashboardTransactionSummary" }) &&
-      await getComparisionData()
     checkIfUserHasActionAccess({ backendScope: session?.user?.userScopes, currentAction: "dashboardPerformanceSummary" }) &&
+      await getComparisionData()
+    checkIfUserHasActionAccess({ backendScope: session?.user?.userScopes, currentAction: "dashboardTransactionSummary" }) &&
       await getPerformanceSummaryForRange()
   }
 
