@@ -15,15 +15,7 @@ import { getErrorMessage, tableDataPerPage } from '@/lib/utils';
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ViewHistorySchemaData } from '@/lib/zod';
-
-export const viewHistorySchema = z.object({
-    fromDate: z.string().min(1, "From date is required"),
-    toDate: z.string().min(1, "To date is required"),
-}).refine(data => new Date(data.fromDate) <= new Date(data.toDate), {
-    message: "From date must be before or equal to To date",
-    path: ["toDate"]
-});
+import { viewHistorySchema, ViewHistorySchemaData } from '@/lib/zod';
 
 const ViewHistory = () => {
     const [balanceList, setBalanceList] = useState([]);
