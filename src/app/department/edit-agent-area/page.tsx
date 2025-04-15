@@ -157,6 +157,7 @@ const EditAgentAreaRoleForm = () => {
                 setIsLoading(true);
                 const response = await getAgentByPhoneNumber(mobileNumber);
                 setValue('agentName', response.data.agent_name)
+                setValue('agencyName', response.data?.agency?.agency_name)
                 setValue('agentId', response.data.id)
                 setValue('agentRole', response.data.collector_role)
                 setValue('workingLevel', (response.data.working_level))
@@ -360,6 +361,12 @@ const EditAgentAreaRoleForm = () => {
                             disabled
                             errors={errors.agentName}
                             {...register('agentName')}
+                        />
+                        <CustomizedInputWithLabel
+                            label="Agency Name"
+                            disabled
+                            errors={errors.agencyName}
+                            {...register('agencyName')}
                         />
                         <CustomizedSelectInputWithLabel
                             label='Agent Role'

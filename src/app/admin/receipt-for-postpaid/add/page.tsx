@@ -347,13 +347,13 @@ const AddReceiptsForPostpaid = () => {
                         {receipts.map((_, index) => (
                             <div key={index} className="grid grid-cols-2 gap-4 p-4 rounded-lg">
                                 <CustomizedInputWithLabel
-                                    label="No of bill per month"
+                                    label="Number of Receipts Possbile Per Month Per Consumer"
                                     type="number"
                                     {...register(`receipts.${index}.receiptsPerMonth`, { valueAsNumber: true })}
                                     errors={errors?.receipts?.[index]?.receiptsPerMonth}
                                 />
                                 <CustomizedInputWithLabel
-                                    label="No of bill per day"
+                                    label="Number of Receipts Possbile Per Day Per Consumer"
                                     type="number"
                                     {...register(`receipts.${index}.receiptsPerDay`, { valueAsNumber: true })}
                                     errors={errors?.receipts?.[index]?.receiptsPerDay}

@@ -120,7 +120,7 @@ const ViewAgency = () => {
             { label: 'Max Limit', key: 'maxLimit', sortable: true },
             { label: 'WO Number', key: 'woNumber', sortable: true },
             { label: 'Validity From', key: 'validity_start_date', sortable: true },
-            { label: 'Validity', key: 'validity_end_date', sortable: true },
+            { label: 'Validity To', key: 'validity_end_date', sortable: true },
             { label: 'Working Office', key: 'workingOffice', sortable: true },
             { label: 'Working Level Office', key: 'workingLevelOffice', sortable: true },
             { label: 'Permissions', key: 'permissions', sortable: true },

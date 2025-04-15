@@ -70,13 +70,13 @@ export const addAgencySchema = z
       .optional(),
     validityFromDate: z.string().nonempty("Validity From Date is required"),
     validityToDate: z.string().nonempty("Validity To Date is required"),
-    paymentDate: z.string().optional(),
+    paymentDate: z.string().nonempty("Payment Date is required"),
     transactionId: z.string().optional(),
     initialBalance: z.number({
       required_error: "Initial Balance is required",
       invalid_type_error: "Initial Balance must",
     }),
-    paymentMode: z.string().optional(),
+    paymentMode: z.string().nonempty('Payment Mode is required'),
     paymentRemark: z.string().optional(),
     workingLevel: z.number({
       required_error: "Working Level is required",
@@ -1103,6 +1103,7 @@ export const editAgentAreaSchema = z.object({
   agentId: z.number(),
   agentMobileNumber: z.number().min(10, 'Mobile number must be at least 10 digits'),
   agentName: z.string().optional(),
+  agencyName: z.string().optional(),
   agentRole: z.string().nonempty('Agent Role is required'),
   workingLevel: z.number().min(1, "Working Level is required"),
   circle: z.array(z.number()).optional(),

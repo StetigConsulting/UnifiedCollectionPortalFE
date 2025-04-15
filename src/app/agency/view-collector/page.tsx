@@ -120,7 +120,7 @@ const ViewCollector = () => {
     }));
 
     return (
-        <AuthUserReusableCode pageTitle="View Collector" isLoading={isLoading}>
+        <AuthUserReusableCode pageTitle="View Agent" isLoading={isLoading}>
             <ReactTable data={tableData} columns={columns} />
         </AuthUserReusableCode>
     );

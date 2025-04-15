@@ -96,11 +96,11 @@ export const PUBLIC_ROUTES = [
 export const urlsListWithTitle = {
   addCollectorForm: {
     url: '/agency/add-collector',
-    title: 'Add Collector'
+    title: 'Add Agent'
   },
   viewCollectorList: {
     url: '/agency/view-collector',
-    title: 'View Collector'
+    title: 'View Agent'
   },
   agencyRecharge: {
     url: '/department/recharge',

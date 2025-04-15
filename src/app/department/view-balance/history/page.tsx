@@ -96,6 +96,7 @@ const ViewHistory = () => {
         () => [
             { label: "Txn Type", key: "transaction_type", sortable: true },
             { label: "TID", key: "transaction_id", sortable: true },
+            { label: "Transaction By", key: "created_by_user", sortable: true },
             { label: "Amount", key: "transaction_amount", sortable: true, align: "right" },
             { label: "Current Balance", key: "balance_after_txn", sortable: true, align: "right" },
             { label: "Remark", key: "remarks", sortable: false },

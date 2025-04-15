@@ -50,7 +50,6 @@ const AddAgency = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = async (data: FormData) => {
-    console.log("Form Data:", data);
     const agencyData: AgencyDataInterface = {
       user_id: currentUserId,
       discom_id: session?.user?.discomId,
@@ -90,7 +89,6 @@ const AddAgency = () => {
       setIsSubmitting(true);
       const response = await createAgency(agencyData);
       toast.success("Agency created successfully");
-      console.log("API Response:", response);
       reset();
       // location.reload();
     } catch (error) {
@@ -127,12 +125,9 @@ const AddAgency = () => {
       }, {} as Record<string, { old: any; new: any }>);
 
       if (Object.keys(changes).length > 0) {
-        console.log("Changes detected:", changes);
         if (Object.keys(changes).includes("workingLevel")) {
-          console.log('i  min')
           let newValue = changes["workingLevel"];
           if (Number.isNaN(newValue?.new)) {
-            console.log('isnamn')
             setValue('workingLevel', null);
           }
           if (newValue?.new) {
@@ -299,7 +294,6 @@ const AddAgency = () => {
           return acc;
         }, {});
 
-      console.log(levelIdMap)
       setLevelNameMappedWithId(levelIdMap)
       setValue('levelWithIdMap', levelIdMap)
     })
@@ -393,9 +387,9 @@ const AddAgency = () => {
               {...register("validityToDate")}
             />
             <CustomizedInputWithLabel
-              label="Payment Date"
+              label="Security Deposit Payment Date"
               errors={errors.paymentDate}
-              containerClass=""
+              required={true}
               placeholder="Choose Payment Date"
               type="date"
               {...register("paymentDate")}
@@ -419,6 +413,7 @@ const AddAgency = () => {
           <CustomizedSelectInputWithLabel
             label="Payment Mode"
             errors={errors.paymentMode}
+            required={true}
             containerClass=""
             list={paymentModes}
             placeholder="Select Payment Mode"

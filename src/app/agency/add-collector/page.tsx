@@ -44,7 +44,7 @@ const AddCounterCollector = () => {
     const [subDivisions, setSubDivisions] = useState([]);
     const [sections, setSections] = useState([]);
 
-    const [agencyData, setAgencyData] = useState({ working_level: null })
+    const [agencyData, setAgencyData] = useState({ working_level: null, maximum_limit: null });
 
     const [collectionTypeList, setCollectionTypeList] = useState(collectionTypePickList)
 
@@ -197,6 +197,11 @@ const AddCounterCollector = () => {
     const onSubmit = async (data: AddCounterCollectorFormData) => {
         if (formData.workingType === 'Offline' && formData?.collectionType?.includes('Non Energy')) {
             setErrorMessage('Error: Non Energy Collection Type can only be assigned to Online Work Type Agents')
+            setIsErrorModalOpen(true)
+            return
+        }
+        if (formData?.maximumLimit > agencyData?.maximum_limit) {
+            setErrorMessage('Error: Agent\'s maximum limit cannot be more then Agency\'s maximum limit')
             setIsErrorModalOpen(true)
             return
         }
@@ -365,7 +370,7 @@ const AddCounterCollector = () => {
     const [errorMessage, setErrorMessage] = useState('')
 
     return (
-        <AuthUserReusableCode pageTitle="Add Collector" isLoading={isLoading}>
+        <AuthUserReusableCode pageTitle="Add Agent" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                     <CustomizedInputWithLabel

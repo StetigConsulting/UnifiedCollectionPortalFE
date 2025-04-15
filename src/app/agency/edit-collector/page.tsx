@@ -16,6 +16,7 @@ import { editCollectorData, getCollectorTypes } from "@/app/api-calls/agency/api
 import CustomizedMultipleSelectInputWithLabelNumber from "@/components/CustomizedMultipleSelectInputWithLabelNumber";
 import { useSession } from "next-auth/react";
 import { Loader2 } from "lucide-react";
+import SuccessErrorModal from "@/components/SuccessErrorModal";
 
 const EditCollector = () => {
     const { register, handleSubmit, formState: { errors }, setValue, watch, setError, reset } = useForm<EditCollectorFormData>({
@@ -62,6 +63,11 @@ const EditCollector = () => {
     }, []);
 
     const onSubmit = async (data: EditCollectorFormData) => {
+        if (formData.workingType === 'Offline' && formData?.collectionType?.includes('Non Energy')) {
+            setErrorMessage('Error: Non Energy Collection Type can only be assigned to Online Work Type Agents')
+            setIsErrorModalOpen(true)
+            return
+        }
         setIsSubmitting(true)
         try {
             let payload = {
@@ -160,10 +166,23 @@ const EditCollector = () => {
         }
     };
 
-    console.log(errors, watch())
+    const formData = watch()
+
+    const [isErrorModalOpen, setIsErrorModalOpen] = useState<boolean>(false);
+    const [errorMessage, setErrorMessage] = useState('')
+
+    useEffect(() => {
+
+        if (formData.workingType === 'Offline' && formData?.collectionType?.includes('Non Energy')) {
+            setErrorMessage('Error: Non Energy Collection Type can only be assigned to Online Work Type Agents')
+            setIsErrorModalOpen(true)
+            let filterList = formData?.collectionType?.filter(item => item !== 'Non Energy')
+            setValue('collectionType', filterList || [])
+        }
+    }, [formData.workingType, formData.collectionType, setValue]);
 
     return (
-        <AuthUserReusableCode pageTitle="Edit Collector" isLoading={isLoading}>
+        <AuthUserReusableCode pageTitle="Edit Agent" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                     <div className='space-y-2 col-span-2'>
@@ -271,6 +290,8 @@ const EditCollector = () => {
                     </Button>
                 </div>
             </form>
+            <SuccessErrorModal isOpen={isErrorModalOpen} onClose={() => setIsErrorModalOpen(false)}
+                message={errorMessage} type="error" />
         </AuthUserReusableCode>
     );
 };

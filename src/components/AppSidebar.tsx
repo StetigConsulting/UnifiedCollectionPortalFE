@@ -161,17 +161,17 @@ const navData = {
           path: '/admin/create-new-user',
         },
         {
-          title: "Add Collector",
+          title: "Add Agent",
           icon: UserPlus2,
           url: "/agency/add-collector",
         },
         {
-          title: "Edit Collector",
+          title: "Edit Agent",
           icon: UserPlus2,
           url: "/agency/edit-collector",
         },
         {
-          title: "View Collector",
+          title: "View Agent",
           icon: Eye,
           url: "/agency/view-collector",
         },
