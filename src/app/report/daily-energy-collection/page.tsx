@@ -340,22 +340,25 @@ const DailyEnergyCollection = () => {
                         label="From Date"
                         type="date"
                         {...register('fromDate')}
+                        errors={errors.fromDate}
                     />
                     <CustomizedInputWithLabel
                         label="To Date"
                         type="date"
                         {...register('toDate')}
+                        errors={errors.toDate}
                     />
                     <CustomizedSelectInputWithLabel label='Date Type' list={dateTypePicklist}
-                        {...register('dateType')} />
+                        {...register('dateType')} errors={errors?.dateType} />
                     <CustomizedSelectInputWithLabel label='Agent Role' list={agentRolePicklist}
-                        {...register('agentRole')} />
+                        {...register('agentRole')} errors={errors?.agentRole} />
                     <CustomizedSelectInputWithLabel label='Agent Mode' list={agentWorkingType}
-                        {...register('agentMode')} />
+                        {...register('agentMode')} errors={errors?.agentMode} />
                     <CustomizedSelectInputWithLabel label='Collection Mode' list={permissions}
-                        {...register('collectionMode', {})} />
+                        {...register('collectionMode', {})} errors={errors?.collectionMode} />
                     <CustomizedSelectInputWithLabel label='Working level' list={workingLevelList}
-                        {...register('workingLevel', { valueAsNumber: true })} onChange={(e) => handleWorkingLevelChange(e)} />
+                        {...register('workingLevel', { valueAsNumber: true })}
+                        onChange={(e) => handleWorkingLevelChange(e)} errors={errors?.workingLevel} />
                     {formData.workingLevel != null && !isNaN(formData?.workingLevel) &&
                         <>
                             <CustomizedMultipleSelectInputWithLabelNumber

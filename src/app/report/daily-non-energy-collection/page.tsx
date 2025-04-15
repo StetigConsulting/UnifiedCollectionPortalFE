@@ -14,7 +14,7 @@ import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { DailyCollectionNonEnergyFormData, dailyCollectionNonEnergySheet } from '@/lib/zod';
+import { DailyCollectionEnergyFormData, dailyCollectionEnergySheet } from '@/lib/zod';
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
 
 const DailyAgentCollection = () => {
@@ -27,8 +27,8 @@ const DailyAgentCollection = () => {
     const [dataList, setDataList] = useState([]);
     const [showTable, setShowTable] = useState(false)
 
-    const { register, control, handleSubmit, formState: { errors }, watch, setValue } = useForm<DailyCollectionNonEnergyFormData>({
-        resolver: zodResolver(dailyCollectionNonEnergySheet),
+    const { register, control, handleSubmit, formState: { errors }, watch, setValue } = useForm<DailyCollectionEnergyFormData>({
+        resolver: zodResolver(dailyCollectionEnergySheet),
         defaultValues: {
             workingLevel: null,
             circle: [],
@@ -324,18 +324,21 @@ const DailyAgentCollection = () => {
                         label="From Date"
                         type="date"
                         {...register('fromDate')}
+                        errors={errors.fromDate}
                     />
                     <CustomizedInputWithLabel
                         label="To Date"
                         type="date"
                         {...register('toDate')}
+                        errors={errors.toDate}
                     />
                     <CustomizedSelectInputWithLabel label='Date type' list={dateTypePicklist}
-                        {...register('dateType')} />
+                        {...register('dateType')} errors={errors?.dateType} />
                     <CustomizedSelectInputWithLabel label='Agent role' list={agentRolePicklist}
-                        {...register('agentRole')} />
+                        {...register('agentRole')} errors={errors?.agentRole} />
                     <CustomizedSelectInputWithLabel label='Working level' list={workingLevelList}
-                        {...register('workingLevel', { valueAsNumber: true })} onChange={(e) => handleWorkingLevelChange(e)} />
+                        {...register('workingLevel', { valueAsNumber: true })}
+                        onChange={(e) => handleWorkingLevelChange(e)} errors={errors?.workingLevel} />
                     {formData.workingLevel != null && !isNaN(formData?.workingLevel) &&
                         <>
                             <CustomizedMultipleSelectInputWithLabelNumber
@@ -390,7 +393,8 @@ const DailyAgentCollection = () => {
                         </>
                     }
 
-                    <CustomizedSelectInputWithLabel label='Agency Name' list={agencyList} {...register('agencyName')} />
+                    <CustomizedSelectInputWithLabel label='Agency Name' list={agencyList}
+                        {...register('agencyName')} errors={errors?.agencyName} />
                     <div className='self-end mb-1'>
                         <Button variant='default' type='submit'>Search</Button>
                     </div>
