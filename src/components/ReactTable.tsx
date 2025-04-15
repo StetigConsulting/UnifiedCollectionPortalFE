@@ -66,7 +66,7 @@ const ReactTable = <T extends Record<string, any>>({
     pageNumber = 1,
     totalPageNumber = 1,
     onPageChange,
-    downloadPdf,
+    downloadPdf = () => { },
     customExport,
     handleExportFile
 }: TableProps<T>) => {
