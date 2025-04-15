@@ -96,10 +96,10 @@ const ViewHistory = () => {
         () => [
             { label: "Txn Type", key: "transactionType", sortable: true },
             { label: "TID", key: "transactionId", sortable: true },
-            { label: "Pay Mode", key: "payMode", sortable: true },
+            // { label: "Pay Mode", key: "payMode", sortable: true },
             { label: "Amount", key: "differenceAmount", sortable: true },
             { label: "Current Balance", key: "newBalance", sortable: true },
-            { label: "Pay Date", key: "payDate", sortable: true },
+            // { label: "Pay Date", key: "payDate", sortable: true },
             { label: "Remark", key: "remark", sortable: false },
             { label: "Entry Date", key: "entryDate", sortable: true },
         ],

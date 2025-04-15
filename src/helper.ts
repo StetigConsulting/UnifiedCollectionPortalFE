@@ -30,7 +30,7 @@ export const listOfUrlForScopes = [
   { url: "/admin/denied-to-pay", backendScopeName: "TPCollectionWebPortal:business_rules:ALL" },
   { url: "/admin/non-energy-type", backendScopeName: "TPCollectionWebPortal:business_rules:ALL" },
   { url: "/admin/add-collector-type", backendScopeName: "TPCollectionWebPortal:collector_types:WRITE" },
-  { url: "/admin/incentive", backendScopeName: "TPCollectionWebPortal:business_rules:ALL" },
+  { url: "/admin/incentive", backendScopeName: "TPCollectionWebPortal:collector_incentive_applicability:ALL" },
   { url: "/admin/import", backendScopeName: "TPCollectionWebPortal:business_rules:ALL" },
   { url: "/report/agency-wallet-history", backendScopeName: "TPCollectionWebPortal:agency_wallet_history_report:READ" },
   { url: "/report/agent-wallet-history", backendScopeName: "TPCollectionWebPortal:agent_wallet_history_report:READ" },
