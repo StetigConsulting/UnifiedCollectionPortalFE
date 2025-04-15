@@ -29,7 +29,7 @@ const DeniedEnergyConsumer = () => {
     const [showTable, setShowTable] = useState(false)
     const [deniedToPayReason, setDeniedToPayReason] = useState([])
 
-    const { register, control, handleSubmit, formState: { errors }, watch, setValue } = useForm<DeniedEnergyConsumerReportFormData>({
+    const { register, control, handleSubmit, formState: { errors }, watch, setValue, clearErrors } = useForm<DeniedEnergyConsumerReportFormData>({
         resolver: zodResolver(deniedEnergyConsumerReport),
         defaultValues: {
             workingLevel: null,
@@ -37,6 +37,7 @@ const DeniedEnergyConsumer = () => {
             division: [],
             subDivision: [],
             section: [],
+            pageSize: tableDataPerPage,
         }
     });
 
@@ -80,6 +81,7 @@ const DeniedEnergyConsumer = () => {
                     value: item.id,
                 })));
             setLevelNameMappedWithId(levelIdMap)
+            setValue('levelWithIdMap', levelIdMap)
         })
         setIsLoading(false)
     }
@@ -232,8 +234,9 @@ const DeniedEnergyConsumer = () => {
     const handleWorkingLevelChange = (selectedValue) => {
         console.log("selectedValue", selectedValue.target.value)
         if (!selectedValue.target.value) {
-            console.log("selectedValuedd", selectedValue.target.value)
+            console.log("selectedValueddss", selectedValue.target.value)
             setValue('workingLevel', null)
+            clearErrors('workingLevel')
             setValue('circle', []);
             setValue('division', []);
             setValue('subDivision', []);
@@ -242,6 +245,7 @@ const DeniedEnergyConsumer = () => {
         } else {
             console.log("selectedValuedd", selectedValue.target.value)
             setValue('workingLevel', parseInt(selectedValue.target.value))
+            clearErrors('workingLevel')
             setValue('circle', []);
             setValue('division', []);
             setValue('subDivision', []);
@@ -336,16 +340,19 @@ const DeniedEnergyConsumer = () => {
                         label="From Date"
                         type="date"
                         {...register('fromDate')}
+                        errors={errors.fromDate}
                     />
                     <CustomizedInputWithLabel
                         label="To Date"
                         type="date"
                         {...register('toDate')}
+                        errors={errors.toDate}
                     />
                     <CustomizedSelectInputWithLabel label='Denied To Pay Reason' list={deniedToPayReason}
-                        {...register('deniedToPay')} />
+                        {...register('deniedToPay')} errors={errors.deniedToPay} />
                     <CustomizedSelectInputWithLabel label='Working level' list={workingLevelList}
-                        {...register('workingLevel', { valueAsNumber: true })} onChange={(e) => handleWorkingLevelChange(e)} />
+                        {...register('workingLevel', { valueAsNumber: true })}
+                        onChange={(e) => handleWorkingLevelChange(e)} errors={errors?.workingLevel} />
                     {formData.workingLevel != null && !isNaN(formData?.workingLevel) &&
                         <>
                             <CustomizedMultipleSelectInputWithLabelNumber
@@ -402,11 +409,13 @@ const DeniedEnergyConsumer = () => {
 
                     <CustomizedInputWithLabel
                         label="Page Size"
-                        value={pageSize}
-                        onChange={(e) => setPageSize(e.target.value)}
+                        type="number"
+                        {...register('pageSize', { valueAsNumber: true })}
+                        errors={errors.pageSize}
                     />
 
-                    <div className='self-end mb-1'>
+                    <div className={`self-end ${Object.keys(errors).length > 0 &&
+                        formData?.workingLevel != levelNameMappedWithId?.CIRCLE ? 'mb-5' : ''}`}>
                         <Button variant='default' type='submit'>Search</Button>
                     </div>
                     <CustomizedSelectInputWithLabel

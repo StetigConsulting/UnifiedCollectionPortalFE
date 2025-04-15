@@ -8,7 +8,10 @@ import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
 import { tableDataPerPage } from '@/lib/utils';
 import { getAgentBankDepositReport, getDepositAcknowledgementReport } from '@/app/api-calls/report/api';
-import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { agentBankDepositTableSchema, AgentBankDepositTableSchemaData } from '@/lib/zod';
 
 const AgentDepositAcknowledgementReport = () => {
     const [dateFrom, setDateFrom] = useState('');
@@ -21,6 +24,21 @@ const AgentDepositAcknowledgementReport = () => {
     const [totalPages, setTotalPages] = useState(1)
 
     const [showTable, setShowTable] = useState(false)
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        getValues,
+    } = useForm<AgentBankDepositTableSchemaData>({
+        resolver: zodResolver(agentBankDepositTableSchema),
+        defaultValues: {
+            dateFrom: "",
+            dateTo: "",
+            agencyName: "",
+            pageSize: tableDataPerPage
+        },
+    });
 
     useEffect(() => {
         // fetchReport();
@@ -96,30 +114,30 @@ const AgentDepositAcknowledgementReport = () => {
                     <CustomizedInputWithLabel
                         label="From Date"
                         type="date"
-                        value={dateFrom}
-                        onChange={(e) => setDateFrom(e.target.value)}
+                        {...register("dateFrom")}
+                        errors={errors.dateFrom}
                     />
                     <CustomizedInputWithLabel
                         label="To Date"
                         type="date"
-                        value={dateTo}
-                        onChange={(e) => setDateTo(e.target.value)}
+                        {...register("dateTo")}
+                        errors={errors.dateTo}
                     />
                     <CustomizedInputWithLabel
                         label="Agency Name"
-                        value={agencyName}
-                        onChange={(e) => setAgencyName(e.target.value)}
+                        {...register("agencyName")}
+                        errors={errors.agencyName}
                     />
                     <CustomizedInputWithLabel
                         label="Page Size"
                         type="number"
-                        value={pageSize}
-                        onChange={(e) => setPageSize(e.target.value)}
+                        {...register("pageSize", { valueAsNumber: true })}
+                        errors={errors.pageSize}
                     />
                 </div>
                 <Button
-                    onClick={handleSearch}
-                    className='mt-6'
+                    onClick={handleSubmit(handleSearch)}
+                    className={`self-end ${errors?.dateFrom || errors?.dateTo || errors?.pageSize ? 'mb-5' : ''}`}
                 >
                     Search
                 </Button>

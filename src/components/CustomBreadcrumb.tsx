@@ -24,7 +24,7 @@ interface CustomBreadcrumbProps {
 const CustomBreadcrumb: React.FC<CustomBreadcrumbProps> = ({
     pageTitle, children, onSignOut, agencyBalanceDetail,
     userName, lastLoginAt, scopes,
-    blacklist = ["agency", 'dashboard', 'agency-dashboard', 'admin', 'department']
+    blacklist = ["agency", 'dashboard', 'admin', 'department', 'report']
 }) => {
     const router = usePathname();
     const searchParams = useSearchParams()
