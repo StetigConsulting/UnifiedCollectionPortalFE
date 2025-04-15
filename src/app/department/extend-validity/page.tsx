@@ -139,6 +139,7 @@ const ExtendValidity = () => {
         }
     }, [selectedAgency, agencyList, setValue]);
 
+    console.log(errors)
     return (
         <AuthUserReusableCode pageTitle="Extend Validity" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

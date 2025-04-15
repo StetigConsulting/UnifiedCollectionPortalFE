@@ -387,12 +387,15 @@ export const extendValiditySchema = z.object({
       message: "Validity date must be a valid date",
     }),
 }).refine((data) => {
-  const currentFrom = Date.parse(data.currentFromValidity);
-  const newTo = Date.parse(data.newToValidity);
+  const currentFrom = new Date(data.currentFromValidity);
+  const newTo = new Date(data.newToValidity);
+
+  if (isNaN(currentFrom.getTime()) || isNaN(newTo.getTime())) return false;
+
   return newTo >= currentFrom;
 }, {
   message: "New To Validity date cannot be earlier than Current From Validity",
-  path: ['newToValidity'], // attaches error to the right field
+  path: ["newToValidity"], // attach the error to newToValidity field
 });
 
 export const resetDeviceSchema = z.object({

@@ -204,7 +204,7 @@ const AgentBankDeposit = () => {
                         {...register("depositDate")}
                     />
                     <CustomizedInputWithLabel
-                        label="Transaction Ref No"
+                        label="Transaction Ref No (UTR No)"
                         required={true}
                         errors={errors.txnRefNo}
                         placeholder=""
