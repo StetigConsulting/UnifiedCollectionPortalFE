@@ -386,16 +386,34 @@ export const extendValiditySchema = z.object({
     .refine((value) => !isNaN(Date.parse(value)), {
       message: "Validity date must be a valid date",
     }),
-}).refine((data) => {
+}).superRefine((data, ctx) => {
   const currentFrom = new Date(data.currentFromValidity);
+  const currentTo = new Date(data.currentToValidity);
+  const newFrom = new Date(data.newFromValidity);
   const newTo = new Date(data.newToValidity);
 
-  if (isNaN(currentFrom.getTime()) || isNaN(newTo.getTime())) return false;
+  if (
+    [currentFrom, currentTo, newFrom, newTo].some(
+      (d) => isNaN(d.getTime())
+    )
+  )
+    return;
 
-  return newTo >= currentFrom;
-}, {
-  message: "New To Validity date cannot be earlier than Current From Validity",
-  path: ["newToValidity"], // attach the error to newToValidity field
+  if (newTo < newFrom) {
+    ctx.addIssue({
+      path: ["newToValidity"],
+      message: "New To Validity cannot be earlier than New From Validity",
+      code: z.ZodIssueCode.custom,
+    });
+  }
+
+  if (newTo <= currentTo) {
+    ctx.addIssue({
+      path: ["newToValidity"],
+      message: "New To Validity cannot be less than Current To Validity",
+      code: z.ZodIssueCode.custom,
+    });
+  }
 });
 
 export const resetDeviceSchema = z.object({

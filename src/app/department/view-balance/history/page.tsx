@@ -94,13 +94,11 @@ const ViewHistory = () => {
 
     const columns = useMemo(
         () => [
-            { label: "Txn Type", key: "transactionType", sortable: true },
-            { label: "TID", key: "transactionId", sortable: true },
-            // { label: "Pay Mode", key: "payMode", sortable: true },
-            { label: "Amount", key: "differenceAmount", sortable: true },
-            { label: "Current Balance", key: "newBalance", sortable: true },
-            // { label: "Pay Date", key: "payDate", sortable: true },
-            { label: "Remark", key: "remark", sortable: false },
+            { label: "Txn Type", key: "transaction_type", sortable: true },
+            { label: "TID", key: "transaction_id", sortable: true },
+            { label: "Amount", key: "transaction_amount", sortable: true, align: "right" },
+            { label: "Current Balance", key: "balance_after_txn", sortable: true, align: "right" },
+            { label: "Remark", key: "remarks", sortable: false },
             { label: "Entry Date", key: "entryDate", sortable: true },
         ],
         []

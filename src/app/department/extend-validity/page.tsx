@@ -137,7 +137,7 @@ const ExtendValidity = () => {
                 setValue('newToValidity', '');
             }
         }
-    }, [selectedAgency, agencyList, setValue]);
+    }, [selectedAgency, agencyList]);
 
     console.log(errors)
     return (
