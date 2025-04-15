@@ -286,7 +286,7 @@ const DeniedEnergyConsumer = () => {
         setValue('section', selectedValue)
     }
 
-    const handleExportFile = async (type = 'pdf') => {
+    const handleExportFile = async (data, type = 'pdf') => {
         setExportType(type)
         try {
             setIsLoading(true);
@@ -424,7 +424,10 @@ const DeniedEnergyConsumer = () => {
                         placeholder='Export to'
                         list={exportPicklist}
                         value={exportType}
-                        onChange={(e) => handleExportFile(e.target.value)}
+                        onChange={(e) => {
+                            const exportType = e.target.value;
+                            handleSubmit((data) => handleExportFile(data, exportType))();
+                        }}
                     />
                 </div>
 

@@ -273,7 +273,7 @@ const DailyAgentCollection = () => {
         setValue('section', selectedValue)
     }
 
-    const handleExportFile = async (type = 'pdf') => {
+    const handleExportFile = async (data, type = 'pdf') => {
         try {
             setIsLoading(true);
             let payload = getPayload(formData)
@@ -402,7 +402,10 @@ const DailyAgentCollection = () => {
                         label="Export"
                         list={exportPicklist}
                         // value={transactionId}
-                        onChange={(e) => handleExportFile(e.target.value)}
+                        onChange={(e) => {
+                            const exportType = e.target.value;
+                            handleSubmit((data) => handleExportFile(data, exportType))();
+                        }}
                     />
                 </div>
 

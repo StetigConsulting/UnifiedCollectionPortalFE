@@ -117,7 +117,7 @@ const AgencyWalletHistory = () => {
         { label: 'TXN Date', key: 'transaction_date', sortable: true },
     ], []);
 
-    const handleExportFile = async (type = 'pdf') => {
+    const handleExportFile = async (data, type = 'pdf') => {
         try {
             setIsLoading(true);
             let payload = {
@@ -169,7 +169,7 @@ const AgencyWalletHistory = () => {
 
     return (
         <AuthUserReusableCode pageTitle="Agency Wallet History" isLoading={isLoading}>
-            <div className="grid grid-cols-6 gap-4">
+            <div className="grid grid-cols-5 gap-4">
                 <CustomizedInputWithLabel
                     label="From Date"
                     type="date"
@@ -222,7 +222,10 @@ const AgencyWalletHistory = () => {
                     placeholder='Export To'
                     list={exportPicklist}
                     // value={transactionId}
-                    onChange={(e) => handleExportFile(e.target.value)}
+                    onChange={(e) => {
+                        const exportType = e.target.value;
+                        handleSubmit((data) => handleExportFile(data, exportType))();
+                    }}
                 />
             </div>
 
@@ -237,7 +240,7 @@ const AgencyWalletHistory = () => {
                         totalPageNumber={totalPages}
                         onPageChange={handlePageChange}
                         customExport={true}
-                        handleExportFile={handleExportFile}
+                        // handleExportFile={handleExportFile}
                         hideSearchAndOtherButtons
                     />
                 }

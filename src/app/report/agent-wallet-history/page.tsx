@@ -129,7 +129,7 @@ const AgentWalletHistory = () => {
         { label: 'Transaction By', key: 'created_by_user', sortable: true },
     ], []);
 
-    const handleExportFile = async (type = 'pdf') => {
+    const handleExportFile = async (data: AgentWalletSchemaData, type = 'pdf') => {
         try {
             setIsLoading(true);
             let payload = {
@@ -233,7 +233,10 @@ const AgentWalletHistory = () => {
                     placeholder='Export To'
                     list={exportPicklist}
                     // value={transactionId}
-                    onChange={(e) => handleExportFile(e.target.value)}
+                    onChange={(e) => {
+                        const exportType = e.target.value;
+                        handleSubmit((data) => handleExportFile(data, exportType))();
+                    }}
                 />
             </div>
 
@@ -247,7 +250,7 @@ const AgentWalletHistory = () => {
                     totalPageNumber={totalPages}
                     onPageChange={handlePageChange}
                     customExport={true}
-                    handleExportFile={handleExportFile}
+                    // handleExportFile={handleExportFile}
                     hideSearchAndOtherButtons
                 />}
             </div>
