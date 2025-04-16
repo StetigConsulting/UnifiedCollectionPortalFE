@@ -341,7 +341,11 @@ const navData = {
           icon: UserPlus2,
           url: "/report/agent-bank-deposit",
         },
-
+        {
+          title: 'MMI',
+          icon: UserPlus2,
+          url: "/report/mmi",
+        }
       ]
     },
     {
