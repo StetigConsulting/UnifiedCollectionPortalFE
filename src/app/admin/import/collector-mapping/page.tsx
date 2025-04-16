@@ -50,7 +50,7 @@ const ConsumerToCollectorMapping: React.FC = () => {
 
             const a = document.createElement("a");
             a.href = url;
-            a.download = `${filename}.${extension}`;
+            a.download = filename.includes('.csv') ? `${filename}` : `${filename}.${extension}`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
