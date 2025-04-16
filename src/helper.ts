@@ -50,6 +50,7 @@ export const listOfUrlForScopes = [
   { url: "/report/daily-energy-collection", backendScopeName: "TPCollectionWebPortal:energy_daily_collection_report:READ" },
   { url: "/report/denied-non-energy-consumer", backendScopeName: "TPCollectionWebPortal:non_energy_denied_consumers_report:READ" },
   { url: "/report/denied-energy-consumer", backendScopeName: "TPCollectionWebPortal:energy_denied_consumers_report:READ" },
+  { url: "/report/mmi", backendScopeName: "TPCollectionWebPortal:mmi:VIEW" },
 ];
 
 
