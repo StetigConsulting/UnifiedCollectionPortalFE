@@ -259,6 +259,7 @@ const EditAgentAreaRoleForm = () => {
 
     const getAgencyData = async (id: number, role: string) => {
         try {
+            setIsLoading(true)
             const agencyResponse = await getAgencyById(String(id));
             const agencyData = agencyResponse.data;
             setAgencyData({
@@ -292,6 +293,8 @@ const EditAgentAreaRoleForm = () => {
 
         } catch (error) {
             console.error("Error fetching agency data:", error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
