@@ -109,7 +109,7 @@ const ExtendValidity = () => {
                         label="Collector Name"
                         list={agencies}
                         required={true}
-                        containerClass="col-span-2"
+                        // containerClass="col-span-2"
                         errors={errors.collectorName}
                         {...register("collectorName")}
                     />
