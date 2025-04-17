@@ -24,7 +24,6 @@ const DeniedEnergyConsumer = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1)
     const [totalPages, setTotalPages] = useState(1)
-    const [pageSize, setPageSize] = useState(tableDataPerPage);
     const [dataList, setDataList] = useState([]);
     const [showTable, setShowTable] = useState(false)
     const [deniedToPayReason, setDeniedToPayReason] = useState([])
@@ -91,7 +90,7 @@ const DeniedEnergyConsumer = () => {
     const getReportData = async (applyFilter = {}, page = 1) => {
         let payload = {
             page: currentPage,
-            page_size: pageSize,
+            page_size: formData?.pageSize,
             filter: {}
         };
 

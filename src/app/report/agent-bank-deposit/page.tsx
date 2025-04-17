@@ -17,7 +17,6 @@ const AgentDepositAcknowledgementReport = () => {
     const [dateFrom, setDateFrom] = useState('');
     const [dateTo, setDateTo] = useState('');
     const [agencyName, setAgencyName] = useState('');
-    const [pageSize, setPageSize] = useState(tableDataPerPage)
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1)
@@ -30,6 +29,7 @@ const AgentDepositAcknowledgementReport = () => {
         handleSubmit,
         formState: { errors },
         getValues,
+        watch,
     } = useForm<AgentBankDepositTableSchemaData>({
         resolver: zodResolver(agentBankDepositTableSchema),
         defaultValues: {
@@ -44,10 +44,12 @@ const AgentDepositAcknowledgementReport = () => {
         // fetchReport();
     }, []);
 
+    const formData = watch()
+
     const fetchReport = async (applyFilter = {}, page = 1) => {
         let payload = {
             page: page,
-            page_size: pageSize,
+            page_size: formData?.pageSize,
             filter: {
                 ...(dateFrom && dateTo) && {
                     deposit_date_range: {
@@ -149,7 +151,7 @@ const AgentDepositAcknowledgementReport = () => {
                     columns={columns}
                     hideSearchAndOtherButtons
                     dynamicPagination
-                    itemsPerPage={pageSize}
+                    itemsPerPage={formData?.pageSize}
                     pageNumber={currentPage}
                     totalPageNumber={totalPages}
                     onPageChange={(e) => fetchReport({}, e)}
