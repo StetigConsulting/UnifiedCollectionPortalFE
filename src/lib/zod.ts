@@ -1381,13 +1381,105 @@ export type AgentBankDepositTableSchemaData = z.infer<typeof agentBankDepositTab
 export const mmiReportSchema = z.object({
   fromDate: z.string().min(1, "From Date is required"),
   toDate: z.string().min(1, "To Date is required"),
-  workingLevel: z.any().optional(),
+  workingLevel: z.number({
+    invalid_type_error: "Working Level is required",
+    required_error: "Working Level is required",
+  }),
   circle: z.array(z.number()).optional(),
   division: z.array(z.number()).optional(),
   subDivision: z.array(z.number()).optional(),
   section: z.array(z.number()).optional(),
   agencyName: z.string().optional(),
   agentMobile: z.string().optional(),
+  levelMapWithId: z.any(),
+}).superRefine((data, ctx) => {
+  const { workingLevel, levelMapWithId } = data;
+
+  // Circle level
+  if (workingLevel === levelMapWithId?.CIRCLE) {
+    if (!data.circle || data.circle.length === 0) {
+      ctx.addIssue({
+        path: ["circle"],
+        code: z.ZodIssueCode.custom,
+        message: "Circle is required",
+      });
+    }
+  }
+
+  // Division level
+  if (workingLevel === levelMapWithId?.DIVISION) {
+    if (!data.circle || data.circle.length === 0) {
+      ctx.addIssue({
+        path: ["circle"],
+        code: z.ZodIssueCode.custom,
+        message: "Circle is required",
+      });
+    }
+    if (!data.division || data.division.length === 0) {
+      ctx.addIssue({
+        path: ["division"],
+        code: z.ZodIssueCode.custom,
+        message: "Division is required",
+      });
+    }
+  }
+
+  // SubDivision level
+  if (workingLevel === levelMapWithId?.SUB_DIVISION) {
+    if (!data.circle || data.circle.length === 0) {
+      ctx.addIssue({
+        path: ["circle"],
+        code: z.ZodIssueCode.custom,
+        message: "Circle is required",
+      });
+    }
+    if (!data.division || data.division.length === 0) {
+      ctx.addIssue({
+        path: ["division"],
+        code: z.ZodIssueCode.custom,
+        message: "Division is required",
+      });
+    }
+    if (!data.subDivision || data.subDivision.length === 0) {
+      ctx.addIssue({
+        path: ["subDivision"],
+        code: z.ZodIssueCode.custom,
+        message: "Sub Division is required",
+      });
+    }
+  }
+
+  // Section level
+  if (workingLevel === levelMapWithId?.SECTION) {
+    if (!data.circle || data.circle.length === 0) {
+      ctx.addIssue({
+        path: ["circle"],
+        code: z.ZodIssueCode.custom,
+        message: "Circle is required",
+      });
+    }
+    if (!data.division || data.division.length === 0) {
+      ctx.addIssue({
+        path: ["division"],
+        code: z.ZodIssueCode.custom,
+        message: "Division is required",
+      });
+    }
+    if (!data.subDivision || data.subDivision.length === 0) {
+      ctx.addIssue({
+        path: ["subDivision"],
+        code: z.ZodIssueCode.custom,
+        message: "Sub Division is required",
+      });
+    }
+    if (!data.section || data.section.length === 0) {
+      ctx.addIssue({
+        path: ["section"],
+        code: z.ZodIssueCode.custom,
+        message: "Section is required",
+      });
+    }
+  }
 });
 
 export type MmiReportSchemaData = z.infer<typeof mmiReportSchema>;

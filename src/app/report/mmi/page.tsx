@@ -29,7 +29,7 @@ const MMI = () => {
         defaultValues: {
             fromDate: '',
             toDate: '',
-            workingLevel: '',
+            workingLevel: null,
             circle: [],
             division: [],
             subDivision: [],
@@ -63,6 +63,7 @@ const MMI = () => {
                     value: item.id,
                 })));
             setLevelNameMappedWithId(levelIdMap)
+            setValue('levelMapWithId', levelIdMap)
         })
         setIsLoading(false)
     }
