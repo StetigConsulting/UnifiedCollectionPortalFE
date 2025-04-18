@@ -1,6 +1,7 @@
 'use client'
 
-import { getLevels, getLevelsDiscomId } from '@/app/api-calls/department/api';
+import { getAllAgentByAgencyId } from '@/app/api-calls/agency/api';
+import { getAgenciesWithDiscom, getAgencyById, getLevels, getLevelsDiscomId } from '@/app/api-calls/department/api';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode'
 import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
@@ -68,6 +69,7 @@ const MMI = () => {
 
     useEffect(() => {
         getWorkingLevel()
+        getAgencyByDiscom()
     }, [])
 
     const handleWorkingLevelChange = (selectedValue) => {
@@ -222,6 +224,46 @@ const MMI = () => {
     const [showIframe, setShowIframe] = useState(false)
     console.log(iframeUrl, 'errors', errors)
 
+    const [agenciesList, setAgenciesList] = useState([])
+
+    const getAgencyByDiscom = async () => {
+        await getAgenciesWithDiscom(session?.user?.discomId).then(res => {
+            console.log(res.data)
+            setAgenciesList(res.data.map((item) => {
+                return {
+                    value: item.id,
+                    label: item.agency_name,
+                };
+            }))
+        })
+    }
+
+    const [agentList, setAgentList] = useState([]);
+
+    const handleAgencyChange = async (agencyId) => {
+        setValue('agencyName', agencyId);
+        setValue('agentMobile', '');
+
+        if (!agencyId) {
+            setAgentList([]);
+            return;
+        }
+        setIsLoading(true)
+        const res = await getAllAgentByAgencyId(agencyId);
+        console.log(res)
+        if (res?.data) {
+            setAgentList(
+                res.data.map((agent) => ({
+                    value: agent.primary_phone,
+                    label: `${agent.agent_name}`,
+                }))
+            );
+        } else {
+            setAgentList([]);
+        }
+        setIsLoading(false)
+    };
+
     return (
         <AuthUserReusableCode pageTitle='MMI' isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="flex items-center gap-4">
@@ -238,6 +280,16 @@ const MMI = () => {
                         {...register('toDate')}
                         errors={errors.toDate}
                     />
+                    <CustomizedSelectInputWithLabel
+                        label='Agency Name'
+                        list={agenciesList}
+                        value={watch('agencyName')}
+                        onChange={(e) => handleAgencyChange(e.target.value)}
+                        errors={errors?.agencyName}
+                    />
+                    <CustomizedSelectInputWithLabel label='Agent Name' list={agentList}
+                        {...register('agentMobile')}
+                        errors={errors?.agentMobile} />
                     <CustomizedSelectInputWithLabel label='Working level' list={workingLevelList}
                         {...register('workingLevel', { valueAsNumber: true })}
                         onChange={(e) => handleWorkingLevelChange(e)} errors={errors?.workingLevel} />
