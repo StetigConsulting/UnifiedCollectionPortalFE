@@ -77,8 +77,8 @@ const AgencyWalletHistory = () => {
                     from_date: formData?.fromDate,
                     to_date: formData?.toDate,
                 },
-                ...formData?.agencyName && { agent_name: formData?.agencyName },
-                ...formData?.agencyMobile && { agent_mobile: formData?.agencyMobile },
+                ...formData?.agencyName && { agency_name: formData?.agencyName },
+                ...formData?.agencyMobile && { agency_mobile: formData?.agencyMobile },
                 ...formData?.transactionId && { transaction_id: formData?.transactionId },
                 ...formData?.transactionType && { transaction_type: formData?.transactionType },
             }
@@ -121,10 +121,14 @@ const AgencyWalletHistory = () => {
         try {
             setIsLoading(true);
             let payload = {
-                "transaction_date_range": {
-                    "from_date": formData?.fromDate,
-                    "to_date": formData?.toDate
-                }
+                transaction_date_range: {
+                    from_date: formData?.fromDate,
+                    to_date: formData?.toDate,
+                },
+                ...formData?.agencyName && { agency_name: formData?.agencyName },
+                ...formData?.agencyMobile && { agency_mobile: formData?.agencyMobile },
+                ...formData?.transactionId && { transaction_id: formData?.transactionId },
+                ...formData?.transactionType && { transaction_type: formData?.transactionType },
             }
             const response = await downloadAgencyWalletReport(payload, type, session?.user?.userId)
 

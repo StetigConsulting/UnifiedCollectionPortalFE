@@ -133,10 +133,16 @@ const AgentWalletHistory = () => {
         try {
             setIsLoading(true);
             let payload = {
-                "transaction_date_range": {
-                    "from_date": formData?.fromDate,
-                    "to_date": formData?.toDate
-                }
+                transaction_date_range: {
+                    from_date: formData?.fromDate,
+                    to_date: formData?.toDate,
+                },
+                ...formData?.agentName && { agent_name: formData?.agentName },
+                ...formData?.agentMobile && { agent_mobile: formData?.agentMobile },
+                ...formData?.transactionId && { transaction_id: formData?.transactionId },
+                ...formData?.transactionType && { transaction_type: formData?.transactionType },
+                ...formData?.agencyName && { agency_name: formData?.agencyName },
+
             }
             const response = await downloadAgentWalletReport(payload, type, session?.user?.userId)
 
