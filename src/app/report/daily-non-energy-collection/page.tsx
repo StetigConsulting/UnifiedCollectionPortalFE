@@ -122,8 +122,8 @@ const DailyAgentCollection = () => {
         { label: 'MRU', key: 'level_6_name', sortable: true },
         { label: 'Agency Name', key: 'agency_name', sortable: true },
         { label: 'Agent Name', key: 'agent_name', sortable: true },
-        { label: 'Agent Mobile No', key: 'agentMobileNo', sortable: true },
-        { label: 'MPOS Serial no', key: 'MposSerialNo', sortable: true },
+        { label: 'Agent Mobile No', key: 'agent_mobile', sortable: true },
+        { label: 'MPOS Serial no', key: 'm_pos_serial_no', sortable: true },
         { label: 'Module Name', key: 'module_name', sortable: true },
     ], []);
 
