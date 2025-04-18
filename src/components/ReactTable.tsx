@@ -234,9 +234,9 @@ const ReactTable = <T extends Record<string, any>>({
                                 <Button variant="default" onClick={() => {
                                     customExport ? handleExportFile('csv') : exportToCSV()
                                 }}>CSV</Button>
-                                <Button variant="default" onClick={() => {
+                                {/* <Button variant="default" onClick={() => {
                                     customExport ? handleExportFile('pdf') : downloadPdf()
-                                }}>PDF</Button>
+                                }}>PDF</Button> */}
                             </div>
                         }
                         {isSelectable && selectedRow !== null && (

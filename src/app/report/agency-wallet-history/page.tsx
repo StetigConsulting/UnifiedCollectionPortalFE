@@ -111,9 +111,9 @@ const AgencyWalletHistory = () => {
         { label: 'Agency Name', key: 'agency_name', sortable: true },
         { label: 'Agency Mobile', key: 'agency_mobile', sortable: true },
         { label: 'TXN type', key: 'transaction_type', sortable: true },
-        { label: 'Top Up / Reverse', key: 'transaction_amount', sortable: true, align: 'right' },
-        { label: 'Current Balance', key: 'balance_after_txn', sortable: true, align: 'right' },
-        { label: 'Previous Balance', key: 'balance_before_txn', sortable: true, align: 'right' },
+        { label: 'Top Up / Reverse', key: 'transaction_amount', sortable: true, align: 'center' },
+        { label: 'Current Balance', key: 'balance_after_txn', sortable: true, align: 'center' },
+        { label: 'Previous Balance', key: 'balance_before_txn', sortable: true, align: 'center' },
         { label: 'TXN Date', key: 'transaction_date', sortable: true },
     ], []);
 

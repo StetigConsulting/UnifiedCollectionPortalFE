@@ -83,7 +83,7 @@ const ViewBalance = () => {
             { label: 'Agency Name', key: 'agencyName', sortable: true },
             { label: 'Working level', key: 'workingOffice', sortable: true },
             { label: 'Working office', key: 'workingLevelOffice', sortable: true },
-            { label: 'Current Balance', key: 'current_balance', sortable: true },
+            { label: 'Current Balance', key: 'current_balance', sortable: true, align: 'center' },
             // { label: 'Action', key: 'action', sortable: false, ignored: true },
         ],
         []

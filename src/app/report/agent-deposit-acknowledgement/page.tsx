@@ -81,7 +81,7 @@ const AgentDepositAcknowledgementReport = () => {
         { label: 'Supervisor ID', key: 'supervisor_id', sortable: true },
         { label: 'Supervisor Name', key: 'supervisor_name', sortable: true },
         { label: 'Deposit Date', key: 'deposit_date', sortable: true },
-        { label: 'Deposit Amount', key: 'deposit_amount', sortable: true, align: 'right' },
+        { label: 'Deposit Amount', key: 'deposit_amount', sortable: true, align: 'center' },
         { label: 'Acknowledgement', key: 'acknowledgement', sortable: true },
     ], []);
 

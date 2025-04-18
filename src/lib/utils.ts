@@ -292,7 +292,7 @@ export const addIncentiveOnKeyValue = {
 export const exportPicklist = [
   { value: 'csv', label: 'CSV' },
   { value: 'xlsx', label: 'Excel' },
-  { value: 'pdf', label: 'PDF' }
+  // { value: 'pdf', label: 'PDF' }
 ]
 
 export const dateTypePicklist = [

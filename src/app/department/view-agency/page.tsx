@@ -114,7 +114,7 @@ const ViewAgency = () => {
             { label: 'Agency ID', key: 'id', sortable: true },
             { label: 'Agency Name', key: 'agencyName', sortable: true },
             { label: 'Address', key: 'agencyAddress', sortable: true },
-            { label: 'Current Balance', key: 'current_balance', sortable: true, align: 'right' },
+            { label: 'Current Balance', key: 'current_balance', sortable: true, align: 'center' },
             { label: 'Contact Person', key: 'contactPerson', sortable: true },
             { label: 'Phone', key: 'phone', sortable: true },
             { label: 'Max Limit', key: 'maxLimit', sortable: true },
