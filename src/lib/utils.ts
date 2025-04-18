@@ -63,19 +63,28 @@ export function numberToWords(num: number): string {
   let integerPart = Math.floor(num);
   let decimalPart = Math.round((num % 1) * 100);
   let result = "";
-  let i = 0;
 
-  while (integerPart > 0) {
-    const chunk = integerPart % 1000;
+  const parts = [];
+  parts.push(integerPart % 1000);
+  integerPart = Math.floor(integerPart / 1000);
+
+  parts.push(integerPart % 100);
+  integerPart = Math.floor(integerPart / 100);
+
+  parts.push(integerPart % 100);
+  integerPart = Math.floor(integerPart / 100);
+
+  parts.push(integerPart);
+
+  let i = parts.length - 1;
+  for (let j = i; j >= 0; j--) {
+    const chunk = parts[j];
     if (chunk > 0) {
-      result = convertToWords(chunk) + (thousands[i] ? " " + thousands[i] : "") + (result ? " " + result : "");
+      result += convertToWords(chunk) + (thousands[j] ? " " + thousands[j] : "") + " ";
     }
-    integerPart = Math.floor(integerPart / 1000);
-    i++;
   }
 
-  result = result.trim();
-  result += " rupees";
+  result = result.trim() + " rupees";
 
   if (decimalPart > 0) {
     const paisaWords = convertToWords(decimalPart);
@@ -84,7 +93,6 @@ export function numberToWords(num: number): string {
 
   return result;
 }
-
 
 export const SIGNIN = '/auth/signin';
 export const ROOT = '/dashboard';
