@@ -4,6 +4,7 @@ import { Input } from './ui/input';
 import { toast } from 'sonner';
 import * as XLSX from 'xlsx';
 import CustomizedInputWithLabel from './CustomizedInputWithLabel';
+import PaginationComponent from './PaginationComponent';
 
 interface ColumnConfig<T> {
     label: string;
@@ -218,7 +219,6 @@ const ReactTable = <T extends Record<string, any>>({
         }
     };
 
-
     return (
         <div className={`${className}`}>
             {!hideSearchAndOtherButtons ?
@@ -323,8 +323,9 @@ const ReactTable = <T extends Record<string, any>>({
                     </button>
                 </div>
             }
-            {
-                dynamicPagination && <div style={{ marginTop: '10px', textAlign: 'center' }}>
+            {/* {
+                dynamicPagination &&
+                <div style={{ marginTop: '10px', textAlign: 'center' }}>
                     <button onClick={() => onPageChange(pageNumber - 1)} disabled={pageNumber === 1}>
                         Previous
                     </button>
@@ -332,6 +333,12 @@ const ReactTable = <T extends Record<string, any>>({
                     <button onClick={() => onPageChange(pageNumber + 1)} disabled={totalPageNumber == pageNumber}>
                         Next
                     </button>
+                </div>
+            } */}
+            {
+                (dynamicPagination && totalPageNumber > 0) &&
+                <div style={{ marginTop: '10px', textAlign: 'center' }}>
+                    <PaginationComponent totalPages={totalPageNumber} onPageChange={onPageChange} />
                 </div>
             }
         </div >

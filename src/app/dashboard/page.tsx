@@ -34,7 +34,7 @@ const dashboard = () => {
 
   const { data: session } = useSession();
 
-  const [isloading, setIsloading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [isSubmitting, setIsSubmiting] = useState(false)
 
   const [showTable, setShowTable] = useState(false)
@@ -173,7 +173,7 @@ const dashboard = () => {
   };
 
   const getComparisonChartOptions = (date1, date2) => ({
-    title: `Comparison: ${date1} vs ${date2}`,
+    title: `Disomwise Performance`,
     hAxis: {
       title: 'Discomwise Performance',
       titleTextStyle: { italic: true, fontSize: 12 },
@@ -379,7 +379,7 @@ const dashboard = () => {
   console.log("transactionData", formData)
 
   return (
-    <AuthUserReusableCode pageTitle="Dashboard" isLoading={isloading || isSubmitting}>
+    <AuthUserReusableCode pageTitle="Dashboard" isLoading={isLoading || isSubmitting}>
       <div className="">
         {checkIfUserHasActionAccess({ backendScope: session?.user?.userScopes, currentAction: "dashboardTransactionSummary" }) &&
           <div className="bg-gray-100 p-4 rounded-md">

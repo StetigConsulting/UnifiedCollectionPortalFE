@@ -102,6 +102,10 @@ const AgentDepositAcknowledgementReport = () => {
         fetchReport(payload, 1)
     }
 
+    const handlePageChange = (page: number) => {
+        fetchReport({}, page)
+    };
+
     return (
         <AuthUserReusableCode pageTitle="Agent Deposit Acknowledgement Report" isLoading={isLoading}>
             <div className="flex items-center gap-4">
@@ -146,6 +150,11 @@ const AgentDepositAcknowledgementReport = () => {
                     data={data}
                     columns={columns}
                     hideSearchAndOtherButtons
+                    dynamicPagination
+                    itemsPerPage={formData?.pageSize}
+                    pageNumber={currentPage}
+                    totalPageNumber={totalPages}
+                    onPageChange={handlePageChange}
                 />}
             </div>
 
