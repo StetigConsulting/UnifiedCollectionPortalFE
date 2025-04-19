@@ -1381,10 +1381,7 @@ export type AgentBankDepositTableSchemaData = z.infer<typeof agentBankDepositTab
 export const mmiReportSchema = z.object({
   fromDate: z.string().min(1, "From Date is required"),
   toDate: z.string().min(1, "To Date is required"),
-  workingLevel: z.any({
-    invalid_type_error: "Working Level is required",
-    required_error: "Working Level is required",
-  }).optional(),
+  workingLevel: z.any().optional(),
   // workingLevel: z.number({
   //   invalid_type_error: "Working Level is required",
   //   required_error: "Working Level is required",
