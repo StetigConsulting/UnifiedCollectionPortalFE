@@ -151,7 +151,7 @@ const DailyEnergyCollection = () => {
                 }
             },
             ...data?.agentRole && { agent_role: data?.agentRole },
-            ...data?.agentMode && { agent_mode: data?.agentMode },
+            // ...data?.agentMode && { agent_mode: data?.agentMode },
             ...data?.collectionMode && { pay_mode: data?.collectionMode },
             ...data.workingLevel && {
                 office_structure_id: data.workingLevel === levelNameMappedWithId.CIRCLE
@@ -310,7 +310,7 @@ const DailyEnergyCollection = () => {
 
             const a = document.createElement("a");
             a.href = url;
-            a.download = `${filename}.${extension}`;
+            a.download = filename.includes(`.${extension}`) ? filename : `${filename}.${extension}`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -352,8 +352,6 @@ const DailyEnergyCollection = () => {
                         {...register('dateType')} errors={errors?.dateType} />
                     <CustomizedSelectInputWithLabel label='Agent Role' list={agentRolePicklist}
                         {...register('agentRole')} errors={errors?.agentRole} />
-                    <CustomizedSelectInputWithLabel label='Agent Mode' list={agentWorkingType}
-                        {...register('agentMode')} errors={errors?.agentMode} />
                     <CustomizedSelectInputWithLabel label='Collection Mode' list={permissions}
                         {...register('collectionMode', {})} errors={errors?.collectionMode} />
                     <CustomizedSelectInputWithLabel label='Working level' list={workingLevelList}

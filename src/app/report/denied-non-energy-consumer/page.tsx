@@ -7,7 +7,7 @@ import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
 import { agentRolePicklist, agentWorkingType, dateTypePicklist, exportPicklist, getErrorMessage, tableDataPerPage } from '@/lib/utils';
-import { downloadDailyEnergyCollectionReport, downloadDailyNonEnergyCollectionReport, getDailyEnergyCollectionReport, getDeniedEnergyConsumerReport, getDeniedNonEnergyConsumerReport } from '@/app/api-calls/report/api';
+import { downloadDailyEnergyCollectionReport, downloadDailyNonEnergyCollectionReport, downloadDeniedNonEnergyConsumerReport, getDailyEnergyCollectionReport, getDeniedEnergyConsumerReport, getDeniedNonEnergyConsumerReport } from '@/app/api-calls/report/api';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
 import { getAgenciesWithDiscom, getAllPaymentModes, getLevels, getLevelsDiscomId } from '@/app/api-calls/department/api';
 import { useSession } from 'next-auth/react';
@@ -289,10 +289,10 @@ const DeniedEnergyConsumer = () => {
         try {
             setIsLoading(true);
             let payload = getPayload(formData)
-            const response = await downloadDailyNonEnergyCollectionReport(payload, type)
+            const response = await downloadDeniedNonEnergyConsumerReport(payload, type)
 
             const contentDisposition = response.headers["content-disposition"];
-            let filename = "DailyEnergyCollectionReport";
+            let filename = "DeniedNonEnergyConsumerReport";
 
             if (contentDisposition) {
                 const matches = contentDisposition.match(/filename="(.+)"/);
@@ -309,7 +309,7 @@ const DeniedEnergyConsumer = () => {
 
             const a = document.createElement("a");
             a.href = url;
-            a.download = `${filename}.${extension}`;
+            a.download = filename.includes(`.${extension}`) ? filename : `${filename}.${extension}`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -413,8 +413,9 @@ const DeniedEnergyConsumer = () => {
                         errors={errors.pageSize}
                     />
 
-                    <div className={`self-end ${Object.keys(errors).length > 0 &&
-                        formData?.workingLevel != levelNameMappedWithId?.CIRCLE ? 'mb-5' : ''}`}>
+                    <div className={`self - end ${Object.keys(errors).length > 0 &&
+                        formData?.workingLevel != levelNameMappedWithId?.CIRCLE ? 'mb-5' : ''
+                        } `}>
                         <Button variant='default' type='submit'>Search</Button>
                     </div>
                     <CustomizedSelectInputWithLabel

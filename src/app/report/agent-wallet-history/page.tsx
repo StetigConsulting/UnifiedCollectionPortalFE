@@ -165,7 +165,7 @@ const AgentWalletHistory = () => {
 
             const a = document.createElement("a");
             a.href = url;
-            a.download = `${filename}.${extension}`;
+            a.download = filename.includes(`.${extension}`) ? filename : `${filename}.${extension}`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);

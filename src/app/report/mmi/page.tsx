@@ -2,6 +2,7 @@
 
 import { getAllAgentByAgencyId } from '@/app/api-calls/agency/api';
 import { getAgenciesWithDiscom, getAgencyById, getLevels, getLevelsDiscomId } from '@/app/api-calls/department/api';
+import { getRosourceByDiscomId } from '@/app/api-calls/other/api';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode'
 import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
@@ -68,9 +69,16 @@ const MMI = () => {
         setIsLoading(false)
     }
 
+    const [discomName, setDiscomName] = useState('')
+
     useEffect(() => {
         getWorkingLevel()
         getAgencyByDiscom()
+        getRosourceByDiscomId(session?.user?.discomId).then((res) => {
+            console.log(res)
+            const logoValue = res.data.find(item => item.name === "Name")?.value;
+            setDiscomName(logoValue);
+        })
     }, [])
 
     const handleWorkingLevelChange = (selectedValue) => {
@@ -186,7 +194,7 @@ const MMI = () => {
     const onSubmit = (data) => {
         let payload = {
             access_token: "da7af3e8-86b3-4177-9190-64a8664d96bd",
-            discom: session?.user?.discomId.toString(),
+            discom: discomName,
             fromDate: moment(data.fromDate).format('DD-MM-YYYY'),
             toDate: moment(data.toDate).format('DD-MM-YYYY'),
             workingLevel: data.workingLevel,
@@ -195,7 +203,7 @@ const MMI = () => {
             subDivision: data.subDivision?.length > 0 ? data.subDivision?.[0] : null,
             section: data.section?.length > 0 ? data.section?.[0] : null,
             userId: formData?.agentMobile ? formData?.agentMobile : null,
-            app_category: 'TP_COLLECTION',
+            app_category: 'TPCODL_SBM',
             fcc_id: 'null',
             manager_id: 'null',
         }

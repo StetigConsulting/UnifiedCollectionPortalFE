@@ -7,7 +7,7 @@ import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
 import { agentRolePicklist, agentWorkingType, dateTypePicklist, exportPicklist, getErrorMessage, tableDataPerPage } from '@/lib/utils';
-import { downloadDailyEnergyCollectionReport, getDailyEnergyCollectionReport, getDeniedEnergyConsumerReport } from '@/app/api-calls/report/api';
+import { downloadDailyEnergyCollectionReport, downloadDeniedEnergyConsumerReport, getDailyEnergyCollectionReport, getDeniedEnergyConsumerReport } from '@/app/api-calls/report/api';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
 import { getAgenciesWithDiscom, getAllPaymentModes, getLevels, getLevelsDiscomId } from '@/app/api-calls/department/api';
 import { useSession } from 'next-auth/react';
@@ -291,7 +291,7 @@ const DeniedEnergyConsumer = () => {
         try {
             setIsLoading(true);
             let payload = getPayload(formData)
-            const response = await downloadDailyEnergyCollectionReport(payload, type)
+            const response = await downloadDeniedEnergyConsumerReport(payload, type)
 
             const contentDisposition = response.headers["content-disposition"];
             let filename = "DeniedToPayConsumerEnergy";
@@ -311,7 +311,7 @@ const DeniedEnergyConsumer = () => {
 
             const a = document.createElement("a");
             a.href = url;
-            a.download = `${filename}.${extension}`;
+            a.download = filename.includes(`.${extension}`) ? filename : `${filename}.${extension}`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
