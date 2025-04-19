@@ -111,9 +111,11 @@ const AgencyWalletHistory = () => {
         { label: 'Agency Name', key: 'agency_name', sortable: true },
         { label: 'Agency Mobile', key: 'agency_mobile', sortable: true },
         { label: 'TXN type', key: 'transaction_type', sortable: true },
+        { label: 'Transaction id', key: 'transaction_id', sortable: true },
         { label: 'Top Up / Reverse', key: 'transaction_amount', sortable: true, align: 'center' },
         { label: 'Current Balance', key: 'balance_after_txn', sortable: true, align: 'center' },
         { label: 'Previous Balance', key: 'balance_before_txn', sortable: true, align: 'center' },
+        { label: 'Remarks', key: 'remarks', sortable: true },
         { label: 'TXN Date', key: 'transaction_date', sortable: true },
     ], []);
 
@@ -208,7 +210,6 @@ const AgencyWalletHistory = () => {
 
                 <CustomizedInputWithLabel
                     label="Transaction ID"
-                    type='number'
                     {...register("transactionId")}
                     errors={errors.transactionId}
                 />

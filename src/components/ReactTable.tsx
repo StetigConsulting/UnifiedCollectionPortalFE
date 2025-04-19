@@ -323,7 +323,7 @@ const ReactTable = <T extends Record<string, any>>({
                     </button>
                 </div>
             }
-            {/* {
+            {
                 dynamicPagination &&
                 <div style={{ marginTop: '10px', textAlign: 'center' }}>
                     <button onClick={() => onPageChange(pageNumber - 1)} disabled={pageNumber === 1}>
@@ -334,13 +334,13 @@ const ReactTable = <T extends Record<string, any>>({
                         Next
                     </button>
                 </div>
-            } */}
-            {
+            }
+            {/* {
                 (dynamicPagination && totalPageNumber > 0) &&
                 <div style={{ marginTop: '10px', textAlign: 'center' }}>
                     <PaginationComponent totalPages={totalPageNumber} onPageChange={onPageChange} />
                 </div>
-            }
+            } */}
         </div >
     );
 };

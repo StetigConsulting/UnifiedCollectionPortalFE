@@ -70,7 +70,7 @@ const dashboard = () => {
       const response = await getBillingDataUploadHistory(payload)
       setTableData(response.data)
       setShowTable(true)
-      console.log(response)
+      console.log('billin', response)
     } catch (e) {
       toast.error('Error: ' + getErrorMessage(e))
     }
@@ -94,7 +94,7 @@ const dashboard = () => {
 
   const structureTableData = tableData.map((item, index) => ({
     ...item,
-    formattedDate: moment(item.uploaded_date).format('DD/MM/YYYY, HH:mm:ss A')
+    formattedDate: moment(item.upload_date).format('DD/MM/YYYY, HH:mm:ss A')
   }));
 
   const mergeComparisionData = (date1Data = [], date2Data = [], date1Label = "Date 1", date2Label = "Date 2") => {
@@ -173,7 +173,7 @@ const dashboard = () => {
   };
 
   const getComparisonChartOptions = (date1, date2) => ({
-    title: `Disomwise Performance`,
+    // title: `Disomwise Performance`,
     hAxis: {
       title: 'Discomwise Performance',
       titleTextStyle: { italic: true, fontSize: 12 },
@@ -307,7 +307,9 @@ const dashboard = () => {
   };
 
   const formulateTheTransactionResponse = (list) => {
-    const response = [["Date", "Current", "Previous"]];
+    const currentLabel = `${moment(formData?.currentMonth, 'MM').format('MMMM')} ${formData?.currentYear}`;
+    const previousLabel = `${moment(formData?.previousMonth, 'MM').format('MMMM')} ${formData?.previousYear}`;
+    const response = [["Date", currentLabel, previousLabel]];
     list.forEach(item => {
       response.push([
         item.upload_date,
@@ -319,11 +321,11 @@ const dashboard = () => {
   };
 
   const transactionChartOption = (currentLabel, previousLabel) => ({
-    title: `Transactions Summary`,
+    // title: `Transactions Summary`,
     // title: `Transaction Summary: ${currentLabel} vs ${previousLabel}`,
     bars: 'vertical',
     hAxis: {
-      title: 'Upload Date',
+      title: 'Date',
       titleTextStyle: { italic: true, fontSize: 12 },
       textStyle: { fontSize: 12 },
     },
@@ -336,7 +338,7 @@ const dashboard = () => {
       gridlines: { color: 'transparent' },
     },
     bar: { groupWidth: '50%' },
-    chartArea: { width: '75%', height: '70%' },
+    chartArea: { width: '70%', height: '70%' },
     series: {
       0: { color: '#81ea81' },
       1: { color: '#c95d5d' },
@@ -424,6 +426,9 @@ const dashboard = () => {
               </div>
             </div>
             {transactionData.length > 0 && <>
+              <div className="text-center text-xl font-semibold text-gray-800 mt-4">
+                Transactions Summary
+              </div>
               <div className="w-full h-[400px]">
                 <Chart
                   chartType="ColumnChart"
@@ -467,6 +472,9 @@ const dashboard = () => {
               </div>
             </div>
             {comparisionData.length > 0 && <>
+              <div className="text-center text-xl font-semibold text-gray-800 mt-4">
+                Performance Summary
+              </div>
               <div className="w-full h-[400px]">
                 <Chart
                   chartType="ColumnChart"
