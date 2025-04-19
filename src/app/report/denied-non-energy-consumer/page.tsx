@@ -413,7 +413,7 @@ const DeniedEnergyConsumer = () => {
                         errors={errors.pageSize}
                     />
 
-                    <div className={`self - end ${Object.keys(errors).length > 0 &&
+                    <div className={`self-end ${Object.keys(errors).length > 0 &&
                         formData?.workingLevel != levelNameMappedWithId?.CIRCLE ? 'mb-5' : ''
                         } `}>
                         <Button variant='default' type='submit'>Search</Button>
