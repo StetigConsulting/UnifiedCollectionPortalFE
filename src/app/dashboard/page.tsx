@@ -18,6 +18,7 @@ import moment from "moment";
 import { Chart } from "react-google-charts";
 import CustomizedSelectInputWithLabel from "@/components/CustomizedSelectInputWithLabel";
 import { checkIfUserHasActionAccess } from "@/helper";
+import { getLevels } from "../api-calls/department/api";
 
 type FormData = z.infer<typeof dashboardSchema>;
 
@@ -161,7 +162,9 @@ const dashboard = () => {
   };
 
   const formulateTheResponse = (list, date1, date2) => {
-    const response = [["Division", date1, date2]];
+    const currentLabel = `${moment(date1).format('DD MMM, YYYY')}`;
+    const previousLabel = `${moment(date2).format('DD MMM, YYYY')}`;
+    const response = [[levelName + 's', currentLabel, previousLabel]];
     list.forEach((item) => {
       response.push([
         item.label,
@@ -175,19 +178,19 @@ const dashboard = () => {
   const getComparisonChartOptions = (date1, date2) => ({
     // title: `Disomwise Performance`,
     hAxis: {
-      title: 'Discomwise Performance',
+      title: levelName,
       titleTextStyle: { italic: true, fontSize: 12 },
       textStyle: { fontSize: 12 },
     },
     vAxis: {
-      title: 'No. of Transactions',
+      title: 'Amount',
       titleTextStyle: { italic: true, fontSize: 12 },
       textStyle: { fontSize: 12 },
       gridlines: { color: 'transparent' },
       format: 'short',
     },
     bar: { groupWidth: '50%' },
-    chartArea: { width: '75%', height: '70%' },
+    chartArea: { width: '70%', height: '70%' },
     series: {
       0: { color: '#81ea81' },
       1: { color: '#c95d5d' },
@@ -306,6 +309,21 @@ const dashboard = () => {
     }
   };
 
+  const [levelName, setLevelName] = useState('')
+
+  const getWorkingLevel = async () => {
+    setIsLoading(true)
+    await getLevels(session?.user?.discomId).then((data) => {
+      let newData = data?.data.filter((item) => (item.levelType === "MAIN" && item?.level === 2))
+      let levelName = newData?.[0]?.levelName;
+      if (levelName) {
+        levelName = levelName.charAt(0).toUpperCase() + levelName.slice(1).toLowerCase();
+      }
+      setLevelName(levelName)
+    })
+    setIsLoading(false)
+  }
+
   const formulateTheTransactionResponse = (list) => {
     const currentLabel = `${moment(formData?.currentMonth, 'MM').format('MMMM')} ${formData?.currentYear}`;
     const previousLabel = `${moment(formData?.previousMonth, 'MM').format('MMMM')} ${formData?.previousYear}`;
@@ -370,6 +388,7 @@ const dashboard = () => {
   }, [])
 
   const fetchAllDataWithDefaultValues = async () => {
+    await getWorkingLevel()
     checkIfUserHasActionAccess({ backendScope: session?.user?.userScopes, currentAction: "dashboardBillUploadHistory" }) &&
       await getBillingUploadHistory()
     checkIfUserHasActionAccess({ backendScope: session?.user?.userScopes, currentAction: "dashboardPerformanceSummary" }) &&
@@ -473,7 +492,7 @@ const dashboard = () => {
             </div>
             {comparisionData.length > 0 && <>
               <div className="text-center text-xl font-semibold text-gray-800 mt-4">
-                Performance Summary
+                {levelName}wise Summary
               </div>
               <div className="w-full h-[400px]">
                 <Chart
