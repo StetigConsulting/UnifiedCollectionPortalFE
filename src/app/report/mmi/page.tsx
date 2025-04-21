@@ -203,7 +203,7 @@ const MMI = () => {
             subDivision: data.subDivision?.length > 0 ? data.subDivision?.[0] : null,
             section: data.section?.length > 0 ? data.section?.[0] : null,
             userId: formData?.agentMobile ? formData?.agentMobile : null,
-            app_category: null,
+            app_category: 'TP_COLLECTION',
             fcc_id: 'null',
             manager_id: 'null',
         }
