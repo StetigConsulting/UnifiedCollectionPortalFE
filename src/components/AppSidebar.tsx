@@ -186,6 +186,11 @@ const navData = {
           url: "/agency/recharge",
         },
         {
+          title: "Reverse Balance",
+          icon: UserPlus2,
+          url: "/agency/reverse-agent-balance",
+        },
+        {
           title: "Extend Validity",
           icon: UserPlus2,
           url: "/agency/extend-validity",

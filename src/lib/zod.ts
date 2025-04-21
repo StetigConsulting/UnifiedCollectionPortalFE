@@ -1499,3 +1499,21 @@ export const viewCollectionSummarySchema = z.object({
 });
 
 export type ViewCollectionSummarySchemaData = z.infer<typeof viewCollectionSummarySchema>;
+
+export const reverseAgentBalanceSchema = z.object({
+  collectorMobile: z.number().min(10, 'Mobile number must be at least 10 digits'),
+  agencyId: z.number(),
+  agencyName: z.string().min(1, "Agency Name is required"),
+  phoneNumber: z.string().min(10, "Phone Number should be 10 digits"),
+  maximumRecharge: z.number().positive("Maximum recharge must be greater than 0"),
+  amount: z.number({
+    invalid_type_error: 'Amount is required'
+  }).min(1, {
+    message: "Amount must be greater than 0"
+  }).positive("Amount must be greater than 0"),
+  transactionType: z.string(),
+  currentBalance: z.number(),
+  remark: z.string().optional(),
+});
+
+export type ReverseAgentBalanceFormData = z.infer<typeof reverseAgentBalanceSchema>;

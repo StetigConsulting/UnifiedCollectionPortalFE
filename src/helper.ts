@@ -37,6 +37,7 @@ export const listOfUrlForScopes = [
   { url: "/agency/add-collector", backendScopeName: "TPCollectionWebPortal:agent:CREATE" },
   { url: "/agency/view-collector", backendScopeName: "TPCollectionWebPortal:agent:VIEW" },
   { url: "/agency/recharge", backendScopeName: "TPCollectionWebPortal:agent:RECHARGE_WALLET" },
+  { url: "/agency/reverse-agent-balance", backendScopeName: "TPCollectionWebPortal:agent:REVERSE_WALLET" },
   { url: "/agency/extend-validity", backendScopeName: "TPCollectionWebPortal:agent:EXTEND_VALIDITY" },
   { url: "/agency/edit-collector", backendScopeName: "TPCollectionWebPortal:agent:EDIT" },
   { url: "/agency/activate-agent", backendScopeName: "TPCollectionWebPortal:agent:ACTIVATE" },

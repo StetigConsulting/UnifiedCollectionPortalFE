@@ -213,3 +213,13 @@ export const resetDeviceById = async (id: number) => {
         throw error?.response?.data
     }
 }
+
+export const reverseAgentBalance = async (data: any) => {
+    try {
+        const response = await api.put(`/v1/agents/reverse-wallet`, data);
+        return response.data;
+    } catch (error) {
+
+        throw error?.response?.data
+    }
+}
