@@ -1484,3 +1484,18 @@ export const mmiReportSchema = z.object({
 });
 
 export type MmiReportSchemaData = z.infer<typeof mmiReportSchema>;
+
+export const viewCollectionSummarySchema = z.object({
+  fromDate: z.string().min(1, "From Date is required"),
+  toDate: z.string().min(1, "To Date is required"),
+  dateType: z.string().min(1, "Date Type is required"),
+  viewType: z.string().min(1, "View Type is required"),
+  workingLevel: z.any().optional(),
+  circle: z.array(z.number()).optional(),
+  division: z.array(z.number()).optional(),
+  subDivision: z.array(z.number()).optional(),
+  section: z.array(z.number()).optional(),
+  agencyName: z.string().optional(),
+});
+
+export type ViewCollectionSummarySchemaData = z.infer<typeof viewCollectionSummarySchema>;

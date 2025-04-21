@@ -300,6 +300,12 @@ export const dateTypePicklist = [
   { label: 'Upload Date', value: 'upload_date' }
 ]
 
+export const viewTypePicklist = [
+  { label: 'Datewise Summary', value: 'DateWise' },
+  { label: 'Monthwise Summary', value: 'MonthWise' },
+  { label: 'Total Summary', value: 'Total' }
+]
+
 export const agentRolePicklist = [
   { label: 'Door To Door', value: 'Door To Door' },
   { label: 'Counter Collector', value: 'Counter Collector' }

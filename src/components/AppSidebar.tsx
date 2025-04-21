@@ -345,6 +345,11 @@ const navData = {
           title: 'MMI',
           icon: UserPlus2,
           url: "/report/mmi",
+        },
+        {
+          title: 'Energy Collection Summary',
+          icon: UserPlus2,
+          url: "/report/energy-collection-summary",
         }
       ]
     },
