@@ -51,10 +51,10 @@ const AgentDepositAcknowledgementReport = () => {
             page: page,
             page_size: formData?.pageSize,
             filter: {
-                ...(dateFrom && dateTo) && {
+                ...(formData.dateFrom && formData.dateTo) && {
                     deposit_date_range: {
-                        "from_date": dateFrom,
-                        "to_date": dateTo
+                        "from_date": formData.dateFrom,
+                        "to_date": formData.dateTo
                     }
                 },
                 ...agencyName && {
@@ -99,12 +99,15 @@ const AgentDepositAcknowledgementReport = () => {
 
     const handleSearch = () => {
         let payload = {
-            ...(dateFrom && dateTo) && {
+            ...(formData.dateFrom && formData.dateTo) && {
                 deposit_date_range: {
-                    "from_date": dateFrom,
-                    "to_date": dateTo
+                    "from_date": formData.dateFrom,
+                    "to_date": formData.dateTo
                 }
             },
+            ...formData.agencyName && {
+                agency_name: formData.agencyName
+            }
         }
         fetchReport(payload, 1)
     }
