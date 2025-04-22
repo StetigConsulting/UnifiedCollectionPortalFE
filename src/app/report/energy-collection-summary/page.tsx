@@ -314,6 +314,8 @@ const DailyEnergyCollectionSummary = () => {
     }
 
     const formattedData = () => {
+        let colors = ['#E9FEFE', '#FDFFE7']
+        let colorIndex = 0
         let data = [];
         let index = 1;
         dataList?.map((item) => {
@@ -325,6 +327,7 @@ const DailyEnergyCollectionSummary = () => {
                     total_amount: subItem.total_amount,
                     total_transaction: subItem.total_transaction,
                     date_month: subItem.date_month,
+                    color: colors[colorIndex % 2]
                 }))
             if (subdata?.length > 0) {
                 data.push(...subdata)
@@ -336,7 +339,9 @@ const DailyEnergyCollectionSummary = () => {
                 total_amount: item.total_amount,
                 total_transaction: item.total_transaction,
                 date_month: item.date_month,
+                color: colors[colorIndex % 2]
             })
+            colorIndex++;
         })
         return data
     }

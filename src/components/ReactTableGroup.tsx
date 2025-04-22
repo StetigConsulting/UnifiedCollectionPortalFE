@@ -162,7 +162,7 @@ const ReactGroupTable = <T extends Record<string, any>>({
             }
             <div className='overflow-x-auto w-full'>
                 <table border={1} width="100%" cellPadding={5} className='w-full caption-bottom text-sm min-w-full border border-gray-200 divide-y divide-gray-200'>
-                    <thead className="bg-themeShade3 z-10 text-sm text-gray-700 uppercase tracking-wider">
+                    <thead className="bg-gray-100 z-10 text-sm text-black-500 uppercase tracking-wider">
                         <tr>
                             {isSelectable && <th className="px-2 py-3"></th>}
                             {!avoidSrNo && <th className="px-2 py-3">#</th>}
@@ -191,7 +191,8 @@ const ReactGroupTable = <T extends Record<string, any>>({
                                         <tr
                                             key={rowKey}
                                             onClick={() => onRowClick && onRowClick(item)}
-                                            className={`transition-all border-b hover:bg-gray-50 ${isTotalRow ? 'font-bold bg-gray-100' : ''}`}
+                                            className={`transition-all border-b hover:bg-gray-50 ${isTotalRow ? 'font-bold' : ''}`}
+                                            style={item?.color ? { backgroundColor: item?.color } : {}}
                                         >
                                             {isSelectable && <td className="p-2 text-center">
                                                 <input

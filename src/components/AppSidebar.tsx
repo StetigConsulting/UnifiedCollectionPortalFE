@@ -54,58 +54,11 @@ const navData = {
       path: '/dashboard',
     },
     {
-      title: "Dashboard",
-      url: "/agency-dashboard",
-      icon: Gauge,
-      path: '/agency-dashboard',
-    },
-    {
-      title: "Action",
+      title: "Configuration",
       icon: Folder,
       url: "#",
       path: '/department/',
       items: [
-        {
-          title: "Add Agency",
-          icon: UserPlus2,
-          url: "/department/add-agency",
-        },
-        {
-          title: "Recharge",
-          icon: CreditCard,
-          url: "/department/recharge",
-        },
-        {
-          title: "Agency Bank Deposit",
-          icon: CreditCard,
-          url: "/department/bank-deposit",
-        },
-        {
-          title: "Change Collector Type",
-          icon: UserCogIcon,
-          url: "/department/collector-type",
-        },
-        { title: "Edit Agency", icon: Edit, url: "/department/edit-agency" },
-        { title: "Edit Agency Area", icon: Edit, url: "/department/edit-agency-area" },
-        { title: "Edit Agent Area & Role", icon: Edit, url: "/department/edit-agent-area" },
-        { title: "Extend Validity", icon: Calendar, url: "/department/extend-validity" },
-        { title: "View Agency", icon: Eye, url: '/department/view-agency' },
-        { title: "View Balance", icon: Wallet, url: '/department/view-balance' },
-        { title: "Reset Device (Collector)", icon: MonitorCog, url: '/department/reset-device' },
-        // { title: "Change Collector Role", icon: FolderSync, url: '/department/change-collector-role' },
-        // { title: "Change Section", icon: FolderSync, url: '/department/change-section' },
-        {
-          title: 'Department User',
-          url: '/admin/department-user',
-          icon: UserPlus2,
-          path: '/admin/department-user'
-        },
-        {
-          title: 'Office Structure',
-          url: '/admin/office-structure',
-          icon: FolderClosed,
-          path: '/admin/office-stucture'
-        },
         {
           title: 'Mode Of Payment',
           url: '/admin/mode-of-payment',
@@ -131,6 +84,83 @@ const navData = {
           path: '/admin/add-collector-type',
         },
         {
+          title: 'Office Structure',
+          url: '/admin/office-structure',
+          icon: FolderClosed,
+          path: '/admin/office-stucture'
+        },
+        {
+          title: 'Receipt For Postpaid',
+          url: '/admin/receipt-for-postpaid',
+          icon: ReceiptText,
+          path: '/admin/receipt-for-postpaid',
+        },
+        {
+          title: "Pseudo Level Mapping",
+          icon: UserPlus2,
+          url: "/agency/binder-mapping",
+        },
+      ]
+    },
+    {
+      title: "Agency Management",
+      icon: Folder,
+      url: "#",
+      path: '/department/',
+      items: [
+        {
+          title: "Add Agency",
+          icon: UserPlus2,
+          url: "/department/add-agency",
+        },
+        {
+          title: "Recharge",
+          icon: CreditCard,
+          url: "/department/recharge",
+        },
+        { title: "Edit Agency", icon: Edit, url: "/department/edit-agency" },
+        { title: "Edit Agency Area", icon: Edit, url: "/department/edit-agency-area" },
+        { title: "Extend Validity", icon: Calendar, url: "/department/extend-validity" },
+        { title: "View Agency", icon: Eye, url: '/department/view-agency' },
+      ]
+    },
+    {
+      title: "Agent Management",
+      icon: Folder,
+      url: "#",
+      path: '/department/',
+      items: [
+        { title: "Edit Agent Area & Role", icon: Edit, url: "/department/edit-agent-area" },
+      ]
+    },
+    {
+      title: "Action",
+      icon: Folder,
+      url: "#",
+      path: '/department/',
+      items: [
+
+        {
+          title: "Agency Bank Deposit",
+          icon: CreditCard,
+          url: "/department/bank-deposit",
+        },
+        {
+          title: "Change Collector Type",
+          icon: UserCogIcon,
+          url: "/department/collector-type",
+        },
+        { title: "View Balance", icon: Wallet, url: '/department/view-balance' },
+        { title: "Reset Device (Collector)", icon: MonitorCog, url: '/department/reset-device' },
+        // { title: "Change Collector Role", icon: FolderSync, url: '/department/change-collector-role' },
+        // { title: "Change Section", icon: FolderSync, url: '/department/change-section' },
+        {
+          title: 'Department User',
+          url: '/admin/department-user',
+          icon: UserPlus2,
+          path: '/admin/department-user'
+        },
+        {
           title: 'Color Coding',
           url: '/admin/color-coding',
           icon: Gauge,
@@ -148,12 +178,7 @@ const navData = {
           icon: Import,
           path: '/admin/import',
         },
-        {
-          title: 'Receipt For Postpaid',
-          url: '/admin/receipt-for-postpaid',
-          icon: ReceiptText,
-          path: '/admin/receipt-for-postpaid',
-        },
+
         {
           title: 'Create New User',
           url: '/admin/create-new-user',
@@ -175,11 +200,7 @@ const navData = {
           icon: Eye,
           url: "/agency/view-collector",
         },
-        {
-          title: "Pseudo Level Mapping",
-          icon: UserPlus2,
-          url: "/agency/binder-mapping",
-        },
+
         {
           title: "Recharge Agent",
           icon: UserPlus2,

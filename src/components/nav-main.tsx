@@ -59,7 +59,7 @@ export function NavMain({
           if (!hasAccessToParent) return null;
         }
 
-        const isDefaultOpen = pathname.includes(item.path) || item.title === 'Action';
+        const isDefaultOpen = pathname.includes(item.path);
 
         return (
           <Collapsible
