@@ -52,7 +52,7 @@ export const listOfUrlForScopes = [
   { url: "/report/denied-non-energy-consumer", backendScopeName: "TPCollectionWebPortal:non_energy_denied_consumers_report:READ" },
   { url: "/report/denied-energy-consumer", backendScopeName: "TPCollectionWebPortal:energy_denied_consumers_report:READ" },
   { url: "/report/mmi", backendScopeName: "TPCollectionWebPortal:mmi:VIEW" },
-  // { url: "/report/energy-collection-summary", backendScopeName: "TPCollectionWebPortal:energy_collection_summary_report:READ" },
+  { url: "/report/energy-collection-summary", backendScopeName: "TPCollectionWebPortal:energy_collection_summary_report:READ" },
 ];
 
 
