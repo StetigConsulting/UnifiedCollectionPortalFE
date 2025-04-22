@@ -6,7 +6,7 @@ import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
-import { agentRolePicklist, agentWorkingType, dateTypePicklist, exportPicklist, getErrorMessage, tableDataPerPage } from '@/lib/utils';
+import { agentRolePicklist, agentWorkingType, dateTypePicklist, exportPicklist, formatDate, getErrorMessage, tableDataPerPage } from '@/lib/utils';
 import { downloadDailyEnergyCollectionReport, downloadDeniedEnergyConsumerReport, getDailyEnergyCollectionReport, getDeniedEnergyConsumerReport } from '@/app/api-calls/report/api';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
 import { getAgenciesWithDiscom, getAllPaymentModes, getLevels, getLevelsDiscomId } from '@/app/api-calls/department/api';
@@ -132,7 +132,7 @@ const DeniedEnergyConsumer = () => {
         { label: 'Bill Issue Date', key: 'bill_issue_date', sortable: true },
         { label: 'Due Date', key: 'due_date', sortable: true },
         { label: 'Amount', key: 'amount', sortable: true },
-        { label: 'Merchant Ref No', key: 'money_receipt_no', sortable: true },
+        { label: 'Merchant Ref No', key: 'merchant_ref_no', sortable: true },
         { label: 'Reason', key: 'reason', sortable: true },
         { label: 'Promise to pay date', key: 'promise_to_pay_date', sortable: true },
         { label: 'Remarks', key: 'remarks', sortable: true },
@@ -329,7 +329,11 @@ const DeniedEnergyConsumer = () => {
         let payload = getPayload(formData)
         getReportData(payload, page)
     }
-    console.log(errors)
+
+    const formatData = dataList.map((item) => ({
+        ...item,
+        entry_date: item?.entry_date ? formatDate(item?.entry_date) : null,
+    }))
 
 
     return (
@@ -434,7 +438,7 @@ const DeniedEnergyConsumer = () => {
 
             <div className="overflow-x-auto mb-4 mt-4">
                 {showTable && <ReactTable
-                    data={dataList}
+                    data={formatData}
                     columns={columns}
                     hideSearchAndOtherButtons
                     dynamicPagination

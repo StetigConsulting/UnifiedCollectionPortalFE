@@ -130,7 +130,7 @@ const DeniedEnergyConsumer = () => {
         { label: 'Consumer No', key: 'consumer_no', sortable: true },
         { label: 'Consumer Name', key: 'consumer_name', sortable: true },
         { label: 'Amount', key: 'amount', sortable: true },
-        { label: 'Merchant Ref No', key: 'money_receipt_no', sortable: true },
+        { label: 'Merchant Ref No', key: 'merchant_ref_no', sortable: true },
         { label: 'Reason', key: 'reason', sortable: true },
         { label: 'Promise to pay date', key: 'promise_to_pay_date', sortable: true },
         { label: 'Remarks', key: 'remarks', sortable: true },
