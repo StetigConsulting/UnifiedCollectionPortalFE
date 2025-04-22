@@ -116,11 +116,12 @@ const DailyEnergyCollectionSummary = () => {
     }
 
     const columns = useMemo(() => [
-        { label: 'Agency Name', key: 'agency_name', sortable: true },
-        { label: 'Agency Id', key: 'agency_id', sortable: true },
-        { label: 'Date / Month', key: 'date_month', sortable: true },
-        { label: 'Total Txn', key: 'total_amount', sortable: true },
-        { label: 'Total Amount', key: 'total_transaction', sortable: true },
+        { label: 'S.No', key: 'index', sortable: false },
+        { label: 'Agency Name', key: 'agency_name', sortable: false },
+        { label: 'Agency Id', key: 'agency_id', sortable: false },
+        { label: 'Date / Month', key: 'date_month', sortable: false },
+        { label: 'Total Txn', key: 'total_amount', sortable: false },
+        { label: 'Total Amount', key: 'total_transaction', sortable: false, align: 'center' },
     ], []);
 
     const getPayload = (data) => {
@@ -314,16 +315,28 @@ const DailyEnergyCollectionSummary = () => {
 
     const formattedData = () => {
         let data = [];
+        let index = 1;
         dataList?.map((item) => {
             let subdata = item?.collection_summary
                 ?.map((subItem) => ({
+                    index: index++,
                     agency_id: item.agency_id,
                     agency_name: item.agency_name,
                     total_amount: subItem.total_amount,
                     total_transaction: subItem.total_transaction,
                     date_month: subItem.date_month,
                 }))
-            data.push(...subdata)
+            if (subdata?.length > 0) {
+                data.push(...subdata)
+            }
+            data.push({
+                index: 'TOTAL',
+                agency_id: item.agency_id,
+                agency_name: item.agency_name,
+                total_amount: item.total_amount,
+                total_transaction: item.total_transaction,
+                date_month: item.date_month,
+            })
         })
         return data
     }
@@ -427,12 +440,12 @@ const DailyEnergyCollectionSummary = () => {
                         }}
                     />
                 </div>
-
             </form>
 
             <div className="overflow-x-auto mb-4 mt-4">
                 {showTable && <ReactGroupTable
                     data={formattedData()}
+                    avoidSrNo
                     columns={columns}
                     hideSearchAndOtherButtons
                     dynamicPagination
