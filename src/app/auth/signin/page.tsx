@@ -92,9 +92,11 @@ const SignUpForm = () => {
 					<Image alt="" width={1000} height={1000} src="/images/power.jpg" className='w-full h-full object-cover' />
 				</div>
 				<div className="ps-16 p-4 flex flex-col justify-center min-h-[80vh]">
-					<h3 className="title mb-8">Login</h3>
-					<form onSubmit={handleSubmit(onSubmit)} className="w-[400px] max-w-md relative min-h-[250px]">
+
+					<form onSubmit={handleSubmit(onSubmit)} className="w-[400px] max-w-md relative min-h-[250px] m-auto">
 						{/* Mobile Number Field */}
+						<img alt="" src="/images/logo.png" width={100} className='m-auto mb-4' />
+						<h3 className="title mb-8">Login</h3>
 						<div className="mb-4">
 							<label htmlFor="mobileNumber" className="block text-sm font-medium text-gray-700">Mobile Number</label>
 							<input

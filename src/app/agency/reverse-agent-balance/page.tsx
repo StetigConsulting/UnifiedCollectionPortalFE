@@ -14,6 +14,7 @@ import { getAllAgentByAgencyId, getRechargeableBalance, rechargeAgentById, rever
 import { getErrorMessage, numberToWords } from "@/lib/utils";
 import { getAgencyById, getAgencyRechargeableBalance, getAgentByPhoneNumber } from "@/app/api-calls/department/api";
 import { useSession } from "next-auth/react";
+import AlertPopupWithState from "@/components/Agency/ViewAgency/AlertPopupWithState";
 
 const RechargeEntry = () => {
 
@@ -89,7 +90,7 @@ const RechargeEntry = () => {
         try {
             setIsSubmitting(true);
             const response = await reverseAgentBalance(payload);
-            toast.success("Agent recharged successfully");
+            toast.success("Agent Balance Reversed Successfully");
             console.log("API Response:", response);
             getAgencyBalance()
             // location.reload()
@@ -150,6 +151,8 @@ const RechargeEntry = () => {
             return;
         }
     }
+
+    const [stateForConfirmationPopup, setStateForConfirmationPopup] = useState(false);
 
     return (
         <AuthUserReusableCode pageTitle="Reverse Agent Balance" isLoading={isLoading}>
@@ -237,11 +240,34 @@ const RechargeEntry = () => {
                         </div>
 
                         <div className="text-end">
-                            <Button type="submit" variant="default" disabled={isSubmitting || !showRestFields}>
+                            <AlertPopupWithState
+                                triggerCode={
+                                    <Button
+                                        variant="default"
+                                        disabled={isSubmitting || !showRestFields}
+                                        onClick={handleSubmit((e) => { setStateForConfirmationPopup(true); })}
+                                    >
+                                        {isSubmitting ? (
+                                            <>
+                                                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
+                                            </>
+                                        ) : (
+                                            "Submit"
+                                        )}
+                                    </Button>
+                                }
+                                handleContinue={handleSubmit(onSubmit)}
+                                title="Confirm Reversal"
+                                description="Are you sure you want to reverse the balance of this Agent?"
+                                continueButtonText="Yes"
+                                isOpen={stateForConfirmationPopup}
+                                setIsOpen={setStateForConfirmationPopup}
+                            />
+                            {/* <Button type="submit" variant="default" disabled={isSubmitting || !showRestFields}>
                                 {isSubmitting ? <>
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
                                 </> : "Submit"}
-                            </Button>
+                            </Button> */}
                         </div>
                     </>
                 }
