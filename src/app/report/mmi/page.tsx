@@ -280,12 +280,14 @@ const MMI = () => {
                     <CustomizedInputWithLabel
                         label="From Date"
                         type="date"
+                        required
                         {...register('fromDate')}
                         errors={errors.fromDate}
                     />
                     <CustomizedInputWithLabel
                         label="To Date"
                         type="date"
+                        required
                         {...register('toDate')}
                         errors={errors.toDate}
                     />
@@ -293,11 +295,14 @@ const MMI = () => {
                         label='Agency Name'
                         list={agenciesList}
                         value={watch('agencyName')}
+                        required
+                        {...register('agencyName')}
                         onChange={(e) => handleAgencyChange(e.target.value)}
                         errors={errors?.agencyName}
                     />
+
                     <CustomizedSelectInputWithLabel label='Agent Name' list={agentList}
-                        {...register('agentMobile')}
+                        {...register('agentMobile')} required disabled={!formData.agencyName}
                         errors={errors?.agentMobile} />
                     <CustomizedSelectInputWithLabel label='Working level' list={workingLevelList}
                         {...register('workingLevel', { valueAsNumber: true })}
@@ -356,7 +361,7 @@ const MMI = () => {
                         </>
                     }
 
-                    <div className='self-end mb-1'>
+                    <div className={`self-end ${Object.keys(errors).length > 0 ? 'mb-5' : ''}`}>
                         <Button variant='default' type='submit'>Search</Button>
                     </div>
                 </div>

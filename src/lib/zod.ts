@@ -1390,8 +1390,8 @@ export const mmiReportSchema = z.object({
   division: z.array(z.number()).optional(),
   subDivision: z.array(z.number()).optional(),
   section: z.array(z.number()).optional(),
-  agencyName: z.string().optional(),
-  agentMobile: z.string().optional(),
+  agencyName: z.string().min(1, "Agency Name is required"),
+  agentMobile: z.string().min(1, "Agency Mobile is required"),
   levelMapWithId: z.any(),
 }).superRefine((data, ctx) => {
   const { workingLevel, levelMapWithId } = data;
