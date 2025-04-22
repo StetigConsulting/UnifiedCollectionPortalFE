@@ -1496,6 +1496,9 @@ export const viewCollectionSummarySchema = z.object({
   subDivision: z.array(z.number()).optional(),
   section: z.array(z.number()).optional(),
   agencyName: z.string().optional(),
+  pageSize: z.number(
+    { invalid_type_error: 'Page size is required' }
+  ).min(1, "Page size is required"),
 });
 
 export type ViewCollectionSummarySchemaData = z.infer<typeof viewCollectionSummarySchema>;

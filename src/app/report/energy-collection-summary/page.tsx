@@ -25,7 +25,6 @@ const DailyEnergyCollectionSummary = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1)
     const [totalPages, setTotalPages] = useState(1)
-    const [pageSize, setPageSize] = useState(tableDataPerPage);
     const [dataList, setDataList] = useState([]);
     const [showTable, setShowTable] = useState(false)
 
@@ -37,6 +36,7 @@ const DailyEnergyCollectionSummary = () => {
             division: [],
             subDivision: [],
             section: [],
+            pageSize: tableDataPerPage,
         }
     });
 
@@ -88,7 +88,7 @@ const DailyEnergyCollectionSummary = () => {
     const getReportData = async (applyFilter = {}, page = 1) => {
         let payload = {
             page: currentPage,
-            page_size: pageSize,
+            page_size: formData?.pageSize,
             filter: {}
         };
 
@@ -432,6 +432,7 @@ const DailyEnergyCollectionSummary = () => {
 
                     <CustomizedSelectInputWithLabel label='Agency Name' list={agencyList}
                         {...register('agencyName')} errors={errors?.agencyName} />
+                    <CustomizedInputWithLabel label='Page size' {...register('pageSize', { valueAsNumber: true })} errors={errors?.pageSize} />
                     <div className='self-end mb-1'>
                         <Button variant='default' type='submit'>Search</Button>
                     </div>
