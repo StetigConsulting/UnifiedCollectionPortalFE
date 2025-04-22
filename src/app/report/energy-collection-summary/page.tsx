@@ -17,6 +17,7 @@ import { z } from 'zod';
 import { ViewCollectionSummarySchemaData, viewCollectionSummarySchema } from '@/lib/zod';
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
 import ReactTableGroup from '@/components/ReactTableGroup';
+import ReactGroupTable from '@/components/ReactTableGroup';
 
 const DailyEnergyCollectionSummary = () => {
     const { data: session } = useSession()
@@ -275,7 +276,7 @@ const DailyEnergyCollectionSummary = () => {
             const response = await downloadEnergyCollectionSummaryReport(payload, type)
 
             const contentDisposition = response.headers["content-disposition"];
-            let filename = "DailyNonEnergyCollectionReport";
+            let filename = "EnergyCollectionSummaryReport";
 
             if (contentDisposition) {
                 const matches = contentDisposition.match(/filename="(.+)"/);
@@ -430,7 +431,7 @@ const DailyEnergyCollectionSummary = () => {
             </form>
 
             <div className="overflow-x-auto mb-4 mt-4">
-                {showTable && <ReactTable
+                {showTable && <ReactGroupTable
                     data={formattedData()}
                     columns={columns}
                     hideSearchAndOtherButtons

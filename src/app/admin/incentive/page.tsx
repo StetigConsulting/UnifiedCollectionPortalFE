@@ -67,8 +67,9 @@ const IncentivePage = () => {
             <AlertPopup triggerCode={<Button variant='destructive' className="cursor-pointer">
                 <Trash2 className='cursor-pointer h-5 w-5' />Delete
             </Button>} handleContinue={() => deleteIncentive(selectedRow.id)}
-                title='Confirm Deactivating'
-                description='Are you sure you want to save the deactivate Agency? Please review the details carefully before confirming.' continueButtonText='Confirm'
+                title='Confirm Deleting'
+                description='Are you sure you want to delete this Incentive?'
+                continueButtonText='Confirm'
             />
             <Button variant='default' onClick={() => { router.push(`${urlsListWithTitle?.incentiveEdit.url}?id=${selectedRow.id}`) }}>
                 <Pencil className='cursor-pointer h-5 w-5' />Edit Collector Incentive

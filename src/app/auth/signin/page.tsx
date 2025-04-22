@@ -95,7 +95,7 @@ const SignUpForm = () => {
 
 					<form onSubmit={handleSubmit(onSubmit)} className="w-[400px] max-w-md relative min-h-[250px] m-auto">
 						{/* Mobile Number Field */}
-						<img alt="" src="/images/logo.png" width={100} className='m-auto mb-4' />
+						<img alt="" src="/images/logo.png" width={200} className='m-auto mb-4' />
 						<h3 className="title mb-8">Login</h3>
 						<div className="mb-4">
 							<label htmlFor="mobileNumber" className="block text-sm font-medium text-gray-700">Mobile Number</label>
