@@ -17,7 +17,7 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
-import { checkIfUserHasAccessToPage } from "@/helper";
+import { checkIfUserHasAccessToPage, hideMenuAccordionItem } from "@/helper";
 import { Session } from "next-auth";
 
 export function NavMain({
@@ -40,26 +40,19 @@ export function NavMain({
 }) {
   const pathname = usePathname();
 
-  const defaultOpenPath = "/agency/";
-
   return (
     <SidebarMenu>
       {items.map((item) => {
         const childItems = item.items || [];
-        if (item?.items?.length > 0) {
-          if (item?.url !== '#') {
-            const hasAccessibleChild = childItems.some(subItem =>
-              checkIfUserHasAccessToPage({ backendScope: session?.user?.userScopes, currentUrl: subItem.url })
-            );
-
-            if (!hasAccessibleChild) return null;
-          }
+        const isDefaultOpen = item.items?.length > 0
+          ? childItems.some(child => child.url === pathname)
+          : item.url === pathname;
+        if (childItems?.length > 0) {
+          if (hideMenuAccordionItem(item?.title, childItems, session?.user?.userScopes)) return null;
         } else {
           const hasAccessToParent = checkIfUserHasAccessToPage({ backendScope: session?.user?.userScopes, currentUrl: item.path || item.url });
           if (!hasAccessToParent) return null;
         }
-
-        const isDefaultOpen = pathname.includes(item.path);
 
         return (
           <Collapsible
@@ -84,6 +77,7 @@ export function NavMain({
                     </SidebarMenuButton>
                   </a>
                 ) : (
+
                   <SidebarMenuButton
                     tooltip={item.title}
                     className={cn(pathname.includes(item.path) && "bg-blue-300")}

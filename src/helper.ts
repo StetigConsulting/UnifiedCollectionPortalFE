@@ -78,3 +78,19 @@ export const checkIfUserHasActionAccess = ({ backendScope = [], currentAction })
 
   return backendScope?.includes(foundScope?.backendScopeName);
 }
+
+export const hideMenuAccordionItem = (title, urlList = [], backendScope = []) => {
+  const anyVisible = urlList.some((item) => {
+    const showThisMenu = checkIfUserHasAccessToPage({
+      backendScope,
+      currentUrl: item?.url
+    });
+    if (showThisMenu) {
+      console.log('show this menu', item?.url, title);
+      return true;
+    }
+    return false;
+  });
+
+  return !anyVisible; // if at least one is visible, don't hide
+};

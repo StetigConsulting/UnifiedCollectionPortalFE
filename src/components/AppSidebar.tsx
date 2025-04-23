@@ -100,6 +100,18 @@ const navData = {
           icon: UserPlus2,
           url: "/agency/binder-mapping",
         },
+        {
+          title: 'Color Coding',
+          url: '/admin/color-coding',
+          icon: Gauge,
+          path: '/admin/color-coding',
+        },
+        {
+          title: 'Incentive',
+          url: '/admin/incentive',
+          icon: PiggyBank,
+          path: '/admin/incentive',
+        }
       ]
     },
     {
@@ -122,24 +134,6 @@ const navData = {
         { title: "Edit Agency Area", icon: Edit, url: "/department/edit-agency-area" },
         { title: "Extend Validity", icon: Calendar, url: "/department/extend-validity" },
         { title: "View Agency", icon: Eye, url: '/department/view-agency' },
-      ]
-    },
-    {
-      title: "Agent Management",
-      icon: Folder,
-      url: "#",
-      path: '/department/',
-      items: [
-        { title: "Edit Agent Area & Role", icon: Edit, url: "/department/edit-agent-area" },
-      ]
-    },
-    {
-      title: "Action",
-      icon: Folder,
-      url: "#",
-      path: '/department/',
-      items: [
-
         {
           title: "Agency Bank Deposit",
           icon: CreditCard,
@@ -151,9 +145,6 @@ const navData = {
           url: "/department/collector-type",
         },
         { title: "View Balance", icon: Wallet, url: '/department/view-balance' },
-        { title: "Reset Device (Collector)", icon: MonitorCog, url: '/department/reset-device' },
-        // { title: "Change Collector Role", icon: FolderSync, url: '/department/change-collector-role' },
-        // { title: "Change Section", icon: FolderSync, url: '/department/change-section' },
         {
           title: 'Department User',
           url: '/admin/department-user',
@@ -161,24 +152,11 @@ const navData = {
           path: '/admin/department-user'
         },
         {
-          title: 'Color Coding',
-          url: '/admin/color-coding',
-          icon: Gauge,
-          path: '/admin/color-coding',
-        },
-        {
-          title: 'Incentive',
-          url: '/admin/incentive',
-          icon: PiggyBank,
-          path: '/admin/incentive',
-        },
-        {
           title: 'Import',
           url: '/admin/import',
           icon: Import,
           path: '/admin/import',
         },
-
         {
           title: 'Create New User',
           url: '/admin/create-new-user',
@@ -200,7 +178,6 @@ const navData = {
           icon: Eye,
           url: "/agency/view-collector",
         },
-
         {
           title: "Recharge Agent",
           icon: UserPlus2,
@@ -236,7 +213,17 @@ const navData = {
           icon: UserPlus2,
           url: "/agency/add-new-supervisor",
         }
-      ],
+      ]
+    },
+    {
+      title: "Agent Management",
+      icon: Folder,
+      url: "#",
+      path: '/department/',
+      items: [
+        { title: "Edit Agent Area & Role", icon: Edit, url: "/department/edit-agent-area" },
+        { title: "Reset Device", icon: MonitorCog, url: '/department/reset-device' },
+      ]
     },
     // {
     //   title: "Agency",
