@@ -231,3 +231,28 @@ export const downloadEnergyCollectionSummaryReport = async (data: any, type: any
         throw error?.response?.data
     }
 }
+
+export const nonEnergyCollectionSummaryReport = async (data: any) => {
+    try {
+        const response = await api.post('/v1/non-energy-reports/collection-summary-report/fetch', data);
+        return response.data;
+    } catch (error) {
+        throw error?.response?.data
+    }
+}
+
+export const downloadNonEnergyCollectionSummaryReport = async (data: any, type: any) => {
+    try {
+        const response = await api.post(`/v1/non-energy-reports/collection-summary-report/download/${type}`, data,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                responseType: "blob",
+            }
+        );
+        return response;
+    } catch (error) {
+        throw error?.response?.data
+    }
+}

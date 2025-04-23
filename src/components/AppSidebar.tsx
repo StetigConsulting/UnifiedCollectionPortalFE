@@ -57,7 +57,7 @@ const navData = {
       title: "Configuration",
       icon: Folder,
       url: "#",
-      path: '/department/',
+      path: '/admin/',
       items: [
         {
           title: 'Mode Of Payment',
@@ -219,7 +219,7 @@ const navData = {
       title: "Agent Management",
       icon: Folder,
       url: "#",
-      path: '/department/',
+      path: '/agency/',
       items: [
         { title: "Edit Agent Area & Role", icon: Edit, url: "/department/edit-agent-area" },
         { title: "Reset Device", icon: MonitorCog, url: '/department/reset-device' },
@@ -363,6 +363,11 @@ const navData = {
           title: 'Energy Collection Summary',
           icon: UserPlus2,
           url: "/report/energy-collection-summary",
+        },
+        {
+          title: 'Non Energy Collection Summary',
+          icon: UserPlus2,
+          url: "/report/non-energy-collection-summary",
         }
       ]
     },
