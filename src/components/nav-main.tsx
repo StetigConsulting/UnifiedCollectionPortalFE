@@ -16,8 +16,8 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import { cn } from "@/lib/utils";
-import { checkIfUserHasAccessToPage, hideMenuAccordionItem } from "@/helper";
+import { cn, urlsListWithTitle } from "@/lib/utils";
+import { checkIfUserHasAccessToPage, checkIfUserHasActionAccess, hideMenuAccordionItem } from "@/helper";
 import { Session } from "next-auth";
 
 export function NavMain({
@@ -50,8 +50,20 @@ export function NavMain({
         if (childItems?.length > 0) {
           if (hideMenuAccordionItem(item?.title, childItems, session?.user?.userScopes)) return null;
         } else {
-          const hasAccessToParent = checkIfUserHasAccessToPage({ backendScope: session?.user?.userScopes, currentUrl: item.path || item.url });
-          if (!hasAccessToParent) return null;
+          console.log("item.url", item.url, pathname);
+          if (pathname === urlsListWithTitle.dashboard.url && item.url === urlsListWithTitle.dashboard.url) {
+            ['dashboardBillUploadHistory', 'dashboardTransactionSummary', 'dashboardPerformanceSummary'].forEach((action) => {
+              const hasAccess = checkIfUserHasActionAccess({
+                backendScope: session?.user?.userScopes,
+                currentAction: action,
+              });
+              if (!hasAccess) return null;
+            })
+
+          } else {
+            const hasAccessToParent = checkIfUserHasAccessToPage({ backendScope: session?.user?.userScopes, currentUrl: item.path || item.url });
+            if (!hasAccessToParent) return null;
+          }
         }
 
         return (
