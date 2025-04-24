@@ -111,6 +111,12 @@ const navData = {
           url: '/admin/incentive',
           icon: PiggyBank,
           path: '/admin/incentive',
+        },
+        {
+          title: 'Cancel Transaction',
+          url: '/admin/cancel-transaction',
+          icon: PiggyBank,
+          path: '/admin/cancel-transaction',
         }
       ]
     },

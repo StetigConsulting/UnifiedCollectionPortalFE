@@ -1,5 +1,5 @@
 import { z, object, optional } from "zod";
-import { addIncentiveOnKeyValue } from "./utils";
+import { addIncentiveOnKeyValue, cancelTransactionTypePicklist } from "./utils";
 
 export const signinSchema = object({
   mobileNumber: z
@@ -1496,9 +1496,98 @@ export const viewCollectionSummarySchema = z.object({
   subDivision: z.array(z.number()).optional(),
   section: z.array(z.number()).optional(),
   agencyName: z.string().optional(),
+  levelMapWithId: z.any(),
   pageSize: z.number(
     { invalid_type_error: 'Page size is required' }
   ).min(1, "Page size is required"),
+}).superRefine((data, ctx) => {
+  const { workingLevel, levelMapWithId } = data;
+
+  // Circle level
+  if (workingLevel === levelMapWithId?.CIRCLE) {
+    if (!data.circle || data.circle.length === 0) {
+      ctx.addIssue({
+        path: ["circle"],
+        code: z.ZodIssueCode.custom,
+        message: "Circle is required",
+      });
+    }
+  }
+
+  // Division level
+  if (workingLevel === levelMapWithId?.DIVISION) {
+    if (!data.circle || data.circle.length === 0) {
+      ctx.addIssue({
+        path: ["circle"],
+        code: z.ZodIssueCode.custom,
+        message: "Circle is required",
+      });
+    }
+    if (!data.division || data.division.length === 0) {
+      ctx.addIssue({
+        path: ["division"],
+        code: z.ZodIssueCode.custom,
+        message: "Division is required",
+      });
+    }
+  }
+
+  // SubDivision level
+  if (workingLevel === levelMapWithId?.SUB_DIVISION) {
+    if (!data.circle || data.circle.length === 0) {
+      ctx.addIssue({
+        path: ["circle"],
+        code: z.ZodIssueCode.custom,
+        message: "Circle is required",
+      });
+    }
+    if (!data.division || data.division.length === 0) {
+      ctx.addIssue({
+        path: ["division"],
+        code: z.ZodIssueCode.custom,
+        message: "Division is required",
+      });
+    }
+    if (!data.subDivision || data.subDivision.length === 0) {
+      ctx.addIssue({
+        path: ["subDivision"],
+        code: z.ZodIssueCode.custom,
+        message: "Sub Division is required",
+      });
+    }
+  }
+
+  // Section level
+  if (workingLevel === levelMapWithId?.SECTION) {
+    if (!data.circle || data.circle.length === 0) {
+      ctx.addIssue({
+        path: ["circle"],
+        code: z.ZodIssueCode.custom,
+        message: "Circle is required",
+      });
+    }
+    if (!data.division || data.division.length === 0) {
+      ctx.addIssue({
+        path: ["division"],
+        code: z.ZodIssueCode.custom,
+        message: "Division is required",
+      });
+    }
+    if (!data.subDivision || data.subDivision.length === 0) {
+      ctx.addIssue({
+        path: ["subDivision"],
+        code: z.ZodIssueCode.custom,
+        message: "Sub Division is required",
+      });
+    }
+    if (!data.section || data.section.length === 0) {
+      ctx.addIssue({
+        path: ["section"],
+        code: z.ZodIssueCode.custom,
+        message: "Section is required",
+      });
+    }
+  }
 });
 
 export type ViewCollectionSummarySchemaData = z.infer<typeof viewCollectionSummarySchema>;
@@ -1520,3 +1609,28 @@ export const reverseAgentBalanceSchema = z.object({
 });
 
 export type ReverseAgentBalanceFormData = z.infer<typeof reverseAgentBalanceSchema>;
+
+const DiscriminatedUnion = z.discriminatedUnion("type", [
+  z.object({
+    type: z.literal(cancelTransactionTypePicklist[0]?.value),
+    recordId: z.string().nonempty("Record ID is required"),
+  }),
+  z.object({
+    type: z.literal(cancelTransactionTypePicklist[1]?.value),
+    recordId: z.string().nonempty("Record ID is required"),
+  }),
+  z.object({
+    type: z.literal(cancelTransactionTypePicklist[2]?.value),
+    consumerServiceConnectionNo: z.string().nonempty("Consumer Service Connection No. is required"),
+    recordId: z.string().nonempty("Record ID is required"),
+    transactionDate: z.string().nonempty("Transaction Date is required"),
+  }),
+]);
+
+export const CancelTransactionSchema = z
+  .object({
+    type: z.string().nonempty("Type is required"),
+  })
+  .and(DiscriminatedUnion);
+
+export type CancelTransactionFormData = z.infer<typeof CancelTransactionSchema>;

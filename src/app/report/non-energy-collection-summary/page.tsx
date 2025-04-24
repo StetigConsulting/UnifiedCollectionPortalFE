@@ -70,6 +70,7 @@ const NonEnergyCollectionSummary = () => {
                     value: item.id,
                 })));
             setLevelNameMappedWithId(levelIdMap)
+            setValue('levelMapWithId', levelIdMap)
         })
         setIsLoading(false)
     }
@@ -426,7 +427,7 @@ const NonEnergyCollectionSummary = () => {
                     <CustomizedSelectInputWithLabel label='Agency Name' list={agencyList}
                         {...register('agencyName')} errors={errors?.agencyName} />
                     <CustomizedInputWithLabel label='Page size' {...register('pageSize', { valueAsNumber: true })} errors={errors?.pageSize} />
-                    <div className='self-end mb-1'>
+                    <div className='mt-6'>
                         <Button variant='default' type='submit'>Search</Button>
                     </div>
                     <CustomizedSelectInputWithLabel

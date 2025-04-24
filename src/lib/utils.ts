@@ -310,3 +310,18 @@ export const agentRolePicklist = [
   { label: 'Door To Door', value: 'Door To Door' },
   { label: 'Counter Collector', value: 'Counter Collector' }
 ]
+
+export const cancelTransactionTypePicklist = [
+  {
+    label: 'Money Receipt Number',
+    value: 'Money Receipt No.',
+  },
+  {
+    label: 'Payment ID',
+    value: 'Payment ID',
+  },
+  {
+    label: 'Consumer No.',
+    value: 'Consumer No.',
+  }
+]
