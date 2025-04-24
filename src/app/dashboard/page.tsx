@@ -67,11 +67,10 @@ const dashboard = () => {
         discom: session?.user?.discomId,
         date: getValues("fromDate"),
       }
-      console.log(formData)
       const response = await getBillingDataUploadHistory(payload)
       setTableData(response.data)
       setShowTable(true)
-      console.log('billin', response)
+
     } catch (e) {
       toast.error('Error: ' + getErrorMessage(e))
     }
@@ -105,7 +104,10 @@ const dashboard = () => {
       const division = item.level_2_name;
       map.set(division, {
         label: division,
-        [date1Label]: item.no_of_transactions,
+        [date1Label]: {
+          transaction: item.no_of_transactions,
+          sum: item.sum,
+        },
       });
     });
 
@@ -115,12 +117,18 @@ const dashboard = () => {
         const existing = map.get(division);
         map.set(division, {
           ...existing,
-          [date2Label]: item.no_of_transactions,
+          [date2Label]: {
+            transaction: item.no_of_transactions,
+            sum: item.sum,
+          }
         });
       } else {
         map.set(division, {
           label: division,
-          [date2Label]: item.no_of_transactions,
+          [date2Label]: {
+            transaction: item.no_of_transactions,
+            sum: item.sum,
+          },
         });
       }
     });
@@ -151,7 +159,6 @@ const dashboard = () => {
       const responseDate1 = await getDateComparisionData(date1)
       const responseDate2 = await getDateComparisionData(date2)
       let data = mergeComparisionData(responseDate1?.data, responseDate2?.data, date1, date2)
-      console.log(data, responseDate1?.data, responseDate2?.data)
       setComparisonData(data)
     } catch (e) {
       toast.error('Error: ' + getErrorMessage(e))
@@ -161,15 +168,27 @@ const dashboard = () => {
     }
   };
 
+  const createTooltipForPerformance = (sum, count) => {
+    return `<div style="padding:5px; text-align:center; font-size:12px;">
+    <p>No. of Transactions - ${count}</p>
+    <p>No. of Meter Reader Logged in - ${sum}</p>
+    </div>`
+  }
+
   const formulateTheResponse = (list, date1, date2) => {
     const currentLabel = `${moment(date1).format('DD MMM, YYYY')}`;
     const previousLabel = `${moment(date2).format('DD MMM, YYYY')}`;
-    const response = [[levelName + 's', currentLabel, previousLabel]];
+    const response = [[levelName + 's',
+      currentLabel, { 'type': 'string', 'role': 'tooltip', 'p': { html: true } },
+      previousLabel, { 'type': 'string', 'role': 'tooltip', 'p': { html: true } }]];
+
     list.forEach((item) => {
       response.push([
         item.label,
-        item[date1] || 0,
-        item[date2] || 0,
+        item[date1].sum || 0,
+        createTooltipForPerformance(item[date1].transaction, item[date1].sum),
+        item[date2].sum || 0,
+        createTooltipForPerformance(item[date1].transaction, item[date1].sum),
       ]);
     });
     return response;
@@ -177,6 +196,7 @@ const dashboard = () => {
 
   const getComparisonChartOptions = (date1, date2) => ({
     // title: `Disomwise Performance`,
+    tooltip: { isHtml: true },
     hAxis: {
       title: levelName,
       titleTextStyle: { italic: true, fontSize: 12 },
@@ -184,6 +204,9 @@ const dashboard = () => {
     },
     vAxis: {
       title: 'Amount',
+      viewWindow: {
+        min: 0,
+      },
       titleTextStyle: { italic: true, fontSize: 12 },
       textStyle: { fontSize: 12 },
       gridlines: { color: 'transparent' },
@@ -298,7 +321,7 @@ const dashboard = () => {
         month: getValues("previousMonth"),
         year: getValues("previousYear")
       })
-      console.log(responseDate1, responseDate2)
+
       let data = mergeTransactionData(responseDate1?.data, responseDate2?.data)
       setTransactionData(data)
     } catch (e) {
@@ -324,23 +347,33 @@ const dashboard = () => {
     setIsLoading(false)
   }
 
+  const createTooltipForTransaction = (transaction) => {
+    return `<div style="padding:5px; text-align:center; font-size:12px;">
+    No. of Transactions - ${transaction}
+    </div>`
+  }
+
   const formulateTheTransactionResponse = (list) => {
     const currentLabel = `${moment(formData?.currentMonth, 'MM').format('MMMM')} ${formData?.currentYear}`;
     const previousLabel = `${moment(formData?.previousMonth, 'MM').format('MMMM')} ${formData?.previousYear}`;
-    const response = [["Date", currentLabel, previousLabel]];
+    const response = [["Date", currentLabel, { 'type': 'string', 'role': 'tooltip', 'p': { html: true } }, previousLabel, { 'type': 'string', 'role': 'tooltip', 'p': { html: true } }]];
     list.forEach(item => {
       response.push([
         item.upload_date,
-        item.current_no_of_transaction || 0,
-        item.previous_no_of_transaction || 0,
+        item.current_sum || 0,
+        createTooltipForTransaction(item.current_no_of_transaction || 0),
+        item.previous_sum || 0,
+        createTooltipForTransaction(item.previous_no_of_transaction || 0),
       ]);
     });
+
     return response;
   };
 
   const transactionChartOption = (currentLabel, previousLabel) => ({
     // title: `Transactions Summary`,
     // title: `Transaction Summary: ${currentLabel} vs ${previousLabel}`,
+    tooltip: { isHtml: true },
     bars: 'vertical',
     hAxis: {
       title: 'Date',
@@ -354,6 +387,9 @@ const dashboard = () => {
       textStyle: { fontSize: 12 },
       format: 'short',
       gridlines: { color: 'transparent' },
+      viewWindow: {
+        min: 0,
+      },
     },
     bar: { groupWidth: '50%' },
     chartArea: { width: '70%', height: '70%' },
@@ -389,15 +425,13 @@ const dashboard = () => {
 
   const fetchAllDataWithDefaultValues = async () => {
     await getWorkingLevel()
-    checkIfUserHasActionAccess({ backendScope: session?.user?.userScopes, currentAction: "dashboardBillUploadHistory" }) &&
-      await getBillingUploadHistory()
-    checkIfUserHasActionAccess({ backendScope: session?.user?.userScopes, currentAction: "dashboardPerformanceSummary" }) &&
-      await getComparisionData()
     checkIfUserHasActionAccess({ backendScope: session?.user?.userScopes, currentAction: "dashboardTransactionSummary" }) &&
       await getPerformanceSummaryForRange()
+    checkIfUserHasActionAccess({ backendScope: session?.user?.userScopes, currentAction: "dashboardPerformanceSummary" }) &&
+      await getComparisionData()
+    checkIfUserHasActionAccess({ backendScope: session?.user?.userScopes, currentAction: "dashboardBillUploadHistory" }) &&
+      await getBillingUploadHistory()
   }
-
-  console.log("transactionData", formData)
 
   return (
     <AuthUserReusableCode pageTitle="Dashboard" isLoading={isLoading || isSubmitting}>

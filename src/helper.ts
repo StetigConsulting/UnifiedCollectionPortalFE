@@ -87,7 +87,6 @@ export const hideMenuAccordionItem = (title, urlList = [], backendScope = []) =>
       currentUrl: item?.url
     });
     if (showThisMenu) {
-      console.log('show this menu', item?.url, title);
       return true;
     }
     return false;
