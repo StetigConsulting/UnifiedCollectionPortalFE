@@ -121,8 +121,8 @@ const NonEnergyCollectionSummary = () => {
         { label: 'Agency Name', key: 'agency_name', sortable: false },
         { label: 'Agency Id', key: 'agency_id', sortable: false },
         { label: 'Date / Month', key: 'date_month', sortable: false },
-        { label: 'Total Txn', key: 'total_amount', sortable: false },
-        { label: 'Total Amount', key: 'total_transaction', sortable: false, align: 'center' },
+        { label: 'Total Txn', key: 'total_transaction', sortable: false },
+        { label: 'Total Amount', key: 'total_amount', sortable: false, align: 'center' },
     ], []);
 
     const getPayload = (data) => {
