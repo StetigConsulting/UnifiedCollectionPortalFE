@@ -1620,7 +1620,6 @@ const DiscriminatedUnion = z.discriminatedUnion("type", [
   }),
   z.object({
     type: z.literal(cancelTransactionTypePicklist[2]?.value),
-    consumerServiceConnectionNo: z.string().nonempty("Consumer Service Connection No. is required"),
     recordId: z.string().nonempty("Record ID is required"),
     transactionDate: z.string().nonempty("Transaction Date is required"),
   }),

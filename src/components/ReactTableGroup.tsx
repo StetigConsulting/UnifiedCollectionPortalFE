@@ -104,10 +104,7 @@ const ReactGroupTable = <T extends Record<string, any>>({
 
 
     const totalPages = Math.ceil(sortedData.length / itemsPerPage);
-    const paginatedData = sortedData.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage
-    );
+    const paginatedData = sortedData
 
     const handleSort = (field: keyof T) => {
         if (sortField === field) {
