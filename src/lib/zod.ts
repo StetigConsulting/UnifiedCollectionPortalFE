@@ -551,7 +551,6 @@ export const addCounterCollectorSchema = z.object({
   nonEnergy: z.array(z.number()).optional(),
   supervisor: z.array(z.number()).optional(),
 }).superRefine((data, ctx) => {
-  console.log(data)
   if (data.collectionType.includes('Non Energy') && data?.nonEnergy?.length == 0) {
     ctx.addIssue({
       path: [`nonEnergy`],
