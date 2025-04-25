@@ -47,7 +47,7 @@ const CancelTransactionPage = () => {
             setIsLoading(true);
             const response = await getAllListOfReceipts(payload);
             console.log("Response:", response);
-            setDataList(response.data);
+            setDataList(response?.data || []);
         } catch (error) {
             console.log(getErrorMessage(error))
         } finally {
