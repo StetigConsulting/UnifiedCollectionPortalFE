@@ -19,7 +19,7 @@ const SuccessErrorModal: React.FC<ModalProps> = ({ isOpen, onClose, message, typ
             <DialogContent className="flex flex-col items-center justify-center p-6 w-auto min-w-1/2 max-w-2/3">
                 <DialogHeader>
                     <VisuallyHidden>
-                        <DialogTitle>Minimum Payable Amount</DialogTitle>
+                        <DialogTitle>Title</DialogTitle>
                     </VisuallyHidden>
                 </DialogHeader>
                 {type === 'success' ? (

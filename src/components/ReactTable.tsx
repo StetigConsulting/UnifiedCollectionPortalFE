@@ -312,7 +312,7 @@ const ReactTable = <T extends Record<string, any>>({
                 </table>
             </div>
             {
-                totalPages > 1 && !noPagination &&
+                !dynamicPagination && totalPages > 1 && !noPagination &&
                 <div style={{ marginTop: '10px', textAlign: 'center' }}>
                     <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
                         Previous

@@ -314,14 +314,14 @@ export const agentRolePicklist = [
 export const cancelTransactionTypePicklist = [
   {
     label: 'Money Receipt Number',
-    value: 'Money Receipt No.',
+    value: 'MoneyReceipt',
   },
   {
     label: 'Payment ID',
-    value: 'Payment ID',
+    value: 'TransactionID',
   },
   {
     label: 'Consumer No.',
-    value: 'Consumer No.',
+    value: 'ServiceConnectionNumber',
   }
 ]

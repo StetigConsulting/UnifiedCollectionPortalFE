@@ -10,15 +10,15 @@ import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
 import ReactTable from '@/components/ReactTable';
 import { CancelTransactionFormData, CancelTransactionSchema } from '@/lib/zod';
-import { cancelTransactionTypePicklist } from '@/lib/utils';
-
-const dummyData = [
-
-];
+import { cancelTransactionTypePicklist, getErrorMessage } from '@/lib/utils';
+import { cancelTransactionWithId, getAllListOfReceipts } from '@/app/api-calls/admin/api';
+import { toast } from 'sonner';
+import SuccessErrorModal from '@/components/SuccessErrorModal';
+import AlertPopup from '@/components/Agency/ViewAgency/AlertPopup';
 
 const CancelTransactionPage = () => {
     const { data: session } = useSession();
-    const [dataList, setDataList] = useState(dummyData);
+    const [dataList, setDataList] = useState([]);
 
     const {
         register,
@@ -32,9 +32,27 @@ const CancelTransactionPage = () => {
 
     const selectedType = useWatch({ control, name: 'type' });
 
-    const onSubmit = async (data: CancelTransactionFormData) => {
+    const [isLoading, setIsLoading] = useState(false);
+
+    const onSubmit = async (data: any) => {
         console.log("Searching with:", data);
-        setDataList(dummyData);
+        let payload = {
+            record_type: data?.type,
+            record_id: data?.recordId,
+            ...data?.type === cancelTransactionTypePicklist?.[2]?.value
+            && { serivce_connection_date: data?.transactionDate },
+        }
+
+        try {
+            setIsLoading(true);
+            const response = await getAllListOfReceipts(payload);
+            console.log("Response:", response);
+            setDataList(response.data);
+        } catch (error) {
+            console.log(getErrorMessage(error))
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const columns = useMemo(() => [
@@ -43,21 +61,54 @@ const CancelTransactionPage = () => {
             key: 'action',
         },
         { label: 'System ID', key: 'system_id' },
-        { label: 'Agency Name', key: 'agency_name' },
+        { label: 'Franchise Name', key: 'agency_name' },
         { label: 'Agent ID', key: 'agent_id' },
         { label: 'Agent Mobile No.', key: 'agent_mobile' },
         { label: 'Agent Name', key: 'agent_name' },
-        { label: 'Transaction Date', key: 'transaction_date' },
+        { label: 'Transaction Date', key: 'created_on' },
         { label: 'Payment ID', key: 'payment_id' },
         { label: 'Transaction ID', key: 'transaction_id' },
-        { label: 'Consumer No.', key: 'consumer_no' },
-        { label: 'Amount', key: 'amount' },
+        { label: 'Consumer No.', key: 'consumer_service_connection_no' },
+        { label: 'Amount', key: 'payment_amount' },
     ], []);
 
+    const formatData = dataList.map((item: any) => ({
+        ...item,
+        action: (
+            <AlertPopup triggerCode={<Button variant="destructive" size="sm" className="w-24">
+                Cancel
+            </Button>} handleContinue={() => handleCancelTransaction(item?.collection_id)}
+                title='Confirm Cancellation?'
+                description='Are you sure you want to cancel this transaction?'
+                continueButtonText='Confirm'
+            />
+        ),
+    }))
+
+    const handleCancelTransaction = async (id: string) => {
+        try {
+            setIsLoading(true);
+            let payload = {
+                collection_id: id,
+            }
+            await cancelTransactionWithId(payload);
+            toast.success('Transaction cancelled successfully!');
+        } catch (error) {
+            console.error('Error cancelling transaction:', error);
+            setErrorMessage(getErrorMessage(error));
+            setIsErrorModalOpened(true);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    const [isErrorModalOpened, setIsErrorModalOpened] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+
     return (
-        <AuthUserReusableCode pageTitle="Cancel Transaction">
+        <AuthUserReusableCode pageTitle="Cancel Transaction" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="grid grid-cols-5 gap-4">
+                <div className="grid grid-cols-4 gap-4">
                     <CustomizedSelectInputWithLabel
                         label="Type"
                         placeholder="Select Type"
@@ -65,15 +116,6 @@ const CancelTransactionPage = () => {
                         {...register('type')}
                         errors={errors?.type as any}
                     />
-
-                    {selectedType === cancelTransactionTypePicklist?.[2]?.value && (
-                        <CustomizedInputWithLabel
-                            label="Consumer Service Connection No."
-                            placeholder="Enter Consumer Service Connection No."
-                            {...register('consumerServiceConnectionNo')}
-                            errors={(errors as any)?.consumerServiceConnectionNo}
-                        />
-                    )}
 
                     <CustomizedInputWithLabel
                         label="Record ID"
@@ -99,12 +141,16 @@ const CancelTransactionPage = () => {
 
             <div className="overflow-x-auto mt-4">
                 <ReactTable
-                    data={dataList}
+                    data={formatData}
                     columns={columns}
                     hideSearchAndOtherButtons
                     avoidSrNo={false}
                 />
             </div>
+
+            <SuccessErrorModal isOpen={isErrorModalOpened} onClose={() => setIsErrorModalOpened(false)}
+                message={errorMessage} type="error"
+            />
         </AuthUserReusableCode>
     );
 };

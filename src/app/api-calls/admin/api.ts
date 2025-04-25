@@ -434,6 +434,24 @@ export const uploadEclConsumer = async (file: FormData) => {
     }
 }
 
+export const getAllListOfReceipts = async (data: any) => {
+    try {
+        const response = await api.post(`/v1/cancel-receipt/get-all-collections`, data);
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
+export const cancelTransactionWithId = async (data: any) => {
+    try {
+        const response = await api.post(`/v1/cancel-receipt/submit`, data);
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
 export {
     createReceiptForPostpaid, getListOfReceiptForPostpaid, deleteBusinessRule, getReceiptForPostpaidById,
     editReceiptForPostpaid, createColorCodingLogic, getColorCodingBillBasis, createColorCodingBillBasis, getColorCodingLogic,
