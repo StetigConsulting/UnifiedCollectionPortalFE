@@ -185,10 +185,10 @@ const dashboard = () => {
     list.forEach((item) => {
       response.push([
         item.label,
-        item[date1].sum || 0,
-        createTooltipForPerformance(item[date1].transaction, item[date1].sum),
-        item[date2].sum || 0,
-        createTooltipForPerformance(item[date1].transaction, item[date1].sum),
+        item[date1]?.sum || 0,
+        createTooltipForPerformance(item[date1]?.transaction, item[date1]?.sum),
+        item[date2]?.sum || 0,
+        createTooltipForPerformance(item[date2]?.transaction, item[date2]?.sum),
       ]);
     });
     return response;
