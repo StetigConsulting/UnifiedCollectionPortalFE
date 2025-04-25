@@ -10,7 +10,7 @@ import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
 import ReactTable from '@/components/ReactTable';
 import { CancelTransactionFormData, CancelTransactionSchema } from '@/lib/zod';
-import { cancelTransactionTypePicklist, getErrorMessage } from '@/lib/utils';
+import { cancelTransactionTypePicklist, formatDate, getErrorMessage } from '@/lib/utils';
 import { cancelTransactionWithId, getAllListOfReceipts } from '@/app/api-calls/admin/api';
 import { toast } from 'sonner';
 import SuccessErrorModal from '@/components/SuccessErrorModal';
@@ -60,13 +60,13 @@ const CancelTransactionPage = () => {
             label: 'Action',
             key: 'action',
         },
-        { label: 'System ID', key: 'system_id' },
-        { label: 'Franchise Name', key: 'agency_name' },
+        { label: 'System ID', key: 'collection_id' },
+        { label: 'Agency Name', key: 'agency_name' },
         { label: 'Agent ID', key: 'agent_id' },
-        { label: 'Agent Mobile No.', key: 'agent_mobile' },
+        { label: 'Agent Mobile No.', key: 'agent_mobile_number' },
         { label: 'Agent Name', key: 'agent_name' },
         { label: 'Transaction Date', key: 'created_on' },
-        { label: 'Payment ID', key: 'payment_id' },
+        { label: 'Payment ID', key: 'money_receipt_no' },
         { label: 'Transaction ID', key: 'transaction_id' },
         { label: 'Consumer No.', key: 'consumer_service_connection_no' },
         { label: 'Amount', key: 'payment_amount' },
@@ -74,6 +74,7 @@ const CancelTransactionPage = () => {
 
     const formatData = dataList.map((item: any) => ({
         ...item,
+        created_on: formatDate(item?.created_on),
         action: (
             <AlertPopup triggerCode={<Button variant="destructive" size="sm" className="w-24">
                 Cancel
