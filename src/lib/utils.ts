@@ -317,7 +317,7 @@ export const cancelTransactionTypePicklist = [
     value: 'MoneyReceipt',
   },
   {
-    label: 'Payment ID',
+    label: 'Transaction ID',
     value: 'TransactionID',
   },
   {
