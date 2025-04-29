@@ -1,11 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-// import getConfig from 'next/config';
-// const { publicRuntimeConfig } = getConfig() || { publicRuntimeConfig: {} };
 
-export const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL_V2;
-// export const backendUrl = publicRuntimeConfig.backendUrlConfig || process.env.NEXT_PUBLIC_API_BASE_URL_V2
-// export const frontendUrl = publicRuntimeConfig.frontendUrlConfig || process.env.NEXT_PUBLIC_API_BASE_URL
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))

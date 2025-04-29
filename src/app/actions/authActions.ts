@@ -32,7 +32,7 @@ export async function handleSignOut() {
     const session = await auth();
     const accessToken = session?.user?.accessToken;
 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/v1/auth/logout`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL_V2_BACKEND}/v1/auth/logout`, {
         method: "GET",
         headers: {
             "Authorization": `Bearer ${accessToken}`,
