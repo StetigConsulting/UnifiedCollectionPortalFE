@@ -1,5 +1,4 @@
 // src/app/api/otp/validate/route.ts
-import { backendUrl } from '@/lib/utils';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
@@ -7,7 +6,7 @@ export async function POST(req: NextRequest) {
 
     try {
         const apiResponse = await fetch(
-            `${backendUrl}/v1/auth/authenticate`,
+            `${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/v1/auth/authenticate`,
             {
                 method: 'POST',
                 headers: {

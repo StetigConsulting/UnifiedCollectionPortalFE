@@ -13,6 +13,10 @@ export async function middleware(request: any) {
 
     console.log("Is Authenticated:", isAuthenticated, session);
 
+    if (nextUrl.pathname === '/debug-env') {
+        return NextResponse.next();
+    }
+
     if (nextUrl.pathname === '/') {
         return NextResponse.redirect(new URL(SIGNIN, nextUrl));
     }

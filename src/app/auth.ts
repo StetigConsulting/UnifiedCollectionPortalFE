@@ -1,4 +1,3 @@
-import { backendUrl } from "@/lib/utils";
 import NextAuth, { User } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 
@@ -43,7 +42,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 console.log(Date.now(), Date.now() + Number(credentials.expires_in))
 
                 try {
-                    const userRoleResponse = await fetch(`${backendUrl}/v1/tp-users/user-info`, {
+                    const userRoleResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/v1/tp-users/user-info`, {
                         method: "GET",
                         headers: {
                             "Authorization": `Bearer ${user.accessToken}`,
@@ -129,7 +128,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
 async function refreshAccessToken(token) {
     try {
-        const url = `${backendUrl}/v1/auth/refresh-token`;
+        const url = `${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/v1/auth/refresh-token`;
         const response = await fetch(url, {
             method: 'POST',
             headers: {

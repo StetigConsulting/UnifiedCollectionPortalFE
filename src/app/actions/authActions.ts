@@ -2,7 +2,6 @@
 
 import { AuthError } from 'next-auth';
 import { auth, signIn, signOut } from '../auth';
-import { backendUrl } from '@/lib/utils';
 
 export async function handleCredentialsSignin({ access_token, expires_in, refresh_token }: {
     access_token: string,
@@ -33,7 +32,7 @@ export async function handleSignOut() {
     const session = await auth();
     const accessToken = session?.user?.accessToken;
 
-    const response = await fetch(`${backendUrl}/v1/auth/logout`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL_V2}/v1/auth/logout`, {
         method: "GET",
         headers: {
             "Authorization": `Bearer ${accessToken}`,
