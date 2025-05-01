@@ -1632,3 +1632,21 @@ export const CancelTransactionSchema = z
   .and(DiscriminatedUnion);
 
 export type CancelTransactionFormData = z.infer<typeof CancelTransactionSchema>;
+
+export const agentWiseSummaryReportSchema = z.object({
+  fromDate: z.string().min(1, "From Date is required"),
+  toDate: z.string().min(1, "To Date is required"),
+  dateType: z.string().min(1, "Date Type is required"),
+  reportType: z.string().nonempty("Report Type is required"),
+  workingLevel: z.any().optional(),
+  circle: z.array(z.number()).optional(),
+  division: z.array(z.number()).optional(),
+  subDivision: z.array(z.number()).optional(),
+  section: z.array(z.number()).optional(),
+  agencyName: z.string().optional(),
+  pageSize: z.number(
+    { invalid_type_error: 'Page size is required' }
+  ).min(1, "Page size is required"),
+});
+
+export type AgentWiseSummaryReportData = z.infer<typeof agentWiseSummaryReportSchema>;

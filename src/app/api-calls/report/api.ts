@@ -256,3 +256,28 @@ export const downloadNonEnergyCollectionSummaryReport = async (data: any, type: 
         throw error?.response?.data
     }
 }
+
+export const getAgentSummaryReport = async (report: any, data: any) => {
+    try {
+        const response = await api.post(`/v1/energy-reports/${report}/fetch`, data);
+        return response.data;
+    } catch (error) {
+        throw error?.response?.data
+    }
+}
+
+export const downloadAgentSummaryReport = async (report: any, data: any, type: any) => {
+    try {
+        const response = await api.post(`/v1/energy-reports/${report}/download/${type}`, data,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                responseType: "blob",
+            }
+        );
+        return response;
+    } catch (error) {
+        throw error?.response?.data
+    }
+}

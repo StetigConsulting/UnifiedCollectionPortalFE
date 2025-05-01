@@ -323,3 +323,36 @@ export const cancelTransactionTypePicklist = [
     value: 'ServiceConnectionNumber',
   }
 ]
+
+export const agentReportKeyValue = {
+  agentWise: 'agent_wise',
+  agentType: 'agent_type',
+  agentMode: 'agent_mode',
+  agentRole: 'agent_role',
+}
+
+export const agentWiseReportTypePicklist = [
+  {
+    label: 'Agent Wise',
+    value: agentReportKeyValue.agentWise
+  },
+  {
+    label: 'Agent Type',
+    value: agentReportKeyValue.agentType
+  },
+  {
+    label: 'Agent Mode',
+    value: agentReportKeyValue.agentMode
+  },
+  {
+    label: 'Agent Role',
+    value: agentReportKeyValue.agentRole
+  }
+]
+
+export const reportTypeMappedToAPITRouteName = {
+  [agentReportKeyValue.agentWise]: 'agent-wise-summary-report',
+  [agentReportKeyValue.agentType]: 'agent-type-wise-summary-report',
+  [agentReportKeyValue.agentMode]: 'agent-mode-wise-summary-report',
+  [agentReportKeyValue.agentRole]: 'agent-role-wise-summary-report',
+}
