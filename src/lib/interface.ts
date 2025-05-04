@@ -209,7 +209,7 @@ export interface AddAgentBankDeposit {
     deposit_date: string;
     amount: number;
     txn_ref_no: string;
-    deposit_slip_file_path: string;
+    deposit_slip_file_name: string;
 }
 
 export interface AddAgencyBankDeposit {

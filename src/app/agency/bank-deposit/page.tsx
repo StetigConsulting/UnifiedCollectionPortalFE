@@ -84,7 +84,7 @@ const AgentBankDeposit = () => {
                 "deposit_date": data.depositDate,
                 "amount": data.depositAmount,
                 "txn_ref_no": data?.txnRefNo,
-                "deposit_slip_file_path": fileUploadResponse?.data?.filePath
+                "deposit_slip_file_name": fileUploadResponse?.data?.filePath
             }
 
             const response = await addAgentBankDeposit(payload);

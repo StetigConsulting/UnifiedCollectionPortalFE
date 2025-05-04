@@ -1,47 +1,63 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
+import { toast } from 'sonner';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
-import { agentReportKeyValue, agentRolePicklist, agentWiseReportTypePicklist, agentWorkingType, dateTypePicklist, exportPicklist, getErrorMessage, reportTypeMappedToAPITRouteName, tableDataPerPage } from '@/lib/utils';
-import { downloadAgentSummaryReport, downloadDailyEnergyCollectionReport, getAgentSummaryReport, getDailyEnergyCollectionReport } from '@/app/api-calls/report/api';
+import { exportPicklist, formatDate, getErrorMessage, tableDataPerPage } from '@/lib/utils';
+import { downloadDeniedEnergyConsumerReport, getAgentAttendance } from '@/app/api-calls/report/api';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
-import { getAgenciesWithDiscom, getAllPaymentModes, getLevels, getLevelsDiscomId } from '@/app/api-calls/department/api';
+import { getLevels, getLevelsDiscomId } from '@/app/api-calls/department/api';
 import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { AgentWiseSummaryReportData, agentWiseSummaryReportSchema } from '@/lib/zod';
+import { AgentAttendanceReportFormData, agentAttendanceReport } from '@/lib/zod';
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
+import { getCollectorTypes } from '@/app/api-calls/agency/api';
 
-const AgentWiseSummary = () => {
+const AgentAttendanceReport = () => {
     const { data: session } = useSession()
 
     const [isLoading, setIsLoading] = useState(false);
-    const [currentPage, setCurrentPage] = useState(1)
-    const [totalPages, setTotalPages] = useState(1)
+    // const [currentPage, setCurrentPage] = useState(1)
+    // const [totalPages, setTotalPages] = useState(1)
     const [dataList, setDataList] = useState([]);
-
     const [showTable, setShowTable] = useState(false)
+    const [agentTypePicklist, setAgentTypePicklist] = useState([])
 
-    const { register, control, handleSubmit, formState: { errors }, watch, setValue } = useForm<AgentWiseSummaryReportData>({
-        resolver: zodResolver(agentWiseSummaryReportSchema),
-        defaultValues: {
-            workingLevel: null,
-            circle: [],
-            division: [],
-            subDivision: [],
-            section: [],
-            pageSize: tableDataPerPage
-        }
-    });
+    const { register, control, handleSubmit,
+        clearErrors, formState: { errors }, watch, setValue }
+        = useForm<AgentAttendanceReportFormData>({
+            resolver: zodResolver(agentAttendanceReport),
+            defaultValues: {
+                workingLevel: null,
+                circle: [],
+                division: [],
+                subDivision: [],
+                section: [],
+                pageSize: tableDataPerPage,
+            }
+        });
 
     useEffect(() => {
         getWorkingLevel()
+        // getReportData();
         getCircles(session?.user?.discomId)
+        getPicklist()
     }, []);
+
+    const getPicklist = async () => {
+        setIsLoading(true)
+        await getCollectorTypes().then((data) => {
+            setAgentTypePicklist(data?.data?.map((item) => ({
+                label: item?.name,
+                value: item?.id,
+            })));
+        }).finally(() => { setIsLoading(false); })
+    }
 
     const [levelNameMappedWithId, setLevelNameMappedWithId] = useState<Record<string, number>>({})
     const [workingLevelList, setWorkingLevelList] = useState([]);
@@ -66,38 +82,27 @@ const AgentWiseSummary = () => {
                     value: item.id,
                 })));
             setLevelNameMappedWithId(levelIdMap)
+            setValue('levelWithIdMap', levelIdMap)
         })
         setIsLoading(false)
     }
 
-    const getReportType = () => {
-        let route = reportTypeMappedToAPITRouteName[formData?.reportType]
-        return route || ''
-    }
-
     const getReportData = async (applyFilter = {}, page = 1) => {
         let payload = {
-            page: currentPage,
-            page_size: formData?.pageSize,
-            filter: {}
         };
 
         payload = {
             ...payload,
-            page,
-            filter: {
-                ...payload.filter,
-                ...applyFilter
-            }
+            ...applyFilter
         }
 
         try {
             setIsLoading(true);
-            const response = await getAgentSummaryReport(getReportType(), payload);
-            setShowTable(true)
+            const response = await getAgentAttendance(payload);
             setDataList(response.data.data);
-            setCurrentPage(page);
-            setTotalPages(response.data.totalPages)
+            setShowTable(true)
+            // setCurrentPage(page);
+            // setTotalPages(response.data.totalPages)
         } catch (error) {
             console.log(getErrorMessage(error))
         } finally {
@@ -105,82 +110,29 @@ const AgentWiseSummary = () => {
         }
     }
 
-    const columnsAgentWise = useMemo(() => [
-        { label: 'Circle', key: 'level_1_name', sortable: true },
-        { label: 'Division', key: 'level_2_name', sortable: true },
-        { label: 'Sub Division', key: 'level_3_name', sortable: true },
-        { label: 'Section', key: 'level_4_name', sortable: true },
+    const columns = useMemo(() => [
         { label: 'Agency Name', key: 'agency_name', sortable: true },
-        { label: 'Agent ID', key: 'agent_id', sortable: true },
-        { label: 'Mobile No', key: 'agent_mobile', sortable: true },
-        { label: 'MPOS SerialNo', key: 'm_pos_serial_no', sortable: true },
-        { label: 'Agent Status', key: 'agent_status', sortable: true },
-        { label: 'Total MR', key: 'total_mr', sortable: true },
-        { label: 'Total Collection', key: 'total_collection', sortable: true },
+        { label: 'Agent Name', key: 'agent_name', sortable: true },
+        { label: 'Agent Mobile No.', key: 'agent_mobile', sortable: true },
+        { label: 'Date', key: 'level_4_name', sortable: true },
         { label: 'Agent Type', key: 'agent_type', sortable: true },
-        { label: 'Agent Mode', key: 'agent_mode', sortable: true },
-        { label: 'Agent Role', key: 'agent_role', sortable: true },
-        { label: 'Total Consumer Allocated', key: 'total_consumer_allocated', sortable: true },
-        { label: 'Total Consumer Touched', key: 'total_consumer_touched', sortable: true },
-    ], []);
-
-    const columnsAgentType = useMemo(() => [
-        { label: 'Circle', key: 'level_1_name', sortable: true },
-        { label: 'Division', key: 'level_2_name', sortable: true },
-        { label: 'Sub Division', key: 'level_3_name', sortable: true },
-        { label: 'Section', key: 'level_4_name', sortable: true },
-        { label: 'Agency Name', key: 'agency_name', sortable: true },
-        { label: 'Agent Type', key: 'agent_type', sortable: true },
-        { label: 'Total Agent', key: 'total_agent', sortable: true },
-        { label: 'Total MR', key: 'total_mr', sortable: true },
-        { label: 'Total Collection', key: 'total_collection', sortable: true },
-        { label: 'Total Consumer Allocated', key: 'total_consumer_allocated', sortable: true },
-        { label: 'Total Consumer Touched', key: 'total_consumer_touched', sortable: true },
-    ], []);
-
-    const columnsAgentMode = useMemo(() => [
-        { label: 'Circle', key: 'level_1_name', sortable: true },
-        { label: 'Division', key: 'level_2_name', sortable: true },
-        { label: 'Sub Division', key: 'level_3_name', sortable: true },
-        { label: 'Section', key: 'level_4_name', sortable: true },
-        { label: 'Agency Name', key: 'agency_name', sortable: true },
-        { label: 'Agent Mode', key: 'agent_mode', sortable: true },
-        { label: 'Total Agent', key: 'total_agent', sortable: true },
-        { label: 'Total MR', key: 'total_mr', sortable: true },
-        { label: 'Total Collection', key: 'total_collection', sortable: true },
-        { label: 'Total Consumer Allocated', key: 'total_consumer_allocated', sortable: true },
-        { label: 'Total Consumer Touched', key: 'total_consumer_touched', sortable: true },
-    ], []);
-
-    const columnsAgentRole = useMemo(() => [
-        { label: 'Circle', key: 'level_1_name', sortable: true },
-        { label: 'Division', key: 'level_2_name', sortable: true },
-        { label: 'Sub Division', key: 'level_3_name', sortable: true },
-        { label: 'Section', key: 'level_4_name', sortable: true },
-        { label: 'Agency Name', key: 'agency_name', sortable: true },
-        { label: 'Agent Role', key: 'agent_role', sortable: true },
-        { label: 'Total Agent', key: 'total_agent', sortable: true },
-        { label: 'Total MR', key: 'total_mr', sortable: true },
-        { label: 'Total Collection', key: 'total_collection', sortable: true },
-        { label: 'Total Consumer Allocated', key: 'total_consumer_allocated', sortable: true },
-        { label: 'Total Consumer Touched', key: 'total_consumer_touched', sortable: true },
+        { label: 'Login', key: 'login', sortable: true },
+        { label: 'Logout', key: 'logout', sortable: true },
+        { label: 'Last Denial Remark Time', key: 'last_denial_remark', sortable: true },
+        { label: 'Total MR', key: 'total_MR', sortable: true },
+        { label: 'Total Amt', key: 'total_collection', sortable: true },
+        { label: 'Total Denied Consumer', key: 'total_denied', sortable: true },
     ], []);
 
     const getPayload = (data) => {
-        console.log(data)
         let filter = {
-            ...data?.dateType === 'transaction_date' && {
-                transaction_date_range: {
+            ...(data?.fromDate && data?.toDate) && {
+                date_range: {
                     from_date: data.fromDate,
                     to_date: data.toDate
                 }
             },
-            ...data?.dateType === 'upload_date' && {
-                upload_date_range: {
-                    from_date: data.fromDate,
-                    to_date: data.toDate
-                }
-            },
+            ...data?.agentType && { agent_type_id: data?.agentType },
             ...data.workingLevel && {
                 office_structure_id: data.workingLevel === levelNameMappedWithId.CIRCLE
                     ? data?.circle?.map(Number)?.[0]
@@ -197,8 +149,8 @@ const AgentWiseSummary = () => {
     }
 
     const onSubmit = (data) => {
-        let payload = getPayload(data)
-        getReportData(payload, 1);
+        const filter = getPayload(data)
+        getReportData(filter, 1);
     };
 
     const formData = watch();
@@ -265,20 +217,25 @@ const AgentWiseSummary = () => {
     };
 
     const handleWorkingLevelChange = (selectedValue) => {
+        console.log("selectedValue", selectedValue.target.value)
         if (!selectedValue.target.value) {
+            console.log("selectedValuedd", selectedValue.target.value)
             setValue('workingLevel', null)
+            clearErrors('workingLevel')
             setValue('circle', []);
             setValue('division', []);
             setValue('subDivision', []);
             setValue('section', []);
             return
+        } else {
+            console.log("selectedValuedd", selectedValue.target.value)
+            setValue('workingLevel', parseInt(selectedValue.target.value))
+            clearErrors('workingLevel')
+            setValue('circle', []);
+            setValue('division', []);
+            setValue('subDivision', []);
+            setValue('section', []);
         }
-        setValue('workingLevel', parseInt(selectedValue.target.value))
-        setValue('circle', []);
-        setValue('division', []);
-        setValue('subDivision', []);
-        setValue('section', []);
-
         getCircles(session?.user?.discomId)
     }
 
@@ -318,10 +275,10 @@ const AgentWiseSummary = () => {
         try {
             setIsLoading(true);
             let payload = getPayload(formData)
-            const response = await downloadAgentSummaryReport(getReportType(), payload, type)
+            const response = await downloadDeniedEnergyConsumerReport(payload, type)
 
             const contentDisposition = response.headers["content-disposition"];
-            let filename = "AgentSummaryReport";
+            let filename = "AgentAttendanceReport";
 
             if (contentDisposition) {
                 const matches = contentDisposition.match(/filename="(.+)"/);
@@ -344,6 +301,7 @@ const AgentWiseSummary = () => {
             document.body.removeChild(a);
 
             window.URL.revokeObjectURL(url);
+            setExportType('')
         } catch (error) {
             console.error("Error downloading the report:", error);
         } finally {
@@ -353,30 +311,19 @@ const AgentWiseSummary = () => {
     }
 
     const handlePageChange = (page) => {
-        setCurrentPage(page)
+        // setCurrentPage(page)
         let payload = getPayload(formData)
         getReportData(payload, page)
     }
 
-    console.log(errors)
+    const formatData = dataList.map((item) => ({
+        ...item,
+        entry_date: item?.entry_date ? formatDate(item?.entry_date) : null,
+    }))
 
-    const getColumnsByReportType = (type) => {
-        if (agentReportKeyValue?.agentWise === type) {
-            return columnsAgentWise
-        }
-        if (agentReportKeyValue?.agentType === type) {
-            return columnsAgentType
-        }
-        if (agentReportKeyValue?.agentRole === type) {
-            return columnsAgentRole
-        }
-        if (agentReportKeyValue?.agentMode === type) {
-            return columnsAgentMode
-        }
-    }
 
     return (
-        <AuthUserReusableCode pageTitle="Agent Wise Summary" isLoading={isLoading}>
+        <AuthUserReusableCode pageTitle="Agent Attendance Report" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="flex items-center gap-4">
                 <div className="grid grid-cols-6 gap-4 flex-grow">
                     <CustomizedInputWithLabel
@@ -391,10 +338,8 @@ const AgentWiseSummary = () => {
                         {...register('toDate')}
                         errors={errors.toDate}
                     />
-                    <CustomizedSelectInputWithLabel label='Date Type' list={dateTypePicklist}
-                        {...register('dateType')} errors={errors?.dateType} />
-                    <CustomizedSelectInputWithLabel label='Report Type' list={agentWiseReportTypePicklist}
-                        {...register('reportType', { onChange: () => setShowTable(false) })} errors={errors?.reportType} />
+                    <CustomizedSelectInputWithLabel label='Agent Type' list={agentTypePicklist}
+                        {...register('agentType', { valueAsNumber: true })} errors={errors?.agentType} />
                     <CustomizedSelectInputWithLabel label='Working level' list={workingLevelList}
                         {...register('workingLevel', { valueAsNumber: true })}
                         onChange={(e) => handleWorkingLevelChange(e)} errors={errors?.workingLevel} />
@@ -451,10 +396,8 @@ const AgentWiseSummary = () => {
                             }
                         </>
                     }
-                    <CustomizedInputWithLabel label='Page Size'
-                        {...register('pageSize', { valueAsNumber: true })} errors={errors?.pageSize} />
 
-                    <div className='self-end mb-1'>
+                    <div className={`mt-7`}>
                         <Button variant='default' type='submit'>Search</Button>
                     </div>
                     <CustomizedSelectInputWithLabel
@@ -473,14 +416,9 @@ const AgentWiseSummary = () => {
 
             <div className="overflow-x-auto mb-4 mt-4">
                 {showTable && <ReactTable
-                    data={dataList}
-                    columns={getColumnsByReportType(formData?.reportType)}
+                    data={formatData}
+                    columns={columns}
                     hideSearchAndOtherButtons
-                    dynamicPagination
-                    itemsPerPage={tableDataPerPage}
-                    pageNumber={currentPage}
-                    onPageChange={handlePageChange}
-                    totalPageNumber={totalPages}
                 // handleExportFile={handleExportFile}
                 />}
             </div>
@@ -488,4 +426,4 @@ const AgentWiseSummary = () => {
     );
 };
 
-export default AgentWiseSummary;
+export default AgentAttendanceReport;

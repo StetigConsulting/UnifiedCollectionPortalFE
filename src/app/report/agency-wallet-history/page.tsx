@@ -116,7 +116,8 @@ const AgencyWalletHistory = () => {
         { label: 'Current Balance', key: 'balance_after_txn', sortable: true, align: 'center' },
         { label: 'Previous Balance', key: 'balance_before_txn', sortable: true, align: 'center' },
         { label: 'Remarks', key: 'remarks', sortable: true },
-        { label: 'TXN Date', key: 'transaction_date', sortable: true },
+        { label: 'Transaction By', key: 'created_by_user', sortable: true },
+        { label: 'Transaction Date & Time', key: 'transaction_date', sortable: true },
     ], []);
 
     const handleExportFile = async (data, type = 'pdf') => {

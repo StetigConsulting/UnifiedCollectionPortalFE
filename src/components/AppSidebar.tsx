@@ -374,6 +374,12 @@ const navData = {
           title: 'Non Energy Collection Summary',
           icon: UserPlus2,
           url: "/report/non-energy-collection-summary",
+        },
+        {
+          title: 'Agent Wise Summary',
+          url: '/report/agent-wise-summary',
+          icon: PiggyBank,
+          path: '/report/agent-wise-summary',
         }
       ]
     },
