@@ -27,6 +27,7 @@ const AgentAttendanceReport = () => {
     const [dataList, setDataList] = useState([]);
     const [showTable, setShowTable] = useState(false)
     const [agentTypePicklist, setAgentTypePicklist] = useState([])
+    const [overflowDataMessage, setOverflowDataMessage] = useState('')
 
     const { register, control, handleSubmit,
         clearErrors, formState: { errors }, watch, setValue }
@@ -101,6 +102,7 @@ const AgentAttendanceReport = () => {
             const response = await getAgentAttendance(payload);
             setDataList(response.data.data);
             setShowTable(true)
+            setOverflowDataMessage(response.overflowDataMessage)
             // setCurrentPage(page);
             // setTotalPages(response.data.totalPages)
         } catch (error) {
@@ -410,6 +412,12 @@ const AgentAttendanceReport = () => {
                             handleSubmit((data) => handleExportFile(data, exportType))();
                         }}
                     />
+                    {
+                        (overflowDataMessage && showTable) &&
+                        <div className='col-span-6 text-center'>
+                            <span className='m-auto bg-[#FD9292] border border-[#FF0000] text-black text-sm rounded-lg px-4 py-2'>Note: {overflowDataMessage}</span>
+                        </div>
+                    }
                 </div>
 
             </form>

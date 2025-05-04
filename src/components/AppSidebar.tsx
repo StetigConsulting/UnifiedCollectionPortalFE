@@ -380,6 +380,12 @@ const navData = {
           url: '/report/agent-wise-summary',
           icon: PiggyBank,
           path: '/report/agent-wise-summary',
+        },
+        {
+          title: 'Agent Attendance',
+          url: '/report/agent-attendance',
+          icon: PiggyBank,
+          path: '/report/agent-attendance',
         }
       ]
     },
