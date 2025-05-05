@@ -68,6 +68,7 @@ const BinderMapping = () => {
             reset()
             setShowRestFields(false)
             setListOfAvailableBinders([])
+            setListOfOtherBinders([])
         } catch (error) {
             let errorMessage = getErrorMessage(error);
             toast.error('Error: ' + errorMessage);
@@ -121,7 +122,7 @@ const BinderMapping = () => {
 
             let unallocated = response.data.unallocated_pseudo_office_structure
 
-            let binderList = [...allocated, ...unallocated]
+            let binderList = [...unallocated]
 
             setListOfAvailableBinders(binderList)
 
@@ -135,13 +136,15 @@ const BinderMapping = () => {
     const selectedBinder = watch('binder') || [];
 
     const handleBinderChange = (officeStructureId: number) => {
-        let updatedSelection = [];
+        console.log(officeStructureId, selectedBinder)
+        let updatedSelection = [...selectedBinder];
 
-        if (selectedBinder.includes(officeStructureId)) {
-            updatedSelection = selectedBinder.filter(id => id !== officeStructureId);
+        if (updatedSelection.includes(officeStructureId)) {
+            updatedSelection = updatedSelection.filter(id => id !== officeStructureId);
         } else {
-            updatedSelection = [...selectedBinder, officeStructureId];
+            updatedSelection.push(officeStructureId);
         }
+        console.log(officeStructureId, updatedSelection)
 
         setValue('binder', updatedSelection, { shouldValidate: true });
     };
@@ -210,10 +213,9 @@ const BinderMapping = () => {
                             {errors?.binder && <span className="text-red-500">{errors.binder.message}</span>}
                             <div className="grid grid-cols-5 gap-4 mt-2">
                                 {listOfAvailableBinders?.map((binder, index) => (
-                                    <div key={`${binder.office_structure_id}_${index}`} className="flex items-center">
+                                    <div key={`available_${binder.office_structure_id}`} className="flex items-center">
                                         <input
                                             type="checkbox"
-                                            id={binder.office_structure_id}
                                             value={binder.office_structure_id}
                                             className="mr-2"
                                             checked={selectedBinder.includes(binder.office_structure_id)}
@@ -231,15 +233,14 @@ const BinderMapping = () => {
                             <div className="col-span-2" key={item?.agency_id}>
                                 <label className="block text-sm font-medium">Binder Allocated To {item?.agent_name}</label>
                                 <div className="grid grid-cols-5 gap-4 mt-2">
-                                    {item?.allocated_pseudo_office_structure?.map((binder) => (
-                                        <div key={binder.office_structure_id} className="flex items-center">
+                                    {item?.allocated_pseudo_office_structure?.map((binder, index) => (
+                                        <div key={`other_${item.agency_id}_${binder.office_structure_id}`} className="flex items-center">
                                             <input
                                                 type="checkbox"
-                                                id={binder.office_structure_id}
                                                 value={binder.office_structure_id}
                                                 className="mr-2"
                                                 disabled
-                                                {...register('binder')}
+                                                checked
                                             />
                                             <label htmlFor={`allocated-${binder.office_structure_id}`} className="text-sm">{binder.office_structure_description}</label>
                                         </div>
