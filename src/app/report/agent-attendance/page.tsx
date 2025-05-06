@@ -342,7 +342,7 @@ const AgentAttendanceReport = () => {
                     />
                     <CustomizedSelectInputWithLabel label='Agent Type' list={agentTypePicklist}
                         {...register('agentType', { valueAsNumber: true })} errors={errors?.agentType} />
-                    <CustomizedSelectInputWithLabel label='Working level' list={workingLevelList}
+                    <CustomizedSelectInputWithLabel label='Applicable level' list={workingLevelList}
                         {...register('workingLevel', { valueAsNumber: true })}
                         onChange={(e) => handleWorkingLevelChange(e)} errors={errors?.workingLevel} />
                     {formData.workingLevel != null && !isNaN(formData?.workingLevel) &&

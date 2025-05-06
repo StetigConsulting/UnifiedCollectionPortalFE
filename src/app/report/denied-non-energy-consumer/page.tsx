@@ -349,7 +349,7 @@ const DeniedEnergyConsumer = () => {
                     />
                     <CustomizedSelectInputWithLabel label='Denied To Pay Reason' list={deniedToPayReason}
                         {...register('deniedToPay')} errors={errors.deniedToPay} />
-                    <CustomizedSelectInputWithLabel label='Working level' list={workingLevelList}
+                    <CustomizedSelectInputWithLabel label='Applicable level' list={workingLevelList}
                         {...register('workingLevel', { valueAsNumber: true })}
                         onChange={(e) => handleWorkingLevelChange(e)} errors={errors?.workingLevel} />
                     {formData.workingLevel != null && !isNaN(formData?.workingLevel) &&
@@ -413,9 +413,7 @@ const DeniedEnergyConsumer = () => {
                         errors={errors.pageSize}
                     />
 
-                    <div className={`self-end ${Object.keys(errors).length > 0 &&
-                        formData?.workingLevel != levelNameMappedWithId?.CIRCLE ? 'mb-5' : ''
-                        } `}>
+                    <div className={`mt-6`}>
                         <Button variant='default' type='submit'>Search</Button>
                     </div>
                     <CustomizedSelectInputWithLabel

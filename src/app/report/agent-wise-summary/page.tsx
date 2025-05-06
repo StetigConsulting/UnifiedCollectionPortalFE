@@ -395,7 +395,7 @@ const AgentWiseSummary = () => {
                         {...register('dateType')} errors={errors?.dateType} />
                     <CustomizedSelectInputWithLabel label='Report Type' list={agentWiseReportTypePicklist}
                         {...register('reportType', { onChange: () => setShowTable(false) })} errors={errors?.reportType} />
-                    <CustomizedSelectInputWithLabel label='Working level' list={workingLevelList}
+                    <CustomizedSelectInputWithLabel label='Applicable level' list={workingLevelList}
                         {...register('workingLevel', { valueAsNumber: true })}
                         onChange={(e) => handleWorkingLevelChange(e)} errors={errors?.workingLevel} />
                     {formData.workingLevel != null && !isNaN(formData?.workingLevel) &&

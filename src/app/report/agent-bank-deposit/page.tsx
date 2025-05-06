@@ -159,7 +159,7 @@ const AgentDepositAcknowledgementReport = () => {
                 </div>
                 <Button
                     onClick={handleSubmit(handleSearch)}
-                    className={`self-end ${errors?.dateFrom || errors?.dateTo || errors?.pageSize ? 'mb-5' : ''}`}
+                    className={`mt-6`}
                 >
                     Search
                 </Button>

@@ -374,7 +374,7 @@ const DailyEnergyCollectionSummary = () => {
                         {...register('dateType')} errors={errors?.dateType} />
                     <CustomizedSelectInputWithLabel label='View type' list={viewTypePicklist}
                         {...register('viewType')} errors={errors?.viewType} />
-                    <CustomizedSelectInputWithLabel label='Working level' list={workingLevelList}
+                    <CustomizedSelectInputWithLabel label='Applicable level' list={workingLevelList}
                         {...register('workingLevel', { valueAsNumber: true })}
                         onChange={(e) => handleWorkingLevelChange(e)} errors={errors?.workingLevel} />
                     {formData.workingLevel != null && !isNaN(formData?.workingLevel) &&
