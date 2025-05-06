@@ -126,7 +126,8 @@ const AgentDepositAcknowledgementReport = () => {
 
     const formattedData = data?.map(item => ({
         ...item,
-        slip: item?.deposit_slip_file_name ? <Eye className='pointer' onClick={() => handleGetSlip(item?.deposit_slip_file_name)} /> : '-'
+        slip: item?.deposit_slip_file_name ?
+            <Eye className='pointer' onClick={() => handleGetSlip(item?.id)} /> : '-'
     }))
 
     return (
