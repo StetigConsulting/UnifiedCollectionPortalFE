@@ -90,7 +90,7 @@ const DailyAgentCollection = () => {
     const getReportData = async (applyFilter = {}, page = 1) => {
         let payload = {
             page: currentPage,
-            page_size: pageSize,
+            page_size: formData?.pageSize,
             filter: {}
         };
 
