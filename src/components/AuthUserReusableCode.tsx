@@ -19,11 +19,11 @@ interface AuthUserReusableCodeProps {
 function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUserReusableCodeProps) {
     const { data: session, status } = useSession({
         required: true,
-        onUnauthenticated() {
-            toast.error('Session Expired')
-            handleSignOut();
-            router.push('/auth/signin');
-        }
+        // onUnauthenticated() {
+        //     toast.error('Session Expired')
+        //     handleSignOut();
+        //     router.push('/auth/signin');
+        // }
     })
 
     const router = useRouter()
