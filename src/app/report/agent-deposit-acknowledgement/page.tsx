@@ -134,6 +134,10 @@ const AgentDepositAcknowledgementReport = () => {
                         label="Page Size"
                         type="number"
                         {...register("pageSize", { valueAsNumber: true })}
+                        onChange={(e) => {
+                            setShowTable(false);
+                            register("pageSize").onChange(e);
+                        }}
                         errors={errors.pageSize}
                     />
                 </div>
@@ -156,9 +160,6 @@ const AgentDepositAcknowledgementReport = () => {
                     totalPageNumber={totalPages}
                     onPageChange={handlePageChange}
                 />}
-            </div>
-
-            <div className="flex justify-between">
             </div>
         </AuthUserReusableCode>
     );

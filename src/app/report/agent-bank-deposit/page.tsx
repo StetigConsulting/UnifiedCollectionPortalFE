@@ -7,10 +7,10 @@ import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
 import { tableDataPerPage } from '@/lib/utils';
-import { getAgentBankDepositReport, getDepositAcknowledgementReport } from '@/app/api-calls/report/api';
+import { downloadSlipAgentBankDeposit, getAgentBankDepositReport, getDepositAcknowledgementReport } from '@/app/api-calls/report/api';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { Eye } from 'lucide-react';
 import { agentBankDepositTableSchema, AgentBankDepositTableSchemaData } from '@/lib/zod';
 
 const AgentDepositAcknowledgementReport = () => {
@@ -112,6 +112,23 @@ const AgentDepositAcknowledgementReport = () => {
         fetchReport(payload, 1)
     }
 
+    const handleGetSlip = async (name) => {
+        setIsLoading(true);
+        try {
+            const response = await downloadSlipAgentBankDeposit(name)
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            toast.error('Failed to download');
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    const formattedData = data?.map(item => ({
+        ...item,
+        slip: item?.deposit_slip_file_name ? <Eye className='pointer' onClick={() => handleGetSlip(item?.deposit_slip_file_name)} /> : '-'
+    }))
+
     return (
         <AuthUserReusableCode pageTitle="Agent Bank Deposit Report" isLoading={isLoading}>
             <div className="flex items-center gap-4">
@@ -150,7 +167,7 @@ const AgentDepositAcknowledgementReport = () => {
 
             <div className="overflow-x-auto mb-4 mt-4">
                 {showTable && <ReactTable
-                    data={data}
+                    data={formattedData}
                     columns={columns}
                     hideSearchAndOtherButtons
                     dynamicPagination

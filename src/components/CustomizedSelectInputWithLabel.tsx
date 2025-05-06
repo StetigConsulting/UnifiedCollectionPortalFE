@@ -28,7 +28,7 @@ const CustomizedSelectInputWithLabel: React.FC<CustomizedSelectInputWithLabelPro
     ...props
 }) => {
     return (
-        <div className={`flex flex-col ${containerClass}`}>
+        <div className={`flex flex-col ${containerClass}`} title={props.title}>
             <label htmlFor={props.id || 'select-input'} className="block text-sm font-medium text-gray-700 mb-1">
                 {label}{required && <span className="text-red-500 ml-1">*</span>}
             </label>

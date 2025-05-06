@@ -107,6 +107,15 @@ export const getAgentBankDepositReport = async (data: any) => {
     }
 }
 
+export const downloadSlipAgentBankDeposit = async (data: any) => {
+    try {
+        const response = await api.get(`/v1/agent-bank-deposits/download/deposit-slip/${data}`);
+        return response;
+    } catch (error) {
+        throw error?.response?.data
+    }
+}
+
 export const getDailyNonEnergyCollectionReport = async (data: any) => {
     try {
         const response = await api.post('/v1/non-energy-reports/daily-collection-report/fetch', data);

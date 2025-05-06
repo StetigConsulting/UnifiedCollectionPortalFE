@@ -23,7 +23,6 @@ const DailyEnergyCollection = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1)
     const [totalPages, setTotalPages] = useState(1)
-    const [pageSize, setPageSize] = useState(tableDataPerPage);
     const [dataList, setDataList] = useState([]);
 
     const [showTable, setShowTable] = useState(false)
@@ -36,8 +35,13 @@ const DailyEnergyCollection = () => {
             division: [],
             subDivision: [],
             section: [],
+            pageSize: tableDataPerPage
         }
     });
+
+    const formData = watch();
+
+    const [pageSize, setPageSize] = useState(formData?.pageSize)
 
     const [permissions, setPermissions] = useState([])
 
@@ -89,7 +93,7 @@ const DailyEnergyCollection = () => {
     const getReportData = async (applyFilter = {}, page = 1) => {
         let payload = {
             page: currentPage,
-            page_size: pageSize,
+            page_size: formData?.pageSize,
             filter: {}
         };
 
@@ -105,6 +109,7 @@ const DailyEnergyCollection = () => {
         try {
             setIsLoading(true);
             const response = await getDailyEnergyCollectionReport(payload);
+            setPageSize(formData?.pageSize);
             setShowTable(true)
             setDataList(response.data.data);
             setCurrentPage(page);
@@ -186,8 +191,6 @@ const DailyEnergyCollection = () => {
         let payload = getPayload(data)
         getReportData(payload, 1);
     };
-
-    const formData = watch();
 
     const [circles, setCircles] = useState([]);
     const [divisions, setDivisions] = useState([]);
@@ -424,6 +427,11 @@ const DailyEnergyCollection = () => {
                             }
                         </>
                     }
+                    <CustomizedInputWithLabel
+                        label="Page Size"
+                        {...register('pageSize', { valueAsNumber: true })}
+                        errors={errors.pageSize}
+                    />
 
                     <div className='self-end mb-1'>
                         <Button variant='default' type='submit'>Search</Button>
@@ -448,7 +456,7 @@ const DailyEnergyCollection = () => {
                     columns={columns}
                     hideSearchAndOtherButtons
                     dynamicPagination
-                    itemsPerPage={tableDataPerPage}
+                    itemsPerPage={pageSize}
                     pageNumber={currentPage}
                     onPageChange={handlePageChange}
                     totalPageNumber={totalPages}
