@@ -116,6 +116,30 @@ const AgentDepositAcknowledgementReport = () => {
         setIsLoading(true);
         try {
             const response = await downloadSlipAgentBankDeposit(name)
+            const contentDisposition = response.headers["content-disposition"];
+            let filename = "Receipt";
+
+            if (contentDisposition) {
+                const matches = contentDisposition.match(/filename="(.+)"/);
+                if (matches && matches.length > 1) {
+                    filename = matches[1];
+                }
+            }
+
+            const contentType = response.headers["content-disposition"];
+            let extension = 'png';
+
+            const blob = new Blob([response.data], { type: contentType });
+            const url = window.URL.createObjectURL(blob);
+
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = filename.includes(`.${extension}`) ? filename : `${filename}.${extension}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            window.URL.revokeObjectURL(url);
         } catch (error) {
             console.error('Error fetching data:', error);
             toast.error('Failed to download');
