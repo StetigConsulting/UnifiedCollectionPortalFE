@@ -148,11 +148,11 @@ const ResetDeviceCollector = () => {
     }
 
     return (
-        <AuthUserReusableCode pageTitle="Reset Device (Collector)" isLoading={isLoading}>
+        <AuthUserReusableCode pageTitle="Reset Device (Agent)" isLoading={isLoading}>
             <form className="space-y-4 p-4" onSubmit={handleSubmit(onSubmit)}>
                 <div className="grid grid-cols-2 gap-4">
                     <CustomizedInputWithLabel
-                        label="Collector Mobile"
+                        label="Agent Mobile"
                         type="text"
                         required
                         {...register('mobileNumber', { valueAsNumber: true })}
@@ -166,13 +166,13 @@ const ResetDeviceCollector = () => {
                         Search
                     </Button>
                     <CustomizedInputWithLabel
-                        label="Collector Name"
-                        placeholder="Collector Name"
+                        label="Agent Name"
+                        placeholder="Agent Name"
                         {...register("collectorName")}
                         disabled
                     />
                     <CustomizedInputWithLabel
-                        label="Collector Type"
+                        label="Agent Type"
                         // list={collectorType}
                         // placeholder="Collector Type"
                         {...register("collectorType")}
