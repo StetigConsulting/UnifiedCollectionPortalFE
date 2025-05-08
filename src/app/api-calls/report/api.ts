@@ -13,9 +13,9 @@ export const getBillingReport = async (data: any, user_id: number) => {
     }
 };
 
-export const downloadBillingReport = async (type: any) => {
+export const downloadBillingReport = async (payload, type: any) => {
     try {
-        const response = await api.post(`/v1/energy-reports/billing-report/download/${type}`, {},
+        const response = await api.post(`/v1/energy-reports/billing-report/download/${type}`, payload,
             {
                 headers: {
                     "Content-Type": "application/json",

@@ -478,7 +478,7 @@ const dashboard = () => {
                 </Button>
               </div>
             </div>
-            {transactionData.length > 0 && <>
+            {transactionData.length > 0 ? <>
               <div className="text-center text-xl font-semibold text-gray-800 mt-4">
                 Transactions Summary
               </div>
@@ -495,7 +495,7 @@ const dashboard = () => {
                   height="400px"
                 />
               </div>
-            </>}
+            </> : <div className="p-4 mt-4 bg-white">No Data Found</div>}
           </div>}
 
         {checkIfUserHasActionAccess({ backendScope: session?.user?.userScopes, currentAction: "dashboardPerformanceSummary" }) &&
@@ -524,7 +524,7 @@ const dashboard = () => {
                 </Button>
               </div>
             </div>
-            {comparisionData.length > 0 && <>
+            {comparisionData.length > 0 ? <>
               <div className="text-center text-xl font-semibold text-gray-800 mt-4">
                 {levelName}wise Summary
               </div>
@@ -538,7 +538,7 @@ const dashboard = () => {
                   height="400px"
                 />
               </div>
-            </>}
+            </> : <div className="p-4 mt-4 bg-white">No Data Found</div>}
           </div>
         }
 

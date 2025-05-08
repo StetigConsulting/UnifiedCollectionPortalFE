@@ -1739,3 +1739,18 @@ export const cancelledTransactionReport = z.object({
 });
 
 export type CancelledTransactionReportFormData = z.infer<typeof cancelledTransactionReport>;
+
+export const billingReportSchema = z.object({
+  fromDate: z.string().min(1, "From Date is required"),
+  toDate: z.string().min(1, "To Date is required"),
+  workingLevel: z.any().optional(),
+  circle: z.array(z.number()).optional(),
+  division: z.array(z.number()).optional(),
+  subDivision: z.array(z.number()).optional(),
+  section: z.array(z.number()).optional(),
+  pageSize: z.number(
+    { invalid_type_error: 'Page size is required' }
+  ).min(1, "Page size is required"),
+});
+
+export type BillingReportFormData = z.infer<typeof billingReportSchema>;
