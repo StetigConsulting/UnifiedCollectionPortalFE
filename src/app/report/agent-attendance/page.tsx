@@ -107,6 +107,7 @@ const AgentAttendanceReport = () => {
             // setTotalPages(response.data.totalPages)
         } catch (error) {
             console.log(getErrorMessage(error))
+            toast.error(getErrorMessage(error))
         } finally {
             setIsLoading(false);
         }
@@ -116,7 +117,7 @@ const AgentAttendanceReport = () => {
         { label: 'Agency Name', key: 'agency_name', sortable: true },
         { label: 'Agent Name', key: 'agent_name', sortable: true },
         { label: 'Agent Mobile No.', key: 'agent_mobile', sortable: true },
-        { label: 'Date', key: 'level_4_name', sortable: true },
+        { label: 'Date', key: 'attendance_date', sortable: true },
         { label: 'Agent Type', key: 'agent_type', sortable: true },
         { label: 'Login', key: 'login', sortable: true },
         { label: 'Logout', key: 'logout', sortable: true },

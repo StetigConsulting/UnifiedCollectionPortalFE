@@ -130,7 +130,6 @@ const DailyAgentCollection = () => {
         { label: 'Agent Mobile No', key: 'agent_mobile', sortable: true },
         { label: 'MPOS Serial no', key: 'm_pos_serial_no', sortable: true },
         { label: 'Consumer No', key: 'consumer_no', sortable: true },
-        { label: 'Consumer Id', key: 'consumer_id', sortable: true },
         { label: 'Consumer Name', key: 'consumer_name', sortable: true },
         { label: 'Money Receipt No', key: 'money_receipt_no', sortable: true },
         { label: 'Txn ID', key: 'transaction_id', sortable: true },
