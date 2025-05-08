@@ -57,6 +57,7 @@ export const listOfUrlForScopes = [
   { url: '/admin/cancel-transaction', backendScopeName: 'TPCollectionWebPortal:cancel_receipt:ALL' },
   { url: '/report/agent-wise-summary', backendScopeName: 'TPCollectionWebPortal:energy_agent_wise_summary_report:READ' },
   { url: '/report/agent-attendance', backendScopeName: 'TPCollectionWebPortal:energy_agent_attendance_report:READ' },
+  { url: '/report/cancelled-transaction', backendScopeName: 'TPCollectionWebPortal:cancel_transaction_report:READ' },
 ];
 
 

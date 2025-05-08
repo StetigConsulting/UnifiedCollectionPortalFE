@@ -386,7 +386,13 @@ const navData = {
           url: '/report/agent-attendance',
           icon: PiggyBank,
           path: '/report/agent-attendance',
-        }
+        },
+        {
+          title: 'Cancelled Transaction',
+          url: '/report/cancelled-transaction',
+          icon: PiggyBank,
+          path: '/report/cancelled-transaction',
+        },
       ]
     },
     {

@@ -315,3 +315,28 @@ export const downloadAgentAttendance = async (data: any, type: any) => {
         throw error?.response?.data
     }
 }
+
+export const getCancelledTransactions = async (data: any) => {
+    try {
+        const response = await api.post('/v1/energy-reports/cancel-receipt-report/fetch', data);
+        return response.data;
+    } catch (error) {
+        throw error?.response?.data
+    }
+}
+
+export const downloadCancelledTransactions = async (data: any, type: any) => {
+    try {
+        const response = await api.post(`/v1/energy-reports/cancel-receipt-report/download/${type}`, data,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                responseType: "blob",
+            }
+        );
+        return response;
+    } catch (error) {
+        throw error?.response?.data
+    }
+}
