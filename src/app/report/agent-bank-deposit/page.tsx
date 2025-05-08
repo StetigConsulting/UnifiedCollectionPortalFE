@@ -115,39 +115,43 @@ const AgentDepositAcknowledgementReport = () => {
     const handleGetSlip = async (name) => {
         setIsLoading(true);
         try {
-            const response = await downloadSlipAgentBankDeposit(name)
-            const contentDisposition = response.headers["content-disposition"];
-            let filename = "Receipt";
+            const response = await downloadSlipAgentBankDeposit(name);
 
+            const defaultFileName = "Receipt";
+            const extension = "png";
+
+            const now = new Date();
+            const formattedDate = now.toLocaleDateString('en-GB').split('/').reverse().join('');
+            const formattedTime = now.toLocaleTimeString('en-GB', { hour12: false }).replace(/:/g, '_');
+            let filename = `${defaultFileName}_${formattedDate}_${formattedTime}.${extension}`;
+
+            const contentDisposition = response.headers["content-disposition"];
             if (contentDisposition) {
-                console.log('in content', contentDisposition)
-                const matches = contentDisposition.match(/filename="(.+)"/);
-                if (matches && matches.length > 1) {
+                const matches = contentDisposition.match(/filename="?([^"]+)"?/);
+                if (matches && matches[1]) {
                     filename = matches[1];
                 }
             }
 
-            const contentType = response.headers["content-disposition"];
-            let extension = 'png';
+            const contentType = response.headers["content-type"] || "image/png";
 
             const blob = new Blob([response.data], { type: contentType });
             const url = window.URL.createObjectURL(blob);
-
             const a = document.createElement("a");
             a.href = url;
-            a.download = filename.includes(`.${extension}`) ? filename : `${filename}.${extension}`;
+            a.download = filename;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-
             window.URL.revokeObjectURL(url);
         } catch (error) {
-            console.error('Error fetching data:', error);
+            console.error('Error downloading file:', error);
             toast.error('Failed to download');
         } finally {
             setIsLoading(false);
         }
-    }
+    };
+
 
     const formattedData = data?.map(item => ({
         ...item,

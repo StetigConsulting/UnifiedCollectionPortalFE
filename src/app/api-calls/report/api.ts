@@ -109,7 +109,12 @@ export const getAgentBankDepositReport = async (data: any) => {
 
 export const downloadSlipAgentBankDeposit = async (data: any) => {
     try {
-        const response = await api.get(`/v1/agent-bank-deposits/download/deposit-slip/${data}`);
+        const response = await api.get(`/v1/agent-bank-deposits/download/deposit-slip/${data}`, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+            responseType: "blob",
+        });
         return response;
     } catch (error) {
         throw error?.response?.data
