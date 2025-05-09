@@ -438,6 +438,9 @@ const dashboard = () => {
       <div className="">
         {checkIfUserHasActionAccess({ backendScope: session?.user?.userScopes, currentAction: "dashboardTransactionSummary" }) &&
           <div className="bg-gray-100 p-4 rounded-md">
+            <div className="text-center text-xl font-semibold text-gray-800">
+              Transactions Summary
+            </div>
             <div className="flex gap-4">
               <h1>Current vs Previous</h1>
             </div>
@@ -479,9 +482,6 @@ const dashboard = () => {
               </div>
             </div>
             {transactionData.length > 0 ? <>
-              <div className="text-center text-xl font-semibold text-gray-800 mt-4">
-                Transactions Summary
-              </div>
               <div className="w-full h-[400px]">
                 <Chart
                   chartType="ColumnChart"
@@ -500,6 +500,11 @@ const dashboard = () => {
 
         {checkIfUserHasActionAccess({ backendScope: session?.user?.userScopes, currentAction: "dashboardPerformanceSummary" }) &&
           <div className="bg-gray-100 p-4 rounded-md gap-4 mt-4">
+            {levelName &&
+              <div className="text-center text-xl font-semibold text-gray-800">
+                {levelName}wise Summary
+              </div>
+            }
             <div className="flex gap-4">
               <h1>Select 2 Dates for Comparision</h1>
             </div>
@@ -525,9 +530,7 @@ const dashboard = () => {
               </div>
             </div>
             {comparisionData.length > 0 ? <>
-              <div className="text-center text-xl font-semibold text-gray-800 mt-4">
-                {levelName}wise Summary
-              </div>
+
               <div className="w-full h-[400px]">
                 <Chart
                   chartType="ColumnChart"
