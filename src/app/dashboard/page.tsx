@@ -168,7 +168,11 @@ const dashboard = () => {
     }
   };
 
-  const createTooltipForPerformance = (sum, count) => {
+  const createTooltipForPerformance = (count, sum) => {
+    return `<div style="padding:5px; text-align:center; font-size:12px;">
+    <p>No. of Transactions - ${count}</p>
+    </div>`
+
     return `<div style="padding:5px; text-align:center; font-size:12px;">
     <p>No. of Transactions - ${count}</p>
     <p>No. of Meter Reader Logged in - ${sum}</p>

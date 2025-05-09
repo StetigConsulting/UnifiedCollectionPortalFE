@@ -192,8 +192,6 @@ const ViewAgency = () => {
         <AuthUserReusableCode pageTitle="View Agency" isLoading={isLoading}>
             <ReactTable
                 additionalData={<div className="grid grid-cols-2 gap-4">
-                    {/* <CustomizedInputWithLabel label='' />
-                    <CustomizedInputWithLabel label='' /> */}
                     <CustomizedSelectInputWithLabel
                         label="Agency status"
                         list={listOfAgencyStatus}
