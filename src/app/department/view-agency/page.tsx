@@ -4,13 +4,16 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { activateAgencyAccount, deactivateAgencyAccountAPI, getAgenciesWithDiscom, getLevels } from '@/app/api-calls/department/api';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
-import { CalendarArrowUp, CreditCard, Pencil, Power, PowerOff, UserCheck, UserX } from 'lucide-react';
+import { BatteryCharging, CalendarArrowUp, CreditCard, History, Pencil, Power, PowerOff, RotateCcw, UserCheck, UserX } from 'lucide-react';
 import ReactTable from '@/components/ReactTable';
 import AlertPopup from '@/components/Agency/ViewAgency/AlertPopup';
 import { useRouter } from 'next/navigation';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
 import { Button } from '@/components/ui/button';
 import { useSession } from 'next-auth/react';
+import { exportPicklist, urlsListWithTitle } from '@/lib/utils';
+import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
+import * as XLSX from 'xlsx';
 
 const ViewAgency = () => {
     const { data: session } = useSession()
@@ -141,12 +144,39 @@ const ViewAgency = () => {
         setIsLoading(true)
     }
 
+    const handleReverse = (id: number) => {
+        router.push(`${urlsListWithTitle.agencyRecharge.url}?id=${id}&type=${'reverse'}`)
+        setIsLoading(true)
+    }
+
+    const handleRecharge = (id: number) => {
+        router.push(`${urlsListWithTitle.agencyRecharge.url}?id=${id}`)
+        setIsLoading(true)
+    }
+
+    const handleViewHistory = (id: number) => {
+        router.push(`${urlsListWithTitle.agencyBalanceHistory.url}?id=${selectedRow.id}&name=${selectedRow?.agencyName}`)
+        setIsLoading(true)
+    }
+
+    const [validityFrom, setValidityFrom] = useState('');
+    const [validityTo, setValidityTo] = useState('');
+
     const filteredAgencies = agencyList.filter((item) => {
         const isStatusMatch =
             statusFilter === 'all' || (statusFilter === 'active' ? item.isActive : !item.isActive);
-        const isWorkingLevelMatch = workingLevelFilter === 'all' || item.workingOffice === workingLevelFilter;
+        const isWorkingLevelMatch =
+            workingLevelFilter === 'all' || item.workingOffice === workingLevelFilter;
 
-        return isStatusMatch && isWorkingLevelMatch;
+        const itemValidityFrom = new Date(item.validity_start_date);
+        const itemValidityTo = new Date(item.validity_end_date);
+
+        const isValidityFromMatch =
+            !validityFrom || new Date(validityFrom) <= itemValidityFrom;
+        const isValidityToMatch =
+            !validityTo || new Date(validityTo) >= itemValidityTo;
+
+        return isStatusMatch && isWorkingLevelMatch && isValidityFromMatch && isValidityToMatch;
     });
 
     const tableData = filteredAgencies.map((item, index) => ({
@@ -185,22 +215,107 @@ const ViewAgency = () => {
                 />}
             <Button variant='success' onClick={() => handleExtendValidity(selectedRow.id)}><CreditCard className='cursor-pointer h-5 w-5' />Extend Validity</Button>
             <Button variant='default' onClick={() => handleEditAgency(selectedRow.id)} ><Pencil className='cursor-pointer h-5 w-5' />Edit Agency</Button>
+            <Button variant='default' onClick={() => handleViewHistory(selectedRow.id)} ><History className='cursor-pointer h-5 w-5' />View History</Button>
+            <Button variant='success' onClick={() => handleRecharge(selectedRow.id)} ><BatteryCharging className='cursor-pointer h-5 w-5' />Recharge</Button>
+            <Button variant='destructive' onClick={() => handleReverse(selectedRow.id)} ><RotateCcw className='cursor-pointer h-5 w-5' />Reverse</Button>
         </div>
     }
+
+    const exportToExcel = () => {
+        const now = new Date();
+        const formattedDate = now.toLocaleDateString('en-GB').split('/').reverse().join('');
+        const formattedTime = now
+            .toLocaleTimeString('en-GB', { hour12: false })
+            .replace(/:/g, '_');
+
+        const filename = `${'ViewAgency'}_${formattedDate}_${formattedTime}.xlsx`;
+
+        const worksheet = XLSX.utils.json_to_sheet(tableData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');
+        XLSX.writeFile(workbook, filename);
+    };
+
+    const convertToCSVString = (value: any): string => {
+        if (value === null || value === undefined) {
+            return '';
+        }
+
+        let valueAsString = String(value);
+
+        if (valueAsString.includes('"')) {
+            valueAsString = `"${valueAsString.replace(/"/g, '""')}"`;
+        }
+
+        if (valueAsString.includes(',') || valueAsString.includes('\n')) {
+            valueAsString = `"${valueAsString}"`;
+        }
+
+        return valueAsString;
+    };
+
+
+    const exportToCSV = () => {
+        const now = new Date();
+        const formattedDate = now.toLocaleDateString('en-GB').split('/').reverse().join('');
+        const formattedTime = now
+            .toLocaleTimeString('en-GB', { hour12: false })
+            .replace(/:/g, '_');
+
+        const filename = `${'ViewAgency'}_${formattedDate}_${formattedTime}.csv`;
+
+        const csvData = tableData.map((row) =>
+            columns
+                .map((col) => convertToCSVString(row[col.key]))
+                .join(',')
+        );
+
+        const csvString = [columns.map((col) => col.label).join(','), ...csvData].join('\n');
+        const blob = new Blob([csvString], { type: 'text/csv' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        link.click();
+    };
+
+    const handleExport = (e: any) => {
+        const value = e.target.value;
+        setExportTo(e.target.value);
+        if (value === 'excel') {
+            exportToExcel();
+        } else if (value === 'csv') {
+            exportToCSV();
+        }
+        setExportTo('');
+    }
+
+    const [exportTo, setExportTo] = useState('');
 
     return (
         <AuthUserReusableCode pageTitle="View Agency" isLoading={isLoading}>
             <ReactTable
-                additionalData={<div className="grid grid-cols-2 gap-4">
+                additionalData={<div className="grid grid-cols-9 gap-4">
+                    <CustomizedInputWithLabel label='Validity From' type="date"
+                        containerClass='col-span-2'
+                        value={validityFrom}
+                        onChange={(e) => setValidityFrom(e.target.value)} />
+                    <CustomizedInputWithLabel label='Validity To' type="date"
+                        containerClass='col-span-2'
+                        value={validityTo}
+                        onChange={(e) => setValidityTo(e.target.value)} />
                     <CustomizedSelectInputWithLabel
                         label="Agency status"
+                        containerClass='col-span-2'
                         list={listOfAgencyStatus}
                         value={statusFilter}
                         onChange={(e) => setStatusFilter(e.target.value)}
                         removeDefaultOption
                     />
                     <CustomizedSelectInputWithLabel label="Working Level" value={workingLevelFilter}
-                        list={workingLevelList} onChange={(e) => setWorkingLevelFilter(e.target.value)} removeDefaultOption />
+                        list={workingLevelList} onChange={(e) => setWorkingLevelFilter(e.target.value)}
+                        containerClass='col-span-2' removeDefaultOption />
+                    <CustomizedSelectInputWithLabel label='Export to' value={exportTo} list={exportPicklist}
+                        onChange={handleExport} />
                 </div>}
                 data={tableData.filter((item) =>
                     item.agencyName.toLowerCase().includes(search.toLowerCase())
@@ -212,6 +327,8 @@ const ViewAgency = () => {
                 }
                 selectedRow={selectedRow}
                 columns={columns}
+                hideSearchButton
+                hideExports
             />
 
         </AuthUserReusableCode >

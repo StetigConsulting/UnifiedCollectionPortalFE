@@ -41,6 +41,8 @@ interface TableProps<T> {
     downloadPdf?: () => void;
     customExport?: boolean;
     handleExportFile?: (type: string) => void;
+    hideSearchButton?: boolean;
+    hideExports?: boolean;
 }
 
 const ReactTable = <T extends Record<string, any>>({
@@ -69,7 +71,9 @@ const ReactTable = <T extends Record<string, any>>({
     onPageChange,
     downloadPdf = () => { },
     customExport,
-    handleExportFile
+    handleExportFile,
+    hideSearchButton = false,
+    hideExports = false,
 }: TableProps<T>) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [sortField, setSortField] = useState<keyof T | null>(defaultSortField || null);
@@ -228,12 +232,17 @@ const ReactTable = <T extends Record<string, any>>({
                         {customActionButton ? customActionButton :
                             <div className="flex space-x-2">
                                 <Button variant="default" onClick={handleCopy}>Copy</Button>
-                                <Button variant="default" onClick={() => {
-                                    customExport ? handleExportFile('xlsx') : exportToExcel()
-                                }}>Excel</Button>
-                                <Button variant="default" onClick={() => {
-                                    customExport ? handleExportFile('csv') : exportToCSV()
-                                }}>CSV</Button>
+                                {
+                                    !hideExports ? <>
+                                        <Button variant="default" onClick={() => {
+                                            customExport ? handleExportFile('xlsx') : exportToExcel()
+                                        }}>Excel</Button>
+                                        <Button variant="default" onClick={() => {
+                                            customExport ? handleExportFile('csv') : exportToCSV()
+                                        }}>CSV</Button>
+                                    </> : null
+                                }
+
                                 {/* <Button variant="default" onClick={() => {
                                     customExport ? handleExportFile('pdf') : downloadPdf()
                                 }}>PDF</Button> */}
@@ -244,12 +253,15 @@ const ReactTable = <T extends Record<string, any>>({
                                 {onRowSelectButtons}
                             </div>
                         )}
-                        <CustomizedInputWithLabel
-                            type="text"
-                            placeholder="Search"
-                            value={searchTerm}
-                            onChange={(e) => handleSearch(e)}
-                        />
+                        {
+                            !hideSearchButton &&
+                            <CustomizedInputWithLabel
+                                type="text"
+                                placeholder="Search"
+                                value={searchTerm}
+                                onChange={(e) => handleSearch(e)}
+                            />
+                        }
                     </div>
 
                     {additionalDataBetweenTableAndAction && additionalDataBetweenTableAndAction}
