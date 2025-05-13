@@ -7,7 +7,7 @@ import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
 import { exportPicklist, formatDate, getErrorMessage, tableDataPerPage } from '@/lib/utils';
-import { downloadDeniedEnergyConsumerReport, getAgentAttendance } from '@/app/api-calls/report/api';
+import { downloadAgentAttendance, downloadDeniedEnergyConsumerReport, getAgentAttendance } from '@/app/api-calls/report/api';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
 import { getLevels, getLevelsDiscomId } from '@/app/api-calls/department/api';
 import { useSession } from 'next-auth/react';
@@ -278,7 +278,7 @@ const AgentAttendanceReport = () => {
         try {
             setIsLoading(true);
             let payload = getPayload(formData)
-            const response = await downloadDeniedEnergyConsumerReport(payload, type)
+            const response = await downloadAgentAttendance(payload, type)
 
             const contentDisposition = response.headers["content-disposition"];
             let filename = "AgentAttendanceReport";
