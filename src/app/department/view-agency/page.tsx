@@ -171,12 +171,12 @@ const ViewAgency = () => {
         const itemValidityFrom = new Date(item.validity_start_date);
         const itemValidityTo = new Date(item.validity_end_date);
 
-        const isValidityFromMatch =
-            !validityFrom || new Date(validityFrom) <= itemValidityFrom;
-        const isValidityToMatch =
-            !validityTo || new Date(validityTo) >= itemValidityTo;
+        const isDateRangeMatch =
+            validityFrom && validityTo
+                ? new Date(validityFrom) <= itemValidityFrom && new Date(validityTo) >= itemValidityTo
+                : true;
 
-        return isStatusMatch && isWorkingLevelMatch && isValidityFromMatch && isValidityToMatch;
+        return isStatusMatch && isWorkingLevelMatch && isDateRangeMatch;
     });
 
     const tableData = filteredAgencies.map((item, index) => ({
