@@ -499,7 +499,7 @@ const dashboard = () => {
                   height="400px"
                 />
               </div>
-            </> : <div className="p-4 mt-4 bg-white">No Data Found</div>}
+            </> : <div className="p-4 mt-4 bg-white text-center">No Records Available</div>}
           </div>}
 
         {checkIfUserHasActionAccess({ backendScope: session?.user?.userScopes, currentAction: "dashboardPerformanceSummary" }) &&
@@ -545,7 +545,7 @@ const dashboard = () => {
                   height="400px"
                 />
               </div>
-            </> : <div className="p-4 mt-4 bg-white">No Data Found</div>}
+            </> : <div className="p-4 mt-4 bg-white text-center">No Records Available</div>}
           </div>
         }
 
