@@ -315,7 +315,7 @@ const ViewAgency = () => {
                         list={workingLevelList} onChange={(e) => setWorkingLevelFilter(e.target.value)}
                         containerClass='col-span-2' removeDefaultOption />
                     <CustomizedSelectInputWithLabel label='Export to' value={exportTo} list={exportPicklist}
-                        onChange={handleExport} />
+                        onChange={handleExport} placeholder='Select' />
                 </div>}
                 data={tableData.filter((item) =>
                     item.agencyName.toLowerCase().includes(search.toLowerCase())
