@@ -111,8 +111,8 @@ const ViewHistory = () => {
             <p className={`font-bold ${item.newBalance - item.previousBalance > 0 ? "text-green-500" : "text-red-500"}`}>
                 {item.newBalance - item.previousBalance > 0 ? `+${item.newBalance - item.previousBalance}` : item.newBalance - item.previousBalance}
             </p>,
-        payDate: moment(item.createdOn).format('DD-MM-YYYY'),
-        entryDate: moment(item.createdOn).format('DD-MM-YYYY, HH:mm A'),
+        payDate: moment(item.created_on).format('DD-MM-YYYY'),
+        entryDate: moment(item.created_on).format('DD-MM-YYYY, HH:mm A'),
     }));
 
 

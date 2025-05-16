@@ -188,7 +188,7 @@ const RechargeEntry = () => {
                     <>
                         <div className="grid grid-cols-2 gap-4">
                             <CustomizedInputWithLabel
-                                label="Agency ID"
+                                label="Agent ID"
                                 required={true}
                                 errors={errors.agencyId}
                                 disabled
@@ -202,7 +202,7 @@ const RechargeEntry = () => {
                                 {...register("phoneNumber")}
                             />
                             <CustomizedInputWithLabel
-                                label="Agency Name"
+                                label="Agent Name"
                                 required={true}
                                 errors={errors.agencyName}
                                 disabled
