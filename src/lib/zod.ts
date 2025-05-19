@@ -1176,6 +1176,120 @@ export const createUserSchema = z.object({
 
 export type CreateUserFormData = z.infer<typeof createUserSchema>;
 
+export const createNewUserSchema = z.object({
+  userRole: z.number({ invalid_type_error: "User Role is required" })
+    .int("User Role must be an integer")
+    .min(1, "User Role is required"),
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  phoneNumber: z.string().length(10, "Phone number must be exactly 10 digits"),
+  needOfficeStructure: z.boolean().optional(),
+  levelWithIdMap: z.any(),
+  workingLevel: z.any().optional(),
+  circle: z.array(z.number()).optional(),
+  division: z.array(z.number()).optional(),
+  subDivision: z.array(z.number()).optional(),
+  section: z.array(z.number()).optional(),
+}).superRefine((data, ctx) => {
+  const { workingLevel, levelWithIdMap, needOfficeStructure } = data;
+  let levelMapWithId = levelWithIdMap
+
+  if (needOfficeStructure && workingLevel == null) {
+    ctx.addIssue({
+      path: ["workingLevel"],
+      code: z.ZodIssueCode.custom,
+      message: "Working Level is required",
+    })
+  }
+
+  // Circle level
+  if (workingLevel === levelMapWithId?.CIRCLE) {
+    if (!data.circle || data.circle.length === 0) {
+      ctx.addIssue({
+        path: ["circle"],
+        code: z.ZodIssueCode.custom,
+        message: "Circle is required",
+      });
+    }
+  }
+
+  // Division level
+  if (workingLevel === levelMapWithId?.DIVISION) {
+    if (!data.circle || data.circle.length === 0) {
+      ctx.addIssue({
+        path: ["circle"],
+        code: z.ZodIssueCode.custom,
+        message: "Circle is required",
+      });
+    }
+    if (!data.division || data.division.length === 0) {
+      ctx.addIssue({
+        path: ["division"],
+        code: z.ZodIssueCode.custom,
+        message: "Division is required",
+      });
+    }
+  }
+
+  // SubDivision level
+  if (workingLevel === levelMapWithId?.SUB_DIVISION) {
+    if (!data.circle || data.circle.length === 0) {
+      ctx.addIssue({
+        path: ["circle"],
+        code: z.ZodIssueCode.custom,
+        message: "Circle is required",
+      });
+    }
+    if (!data.division || data.division.length === 0) {
+      ctx.addIssue({
+        path: ["division"],
+        code: z.ZodIssueCode.custom,
+        message: "Division is required",
+      });
+    }
+    if (!data.subDivision || data.subDivision.length === 0) {
+      ctx.addIssue({
+        path: ["subDivision"],
+        code: z.ZodIssueCode.custom,
+        message: "Sub Division is required",
+      });
+    }
+  }
+
+  // Section level
+  if (workingLevel === levelMapWithId?.SECTION) {
+    if (!data.circle || data.circle.length === 0) {
+      ctx.addIssue({
+        path: ["circle"],
+        code: z.ZodIssueCode.custom,
+        message: "Circle is required",
+      });
+    }
+    if (!data.division || data.division.length === 0) {
+      ctx.addIssue({
+        path: ["division"],
+        code: z.ZodIssueCode.custom,
+        message: "Division is required",
+      });
+    }
+    if (!data.subDivision || data.subDivision.length === 0) {
+      ctx.addIssue({
+        path: ["subDivision"],
+        code: z.ZodIssueCode.custom,
+        message: "Sub Division is required",
+      });
+    }
+    if (!data.section || data.section.length === 0) {
+      ctx.addIssue({
+        path: ["section"],
+        code: z.ZodIssueCode.custom,
+        message: "Section is required",
+      });
+    }
+  }
+});
+
+export type CreateNewUserFormData = z.infer<typeof createNewUserSchema>;
+
 export const addSupervisorSchema = z.object({
   supervisorName: z
     .string()

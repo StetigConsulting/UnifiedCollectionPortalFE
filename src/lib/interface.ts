@@ -245,6 +245,7 @@ export interface CreateUserInterface {
     user_role_id: number;
     user_name: string;
     mobile_number: string;
+    office_structure_id?: number;
 }
 
 export interface DeniedToPayInterface {

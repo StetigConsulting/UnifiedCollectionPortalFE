@@ -23,8 +23,6 @@ const CreateUserConfiguration = () => {
         { label: 'Name', key: 'user_name', sortable: true },
         { label: 'Mobile Number', key: 'mobile_number', sortable: true },
         { label: 'Created at', key: 'formattedDate', sortable: true },
-        { label: 'Working Office Level', key: 'working_level_office', sortable: true },
-        { label: 'Working Office Name', key: 'working_office_name', sortable: true },
     ];
 
     const fetchData = async () => {
@@ -42,9 +40,7 @@ const CreateUserConfiguration = () => {
 
     const structureTableData = users.map((item, index) => ({
         ...item,
-        formattedDate: moment(item.created_at).format('DD/MM/YYYY, HH:mm:ss A'),
-        working_level_office: item?.working_level_office?.office_structure_level_name,
-        working_office_name: item?.working_level_office?.office_description,
+        formattedDate: moment(item.created_at).format('DD/MM/YYYY, HH:mm:ss A')
     }));
 
     useEffect(() => {
