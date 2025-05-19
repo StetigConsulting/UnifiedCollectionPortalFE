@@ -133,7 +133,7 @@ const ExtendValidity = () => {
                 setValue('agencyName', agency.id || '');
                 setValue('currentFromValidity', agency.validity_start_date || '');
                 setValue('currentToValidity', agency.validity_end_date || '');
-                setValue('newFromValidity', '');
+                setValue('newFromValidity', agency.validity_end_date || '');
                 setValue('newToValidity', '');
             }
         }
@@ -197,9 +197,8 @@ const ExtendValidity = () => {
                         label="Validity From Date"
                         errors={errors.newFromValidity}
                         containerClass=""
-                        placeholder="Choose Validity Date"
-                        type="date"
-                        required
+                        placeholder="Validity Date"
+                        disabled
                         {...register('newFromValidity')}
                     />
                     <CustomizedInputWithLabel

@@ -70,7 +70,7 @@ export const addAgencySchema = z
       .optional(),
     validityFromDate: z.string().nonempty("Validity From Date is required"),
     validityToDate: z.string().nonempty("Validity To Date is required"),
-    paymentDate: z.string().nonempty("Payment Date is required"),
+    paymentDate: z.string().optional(),
     transactionId: z.string().optional(),
     initialBalance: z.number({
       required_error: "Initial Balance is required",

@@ -34,6 +34,7 @@ const DailyAgentCollection = () => {
             division: [],
             subDivision: [],
             section: [],
+            dateType: dateTypePicklist[0].value,
             pageSize: tableDataPerPage
         }
     });

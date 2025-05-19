@@ -35,7 +35,8 @@ const DailyEnergyCollection = () => {
             division: [],
             subDivision: [],
             section: [],
-            pageSize: tableDataPerPage
+            pageSize: tableDataPerPage,
+            dateType: dateTypePicklist[0].value,
         }
     });
 
@@ -61,6 +62,7 @@ const DailyEnergyCollection = () => {
                     })
             );
         }).catch((err) => { })
+        getAgencyList()
     }, []);
 
     const [levelNameMappedWithId, setLevelNameMappedWithId] = useState<Record<string, number>>({})
@@ -170,7 +172,7 @@ const DailyEnergyCollection = () => {
                 }
             },
             ...data?.agentRole && { agent_role: data?.agentRole },
-            // ...data?.agentMode && { agent_mode: data?.agentMode },
+            ...data?.agencyName && { agency_name: data?.agencyName },
             ...data?.collectionMode && { pay_mode: data?.collectionMode },
             ...data.workingLevel && {
                 office_structure_id: data.workingLevel === levelNameMappedWithId.CIRCLE
@@ -349,6 +351,19 @@ const DailyEnergyCollection = () => {
 
     console.log(errors)
 
+    const [agencyList, setAgencyList] = useState([]);
+
+    const getAgencyList = async () => {
+        setIsLoading(true)
+        await getAgenciesWithDiscom(session?.user?.discomId).then(data => {
+            setAgencyList(data?.data?.map((item) => ({
+                label: item.agency_name,
+                value: item.agency_name,
+            })))
+        })
+        setIsLoading(false)
+    }
+
     return (
         <AuthUserReusableCode pageTitle="Daily Energy Collection Sheet" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="flex items-center gap-4">
@@ -365,10 +380,14 @@ const DailyEnergyCollection = () => {
                         {...register('toDate')}
                         errors={errors.toDate}
                     />
+
                     <CustomizedSelectInputWithLabel label='Date Type' list={dateTypePicklist}
                         {...register('dateType')} errors={errors?.dateType} />
                     <CustomizedSelectInputWithLabel label='Agent Role' list={agentRolePicklist}
                         {...register('agentRole')} errors={errors?.agentRole} />
+                    <CustomizedSelectInputWithLabel label='Agency Name' list={agencyList}
+                        title={formData?.agencyName}
+                        {...register('agencyName')} errors={errors?.agencyName} />
                     <CustomizedSelectInputWithLabel label='Collection Mode' list={permissions}
                         {...register('collectionMode', {})} errors={errors?.collectionMode} />
                     <CustomizedSelectInputWithLabel label='Applicable level' list={workingLevelList}

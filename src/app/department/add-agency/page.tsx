@@ -389,7 +389,6 @@ const AddAgency = () => {
             <CustomizedInputWithLabel
               label="Security Deposit Payment Date"
               errors={errors.paymentDate}
-              required={true}
               placeholder="Choose Payment Date"
               type="date"
               {...register("paymentDate")}

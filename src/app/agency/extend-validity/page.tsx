@@ -91,6 +91,7 @@ const ExtendValidity = () => {
                 setValue('collectorId', agency.id || null);
                 setValue('currentValidityFrom', agency.validity_from_date || '');
                 setValue('currentValidityTo', agency.validity_to_date || '');
+                setValue('validityDateFrom', agency.validity_to_date || '');
             } else if (agency && agency?.is_active === false) {
                 setIsErrorModalOpen(true)
                 setErrorMessage('Please activate the agent before extending validity')
@@ -144,6 +145,7 @@ const ExtendValidity = () => {
                         required={true}
                         errors={errors.validityDateFrom}
                         type="date"
+                        disabled
                         {...register("validityDateFrom")}
                     />
                     <CustomizedInputWithLabel
