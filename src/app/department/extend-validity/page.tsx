@@ -133,7 +133,7 @@ const ExtendValidity = () => {
                 setValue('agencyName', agency.id || '');
                 setValue('currentFromValidity', agency.validity_start_date || '');
                 setValue('currentToValidity', agency.validity_end_date || '');
-                setValue('newFromValidity', agency.validity_end_date || '');
+                setValue('newFromValidity', agency.validity_start_date || '');
                 setValue('newToValidity', '');
             }
         }
