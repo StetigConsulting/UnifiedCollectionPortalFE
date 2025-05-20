@@ -6,7 +6,7 @@ import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
-import { tableDataPerPage } from '@/lib/utils';
+import { formatDate, tableDataPerPage } from '@/lib/utils';
 import { getDepositAcknowledgementReport } from '@/app/api-calls/report/api';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
 import { agentDepositReportSchema, AgentDepositReportSchemaData } from '@/lib/zod';
@@ -80,7 +80,7 @@ const AgentDepositAcknowledgementReport = () => {
         { label: 'Agent Name', key: 'agent_name', sortable: true },
         { label: 'Supervisor ID', key: 'supervisor_id', sortable: true },
         { label: 'Supervisor Name', key: 'supervisor_name', sortable: true },
-        { label: 'Deposit Date', key: 'deposit_date', sortable: true },
+        { label: 'Deposit Date', key: 'formattedDate', sortable: true },
         { label: 'Deposit Amount', key: 'deposit_amount', sortable: true, align: 'center' },
         { label: 'Acknowledgement', key: 'acknowledgement', sortable: true },
     ], []);
@@ -105,6 +105,11 @@ const AgentDepositAcknowledgementReport = () => {
     const handlePageChange = (page: number) => {
         fetchReport({}, page)
     };
+
+    const formatData = data?.map((item) => ({
+        ...item,
+        formattedDate: formatDate(item?.deposit_date),
+    }))
 
     return (
         <AuthUserReusableCode pageTitle="Agent Deposit Acknowledgement Report" isLoading={isLoading}>
@@ -151,7 +156,7 @@ const AgentDepositAcknowledgementReport = () => {
 
             <div className="overflow-x-auto mb-4 mt-4">
                 {showTable && <ReactTable
-                    data={data}
+                    data={formatData}
                     columns={columns}
                     hideSearchAndOtherButtons
                     dynamicPagination

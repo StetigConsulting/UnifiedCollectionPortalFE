@@ -6,7 +6,7 @@ import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
-import { agentRolePicklist, agentWorkingType, dateTypePicklist, exportPicklist, getErrorMessage, tableDataPerPage } from '@/lib/utils';
+import { agentRolePicklist, agentWorkingType, dateTypePicklist, exportPicklist, formatDate, getErrorMessage, tableDataPerPage } from '@/lib/utils';
 import { downloadDailyEnergyCollectionReport, downloadDailyNonEnergyCollectionReport, downloadDeniedNonEnergyConsumerReport, getDailyEnergyCollectionReport, getDeniedEnergyConsumerReport, getDeniedNonEnergyConsumerReport } from '@/app/api-calls/report/api';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
 import { getAgenciesWithDiscom, getAllPaymentModes, getLevels, getLevelsDiscomId } from '@/app/api-calls/department/api';
@@ -136,6 +136,16 @@ const DeniedEnergyConsumer = () => {
         { label: 'Remarks', key: 'remarks', sortable: true },
         { label: 'Entry Date', key: 'entry_date', sortable: true },
     ], []);
+
+    const formatData = dataList.map((item) => {
+        return ({
+            ...item,
+            entry_date: item?.entry_date ? formatDate(item?.entry_date) : null,
+            bill_issue_date: item?.bill_issue_date ? formatDate(item?.bill_issue_date) : null,
+            due_date: item?.due_date ? formatDate(item?.due_date) : null,
+            promise_to_pay_date: item?.promise_to_pay_date ? formatDate(item?.promise_to_pay_date) : null,
+        })
+    })
 
     const getPayload = (data) => {
         let filter = {
@@ -432,7 +442,7 @@ const DeniedEnergyConsumer = () => {
 
             <div className="overflow-x-auto mb-4 mt-4">
                 {showTable && <ReactTable
-                    data={dataList}
+                    data={formatData}
                     columns={columns}
                     hideSearchAndOtherButtons
                     dynamicPagination

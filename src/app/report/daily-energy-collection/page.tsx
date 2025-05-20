@@ -6,7 +6,7 @@ import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
-import { agentRolePicklist, agentWorkingType, dateTypePicklist, exportPicklist, getErrorMessage, tableDataPerPage } from '@/lib/utils';
+import { agentRolePicklist, agentWorkingType, dateTypePicklist, exportPicklist, formatDate, getErrorMessage, tableDataPerPage } from '@/lib/utils';
 import { downloadDailyEnergyCollectionReport, getDailyEnergyCollectionReport } from '@/app/api-calls/report/api';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
 import { getAgenciesWithDiscom, getAllPaymentModes, getLevels, getLevelsDiscomId } from '@/app/api-calls/department/api';
@@ -155,6 +155,12 @@ const DailyEnergyCollection = () => {
         { label: 'Remarks', key: 'remarks', sortable: true },
         { label: 'Upload Date', key: 'upload_date', sortable: true },
     ], []);
+
+    const formatData = dataList?.map((item) => ({
+        ...item,
+        transaction_date: formatDate(item?.transaction_date),
+        upload_date: formatDate(item?.upload_date),
+    }))
 
     const getPayload = (data) => {
         console.log(data)
@@ -471,7 +477,7 @@ const DailyEnergyCollection = () => {
 
             <div className="overflow-x-auto mb-4 mt-4">
                 {showTable && <ReactTable
-                    data={dataList}
+                    data={formatData}
                     columns={columns}
                     hideSearchAndOtherButtons
                     dynamicPagination

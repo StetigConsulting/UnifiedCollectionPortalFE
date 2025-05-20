@@ -333,6 +333,9 @@ const DeniedEnergyConsumer = () => {
     const formatData = dataList.map((item) => ({
         ...item,
         entry_date: item?.entry_date ? formatDate(item?.entry_date) : null,
+        bill_issue_date: item?.bill_issue_date ? formatDate(item?.bill_issue_date) : null,
+        due_date: item?.due_date ? formatDate(item?.due_date) : null,
+        promise_to_pay_date: item?.promise_to_pay_date ? formatDate(item?.promise_to_pay_date) : null,
     }))
 
 

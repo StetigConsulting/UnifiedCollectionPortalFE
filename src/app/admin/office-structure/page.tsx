@@ -27,7 +27,7 @@ const OfficeStructurePage = () => {
                 data?.data?.map((item) => {
                     return ({
                         ...item,
-                        createdOn: moment(item.createdOn).format('MMMM D, YYYY [at] h:mm A'),
+                        createdOn: formatDate(item.createdOn)
                     })
                 })
             );

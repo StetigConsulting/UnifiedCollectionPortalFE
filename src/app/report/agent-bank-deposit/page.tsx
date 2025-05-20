@@ -6,7 +6,7 @@ import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
-import { tableDataPerPage } from '@/lib/utils';
+import { formatDate, tableDataPerPage } from '@/lib/utils';
 import { downloadSlipAgentBankDeposit, getAgentBankDepositReport, getDepositAcknowledgementReport } from '@/app/api-calls/report/api';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -156,7 +156,8 @@ const AgentDepositAcknowledgementReport = () => {
     const formattedData = data?.map(item => ({
         ...item,
         slip: item?.deposit_slip_file_name ?
-            <Eye className='pointer' onClick={() => handleGetSlip(item?.id)} /> : '-'
+            <Eye className='pointer' onClick={() => handleGetSlip(item?.id)} /> : '-',
+        deposit_date: formatDate(item?.deposit_date)
     }))
 
     return (

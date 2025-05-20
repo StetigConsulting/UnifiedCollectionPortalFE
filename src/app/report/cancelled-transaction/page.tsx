@@ -6,7 +6,7 @@ import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
-import { exportPicklist, getErrorMessage, tableDataPerPage } from '@/lib/utils';
+import { exportPicklist, formatDate, getErrorMessage, tableDataPerPage } from '@/lib/utils';
 import { downloadCancelledTransactions, getCancelledTransactions } from '@/app/api-calls/report/api';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
 import { getAllPaymentModes, getLevels, getLevelsDiscomId } from '@/app/api-calls/department/api';
@@ -127,6 +127,12 @@ const CancelTransaction = () => {
         { label: 'Cancelled Date', key: 'cancelled_date', sortable: true },
         { label: 'Cancelled By', key: 'cancelled_by', sortable: true },
     ], []);
+
+    const formatData = dataList.map((item) => ({
+        ...item,
+        transaction_date: formatDate(item?.transaction_date),
+        cancelled_date: formatDate(item?.cancelled_date),
+    }))
 
     const getPayload = (data) => {
         console.log(data)
@@ -409,7 +415,7 @@ const CancelTransaction = () => {
 
             <div className="overflow-x-auto mb-4 mt-4">
                 {showTable && <ReactTable
-                    data={dataList}
+                    data={formatData}
                     columns={columns}
                     hideSearchAndOtherButtons
                     dynamicPagination

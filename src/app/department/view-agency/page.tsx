@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
 import { Button } from '@/components/ui/button';
 import { useSession } from 'next-auth/react';
-import { exportPicklist, urlsListWithTitle } from '@/lib/utils';
+import { exportPicklist, formatDate, urlsListWithTitle } from '@/lib/utils';
 import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import * as XLSX from 'xlsx';
 
@@ -181,6 +181,8 @@ const ViewAgency = () => {
 
     const tableData = filteredAgencies.map((item, index) => ({
         ...item,
+        validity_start_date: formatDate(item.validity_start_date),
+        validity_end_date: formatDate(item.validity_end_date),
     }));
 
     const listOfAgencyStatus = [{
@@ -317,9 +319,7 @@ const ViewAgency = () => {
                     <CustomizedSelectInputWithLabel label='Export to' value={exportTo} list={exportPicklist}
                         onChange={handleExport} placeholder='Select' />
                 </div>}
-                data={tableData.filter((item) =>
-                    item.agencyName.toLowerCase().includes(search.toLowerCase())
-                )}
+                data={tableData}
                 isSelectable={true}
                 onRowSelect={handleRowSelection}
                 onRowSelectButtons={

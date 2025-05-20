@@ -102,7 +102,7 @@ const ResetDeviceCollector = () => {
                 console.log(historyResponse)
                 setCollectorId(response?.data?.id)
                 setValue("collectorName", response?.data?.agent_name);
-                setValue("agencyName", response?.data?.agent_name);
+                setValue("agencyName", response?.data?.agency?.agency_name);
                 setShowTable(true)
                 let arrData = [];
                 arrData.push(registeredResponse.data)

@@ -322,6 +322,7 @@ const AgentAttendanceReport = () => {
     const formatData = dataList.map((item) => ({
         ...item,
         entry_date: item?.entry_date ? formatDate(item?.entry_date) : null,
+        attendance_date: item?.attendance_date ? formatDate(item?.attendance_date) : null,
     }))
 
 
