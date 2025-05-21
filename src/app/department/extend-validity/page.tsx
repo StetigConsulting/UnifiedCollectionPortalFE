@@ -198,7 +198,6 @@ const ExtendValidity = () => {
                         errors={errors.newFromValidity}
                         containerClass=""
                         placeholder="Validity Date"
-                        disabled
                         {...register('newFromValidity')}
                     />
                     <CustomizedInputWithLabel
