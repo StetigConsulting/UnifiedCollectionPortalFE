@@ -7,7 +7,7 @@ import ReactTable from "@/components/ReactTable";
 import AuthUserReusableCode from "@/components/AuthUserReusableCode";
 import { getAllAgentDepositAcknowledgement, updateDepositAcknowlegment } from "@/app/api-calls/agency/api";
 import { useSession } from "next-auth/react";
-import { getErrorMessage } from "@/lib/utils";
+import { formatDate, getErrorMessage } from "@/lib/utils";
 
 const AgentDepositAcknowledgement = () => {
     const { data: session } = useSession();
@@ -61,6 +61,7 @@ const AgentDepositAcknowledgement = () => {
 
     const tableData = data.map((item) => ({
         ...item,
+        deposit_date: formatDate(item?.deposit_date),
         action:
             <div className="flex gap-2">
                 {/* <AlertPopup triggerCode={<UserRoundMinus className="text-red-500 cursor-pointer" />} handleContinue={() => deactivateAgent(item.id)}

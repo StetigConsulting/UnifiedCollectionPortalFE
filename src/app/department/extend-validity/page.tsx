@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 import { useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
+import { formatDate } from '@/lib/utils';
 
 type FormData = z.infer<typeof extendValiditySchema>;
 
@@ -131,8 +132,8 @@ const ExtendValidity = () => {
             if (agency) {
                 setValue('agencyId', agency.id || '');
                 setValue('agencyName', agency.id || '');
-                setValue('currentFromValidity', agency.validity_start_date || '');
-                setValue('currentToValidity', agency.validity_end_date || '');
+                setValue('currentFromValidity', formatDate(agency.validity_start_date) || '');
+                setValue('currentToValidity', formatDate(agency.validity_end_date) || '');
                 setValue('newFromValidity', agency.validity_start_date || '');
                 setValue('newToValidity', '');
             }
@@ -197,7 +198,9 @@ const ExtendValidity = () => {
                         label="Validity From Date"
                         errors={errors.newFromValidity}
                         containerClass=""
-                        placeholder="Validity Date"
+                        placeholder="Choose Validity From Date"
+                        type="date"
+                        required
                         {...register('newFromValidity')}
                     />
                     <CustomizedInputWithLabel

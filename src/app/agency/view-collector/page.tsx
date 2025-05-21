@@ -10,6 +10,7 @@ import { activateAgentById, deactivateAgentById, getAllAgentByAgencyId } from "@
 import { getLevels } from "@/app/api-calls/department/api";
 import AlertPopup from "@/components/Agency/ViewAgency/AlertPopup";
 import { useSession } from "next-auth/react";
+import { formatDate } from "@/lib/utils";
 
 const ViewCollector = () => {
     const { data: session } = useSession();
@@ -101,6 +102,8 @@ const ViewCollector = () => {
 
     const tableData = collectors.map((item) => ({
         ...item,
+        validity_from_date: formatDate(item.validity_from_date),
+        validity_to_date: formatDate(item.validity_to_date),
         action: item.is_active ? (
             <div className="flex gap-2">
                 <AlertPopup triggerCode={<UserRoundMinus className="text-red-500 cursor-pointer" />} handleContinue={() => deactivateAgent(item.id)}

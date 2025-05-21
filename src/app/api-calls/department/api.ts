@@ -91,6 +91,16 @@ const getAgenciesWithDiscom = async (Id: number) => {
   }
 };
 
+export const getAgenciesWithDiscomWithBalance = async (Id: number) => {
+  try {
+    const response = await api.get(`/agencies/discom/${Id}?isAgentBalanceRequired=true`);
+    return response.data;
+  } catch (error: any) {
+
+    throw error?.response?.data
+  }
+};
+
 const getAgencyById = async (Id: number | string) => {
   try {
     const response = await api.get(`/agencies/${Id}`);

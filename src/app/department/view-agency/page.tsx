@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
-import { activateAgencyAccount, deactivateAgencyAccountAPI, getAgenciesWithDiscom, getLevels } from '@/app/api-calls/department/api';
+import { activateAgencyAccount, deactivateAgencyAccountAPI, getAgenciesWithDiscom, getAgenciesWithDiscomWithBalance, getLevels } from '@/app/api-calls/department/api';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import { BatteryCharging, CalendarArrowUp, CreditCard, History, Pencil, Power, PowerOff, RotateCcw, UserCheck, UserX } from 'lucide-react';
 import ReactTable from '@/components/ReactTable';
@@ -32,7 +32,7 @@ const ViewAgency = () => {
     const getAgencyList = async () => {
         setIsLoading(true);
         try {
-            const response = await getAgenciesWithDiscom(session?.user?.discomId);
+            const response = await getAgenciesWithDiscomWithBalance(session?.user?.discomId);
             const discomList = await getLevels(session?.user?.discomId);
             const listOfLevel = discomList.data.reduce((acc, item) => {
                 acc[item.id] = item.levelName;
