@@ -9,7 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { editAgencySchema } from '@/lib/zod';
 import { z } from 'zod';
 import { useEffect, useState } from 'react';
-import { editAgency, getAgenciesWithDiscom, getAgencyById } from '@/app/api-calls/department/api';
+import { editAgency, getAgenciesWithDiscom, getAgencyById, getAllGlobalPaymentMode } from '@/app/api-calls/department/api';
 import { getErrorMessage, } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useSearchParams } from 'next/navigation';
@@ -40,6 +40,7 @@ const EditAgency = () => {
             "phone": data.phoneNumber,
             "maximum_limit": data.maximumAmount,
             "max_agent": data.maximumAgent,
+            "vendor_id": data.vendorCode,
         }
 
         try {
@@ -151,9 +152,27 @@ const EditAgency = () => {
                 setValue('maximumAgent', agency.max_agent || null);
                 setValue('woNumber', agency.wo_number || '');
                 setValue('contactPerson', agency.contact_person || '');
+                setValue('vendorCode', agency.vendor_id || '');
             }
         }
     }, [selectedAgency, agencyList, setValue]);
+
+    // const [paymentModes, setPaymentMethods] = useState([])
+
+    // useEffect(() => {
+    //     getAllGlobalPaymentMode().then((data) => {
+    //         setPaymentMethods(
+    //             data?.data
+    //                 ?.filter((ite) => ite.mode_type == "Security Deposit")
+    //                 ?.map((ite) => {
+    //                     return {
+    //                         label: ite.mode_name,
+    //                         value: ite.id,
+    //                     };
+    //                 })
+    //         );
+    //     }).catch((err) => { })
+    // }, [])
 
     return (
         <AuthUserReusableCode pageTitle="Edit Agency" isLoading={isLoading}>
@@ -206,28 +225,42 @@ const EditAgency = () => {
                         placeholder="Enter New Address"
                         {...register('address')}
                     />
-                    <div className="grid grid-cols-3 gap-4 col-span-2">
-                        <CustomizedInputWithLabel
-                            label="WO Number"
-                            errors={errors.woNumber}
-                            placeholder="Enter WO Number"
-                            {...register('woNumber')}
-                        />
-                        <CustomizedInputWithLabel
-                            label="Contact Person"
-                            errors={errors.contactPerson}
-                            required
-                            placeholder="Enter Contact Person"
-                            {...register('contactPerson')}
-                        />
-                        <CustomizedInputWithLabel
-                            label="Phone Number"
-                            errors={errors.phoneNumber}
-                            required
-                            placeholder="Enter Phone Number"
-                            {...register('phoneNumber')}
-                        />
-                    </div>
+                    <CustomizedInputWithLabel
+                        label="WO Number"
+                        errors={errors.woNumber}
+                        placeholder="Enter WO Number"
+                        {...register('woNumber')}
+                    />
+                    <CustomizedInputWithLabel
+                        label="Contact Person"
+                        errors={errors.contactPerson}
+                        required
+                        placeholder="Enter Contact Person"
+                        {...register('contactPerson')}
+                    />
+                    <CustomizedInputWithLabel
+                        label="Phone Number"
+                        errors={errors.phoneNumber}
+                        required
+                        placeholder="Enter Phone Number"
+                        {...register('phoneNumber')}
+                    />
+                    <CustomizedInputWithLabel
+                        label="Vendor Code"
+                        errors={errors.vendorCode}
+                        required
+                        placeholder="Enter Vendor Code"
+                        {...register('vendorCode')}
+                    />
+                    {/* <CustomizedSelectInputWithLabel
+                        label="Payment Mode"
+                        errors={errors.paymentMode}
+                        required={true}
+                        containerClass=""
+                        list={paymentModes}
+                        placeholder="Select Payment Mode"
+                        {...register("paymentMode")}
+                    /> */}
                 </div>
                 <div className="flex justify-end mt-4">
                     <Button type="submit" variant="default" disabled={isSubmitting}>

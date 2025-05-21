@@ -138,6 +138,8 @@ const DailyEnergyCollection = () => {
         { label: 'Consumer Id', key: 'consumer_id', sortable: true },
         { label: 'Consumer Name', key: 'consumer_name', sortable: true },
         { label: 'Money Receipt No', key: 'money_receipt_no', sortable: true },
+        { label: 'FG Money Receipt', key: 'fg_id', sortable: true },
+        { label: 'Vencor code', key: 'vendor_id', sortable: true },
         { label: 'Txn ID', key: 'transaction_id', sortable: true },
         { label: 'Txn Date', key: 'transaction_date', sortable: true },
         { label: 'Txn Time', key: 'transaction_time', sortable: true },
@@ -458,7 +460,7 @@ const DailyEnergyCollection = () => {
                         errors={errors.pageSize}
                     />
 
-                    <div className='self-end mb-1'>
+                    <div className='mt-6'>
                         <Button variant='default' type='submit'>Search</Button>
                     </div>
                     <CustomizedSelectInputWithLabel

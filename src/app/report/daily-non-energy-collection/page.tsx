@@ -133,6 +133,8 @@ const DailyAgentCollection = () => {
         { label: 'Consumer No', key: 'consumer_no', sortable: true },
         { label: 'Consumer Name', key: 'consumer_name', sortable: true },
         { label: 'Money Receipt No', key: 'money_receipt_no', sortable: true },
+        { label: 'FG Money Receipt', key: 'fg_id', sortable: true },
+        { label: 'Vencor code', key: 'vendor_id', sortable: true },
         { label: 'Txn ID', key: 'transaction_id', sortable: true },
         { label: 'Txn Date', key: 'transaction_date', sortable: true },
         { label: 'Txn Time', key: 'transaction_time', sortable: true },

@@ -258,6 +258,8 @@ export const editAgencySchema = z.object({
   phoneNumber: z
     .string()
     .regex(/^\d{10}$/, "Phone number must be exactly 10 digits"),
+  vendorCode: z.string().optional(),
+  // paymentMode: z.string().nonempty('Payment Mode is required'),
 });
 
 export const editAgencyAreaSchema = z.object({

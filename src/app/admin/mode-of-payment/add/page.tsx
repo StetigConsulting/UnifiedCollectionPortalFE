@@ -16,10 +16,12 @@ import { updatePaymentMode } from '@/app/api-calls/admin/api';
 import { getErrorMessage, urlsListWithTitle } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import { getAllGlobalPaymentMode, getAllPaymentModes } from '@/app/api-calls/department/api';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Trash2 } from 'lucide-react';
 import SuccessErrorModal from '@/components/SuccessErrorModal';
 import ReactTable from '@/components/ReactTable';
 import NormalReactTable from '@/components/NormalReactTable';
+import AlertPopup from '@/components/Agency/ViewAgency/AlertPopup';
+import AlertPopupWithState from '@/components/Agency/ViewAgency/AlertPopupWithState';
 
 const AddPaymentConfiguration: React.FC = () => {
     const router = useRouter();
@@ -121,6 +123,7 @@ const AddPaymentConfiguration: React.FC = () => {
         { label: 'Status', key: 'status', sortable: true },
     ];
 
+    const [openConfirmationPopup, setOpenConfirmationPopup] = useState(false);
 
     return (
         <AuthUserReusableCode pageTitle="Mode Of Payment" isLoading={isLoading || isSubmitting}>
@@ -137,11 +140,16 @@ const AddPaymentConfiguration: React.FC = () => {
                 />
                 <div className="flex justify-end gap-4 mt-4">
                     <Button type="button" variant="outline" onClick={() => { router.push(urlsListWithTitle.modeOfPayment.url) }}>Cancel</Button>
-                    <Button type="submit" variant="default" disabled={isSubmitting}>
-                        {isSubmitting ? <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...
-                        </> : "Save"}
-                    </Button>
+                    <AlertPopupWithState isOpen={openConfirmationPopup} setIsOpen={setOpenConfirmationPopup}
+                        triggerCode={<Button variant="default" disabled={isSubmitting}>
+                            {isSubmitting ? <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...
+                            </> : "Save"}
+                        </Button>} handleContinue={handleSubmit(onSubmit)}
+                        title=''
+                        description='Deleteing the selected Payment Mode(s) from discom configuration will also delete it from associated Agency and Agents. Are you sure you want to delete it?'
+                        continueButtonText='Yes'
+                    />
                 </div>
             </form>
             <SuccessErrorModal isOpen={isErrorModalOpened} onClose={() => setIsErrorModalOpened(false)}
