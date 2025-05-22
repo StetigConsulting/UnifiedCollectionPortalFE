@@ -144,6 +144,23 @@ const EditCollector = () => {
             console.log("agencyData", agencyData);
             setAgencyData(agencyData);
 
+            let collectionTypesList = [];
+
+            if (agencyData?.collection_type_energy) {
+                collectionTypesList.push({
+                    label: 'Energy',
+                    value: 'Energy',
+                })
+            }
+            if (agencyData?.collection_type_non_energy) {
+                collectionTypesList.push({
+                    label: 'Non Energy',
+                    value: 'Non Energy',
+                })
+            }
+
+            setCollectionTypes(collectionTypesList)
+
             setPermissions(agencyData?.collection_payment_modes
                 ?.map((ite) => {
                     return {

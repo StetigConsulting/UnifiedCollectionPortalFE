@@ -132,8 +132,8 @@ const ExtendValidity = () => {
             if (agency) {
                 setValue('agencyId', agency.id || '');
                 setValue('agencyName', agency.id || '');
-                setValue('currentFromValidity', formatDate(agency.validity_start_date) || '');
-                setValue('currentToValidity', formatDate(agency.validity_end_date) || '');
+                setValue('currentFromValidity', agency.validity_start_date || '');
+                setValue('currentToValidity', agency.validity_end_date || '');
                 setValue('newFromValidity', agency.validity_start_date || '');
                 setValue('newToValidity', '');
             }
@@ -141,6 +141,9 @@ const ExtendValidity = () => {
     }, [selectedAgency, agencyList]);
 
     console.log(errors)
+
+    const formData = watch();
+
     return (
         <AuthUserReusableCode pageTitle="Extend Validity" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -184,6 +187,7 @@ const ExtendValidity = () => {
                         containerClass=""
                         placeholder="Current Validity From"
                         {...register('currentFromValidity')}
+                        value={formData?.currentFromValidity ? formatDate(watch('currentFromValidity')) : ''}
                         disabled
                     />
                     <CustomizedInputWithLabel
@@ -192,6 +196,7 @@ const ExtendValidity = () => {
                         containerClass=""
                         placeholder="Current Validity To"
                         {...register('currentToValidity')}
+                        value={formData?.currentFromValidity ? formatDate(watch('currentToValidity')) : ''}
                         disabled
                     />
                     <CustomizedInputWithLabel
