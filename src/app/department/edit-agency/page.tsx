@@ -46,7 +46,7 @@ const EditAgency = () => {
             "vendor_id": data.vendorCode,
             "collection_type_energy": data.collectionType?.includes("Energy"),
             "collection_type_non_energy": data.collectionType?.includes("Non-Energy"),
-            "non_energy_types": data.nonEnergy,
+            "non_energy_types": data.collectionType?.includes("Non-Energy") ? data.nonEnergy : [],
             "collection_payment_modes": data.permission,
         }
 
@@ -68,6 +68,7 @@ const EditAgency = () => {
                 vendorCode: "",
                 collectionType: [],
                 nonEnergy: [],
+                permission: []
             });
             if (agencyIdFromUrl) {
                 const url = new URL(window.location.href);
