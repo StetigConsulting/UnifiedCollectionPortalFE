@@ -490,7 +490,7 @@ const AddAgency = () => {
             )
           }
           <CustomizedInputWithLabel
-            label="VendorID"
+            label="Vendor ID"
             errors={errors.vendorId}
             containerClass=""
             placeholder="Enter vendor ID"
