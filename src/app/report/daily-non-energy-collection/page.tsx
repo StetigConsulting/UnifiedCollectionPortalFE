@@ -134,7 +134,7 @@ const DailyAgentCollection = () => {
         { label: 'Consumer Name', key: 'consumer_name', sortable: true },
         { label: 'Money Receipt No', key: 'money_receipt_no', sortable: true },
         { label: 'FG ID', key: 'fg_id', sortable: true },
-        { label: 'Vendor code', key: 'vendor_id', sortable: true },
+        { label: 'Vendor ID', key: 'vendor_id', sortable: true },
         { label: 'Txn ID', key: 'transaction_id', sortable: true },
         { label: 'Txn Date', key: 'transaction_date', sortable: true },
         { label: 'Txn Time', key: 'transaction_time', sortable: true },

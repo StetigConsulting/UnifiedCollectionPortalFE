@@ -300,14 +300,14 @@ const EditAgency = () => {
                     />
 
                     <CustomizedInputWithLabel
-                        label="Vendor Code"
+                        label="Vendor ID"
                         errors={errors.vendorCode}
                         disabled={checkIfUserHasActionAccess(
                             {
                                 backendScope: session?.user?.userScopes,
                                 currentAction: 'disableVendorCode'
                             })}
-                        placeholder="Enter Vendor Code"
+                        placeholder="Enter Vendor ID"
                         {...register('vendorCode')}
                     />
                     <CustomizedMultipleSelectInputWithLabelNumber
