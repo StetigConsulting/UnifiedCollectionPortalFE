@@ -9,12 +9,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { editAgencySchema } from '@/lib/zod';
 import { z } from 'zod';
 import { useEffect, useState } from 'react';
-import { editAgency, getAgenciesWithDiscom, getAgencyById, getAllGlobalPaymentMode } from '@/app/api-calls/department/api';
+import { editAgency, getAgenciesWithDiscom, getAgencyById, getAllGlobalPaymentMode, getAllNonEnergyTypes, getAllPaymentModes } from '@/app/api-calls/department/api';
 import { getErrorMessage, } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
+import CustomizedMultipleSelectInputWithLabelString from '@/components/CustomizedMultipleSelectInputWithLabelString';
+import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
+import { checkIfUserHasActionAccess } from '@/helper';
 
 type FormData = z.infer<typeof editAgencySchema>;
 
@@ -41,6 +44,10 @@ const EditAgency = () => {
             "maximum_limit": data.maximumAmount,
             "max_agent": data.maximumAgent,
             "vendor_id": data.vendorCode,
+            "collection_type_energy": data.collectionType?.includes("Energy"),
+            "collection_type_non_energy": data.collectionType?.includes("Non-Energy"),
+            "non_energy_types": data.nonEnergy,
+            "collection_payment_modes": data.permission,
         }
 
         try {
@@ -58,6 +65,9 @@ const EditAgency = () => {
                 woNumber: "",
                 contactPerson: "",
                 phoneNumber: "",
+                vendorCode: "",
+                collectionType: [],
+                nonEnergy: [],
             });
             if (agencyIdFromUrl) {
                 const url = new URL(window.location.href);
@@ -100,7 +110,22 @@ const EditAgency = () => {
             setValue('maximumAgent', agency.max_agent || null);
             setValue('woNumber', agency.wo_number || '');
             setValue('contactPerson', agency.contact_person || '');
-
+            setValue('vendorCode', agency.vendor_id || '');
+            let paymentMode = [];
+            paymentMode = agency.collection_payment_modes?.map((item) => item.id);
+            console.log("Payment Mode", paymentMode, agency.collection_payment_modes);
+            setValue('permission', paymentMode || []);
+            let collectionType = [];
+            if (agency.collection_type_energy) {
+                collectionType.push("Energy");
+            }
+            if (agency.collection_type_non_energy) {
+                collectionType.push("Non-Energy");
+            }
+            setValue('collectionType', collectionType || []);
+            let nonEnergy = [];
+            nonEnergy = agency.non_energy_types?.map((item) => item.id);
+            setValue('nonEnergy', nonEnergy || []);
             setValue('agency', agency.id)
         } catch (error) {
             console.error("Failed to fetch agency by ID:", error);
@@ -109,12 +134,25 @@ const EditAgency = () => {
         }
     };
 
+    const [nonEnergyTypes, setNonEnergyTypes] = useState([])
+    const [permissions, setPermissions] = useState([]);
+
     useEffect(() => {
         if (agencyIdFromUrl) {
             fetchAgencyById(agencyIdFromUrl);
         } else {
             getAgencyList();
         }
+        getAllNonEnergyTypes().then((data) => {
+            setNonEnergyTypes(
+                data?.data?.map((ite) => {
+                    return {
+                        label: ite.type_name,
+                        value: ite.id,
+                    };
+                })
+            );
+        })
     }, [agencyIdFromUrl]);
 
     const getAgencyList = async () => {
@@ -153,26 +191,41 @@ const EditAgency = () => {
                 setValue('woNumber', agency.wo_number || '');
                 setValue('contactPerson', agency.contact_person || '');
                 setValue('vendorCode', agency.vendor_id || '');
+                let paymentMode = [];
+                paymentMode = agency.collection_payment_modes?.map((item) => item.id);
+                console.log("Payment Mode", paymentMode, agency.collection_payment_modes);
+                setValue('permission', paymentMode || []);
+                let collectionType = [];
+                if (agency.collection_type_energy) {
+                    collectionType.push("Energy");
+                }
+                if (agency.collection_type_non_energy) {
+                    collectionType.push("Non-Energy");
+                }
+                setValue('collectionType', collectionType || []);
+                let nonEnergy = [];
+                nonEnergy = agency.non_energy_types?.map((item) => item.id);
+                setValue('nonEnergy', nonEnergy || []);
             }
         }
     }, [selectedAgency, agencyList, setValue]);
 
-    // const [paymentModes, setPaymentMethods] = useState([])
+    useEffect(() => {
+        getAllPaymentModes().then((data) => {
+            setPermissions(
+                data?.data
+                    ?.filter((ite) => ite.mode_type == "Collection")
+                    ?.map((ite) => {
+                        return {
+                            label: ite.mode_name,
+                            value: ite.id,
+                        };
+                    })
+            );
+        }).catch((err) => { })
+    }, [])
 
-    // useEffect(() => {
-    //     getAllGlobalPaymentMode().then((data) => {
-    //         setPaymentMethods(
-    //             data?.data
-    //                 ?.filter((ite) => ite.mode_type == "Security Deposit")
-    //                 ?.map((ite) => {
-    //                     return {
-    //                         label: ite.mode_name,
-    //                         value: ite.id,
-    //                     };
-    //                 })
-    //         );
-    //     }).catch((err) => { })
-    // }, [])
+    const formData = watch();
 
     return (
         <AuthUserReusableCode pageTitle="Edit Agency" isLoading={isLoading}>
@@ -245,22 +298,57 @@ const EditAgency = () => {
                         placeholder="Enter Phone Number"
                         {...register('phoneNumber')}
                     />
+
                     <CustomizedInputWithLabel
                         label="Vendor Code"
                         errors={errors.vendorCode}
-                        required
+                        disabled={checkIfUserHasActionAccess(
+                            {
+                                backendScope: session?.user?.userScopes,
+                                currentAction: 'disableVendorCode'
+                            })}
                         placeholder="Enter Vendor Code"
                         {...register('vendorCode')}
                     />
-                    {/* <CustomizedSelectInputWithLabel
-                        label="Payment Mode"
-                        errors={errors.paymentMode}
+                    <CustomizedMultipleSelectInputWithLabelNumber
+                        label="Permissions"
+                        errors={errors.permission}
+                        placeholder="Select permission"
+                        list={permissions}
                         required={true}
-                        containerClass=""
-                        list={paymentModes}
-                        placeholder="Select Payment Mode"
-                        {...register("paymentMode")}
-                    /> */}
+                        value={watch('permission') || []}
+                        multi={true}
+                        onChange={(selectedValues) => setValue('permission', selectedValues)}
+                    />
+                    <CustomizedMultipleSelectInputWithLabelString
+                        label="Collection Type"
+                        errors={errors.collectionType}
+                        placeholder="Select Collection"
+                        list={[
+                            { label: "Energy", value: "Energy" },
+                            { label: "Non-Energy", value: "Non-Energy" },
+                        ]}
+                        required={true}
+                        value={watch('collectionType') || []}
+                        multi={true}
+                        onChange={(selectedValues) => setValue('collectionType', selectedValues)}
+                    />
+
+                    {formData?.collectionType &&
+                        formData?.collectionType?.includes("Non-Energy") ? (
+                        <CustomizedMultipleSelectInputWithLabelNumber
+                            label="Non Energy"
+                            list={nonEnergyTypes}
+                            required={true}
+                            errors={errors.nonEnergy}
+                            value={watch('nonEnergy') || []}
+                            multi={true}
+                            onChange={(selectedValues) => setValue('nonEnergy', selectedValues)}
+                        />
+                    ) : (
+                        <></>
+                    )}
+
                 </div>
                 <div className="flex justify-end mt-4">
                     <Button type="submit" variant="default" disabled={isSubmitting}>

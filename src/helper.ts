@@ -74,6 +74,7 @@ export const listOfActionScopes = [
   { action: 'dashboardBillUploadHistory', backendScopeName: 'TPCollectionWebPortal:dashboard-bill-upload-history:READ' },
   { action: 'dashboardTransactionSummary', backendScopeName: 'TPCollectionWebPortal:dashboard-transaction-summary:READ' },
   { action: 'dashboardPerformanceSummary', backendScopeName: 'TPCollectionWebPortal:dashboard-performance-summary:READ' },
+  { action: 'disableVendorCode', backendScopeName: 'TPCollectionWebPortal:agency:EDIT_WITHOUT_VENDOR_ID' },
 ]
 
 export const checkIfUserHasActionAccess = ({ backendScope = [], currentAction }) => {
