@@ -398,8 +398,8 @@ const navData = {
     {
       title: "News/Notice",
       icon: Volume2Icon,
-      url: "/department/add-news",
-      path: "/department/add-news",
+      url: "/new-notices",
+      path: "/new-notices",
     },
     // {
     //   title: "Logout",

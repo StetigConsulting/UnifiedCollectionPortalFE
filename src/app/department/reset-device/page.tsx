@@ -86,6 +86,7 @@ const ResetDeviceCollector = () => {
         { label: 'Reason', key: 'reason', sortable: true },
         { label: 'Status', key: 'deviceStatus', sortable: true },
         { label: 'Date', key: 'date', sortable: true },
+        { label: 'Reset by', key: 'created_by_name' }
     ], []);
 
     const [showTable, setShowTable] = useState(false)

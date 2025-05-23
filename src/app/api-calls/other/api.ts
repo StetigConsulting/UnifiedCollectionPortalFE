@@ -53,3 +53,12 @@ export const getTransactionSummary = async (data: any) => {
         throw error?.response?.data
     }
 }
+
+export const getNewsNoticesForUser = async () => {
+    try {
+        const response = await api.get(`/v1/newsnotice/agency-fetch`);
+        return response.data;
+    } catch (error) {
+        throw error?.response?.data
+    }
+}
