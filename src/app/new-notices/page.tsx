@@ -36,17 +36,16 @@ const AdminNewsNotices = () => {
                 Welcome, {session?.user?.userName}
             </div>
 
-            {/* News / Notices */}
             <Card className="max-w-xl mx-auto">
                 <CardContent className="p-4">
                     <h3 className="text-lg font-semibold mb-2">News / Notices :</h3>
-                    <ul className="list-disc list-inside space-y-1">
-                        {
+                    {
+                        newsList.length === 0 ? <ul className="list-disc list-inside space-y-1">{
                             newsList?.map((item: any, index: number) => (
                                 <li key={index}><strong>{item?.title}</strong>: {item?.description}</li>
-                            ))
-                        }
-                    </ul>
+                            ))}
+                        </ul> : <p>No news or notices available.</p>
+                    }
                 </CardContent>
             </Card>
         </AuthUserReusableCode>

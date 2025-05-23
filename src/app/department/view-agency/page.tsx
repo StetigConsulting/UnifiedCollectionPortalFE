@@ -285,7 +285,7 @@ const ViewAgency = () => {
     const handleExport = (e: any) => {
         const value = e.target.value;
         setExportTo(e.target.value);
-        if (value === 'excel') {
+        if (value === 'xlsx') {
             exportToExcel();
         } else if (value === 'csv') {
             exportToCSV();
