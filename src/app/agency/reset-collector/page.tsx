@@ -42,7 +42,7 @@ const ResetCollectorBalance = () => {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                     <CustomizedSelectInputWithLabel
-                        label="Collector Mobile"
+                        label="Agent Mobile"
                         list={[]}
                         required={true}
                         errors={errors.collectorMobile}

@@ -147,7 +147,7 @@ const AddPaymentConfiguration: React.FC = () => {
                             </> : "Save"}
                         </Button>} handleContinue={handleSubmit(onSubmit)}
                         title=''
-                        description='Deleteing the selected Payment Mode(s) from discom configuration will also delete it from associated Agency and Agents. Are you sure you want to delete it?'
+                        description='This action may affect the current payment methods for agencies and agents. Do you wish to proceed?'
                         continueButtonText='Yes'
                     />
                 </div>

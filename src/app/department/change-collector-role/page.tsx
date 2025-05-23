@@ -78,11 +78,11 @@ const ChangeCollectorRole = () => {
 
 
     return (
-        <AuthUserReusableCode pageTitle="Change Collector Role" isLoading={isLoading}>
+        <AuthUserReusableCode pageTitle="Change Agent Role" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div className="flex items-center gap-4">
                     <CustomizedInputWithLabel
-                        label="Collector Mobile Number"
+                        label="Agent Mobile Number"
                         placeholder="Enter Mobile Number"
                         errors={errors.collectorMobileNumber}
                         containerClass="flex-1"

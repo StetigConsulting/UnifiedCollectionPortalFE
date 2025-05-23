@@ -54,10 +54,10 @@ const CollectorActivityReport = () => {
 
     const columns = useMemo(() => [
         { label: 'Agency Name', key: 'agencyName', sortable: true },
-        { label: 'Collector Id', key: 'collectorId', sortable: true },
-        { label: 'Collector Mobile Number', key: 'collectorMobileNo', sortable: true },
-        { label: 'Collector Name', key: 'collectorName', sortable: true },
-        { label: 'Collector Type', key: 'collectorType', sortable: true },
+        { label: 'Agent Id', key: 'collectorId', sortable: true },
+        { label: 'Agent Mobile Number', key: 'collectorMobileNo', sortable: true },
+        { label: 'Agent Name', key: 'collectorName', sortable: true },
+        { label: 'Agent Type', key: 'collectorType', sortable: true },
         { label: 'Login Time', key: 'loginTime', sortable: true },
         { label: 'Logout Time', key: 'logoutTime', sortable: true },
     ], []);

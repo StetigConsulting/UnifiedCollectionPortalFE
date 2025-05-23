@@ -18,6 +18,7 @@ import { useSession } from 'next-auth/react';
 import CustomizedMultipleSelectInputWithLabelString from '@/components/CustomizedMultipleSelectInputWithLabelString';
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
 import { checkIfUserHasActionAccess } from '@/helper';
+import AlertPopupWithState from '@/components/Agency/ViewAgency/AlertPopupWithState';
 
 type FormData = z.infer<typeof editAgencySchema>;
 
@@ -228,6 +229,8 @@ const EditAgency = () => {
 
     const formData = watch();
 
+    const [openConfirmationPopup, setOpenConfirmationPopup] = useState(false);
+
     return (
         <AuthUserReusableCode pageTitle="Edit Agency" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -352,11 +355,16 @@ const EditAgency = () => {
 
                 </div>
                 <div className="flex justify-end mt-4">
-                    <Button type="submit" variant="default" disabled={isSubmitting}>
-                        {isSubmitting ? <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
-                        </> : "Submit"}
-                    </Button>
+                    <AlertPopupWithState isOpen={openConfirmationPopup} setIsOpen={setOpenConfirmationPopup}
+                        triggerCode={<Button variant="default" disabled={isSubmitting}>
+                            {isSubmitting ? <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
+                            </> : "Submit"}
+                        </Button>} handleContinue={handleSubmit(onSubmit)}
+                        title=''
+                        description='This action may affect the current payment methods for agencies and agents. Do you wish to proceed?'
+                        continueButtonText='Yes'
+                    />
                 </div>
             </form>
         </AuthUserReusableCode>

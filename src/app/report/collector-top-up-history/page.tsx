@@ -37,8 +37,8 @@ const CollectorTopUpHistory = () => {
 
     const columns = useMemo(
         () => [
-            { label: 'Collector Mobile', key: 'collectorMobile', sortable: true },
-            { label: 'Collector Name', key: 'collectorName', sortable: true },
+            { label: 'Agent Mobile', key: 'collectorMobile', sortable: true },
+            { label: 'Agent Name', key: 'collectorName', sortable: true },
             { label: 'TXN Type', key: 'txnType', sortable: true },
             { label: 'Txn Amount', key: 'txnAmount', sortable: true },
             { label: 'Balance After Txn', key: 'balanceAfterTxn', sortable: true },

@@ -67,12 +67,12 @@ const TransactionRecord = () => {
 
     const columns = useMemo(
         () => [
-            { label: 'Collector Mobile', key: 'collectorMobile', sortable: true },
-            { label: 'Collector Name', key: 'collectorName', sortable: true },
+            { label: 'Agent Mobile', key: 'collectorMobile', sortable: true },
+            { label: 'Agent Name', key: 'collectorName', sortable: true },
             { label: 'Consumer No', key: 'consumerNo', sortable: true },
             { label: 'Consumer Name', key: 'consumerName', sortable: true },
-            { label: 'Collector Operating Balance', key: 'collectorOperatingBalance', sortable: true },
-            { label: 'Collector Closing Balance', key: 'collectorClosingBalance', sortable: true },
+            { label: 'Agent Operating Balance', key: 'collectorOperatingBalance', sortable: true },
+            { label: 'Agent Closing Balance', key: 'collectorClosingBalance', sortable: true },
             { label: 'Agency Opening Balance', key: 'agencyOpeningBalance', sortable: true },
             { label: 'Agency Closing Balance', key: 'agencyClosingBalance', sortable: true },
             { label: 'Entry Date', key: 'entryDate', sortable: true },

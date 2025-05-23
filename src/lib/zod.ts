@@ -638,7 +638,7 @@ export const extendValiditySchemaCollector = z.object({
 export type ExtendValidityCollectorFormData = z.infer<typeof extendValiditySchemaCollector>;
 
 export const resetCollectorBalanceSchema = z.object({
-  collectorMobile: z.string().min(1, "Collector mobile is required"),
+  collectorMobile: z.string().min(1, "Agent mobile is required"),
   agencyName: z.string().min(1, "Agency name is required"),
   agencyId: z.string().min(1, "Agency ID is required"),
   phoneNumber: z.string().min(1, "Phone number is required"),

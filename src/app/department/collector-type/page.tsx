@@ -19,7 +19,7 @@ const ChangeCollectorType = () => {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div className="grid grid-cols-3 gap-4 items-center">
                     <CustomizedInputWithLabel
-                        label="Collector Mobile Number"
+                        label="Agent Mobile Number"
                         errors={errors.mobileNumber}
                         containerClass="col-span-2"
                         placeholder="Enter Mobile Number"

@@ -136,7 +136,7 @@ const AgentBankDeposit = () => {
                 <div className='space-y-2'>
                     <div className="col-span-2">
                         <CustomizedInputWithLabel
-                            label="Collector Mobile"
+                            label="Agent Mobile"
                             type="text"
                             {...register('collectorMobile', { valueAsNumber: true })}
                             onChange={() => {
