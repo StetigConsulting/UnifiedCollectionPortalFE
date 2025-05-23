@@ -401,6 +401,12 @@ const navData = {
       url: "/new-notices",
       path: "/new-notices",
     },
+    {
+      title: "News/Notice",
+      icon: Volume2Icon,
+      url: "/add-news",
+      path: "/add-news",
+    },
     // {
     //   title: "Logout",
     //   icon: LogOut,

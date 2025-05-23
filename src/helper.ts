@@ -58,7 +58,8 @@ export const listOfUrlForScopes = [
   { url: '/report/agent-wise-summary', backendScopeName: 'TPCollectionWebPortal:energy_agent_wise_summary_report:READ' },
   { url: '/report/agent-attendance', backendScopeName: 'TPCollectionWebPortal:energy_agent_attendance_report:READ' },
   { url: '/report/cancelled-transaction', backendScopeName: 'TPCollectionWebPortal:cancel_transaction_report:READ' },
-  { url: '/new-notices', backendScopeName: 'TPCollectionWebPortal:news-notice:READ' },
+  { url: '/new-notices', backendScopeName: 'TPCollectionWebPortal:news_notice:READ' },
+  { url: '/add-news', backendScopeName: 'TPCollectionWebPortal:news_notice:ALL' },
 ];
 
 

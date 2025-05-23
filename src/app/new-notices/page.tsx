@@ -11,9 +11,12 @@ const AdminNewsNotices = () => {
 
     const { data: session } = useSession()
 
+    const [newsList, setNewsList] = React.useState([])
+
     const fetchNewsNotices = async () => {
         try {
             const response = await getNewsNoticesForUser()
+            setNewsList(response?.data)
             console.log('News / Notices:', response)
         } catch (error) {
             console.error('Error fetching news/notices:', error)
@@ -38,8 +41,11 @@ const AdminNewsNotices = () => {
                 <CardContent className="p-4">
                     <h3 className="text-lg font-semibold mb-2">News / Notices :</h3>
                     <ul className="list-disc list-inside space-y-1">
-                        <li>New Agent: Agent XYZ assigned to Area1!</li>
-                        <li>New Agent: Agent XYZ assigned to Area2!</li>
+                        {
+                            newsList?.map((item: any, index: number) => (
+                                <li key={index}><strong>{item?.title}</strong>: {item?.description}</li>
+                            ))
+                        }
                     </ul>
                 </CardContent>
             </Card>

@@ -62,3 +62,12 @@ export const getNewsNoticesForUser = async () => {
         throw error?.response?.data
     }
 }
+
+export const addNewsNotice = async (data: any) => {
+    try {
+        const response = await api.post(`/v1/newsnotice/add`, data);
+        return response.data;
+    } catch (error) {
+        throw error?.response?.data
+    }
+}
