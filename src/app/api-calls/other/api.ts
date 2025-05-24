@@ -71,3 +71,21 @@ export const addNewsNotice = async (data: any) => {
         throw error?.response?.data
     }
 }
+
+export const getAllNewsList = async () => {
+    try {
+        const response = await api.get(`/v1/newsnotice/fetch`);
+        return response.data;
+    } catch (error) {
+        throw error?.response?.data
+    }
+}
+
+export const deleteNewsById = async (data: any) => {
+    try {
+        const response = await api.post('/v1/newsnotice/delete', data)
+        return response?.data;
+    } catch (error) {
+        throw error?.response?.data
+    }
+}
