@@ -4,12 +4,14 @@ import {
     SIGNIN,
     ROOT
 } from "./lib/utils";
+import { getLandingPageUrl } from "./helper";
 
 export async function middleware(request: any) {
 
     const { nextUrl } = request;
     const session = await auth();
     const isAuthenticated = !!session?.user;
+    let landingPage = getLandingPageUrl(session?.user?.userScopes)
 
     console.log("Is Authenticated:", isAuthenticated, session);
 
@@ -27,7 +29,7 @@ export async function middleware(request: any) {
         }
     } else {
         if (nextUrl.pathname === SIGNIN) {
-            return NextResponse.redirect(new URL(ROOT, nextUrl));
+            return NextResponse.redirect(new URL(landingPage, nextUrl));
         }
     }
     return NextResponse.next();

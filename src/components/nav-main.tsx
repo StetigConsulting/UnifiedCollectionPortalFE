@@ -51,7 +51,7 @@ export function NavMain({
           if (hideMenuAccordionItem(item?.title, childItems, session?.user?.userScopes)) return null;
         } else {
 
-          if (pathname === urlsListWithTitle.dashboard.url && item.url === urlsListWithTitle.dashboard.url) {
+          if (item.url === urlsListWithTitle.dashboard.url) {
             ['dashboardBillUploadHistory', 'dashboardTransactionSummary', 'dashboardPerformanceSummary'].forEach((action) => {
               const hasAccess = checkIfUserHasActionAccess({
                 backendScope: session?.user?.userScopes,

@@ -16,7 +16,7 @@ const AdminNewsNotices = () => {
     const fetchNewsNotices = async () => {
         try {
             const response = await getNewsNoticesForUser()
-            setNewsList(response?.data)
+            setNewsList(response?.data || [])
             console.log('News / Notices:', response)
         } catch (error) {
             console.error('Error fetching news/notices:', error)
@@ -40,11 +40,12 @@ const AdminNewsNotices = () => {
                 <CardContent className="p-4">
                     <h3 className="text-lg font-semibold mb-2">News / Notices :</h3>
                     {
-                        newsList.length === 0 ? <ul className="list-disc list-inside space-y-1">{
+                        newsList.length > 0 ? <ul className="list-disc list-inside space-y-1">{
                             newsList?.map((item: any, index: number) => (
                                 <li key={index}><strong>{item?.title}</strong>: {item?.description}</li>
                             ))}
-                        </ul> : <p>No news or notices available.</p>
+                        </ul> :
+                            <p>No news or notices available.</p>
                     }
                 </CardContent>
             </Card>

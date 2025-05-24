@@ -10,7 +10,7 @@ import { handleCredentialsSignin } from '@/app/actions/authActions';
 import { getSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { urlsListWithTitle } from '@/lib/utils';
-import { checkIfUserHasAccessToPage } from '@/helper';
+import { checkIfUserHasAccessToPage, getLandingPageUrl } from '@/helper';
 
 interface OTPPopupProps {
     isOpen: boolean;
@@ -79,11 +79,8 @@ const OTPPopup: React.FC<OTPPopupProps> = ({ sendOTP, setResendTimer, isOpen, se
                 })
                 const session = await getSession();
                 console.log("Sign-in successful:", session?.user);
-                // if (checkIfUserHasAccessToPage({
-                //     backendScope: session?.user?.userScopes,
-                //     currentUrl: urlsListWithTitle.dashboard.url
-                // }))
-                router.push(urlsListWithTitle.dashboard.url);
+                let landingPage = getLandingPageUrl(session?.user?.userScopes)
+                router.push(landingPage)
             } else {
                 toast.error(result.message)
             }

@@ -101,3 +101,15 @@ export const hideMenuAccordionItem = (title, urlList = [], backendScope = []) =>
 
   return !anyVisible; // if at least one is visible, don't hide
 };
+
+export const getLandingPageUrl = (backendScope = []) => {
+
+  //handling agency login landingpage
+  if (checkIfUserHasAccessToPage({
+    backendScope,
+    currentUrl: urlsListWithTitle?.agencyNews?.url
+  })) {
+    return urlsListWithTitle?.agencyNews?.url
+  } else
+    return urlsListWithTitle.dashboard.url;
+}

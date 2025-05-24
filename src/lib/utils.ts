@@ -213,6 +213,10 @@ export const urlsListWithTitle = {
   binderMapping: {
     url: '/agency/binder-mapping',
     title: 'MRU Mapping'
+  },
+  agencyNews: {
+    url: '/new-notices',
+    title: 'News'
   }
 };
 
