@@ -1,5 +1,8 @@
 import { clsx, type ClassValue } from "clsx"
+import { BookOpenCheck } from "lucide-react";
 import { twMerge } from "tailwind-merge"
+
+export const reportIcon = BookOpenCheck
 
 
 export function cn(...inputs: ClassValue[]) {
@@ -107,7 +110,7 @@ export const urlsListWithTitle = {
     title: 'Recharge'
   },
   agencyBalanceHistory: {
-    url: '/department/view-balance/history',
+    url: '/department/view-agency/history',
     title: 'History'
   },
   dashboard: {
@@ -227,6 +230,7 @@ export function getTitleByUrl(url) {
   }
   const cleanUrl = url.split('?')[0];
   const entry = Object.values(urlsListWithTitle).find(item => item.url === cleanUrl);
+  console.log('entry', entry)
   return entry ? entry.title : cleanUrl.split('/').pop().replaceAll('-', ' ');
 }
 

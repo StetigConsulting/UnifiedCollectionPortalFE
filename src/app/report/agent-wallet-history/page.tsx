@@ -212,6 +212,7 @@ const AgentWalletHistory = () => {
                 />
                 <CustomizedInputWithLabel
                     label="Agent Mobile no"
+                    type="number"
                     {...register("agentMobile")}
                     errors={errors.agentMobile}
                 />

@@ -193,6 +193,7 @@ const AgentBankDeposit = () => {
                     <CustomizedInputWithLabel
                         label="Deposit Amount"
                         required={true}
+                        type="number"
                         errors={errors.depositAmount}
                         {...register("depositAmount", { valueAsNumber: true })}
                     />

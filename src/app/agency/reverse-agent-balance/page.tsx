@@ -114,7 +114,7 @@ const RechargeEntry = () => {
                 setValue('agencyId', agency.id || null);
                 setValue('agencyName', agency.agent_name || '');
                 setValue('phoneNumber', agency.primary_phone || '');
-                setValue('transactionType', 'Recharge')
+                setValue('transactionType', 'Reverse')
                 setValue('currentBalance', agency.current_balance);
                 setValue('maximumRecharge', agency.maximum_limit)
             }
@@ -161,7 +161,7 @@ const RechargeEntry = () => {
                     <div className="col-span-2">
                         <CustomizedInputWithLabel
                             label="Agent Mobile"
-                            type="text"
+                            type="number"
                             {...register('collectorMobile', { valueAsNumber: true })}
                             onChange={() => {
                                 clearErrors("collectorMobile")
@@ -186,14 +186,14 @@ const RechargeEntry = () => {
                     <>
                         <div className="grid grid-cols-2 gap-4">
                             <CustomizedInputWithLabel
-                                label="Agency Name"
+                                label="Agent Name"
                                 containerClass="col-span-2"
                                 errors={errors.agencyName}
                                 disabled
                                 {...register("agencyName")}
                             />
                             <CustomizedInputWithLabel
-                                label="Agency ID"
+                                label="Agent ID"
                                 errors={errors.agencyId}
                                 disabled
                                 {...register("agencyId", { valueAsNumber: true })}

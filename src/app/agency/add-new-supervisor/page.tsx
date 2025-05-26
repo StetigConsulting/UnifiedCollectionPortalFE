@@ -107,6 +107,7 @@ const AddNewSupervisor = () => {
                     <CustomizedInputWithLabel
                         label="Mobile Number"
                         placeholder="Enter Mobile Number"
+                        type="number"
                         {...register('mobileNumber')}
                         errors={errors.mobileNumber}
                     />

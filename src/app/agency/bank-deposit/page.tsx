@@ -181,6 +181,7 @@ const AgentBankDeposit = () => {
                     />
                     <CustomizedInputWithLabel
                         label="Deposit Amount"
+                        type="number"
                         required={true}
                         disabled={!showRestFields}
                         errors={errors.depositAmount}

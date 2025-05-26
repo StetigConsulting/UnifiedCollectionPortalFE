@@ -344,6 +344,7 @@ const AddAgency = () => {
           <CustomizedInputWithLabel
             containerClass=""
             label="Phone Number"
+            type="number"
             required={true}
             errors={errors.phoneNumber}
             placeholder="Enter Phone Number"

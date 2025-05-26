@@ -38,6 +38,7 @@ import { Button } from "./ui/button";
 import { handleSignOut } from "@/app/actions/authActions";
 import { getRosourceByDiscomId } from "@/app/api-calls/other/api";
 import { getAgencyRechargeableBalance } from "@/app/api-calls/department/api";
+import { reportIcon } from "@/lib/utils";
 
 const navData = {
   user: {
@@ -257,140 +258,140 @@ const navData = {
       items: [
         {
           title: "Agent Deposit Acknowledgement",
-          icon: UserPlus2,
+          icon: reportIcon,
           url: "/report/agent-deposit-acknowledgement",
         },
         {
           title: "Daily Collection",
-          icon: UserPlus2,
+          icon: reportIcon,
           url: "/report/daily-collection",
         },
         {
           title: "Agent Wallet History",
-          icon: UserPlus2,
+          icon: reportIcon,
           url: "/report/agent-wallet-history",
         },
         {
           title: "Agency Wallet History",
-          icon: UserPlus2,
+          icon: reportIcon,
           url: "/report/agency-wallet-history",
         },
         {
           title: "Billing Report",
-          icon: UserPlus2,
+          icon: reportIcon,
           url: "/report/billing-report",
         },
         {
           title: "Top up history",
-          icon: UserPlus2,
+          icon: reportIcon,
           url: "/report/top-up-history",
         },
         {
           title: "Collector Top up history",
-          icon: UserPlus2,
+          icon: reportIcon,
           url: "/report/collector-top-up-history",
         },
         {
           title: "Transaction record",
-          icon: UserPlus2,
+          icon: reportIcon,
           url: "/report/transaction-record",
         },
         {
           title: "Login history",
-          icon: UserPlus2,
+          icon: reportIcon,
           url: "/report/login-history",
         },
         {
           title: "Daily Energy Collection",
-          icon: UserPlus2,
+          icon: reportIcon,
           url: "/report/daily-energy-collection",
         },
         {
           title: "Daily Non Energy Collection",
-          icon: UserPlus2,
+          icon: reportIcon,
           url: "/report/daily-non-energy-collection",
         },
         {
           title: "Agent wise Collection",
-          icon: UserPlus2,
+          icon: reportIcon,
           url: "/report/agency-wise-collection",
         },
         {
           title: "Collector wise",
-          icon: UserPlus2,
+          icon: reportIcon,
           url: "/report/collector-wise",
         },
         {
           title: "Cancel wise receipt",
-          icon: UserPlus2,
+          icon: reportIcon,
           url: "/report/cancel-wise-receipt",
         },
         {
           title: "Denied Energy consumer",
-          icon: UserPlus2,
+          icon: reportIcon,
           url: "/report/denied-energy-consumer",
         },
         {
           title: "Denied Non Energy consumer report",
-          icon: UserPlus2,
+          icon: reportIcon,
           url: "/report/denied-non-energy-consumer",
         },
         {
           title: "Counter collector",
-          icon: UserPlus2,
+          icon: reportIcon,
           url: "/report/counter-collector",
         },
         {
           title: "Collector activity",
-          icon: UserPlus2,
+          icon: reportIcon,
           url: "/report/collector-activity",
         },
         {
           title: "Wallet history",
-          icon: UserPlus2,
+          icon: reportIcon,
           url: "/report/wallet-history",
         },
         {
           title: "CC wallet history",
-          icon: UserPlus2,
+          icon: reportIcon,
           url: "/report/cc-wallet-history",
         },
         {
           title: 'Agent Bank Deposit',
-          icon: UserPlus2,
+          icon: reportIcon,
           url: "/report/agent-bank-deposit",
         },
         {
           title: 'MMI',
-          icon: UserPlus2,
+          icon: reportIcon,
           url: "/report/mmi",
         },
         {
           title: 'Energy Collection Summary',
-          icon: UserPlus2,
+          icon: reportIcon,
           url: "/report/energy-collection-summary",
         },
         {
           title: 'Non Energy Collection Summary',
-          icon: UserPlus2,
+          icon: reportIcon,
           url: "/report/non-energy-collection-summary",
         },
         {
           title: 'Agent Wise Summary',
           url: '/report/agent-wise-summary',
-          icon: PiggyBank,
+          icon: reportIcon,
           path: '/report/agent-wise-summary',
         },
         {
           title: 'Agent Attendance',
           url: '/report/agent-attendance',
-          icon: PiggyBank,
+          icon: reportIcon,
           path: '/report/agent-attendance',
         },
         {
           title: 'Cancelled Transaction',
           url: '/report/cancelled-transaction',
-          icon: PiggyBank,
+          icon: reportIcon,
           path: '/report/cancelled-transaction',
         },
       ]

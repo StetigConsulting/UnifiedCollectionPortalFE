@@ -199,6 +199,7 @@ const AgencyWalletHistory = () => {
 
                 <CustomizedInputWithLabel
                     label="Agency Mobile No."
+                    type="number"
                     {...register("agencyMobile")}
                     errors={errors.agencyMobile}
                 />

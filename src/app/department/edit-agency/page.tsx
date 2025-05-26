@@ -264,6 +264,7 @@ const EditAgency = () => {
                         label="Maximum Amount"
                         errors={errors.maximumAmount}
                         required
+                        type="number"
                         placeholder="Enter Maximum Amount"
                         {...register('maximumAmount', { valueAsNumber: true })}
                     />
@@ -271,6 +272,7 @@ const EditAgency = () => {
                         label="Maximum Agent"
                         errors={errors.maximumAgent}
                         required
+                        type="number"
                         placeholder="Enter Maximum Agent"
                         {...register('maximumAgent', { valueAsNumber: true })}
                     />
@@ -299,6 +301,7 @@ const EditAgency = () => {
                         label="Phone Number"
                         errors={errors.phoneNumber}
                         required
+                        type="number"
                         placeholder="Enter Phone Number"
                         {...register('phoneNumber')}
                     />

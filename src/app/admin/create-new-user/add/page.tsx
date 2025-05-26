@@ -225,6 +225,7 @@ const CreateUserForm = () => {
                         label="Phone Number"
                         placeholder="Enter Phone Number"
                         required
+                        type="number"
                         {...register('phoneNumber')}
                         errors={errors.phoneNumber}
                     />

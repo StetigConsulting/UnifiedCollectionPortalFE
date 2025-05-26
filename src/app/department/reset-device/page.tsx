@@ -70,7 +70,7 @@ const ResetDeviceCollector = () => {
     const [isLoading, setIsLoading] = useState(false)
 
     const deviceDataColumn = useMemo(() => [
-        { label: 'Collector Name', key: 'user_name', sortable: true },
+        { label: 'Agent Name', key: 'user_name', sortable: true },
         { label: 'Mobile Number', key: 'mobile_number', sortable: true },
         { label: 'Device ID', key: 'device_id', sortable: true },
         { label: 'Device Name', key: 'device_name', sortable: true },
@@ -79,7 +79,7 @@ const ResetDeviceCollector = () => {
     ], []);
 
     const historyLogColumn = useMemo(() => [
-        { label: 'Collector Name', key: 'user_name', sortable: true },
+        { label: 'Agent Name', key: 'user_name', sortable: true },
         { label: 'Mobile Number', key: 'mobile_number', sortable: true },
         { label: 'Device ID', key: 'device_id', sortable: true },
         { label: 'Device Name', key: 'device_name', sortable: true },
@@ -154,7 +154,7 @@ const ResetDeviceCollector = () => {
                 <div className="grid grid-cols-2 gap-4">
                     <CustomizedInputWithLabel
                         label="Agent Mobile"
-                        type="text"
+                        type="number"
                         required
                         {...register('mobileNumber', { valueAsNumber: true })}
                         onChange={() => {

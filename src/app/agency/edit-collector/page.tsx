@@ -227,7 +227,7 @@ const EditCollector = () => {
                         </div>
                     </div>
                     <CustomizedInputWithLabel
-                        label="Collector Name"
+                        label="Agent Name"
                         placeholder="Enter Name"
                         disabled
                         {...register("name")}
@@ -241,7 +241,7 @@ const EditCollector = () => {
                         errors={errors.phoneNumber}
                     />
                     <CustomizedSelectInputWithLabel
-                        label="Collector Type"
+                        label="Agent Type"
                         list={collectorTypes}
                         {...register("collectorType", { valueAsNumber: true })}
                         errors={errors.collectorType}

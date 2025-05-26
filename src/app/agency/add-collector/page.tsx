@@ -385,6 +385,7 @@ const AddCounterCollector = () => {
                         label="Office Phone Number"
                         placeholder="Enter Phone Number"
                         required
+                        type="number"
                         requiredText='(OTP will be sent on this phone number)'
                         {...register('officePhoneNumber')}
                         errors={errors.officePhoneNumber}
@@ -392,6 +393,7 @@ const AddCounterCollector = () => {
                     <CustomizedInputWithLabel
                         label="Personal Phone Number"
                         placeholder="Enter Phone Number"
+                        type="number"
                         {...register('personalPhoneNumber')}
                         errors={errors.personalPhoneNumber}
                         additionAction={<div className='flex gap-2 text-end'>
