@@ -94,7 +94,7 @@ const BinderMapping = () => {
                 setValue('agentMobileNumber', response.data.primary_phone || '');
                 setValue('division', response.data.working_level)
                 setShowRestFields(true)
-                getListOfAllBinders(response.data.id)
+                await getListOfAllBinders(response.data.id)
             } catch (error) {
                 console.log(error.message);
                 let errorMessage = getErrorMessage(error);
@@ -113,6 +113,7 @@ const BinderMapping = () => {
     }
 
     const getListOfAllBinders = async (id: number) => {
+        setIsLoading(true);
         try {
             const response = await getListOfAvailableBindersByAgentId(id);
             let allocated = response.data.agent_allocated_pseudo_office_structure
@@ -122,15 +123,21 @@ const BinderMapping = () => {
 
             let unallocated = response.data.unallocated_pseudo_office_structure
 
-            let binderList = [...unallocated]
+            let binderList = unallocated.filter(
+                item => !officeStructureIds.includes(item.office_structure_id)
+            );
 
-            setListOfAvailableBinders(binderList)
+            let listToShow = [...allocated, ...binderList];
+
+            setListOfAvailableBinders(listToShow);
 
             setListOfOtherBinders(response.data.other_agent_allocated_pseudo_office_structure)
         } catch (error) {
             console.error(error)
         }
-
+        finally {
+            setIsLoading(false);
+        }
     }
 
     const selectedBinder = watch('binder') || [];
