@@ -132,7 +132,7 @@ const RechargeEntry = () => {
                 setValue('agencyName', response.data.agent_name)
                 setValue('agencyId', response.data.id)
                 setValue('phoneNumber', response.data.primary_phone || '');
-                setValue('transactionType', 'Reset')
+                setValue('transactionType', 'Reverse')
                 setValue('currentBalance', response.data.current_balance);
                 setValue('maximumRecharge', response?.data?.maximum_limit)
                 setShowRestFields(true)

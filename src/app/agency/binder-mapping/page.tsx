@@ -194,7 +194,7 @@ const BinderMapping = () => {
                         errors={errors.agentId}
                     />
                     <CustomizedInputWithLabel
-                        label="Agency Name"
+                        label="Agent Name"
                         disabled
                         {...register('agencyName')}
                         errors={errors.agencyName}
