@@ -206,7 +206,7 @@ const EditCollector = () => {
                         <div className="col-span-2">
                             <CustomizedInputWithLabel
                                 label="Agent Mobile"
-                                type="text"
+                                type="number"
                                 {...register('collectorMobile', { valueAsNumber: true })}
                                 onChange={() => {
                                     // clearErrors("collectorMobile")
