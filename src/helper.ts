@@ -60,6 +60,7 @@ export const listOfUrlForScopes = [
   { url: '/report/cancelled-transaction', backendScopeName: 'TPCollectionWebPortal:cancel_transaction_report:READ' },
   { url: '/new-notices', backendScopeName: 'TPCollectionWebPortal:news_notice:READ' },
   { url: '/add-news', backendScopeName: 'TPCollectionWebPortal:news_notice:ALL' },
+  { url: '/admin/update-pos', backendScopeName: 'TPCollectionWebPortal:pos_device_update:READ' },
 ];
 
 

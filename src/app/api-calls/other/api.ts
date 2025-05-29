@@ -89,3 +89,21 @@ export const deleteNewsById = async (data: any) => {
         throw error?.response?.data
     }
 }
+
+export const getPosSerialNoDetails = async (data: string) => {
+    try {
+        const response = await api.get(`/v1/reset-pos-serial-no/${data}`)
+        return response?.data;
+    } catch (error) {
+        throw error?.response?.data
+    }
+}
+
+export const updatePosSerialNoStatus = async (data: any) => {
+    try {
+        const response = await api.post(`/v1/reset-pos-serial-no/update`, data)
+        return response?.data;
+    } catch (error) {
+        throw error?.response?.data
+    }
+}

@@ -1882,3 +1882,14 @@ export const billingReportSchema = z.object({
 });
 
 export type BillingReportFormData = z.infer<typeof billingReportSchema>;
+
+export const updatePosSchema = z.object({
+  deviceSerialNo: z.string().min(1, 'Device serial no is required'),
+  deviceName: z.any(),
+  mid: z.any(),
+  tid: z.any(),
+  deviceSerial: z.any(),
+  deviceStatus: z.any(),
+});
+
+export type UpdatePosFormData = z.infer<typeof updatePosSchema>
