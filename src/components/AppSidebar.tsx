@@ -49,6 +49,12 @@ const navData = {
 
   navMain: [
     {
+      title: "Home",
+      url: "/",
+      icon: Gauge,
+      path: '/',
+    },
+    {
       title: "Dashboard",
       url: "/dashboard",
       icon: Gauge,
@@ -402,12 +408,12 @@ const navData = {
         },
       ]
     },
-    {
-      title: "News/Notice",
-      icon: Volume2Icon,
-      url: "/new-notices",
-      path: "/new-notices",
-    },
+    // {
+    //   title: "News/Notice",
+    //   icon: Volume2Icon,
+    //   url: "/new-notices",
+    //   path: "/new-notices",
+    // },
     {
       title: "News/Notice",
       icon: Volume2Icon,

@@ -58,14 +58,18 @@ export const listOfUrlForScopes = [
   { url: '/report/agent-wise-summary', backendScopeName: 'TPCollectionWebPortal:energy_agent_wise_summary_report:READ' },
   { url: '/report/agent-attendance', backendScopeName: 'TPCollectionWebPortal:energy_agent_attendance_report:READ' },
   { url: '/report/cancelled-transaction', backendScopeName: 'TPCollectionWebPortal:cancel_transaction_report:READ' },
-  { url: '/new-notices', backendScopeName: 'TPCollectionWebPortal:news_notice:READ' },
+  // { url: '/new-notices', backendScopeName: 'TPCollectionWebPortal:news_notice:READ' },
   { url: '/add-news', backendScopeName: 'TPCollectionWebPortal:news_notice:ALL' },
   { url: '/admin/update-pos', backendScopeName: 'TPCollectionWebPortal:pos_device_update:READ' },
+  { url: '/', backendScopeName: '' }
 ];
 
 
 
 export const checkIfUserHasAccessToPage = ({ backendScope = [], currentUrl }) => {
+  if (currentUrl === '/') {
+    return true
+  }
   const foundScope = listOfUrlForScopes.find((item) => item.url === currentUrl);
   // return true
   if (!foundScope) return false;
@@ -79,6 +83,7 @@ export const listOfActionScopes = [
   { action: 'dashboardPerformanceSummary', backendScopeName: 'TPCollectionWebPortal:dashboard-performance-summary:READ' },
   { action: 'disableVendorCode', backendScopeName: 'TPCollectionWebPortal:agency:EDIT_WITHOUT_VENDOR_ID' },
   { action: 'enabledUpdatePos', backendScopeName: 'TPCollectionWebPortal:pos_device_update:EDIT' },
+  { action: 'readNewsNotice', backendScopeName: 'TPCollectionWebPortal:news_notice:READ' }
 ]
 
 export const checkIfUserHasActionAccess = ({ backendScope = [], currentAction }) => {
@@ -105,7 +110,7 @@ export const hideMenuAccordionItem = (title, urlList = [], backendScope = []) =>
 };
 
 export const getLandingPageUrl = (backendScope = []) => {
-
+  return '/'
   //handling agency login landingpage
   if (checkIfUserHasAccessToPage({
     backendScope,

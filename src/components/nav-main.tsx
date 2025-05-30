@@ -40,6 +40,8 @@ export function NavMain({
 }) {
   const pathname = usePathname();
 
+  console.log(pathname)
+
   return (
     <SidebarMenu>
       {items.map((item) => {
@@ -79,7 +81,10 @@ export function NavMain({
                   <a href={item.url}>
                     <SidebarMenuButton
                       tooltip={item.title}
-                      className={cn(pathname.includes(item.path) && "bg-themeColor py-5 text-white")}
+                      className={cn(
+                        (pathname === item.path || (pathname !== '/' && item.path !== '/' && pathname.includes(item.path))) &&
+                        "bg-themeColor py-5 text-white"
+                      )}
                     >
                       {item.icon && <item.icon />}
                       <span>{item.title}</span>

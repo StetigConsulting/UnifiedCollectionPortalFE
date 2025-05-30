@@ -24,7 +24,7 @@ interface CustomBreadcrumbProps {
 const CustomBreadcrumb: React.FC<CustomBreadcrumbProps> = ({
     pageTitle, children, onSignOut, agencyBalanceDetail,
     userName, lastLoginAt, scopes,
-    blacklist = ["agency", 'dashboard', 'admin', 'department', 'report']
+    blacklist = ["agency", 'admin', 'department', 'report']
 }) => {
     const router = usePathname();
     const searchParams = useSearchParams()
@@ -55,6 +55,7 @@ const CustomBreadcrumb: React.FC<CustomBreadcrumbProps> = ({
     });
 
     const getLinkForDashboard = () => {
+        return '/'
         if (checkIfUserHasAccessToPage({
             backendScope: scopes,
             currentUrl: urlsListWithTitle.dashboard.url
