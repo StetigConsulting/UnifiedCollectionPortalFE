@@ -11,6 +11,7 @@ import {
   FolderClosed,
   FolderSync,
   Gauge,
+  House,
   Import,
   LogOut,
   Merge,
@@ -51,7 +52,7 @@ const navData = {
     {
       title: "Home",
       url: "/",
-      icon: Gauge,
+      icon: House,
       path: '/',
     },
     {

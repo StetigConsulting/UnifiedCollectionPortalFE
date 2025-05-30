@@ -2,7 +2,7 @@ import React from 'react'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from './ui/breadcrumb'
 import { Separator } from './ui/separator'
 import { SidebarTrigger } from './ui/sidebar'
-import { LogOut, User, Wallet } from 'lucide-react';
+import { House, LogOut, User, Wallet } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { usePathname, useSearchParams } from 'next/navigation';
@@ -19,12 +19,14 @@ interface CustomBreadcrumbProps {
     userName?: string;
     lastLoginAt?: string;
     scopes?: string[];
+    routingFunction?: any;
 }
 
 const CustomBreadcrumb: React.FC<CustomBreadcrumbProps> = ({
     pageTitle, children, onSignOut, agencyBalanceDetail,
     userName, lastLoginAt, scopes,
-    blacklist = ["agency", 'admin', 'department', 'report']
+    blacklist = ["agency", 'admin', 'department', 'report'],
+    routingFunction
 }) => {
     const router = usePathname();
     const searchParams = useSearchParams()
@@ -73,6 +75,15 @@ const CustomBreadcrumb: React.FC<CustomBreadcrumbProps> = ({
         <div className='flex flex-col h-screen bg-lightThemeColor p-2'>
             <Card className="flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 border-b px-4">
                 <SidebarTrigger className="-ml-1" />
+                <Button
+                    data-sidebar="trigger"
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7 group relative"
+                    onClick={() => routingFunction.push('/')}
+                >
+                    <House size={16} className='cursor-pointer' />
+                </Button>
                 <Button
                     data-sidebar="trigger"
                     variant="ghost"
