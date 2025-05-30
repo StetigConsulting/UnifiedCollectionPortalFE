@@ -16,8 +16,13 @@ import ReactTable from '@/components/ReactTable';
 import SuccessErrorModal from "@/components/SuccessErrorModal";
 import AlertPopupWithState from '@/components/Agency/ViewAgency/AlertPopupWithState';
 import { Loader2 } from 'lucide-react';
+import { checkIfUserHasActionAccess } from '@/helper';
+import { useSession } from 'next-auth/react';
 
 const NewsNoticeForm = () => {
+
+    const { data: session } = useSession()
+
     const { register, handleSubmit, formState: { errors }, reset, setValue, watch } = useForm<UpdatePosFormData>({
         resolver: zodResolver(updatePosSchema),
     });
@@ -52,12 +57,13 @@ const NewsNoticeForm = () => {
         { label: 'Device ID', key: 'device_id', sortable: true },
         { label: 'Device Model', key: 'model', sortable: true },
         { label: 'Device Maker', key: 'maker', sortable: true },
-        { label: 'Status', key: 'status', sortable: true },
-        { label: 'Last Synced Data', key: 'published_date', sortable: true },
+        { label: 'Status', key: 'display_status', sortable: true },
+        { label: 'Last Synced Date', key: 'published_date', sortable: true },
     ], []);
 
     const formatData = posDeviceDetailsList.map((item) => ({
         ...item,
+        display_status: item?.status === 'true' ? "Active" : "Inactive",
         published_date: formatDate(item?.last_sync_date)
     }))
 
@@ -141,7 +147,14 @@ const NewsNoticeForm = () => {
                     />
                 </div>
             </form>
-            {showButton && <>
+
+            {/* disabled={
+                checkIfUserHasActionAccess(
+                    {
+                        backendScope: session?.user?.userScopes,
+                        currentAction: 'disableVendorCode'
+                    })} */}
+            {checkIfUserHasActionAccess({ backendScope: session?.user?.userScopes, currentAction: 'enabledUpdatePos' }) && showButton ? <>
                 <div className='text-end mt-4'>
                     <AlertPopupWithState
                         triggerCode={
@@ -164,15 +177,18 @@ const NewsNoticeForm = () => {
                         setIsOpen={setStateForConfirmationPopup}
                     />
                 </div>
-                <div className='mt-4'>
+            </> : <></>
+            }
+            {
+                showButton && <div className='mt-4'>
                     <ReactTable
                         data={formatData}
                         columns={columns}
                         hideSearchAndOtherButtons
                     />
                 </div>
-            </>
             }
+
             <SuccessErrorModal isOpen={isErrorModalOpened} onClose={() => setIsErrorModalOpened(false)}
                 message={errorMessage} type={popupType} />
         </AuthUserReusableCode>
