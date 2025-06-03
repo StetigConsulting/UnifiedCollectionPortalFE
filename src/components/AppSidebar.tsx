@@ -407,6 +407,12 @@ const navData = {
           icon: reportIcon,
           path: '/report/cancelled-transaction',
         },
+        {
+          title: 'Agent Details',
+          url: '/report/agent-details',
+          icon: reportIcon,
+          path: '/report/agent-details',
+        },
       ]
     },
     // {

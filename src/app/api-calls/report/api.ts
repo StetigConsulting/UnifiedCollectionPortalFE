@@ -345,3 +345,28 @@ export const downloadCancelledTransactions = async (data: any, type: any) => {
         throw error?.response?.data
     }
 }
+
+export const getAgentDetailsReport = async (data: any) => {
+    try {
+        const response = await api.post('/v1/common-reports/agent-details-report/fetch', data);
+        return response.data;
+    } catch (error) {
+        throw error?.response?.data
+    }
+}
+
+export const downloadAgentDetailsReport = async (data: any, type: any) => {
+    try {
+        const response = await api.post(`/v1/common-reports/agent-details-report/download/${type}`, data,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                responseType: "blob",
+            }
+        );
+        return response;
+    } catch (error) {
+        throw error?.response?.data
+    }
+}

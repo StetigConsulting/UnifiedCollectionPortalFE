@@ -1893,3 +1893,13 @@ export const updatePosSchema = z.object({
 });
 
 export type UpdatePosFormData = z.infer<typeof updatePosSchema>
+
+export const agentDetailsReportSchema = z.object({
+  agency: z.string(),
+  agencyStatus: z.string().optional(),
+  pageSize: z.number(
+    { invalid_type_error: 'Page size is required' }
+  ).min(1, "Page size is required"),
+});
+
+export type AgentDetailsReportFormData = z.infer<typeof agentDetailsReportSchema>;

@@ -19,6 +19,7 @@ export const generateCaptcha = () => {
 };
 
 export const formatDate = (dateString: string): string => {
+  if (!dateString) return null;
   const date = new Date(dateString);
   const day = String(date.getDate()).padStart(2, '0');
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -358,3 +359,8 @@ export const reportTypeMappedToAPITRouteName = {
   [agentReportKeyValue.agentMode]: 'agent-mode-wise-summary-report',
   [agentReportKeyValue.agentRole]: 'agent-role-wise-summary-report',
 }
+
+export const agencyStatusType = [
+  { label: 'Active', value: 'Active' },
+  { label: 'Inactive', value: 'Inactive' }
+]
