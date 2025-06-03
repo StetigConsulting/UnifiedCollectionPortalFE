@@ -23,6 +23,7 @@ const AgentDetails = () => {
 
     const [currentPage, setCurrentPage] = useState(1)
     const [totalPages, setTotalPages] = useState(1)
+    const [pageSize, setPageSize] = useState(tableDataPerPage)
 
     const [dataList, setDataList] = useState([])
 
@@ -123,11 +124,15 @@ const AgentDetails = () => {
 
     const getPayload = (data) => {
         let filter = {
-            date_range: {
-                from_date: data?.fromDate,
-                to_date: data?.toDate
+            page: currentPage,
+            page_size: formData?.pageSize,
+            filter: {
+                ...formData?.agency && { agency_name: formData?.agency },
+                ...formData?.agencyStatus && { is_active: formData?.agencyStatus === 'Active' ? true : false },
             }
         }
+
+        setPageSize(formData?.pageSize)
         return filter;
     }
 
@@ -211,7 +216,7 @@ const AgentDetails = () => {
                     data={formatData}
                     columns={columns}
                     dynamicPagination
-                    itemsPerPage={tableDataPerPage}
+                    itemsPerPage={pageSize}
                     pageNumber={currentPage}
                     totalPageNumber={totalPages}
                     onPageChange={handlePageChange}
