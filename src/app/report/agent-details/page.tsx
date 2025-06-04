@@ -135,7 +135,6 @@ const AgentDetails = () => {
                 ...formData?.agencyStatus && { is_active: formData?.agencyStatus === 'Active' ? true : false },
             }
         }
-
         setPageSize(formData?.pageSize)
         return filter;
     }
@@ -183,8 +182,10 @@ const AgentDetails = () => {
         getReportData({}, page)
     };
 
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
+        setPageSize(formData?.pageSize)
         getReportData({}, 1);
+
     };
 
     const formData = watch()
