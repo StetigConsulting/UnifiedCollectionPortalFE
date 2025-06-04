@@ -27,9 +27,9 @@ export async function middleware(request: any) {
             return NextResponse.redirect(new URL(SIGNIN, nextUrl));
         }
     } else {
-        // if (!checkIfUserHasAccessToPage({ backendScope: session?.user?.userScopes, currentUrl: nextUrl.pathname.split('?')?.[0] })) {
-        //     return NextResponse.redirect(new URL(landingPage, nextUrl));
-        // }
+        if (!checkIfUserHasAccessToPage({ backendScope: session?.user?.userScopes, currentUrl: nextUrl.pathname.split('?')?.[0] })) {
+            return NextResponse.redirect(new URL(landingPage, nextUrl));
+        }
         if (nextUrl.pathname === SIGNIN) {
             return NextResponse.redirect(new URL(landingPage, nextUrl));
         }
