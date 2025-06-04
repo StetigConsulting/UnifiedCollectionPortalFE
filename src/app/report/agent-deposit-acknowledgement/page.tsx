@@ -47,9 +47,16 @@ const AgentDepositAcknowledgementReport = () => {
         let payload = {
             page: page,
             page_size: formData?.pageSize,
-            filter: {}
+            filter: {
+                ...formData?.acknowledgementType && { acknowledgement: formData?.acknowledgementType },
+                ...(formData?.dateFrom && formData?.dateTo) && {
+                    deposit_date_range: {
+                        "from_date": formData?.dateFrom,
+                        "to_date": formData?.dateTo
+                    }
+                }
+            }
         }
-
         payload = {
             ...payload,
             page: page,
@@ -112,7 +119,7 @@ const AgentDepositAcknowledgementReport = () => {
     }))
 
     return (
-        <AuthUserReusableCode pageTitle="Agent Deposit Acknowledgement Report" isLoading={isLoading}>
+        <AuthUserReusableCode pageTitle="Agent Deposit Acknowledgement Report" isLoading={isLoading} >
             <div className="flex items-center gap-4">
                 <div className="grid grid-cols-4 gap-4 flex-grow">
                     <CustomizedInputWithLabel
@@ -166,7 +173,7 @@ const AgentDepositAcknowledgementReport = () => {
                     onPageChange={handlePageChange}
                 />}
             </div>
-        </AuthUserReusableCode>
+        </AuthUserReusableCode >
     );
 };
 
