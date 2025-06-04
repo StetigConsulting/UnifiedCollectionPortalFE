@@ -51,6 +51,7 @@ const AgentDetails = () => {
 
     useEffect(() => {
         getAgencyList();
+        getReportData({}, 1)
     }, []);
 
     const getReportData = async (applyFilter = {}, page = 1) => {
