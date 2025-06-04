@@ -51,6 +51,7 @@ const AgentDetails = () => {
 
     useEffect(() => {
         getAgencyList();
+        getReportData({}, 1)
     }, []);
 
     const getReportData = async (applyFilter = {}, page = 1) => {
@@ -92,6 +93,7 @@ const AgentDetails = () => {
         validity_start_date: formatDate(item.validity_start_date),
         validity_end_date: formatDate(item.validity_end_date),
         activation_date: formatDate(item?.activation_date),
+        agent_created_on: formatDate(item?.agent_created_on),
         // last_login_date_time: formatDate(item.last_login_date_time),
         // last_sync_date_time: formatDate(item.last_sync_date_time),
     }))
@@ -133,7 +135,6 @@ const AgentDetails = () => {
                 ...formData?.agencyStatus && { is_active: formData?.agencyStatus === 'Active' ? true : false },
             }
         }
-
         setPageSize(formData?.pageSize)
         return filter;
     }
@@ -181,8 +182,10 @@ const AgentDetails = () => {
         getReportData({}, page)
     };
 
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
+        setPageSize(formData?.pageSize)
         getReportData({}, 1);
+
     };
 
     const formData = watch()

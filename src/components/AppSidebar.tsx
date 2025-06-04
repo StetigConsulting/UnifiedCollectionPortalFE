@@ -413,6 +413,12 @@ const navData = {
           icon: reportIcon,
           path: '/report/agent-details',
         },
+        {
+          title: 'Agent Login',
+          url: '/report/agent-login',
+          icon: reportIcon,
+          path: '/report/agent-login',
+        },
       ]
     },
     // {
