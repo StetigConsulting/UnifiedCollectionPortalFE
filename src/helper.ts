@@ -61,6 +61,7 @@ export const listOfUrlForScopes = [
   { url: '/report/agent-details', backendScopeName: 'TPCollectionWebPortal:agent_details_report:READ' },
   { url: '/add-news', backendScopeName: 'TPCollectionWebPortal:news_notice:ALL' },
   { url: '/admin/update-pos', backendScopeName: 'TPCollectionWebPortal:pos_device_update:READ' },
+  { url: '/report/agent-login', backendScopeName: 'TPCollectionWebPortal:agent_login_history_report:READ' },
   { url: '/', backendScopeName: '' }
 ];
 
