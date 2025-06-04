@@ -1903,3 +1903,13 @@ export const agentDetailsReportSchema = z.object({
 });
 
 export type AgentDetailsReportFormData = z.infer<typeof agentDetailsReportSchema>;
+
+export const agentLoginReportSchema = z.object({
+  fromDate: z.string().min(1, "From Date is required"),
+  toDate: z.string().min(1, "To Date is required"),
+  agent: z.string().optional(),
+  agency: z.string().optional(),
+  agencyName: z.any().optional(),
+});
+
+export type AgentLoginReportFormData = z.infer<typeof agentLoginReportSchema>;

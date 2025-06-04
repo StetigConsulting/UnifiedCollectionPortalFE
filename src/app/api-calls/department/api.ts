@@ -281,5 +281,6 @@ export {
   getLevels,
   getAgenciesWithDiscom,
   rechargeAgency,
-  editAgency, activateAgencyAccount, deactivateAgencyAccountAPI, getAgencyById, extendValidity, getAgentDetailsById, changeAgentRole
+  editAgency, activateAgencyAccount,
+  deactivateAgencyAccountAPI, getAgencyById, extendValidity, getAgentDetailsById, changeAgentRole
 };
