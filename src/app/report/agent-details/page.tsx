@@ -92,6 +92,7 @@ const AgentDetails = () => {
         validity_start_date: formatDate(item.validity_start_date),
         validity_end_date: formatDate(item.validity_end_date),
         activation_date: formatDate(item?.activation_date),
+        agent_created_on: formatDate(item?.agent_created_on),
         // last_login_date_time: formatDate(item.last_login_date_time),
         // last_sync_date_time: formatDate(item.last_sync_date_time),
     }))
