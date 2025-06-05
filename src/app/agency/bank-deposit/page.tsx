@@ -217,6 +217,7 @@ const AgentBankDeposit = () => {
                         errors={errors.depositSlip}
                         // disabled={!showRestFields}
                         type="file"
+                        accept=".pdf,.jpg,.jpeg,.png"
                         {...register("depositSlip")}
                     />
                 </div>

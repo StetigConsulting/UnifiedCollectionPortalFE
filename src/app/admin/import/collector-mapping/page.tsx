@@ -80,9 +80,28 @@ const ConsumerToCollectorMapping: React.FC = () => {
     };
 
     const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files?.[0]) {
-            setSelectedFile(event.target.files[0]);
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        const allowedTypes = [
+            'text/csv',
+            'application/vnd.ms-excel',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        ];
+
+        const allowedExtensions = ['.csv', '.xls', '.xlsx'];
+        const fileName = file.name.toLowerCase();
+
+        const hasValidExtension = allowedExtensions.some(ext => fileName.endsWith(ext));
+        const hasValidType = allowedTypes.includes(file.type);
+
+        if (!hasValidExtension || !hasValidType) {
+            toast.error('Only .csv, .xls, or .xlsx files are allowed');
+            return;
         }
+
+        setSelectedFile(file);
+
     };
 
     const [errorMessage, setErrorMessage] = useState('')

@@ -33,10 +33,20 @@ const CreateNewLevelUploadPopup: React.FC<CreateNewLevelUploadPopupProps> = ({ f
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
-        if (file) {
-            setValue('file', file);
-            setFileName(file.name);
+        if (!file) return;
+
+        const isCSV =
+            file.type === 'text/csv' || file.name.toLowerCase().endsWith('.csv');
+
+        if (!isCSV) {
+            toast.error('Only .csv files are allowed');
+            setValue('file', '');
+            setFileName('');
+            return;
         }
+
+        setValue('file', file);
+        setFileName(file.name);
     };
 
     const handleFormSubmit = async (data: FormData) => {

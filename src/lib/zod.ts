@@ -1145,8 +1145,16 @@ export const agentBankDepositSchema = z.object({
     .min(1, 'Transaction Ref No cannot be empty'),
   depositSlip: z
     .any()
-    .refine((val) => val && val[0], 'Deposit slip is required')
-    .optional(),
+    .refine((val) => val && val.length > 0, {
+      message: 'Deposit slip is required',
+    })
+    .refine((val) => {
+      if (!val || val.length === 0) return false;
+      const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+      return allowedTypes.includes(val[0].type);
+    }, {
+      message: 'Only PDF, JPG, or PNG files are allowed.',
+    }),
   bank: z.string().nonempty('Bank is required'),
 });
 
