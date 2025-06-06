@@ -48,36 +48,16 @@ const MMI = () => {
     const [accessToken, setAccessToken] = useState('')
 
     const getAccessToken = async () => {
-        const url = 'https://outpost.mapmyindia.com/api/security/oauth/token';
-        const params = new URLSearchParams();
-        params.append('grant_type', 'password');
-        params.append('username', 'razi.ahmad@tatapower-ddl.com');
-        params.append('password', '40d3b93a50212bb5fdee5d4c8be2d216');
-        params.append('client_id', '96dHZVzsAuur3toCe9C5zyZ1_Lrlh6iJat-P66iYu1jJxHlZ6TPRgI37ZsBKhHeSMIb0dJMt-97nWVjJRKHNJA==');
-        params.append('client_secret', 'lrFxI-iSEg--PZqVa7wigtJSWuZenvsj7xlAh0kFI-8M0XoDA2s7YyzFN_LiP4BVv2V_uiR6w1QOIgG-jXTCOUrLFHmssClt');
-        setIsLoading(true)
         try {
-            const response = await fetch(url, {
+            const res = await fetch('/api/mmi-token', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: params.toString(),
             });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error_description || 'Failed to get token');
-            }
-
-            console.log('Access Token:', data.access_token);
-            return data.access_token;
-
-        } catch (error) {
-            console.error('Error fetching token:', error.message);
-        } finally {
-            setIsLoading(false)
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error);
+            setAccessToken(data?.access_token)
+            console.log('Access Token from backend:', data.access_token);
+        } catch (err) {
+            console.error('Token fetch error:', err.message);
         }
     }
 
@@ -261,7 +241,7 @@ const MMI = () => {
             fromDate: payload.fromDate,
         }).toString();
 
-        const fullUrl = `https://locatortest.mapmyindia.in/tata-power/#/tpReports/fieldforceactivity?${queryParams}`;
+        const fullUrl = `${process.env.NEXT_PUBLIC_MMI_REPORTURL}?${queryParams}`;
         setIframeUrl(fullUrl);
         setShowIframe(true);
     };
