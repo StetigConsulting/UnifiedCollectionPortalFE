@@ -443,7 +443,7 @@ const navData = {
   ],
 };
 
-const INACTIVITY_TIMEOUT = 1 * 60 * 1000;
+const INACTIVITY_TIMEOUT = 15 * 60 * 1000;
 
 export function AppSidebar({ logoLink, onSignOut }) {
 
