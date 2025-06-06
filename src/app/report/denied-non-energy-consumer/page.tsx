@@ -359,7 +359,7 @@ const DeniedEnergyConsumer = () => {
                     />
                     <CustomizedSelectInputWithLabel label='Denied To Pay Reason' list={deniedToPayReason}
                         {...register('deniedToPay')} errors={errors.deniedToPay} />
-                    <CustomizedSelectInputWithLabel label='Applicable level' list={workingLevelList}
+                    <CustomizedSelectInputWithLabel label='Applicable Level' list={workingLevelList}
                         {...register('workingLevel', { valueAsNumber: true })}
                         onChange={(e) => handleWorkingLevelChange(e)} errors={errors?.workingLevel} />
                     {formData.workingLevel != null && !isNaN(formData?.workingLevel) &&

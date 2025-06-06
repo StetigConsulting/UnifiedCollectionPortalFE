@@ -367,7 +367,7 @@ const NonEnergyCollectionSummary = () => {
                         {...register('dateType')} errors={errors?.dateType} />
                     <CustomizedSelectInputWithLabel label='View type' list={viewTypePicklist}
                         {...register('viewType')} errors={errors?.viewType} />
-                    <CustomizedSelectInputWithLabel label='Applicable level' list={workingLevelList}
+                    <CustomizedSelectInputWithLabel label='Applicable Level' list={workingLevelList}
                         {...register('workingLevel', { valueAsNumber: true })}
                         onChange={(e) => handleWorkingLevelChange(e)} errors={errors?.workingLevel} />
                     {formData.workingLevel != null && !isNaN(formData?.workingLevel) &&

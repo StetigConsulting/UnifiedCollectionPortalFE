@@ -398,7 +398,7 @@ const DailyEnergyCollection = () => {
                         {...register('agencyName')} errors={errors?.agencyName} />
                     <CustomizedSelectInputWithLabel label='Collection Mode' list={permissions}
                         {...register('collectionMode', {})} errors={errors?.collectionMode} />
-                    <CustomizedSelectInputWithLabel label='Applicable level' list={workingLevelList}
+                    <CustomizedSelectInputWithLabel label='Applicable Level' list={workingLevelList}
                         {...register('workingLevel', { valueAsNumber: true })}
                         onChange={(e) => handleWorkingLevelChange(e)} errors={errors?.workingLevel} />
                     {formData.workingLevel != null && !isNaN(formData?.workingLevel) &&

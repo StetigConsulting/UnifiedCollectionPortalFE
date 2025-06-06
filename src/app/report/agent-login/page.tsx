@@ -40,7 +40,7 @@ const AgentLoginReport = () => {
             const response = await getAgenciesWithDiscom(session?.user?.discomId)
             setAgencyList(response?.data?.map((item) => ({
                 ...item,
-                label: `${item?.agency_name}`,
+                label: `${item?.agency_name} - ${item?.phone}`,
                 value: item?.id,
             })))
         } catch (err) {
@@ -58,7 +58,7 @@ const AgentLoginReport = () => {
             const response = await getAllAgentByAgencyId(agencyId);
             setAgentList(
                 response?.data?.map((item) => ({
-                    label: `${item?.agent_name}`,
+                    label: `${item?.agent_name} - ${item?.primary_phone}`,
                     value: item.id,
                 }))
             );
@@ -71,9 +71,8 @@ const AgentLoginReport = () => {
 
     const handleAgencySelect = (e) => {
         const agencyId = e.target.value;
-        const agencyName = e.target.label;
         setValue('agency', agencyId);
-        setValue('agencyName', agencyName);
+        setValue('agency', '');
         getAgentList(agencyId);
     }
 
@@ -82,15 +81,19 @@ const AgentLoginReport = () => {
     }, []);
 
     const getReportData = async (applyFilter = {}, page = 1) => {
+
+        let agencyDetails = agencyList.filter((item: any) => item.id === Number(formData?.agency))
+
         let payload = {
             date_range: {
                 from_date: formData?.fromDate,
                 to_date: formData?.toDate
             },
-            ...formData?.agency && { agency_name: formData?.agencyName },
+            ...formData?.agency && { agency_name: agencyDetails?.[0]?.agency_name },
             ...formData?.agent && { agent_id: formData?.agent },
         }
 
+        console.log(payload)
         payload = {
             ...payload,
             ...applyFilter
@@ -113,32 +116,33 @@ const AgentLoginReport = () => {
     const formatData = dataList.map(item => ({
         ...item,
         login_date: formatDate(item.login_date),
-        logout: formatDate(item.logout),
     }))
 
     const columns = useMemo(() => [
-        { label: 'Date', key: 'login', sortable: true },
+        { label: 'Login Date', key: 'login_date', sortable: true },
         { label: 'Agency Name', key: 'agency_name', sortable: true },
         { label: 'Agent Id', key: 'agent_id', sortable: true },
         { label: 'Agent Mobile No', key: 'agent_mobile', sortable: true },
         { label: 'Agent Name', key: 'agent_name', sortable: true },
-        { label: 'Login Date Time', key: 'login_date', sortable: true },
+        { label: 'Login Date Time', key: 'login', sortable: true },
         { label: 'Logout Date Time', key: 'logout', sortable: true },
     ], []);
 
     const [exportType, setExportType] = useState('')
 
     const getPayload = (data) => {
-        let filter = {
+        let agencyDetails = agencyList.filter((item: any) => item.id === formData?.agency)
+
+        let payload = {
             date_range: {
                 from_date: formData?.fromDate,
                 to_date: formData?.toDate
             },
-            ...formData?.agency && { agency_name: formData?.agencyName },
+            ...formData?.agency && { agency_name: agencyDetails?.[0]?.agency_name },
             ...formData?.agent && { agent_id: formData?.agent },
         }
 
-        return filter;
+        return payload;
     }
 
     const [overflowDataMessage, setOverflowDataMessage] = useState(null)
@@ -201,8 +205,9 @@ const AgentLoginReport = () => {
                     <CustomizedInputWithLabel label='To Date' {...register('toDate')}
                         type='date' errors={errors?.toDate} />
                     <CustomizedSelectInputWithLabel
-                        label='Agency' list={agencyList} {...register('agency')} errors={errors.agency}
-                        onChange={(e) => handleAgencySelect(e)} />
+                        label='Agency' list={agencyList} {...register('agency', {
+                            onChange: (e) => handleAgencySelect(e)
+                        })} errors={errors.agency} />
                     <CustomizedSelectInputWithLabel label='Agent' list={agentList}
                         {...register('agent')} />
 

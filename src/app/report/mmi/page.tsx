@@ -45,6 +45,42 @@ const MMI = () => {
     const [levelNameMappedWithId, setLevelNameMappedWithId] = useState<Record<string, number>>({})
     const [workingLevelList, setWorkingLevelList] = React.useState([])
 
+    const [accessToken, setAccessToken] = useState('')
+
+    const getAccessToken = async () => {
+        const url = 'https://outpost.mapmyindia.com/api/security/oauth/token';
+        const params = new URLSearchParams();
+        params.append('grant_type', 'password');
+        params.append('username', 'razi.ahmad@tatapower-ddl.com');
+        params.append('password', '40d3b93a50212bb5fdee5d4c8be2d216');
+        params.append('client_id', '96dHZVzsAuur3toCe9C5zyZ1_Lrlh6iJat-P66iYu1jJxHlZ6TPRgI37ZsBKhHeSMIb0dJMt-97nWVjJRKHNJA==');
+        params.append('client_secret', 'lrFxI-iSEg--PZqVa7wigtJSWuZenvsj7xlAh0kFI-8M0XoDA2s7YyzFN_LiP4BVv2V_uiR6w1QOIgG-jXTCOUrLFHmssClt');
+        setIsLoading(true)
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: params.toString(),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error_description || 'Failed to get token');
+            }
+
+            console.log('Access Token:', data.access_token);
+            return data.access_token;
+
+        } catch (error) {
+            console.error('Error fetching token:', error.message);
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
     const getWorkingLevel = async () => {
         setIsLoading(true)
         await getLevels(session?.user?.discomId).then((data) => {
@@ -72,6 +108,7 @@ const MMI = () => {
     const [discomName, setDiscomName] = useState('')
 
     useEffect(() => {
+        getAccessToken()
         getWorkingLevel()
         getAgencyByDiscom()
         getRosourceByDiscomId(session?.user?.discomId).then((res) => {
@@ -193,7 +230,7 @@ const MMI = () => {
 
     const onSubmit = (data) => {
         let payload = {
-            access_token: "da7af3e8-86b3-4177-9190-64a8664d96bd",
+            access_token: accessToken,
             discom: discomName,
             fromDate: moment(data.fromDate).format('DD-MM-YYYY'),
             toDate: moment(data.toDate).format('DD-MM-YYYY'),

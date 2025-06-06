@@ -366,7 +366,7 @@ const DailyAgentCollection = () => {
                         {...register('dateType')} errors={errors?.dateType} />
                     <CustomizedSelectInputWithLabel label='Agent role' list={agentRolePicklist}
                         {...register('agentRole')} errors={errors?.agentRole} />
-                    <CustomizedSelectInputWithLabel label='Applicable level' list={workingLevelList}
+                    <CustomizedSelectInputWithLabel label='Applicable Level' list={workingLevelList}
                         {...register('workingLevel', { valueAsNumber: true })}
                         onChange={(e) => handleWorkingLevelChange(e)} errors={errors?.workingLevel} />
                     {formData.workingLevel != null && !isNaN(formData?.workingLevel) &&

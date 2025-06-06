@@ -334,7 +334,7 @@ const CancelTransaction = () => {
                         {...register('toDate')}
                         errors={errors.toDate}
                     />
-                    <CustomizedSelectInputWithLabel label='Applicable level' list={workingLevelList}
+                    <CustomizedSelectInputWithLabel label='Applicable Level' list={workingLevelList}
                         {...register('workingLevel', { valueAsNumber: true })}
                         onChange={(e) => handleWorkingLevelChange(e)} errors={errors?.workingLevel} />
                     {formData.workingLevel != null && !isNaN(formData?.workingLevel) &&

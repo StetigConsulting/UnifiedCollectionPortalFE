@@ -87,7 +87,7 @@ export function NavMain({
                       )}
                     >
                       {item.icon && <item.icon />}
-                      <span>{item.title}</span>
+                      <span className="capitalize">{item.title}</span>
                       {childItems.length > 0 && (
                         <ChevronLeft className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:-rotate-90" />
                       )}
@@ -100,7 +100,7 @@ export function NavMain({
                     className={cn(pathname.includes(item.path) && "bg-blue-300")}
                   >
                     {item.icon && <item.icon />}
-                    <span>{item.title}</span>
+                    <span className="capitalize">{item.title}</span>
                     {childItems.length > 0 && (
                       <ChevronLeft className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:-rotate-90" />
                     )}
@@ -123,7 +123,7 @@ export function NavMain({
                           >
                             <a className='min-h-7 h-auto' href={subItem.url}>
                               {subItem.icon && <subItem.icon />}
-                              <p>{subItem.title}</p>
+                              <p className="capitalize">{subItem.title}</p>
                             </a>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
