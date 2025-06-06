@@ -8,14 +8,14 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Method not allowed' }, { status: 405 })
     }
 
-    const url = process.env.NEXT_PUBLIC_MMI_TOKENURL;
+    const url = process.env.MMI_TOKENURL;
 
     const params = new URLSearchParams();
     params.append('grant_type', 'password');
-    params.append('username', process.env.NEXT_PUBLIC_MMI_USERNAME);
-    params.append('password', process.env.NEXT_PUBLIC_MMI_PASSWORD);
-    params.append('client_id', process.env.NEXT_PUBLIC_MMI_CLIENT_ID);
-    params.append('client_secret', process.env.NEXT_PUBLIC_MMI_CLIENT_SECRET);
+    params.append('username', process.env.MMI_USERNAME);
+    params.append('password', process.env.MMI_PASSWORD);
+    params.append('client_id', process.env.MMI_CLIENT_ID);
+    params.append('client_secret', process.env.MMI_CLIENT_SECRET);
 
     try {
         const response = await fetch(url, {
