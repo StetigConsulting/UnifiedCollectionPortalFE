@@ -40,6 +40,7 @@ import { handleSignOut } from "@/app/actions/authActions";
 import { getRosourceByDiscomId } from "@/app/api-calls/other/api";
 import { getAgencyRechargeableBalance } from "@/app/api-calls/department/api";
 import { reportIcon } from "@/lib/utils";
+import { toast } from "sonner";
 
 const navData = {
   user: {
@@ -442,11 +443,34 @@ const navData = {
   ],
 };
 
+const INACTIVITY_TIMEOUT = 1 * 60 * 1000;
+
 export function AppSidebar({ logoLink, onSignOut }) {
 
   const { data: session } = useSession()
 
   const filteredNavMain = navData.navMain
+
+  const timerRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  const resetInactivityTimer = () => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      toast.error("You have been logged out due to inactivity.");
+      handleSignOut();
+    }, INACTIVITY_TIMEOUT);
+  };
+
+  React.useEffect(() => {
+    const events = ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart'];
+    events.forEach(event => window.addEventListener(event, resetInactivityTimer));
+    resetInactivityTimer();
+
+    return () => {
+      events.forEach(event => window.removeEventListener(event, resetInactivityTimer));
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
 
   return (
     <Sidebar>
