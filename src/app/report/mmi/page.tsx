@@ -241,7 +241,7 @@ const MMI = () => {
             fromDate: payload.fromDate,
         }).toString();
 
-        const fullUrl = `${process.env.NEXT_PUBLIC_MMI_REPORTURL}?${queryParams}`;
+        const fullUrl = `${process.env.NEXT_PUBLIC_MMI_REPORTURL}/tata-power/#/tpReports/fieldforceactivity?${queryParams}`;
         setIframeUrl(fullUrl);
         setShowIframe(true);
     };
