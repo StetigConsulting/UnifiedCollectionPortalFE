@@ -128,12 +128,8 @@ const AgentDetails = () => {
 
     const getPayload = (data) => {
         let filter = {
-            page: currentPage,
-            page_size: formData?.pageSize,
-            filter: {
-                ...formData?.agency && { agency_name: formData?.agency },
-                ...formData?.agencyStatus && { is_active: formData?.agencyStatus === 'Active' ? true : false },
-            }
+            ...formData?.agency && { agency_name: formData?.agency },
+            ...formData?.agencyStatus && { is_active: formData?.agencyStatus === 'Active' ? true : false },
         }
         setPageSize(formData?.pageSize)
         return filter;
