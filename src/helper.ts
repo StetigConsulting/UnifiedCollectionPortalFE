@@ -19,6 +19,7 @@ export const listOfUrlForScopes = [
   { url: "/agency/bank-deposit", backendScopeName: "TPCollectionWebPortal:agent_bank_deposit:ALL" },
   { url: "/department/cancel-receipt", backendScopeName: "TPCollectionWebPortal:collection:CANCEL_RECEIPT" },//not developed
   { url: "/admin/create-new-user", backendScopeName: "TPCollectionWebPortal:user:CREATE" },
+  { url: "/admin/create-new-user/add", backendScopeName: "TPCollectionWebPortal:user:CREATE" },
   { url: "/admin/office-structure", backendScopeName: "TPCollectionWebPortal:office_structure:ALL" },
   { url: "/agency/binder-mapping", backendScopeName: "TPCollectionWebPortal:agent_pseudo_mapping:ALL" },
   { url: "/admin/receipt-for-postpaid", backendScopeName: "TPCollectionWebPortal:business_rules:ALL" },
