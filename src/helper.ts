@@ -75,6 +75,7 @@ export const listOfUrlForScopes = [
   { url: '/add-news', backendScopeName: 'TPCollectionWebPortal:news_notice:ALL' },
   { url: '/admin/update-pos', backendScopeName: 'TPCollectionWebPortal:pos_device_update:READ' },
   { url: '/report/agent-login', backendScopeName: 'TPCollectionWebPortal:agent_login_history_report:READ' },
+  { url: '/report/total-collection', backendScopeName: 'TPCollectionWebPortal:total_collection_report:READ' },
   { url: '/', backendScopeName: '' }
 ];
 
@@ -120,12 +121,11 @@ export const hideMenuAccordionItem = (title, urlList = [], backendScope = []) =>
     return false;
   });
 
-  return !anyVisible; // if at least one is visible, don't hide
+  return !anyVisible;
 };
 
 export const getLandingPageUrl = (backendScope = []) => {
   return '/'
-  //handling agency login landingpage
   if (checkIfUserHasAccessToPage({
     backendScope,
     currentUrl: urlsListWithTitle?.agencyNews?.url

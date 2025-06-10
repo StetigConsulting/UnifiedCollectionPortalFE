@@ -395,3 +395,28 @@ export const downloadAgentLoginReport = async (data: any, type: any) => {
         throw error?.response?.data
     }
 }
+
+export const getTotalCollectionReport = async (data: any) => {
+    try {
+        const response = await api.post('/v1/common-reports/total-collection-report/fetch', data);
+        return response.data;
+    } catch (error) {
+        throw error?.response?.data
+    }
+}
+
+export const downloadTotalCollectionReport = async (data: any, type: any) => {
+    try {
+        const response = await api.post(`/v1/common-reports/total-collection-report/download/${type}`, data,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                responseType: "blob",
+            }
+        );
+        return response;
+    } catch (error) {
+        throw error?.response?.data
+    }
+}

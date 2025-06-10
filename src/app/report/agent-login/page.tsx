@@ -72,7 +72,7 @@ const AgentLoginReport = () => {
     const handleAgencySelect = (e) => {
         const agencyId = e.target.value;
         setValue('agency', agencyId);
-        setValue('agency', '');
+        setValue('agent', '');
         getAgentList(agencyId);
     }
 

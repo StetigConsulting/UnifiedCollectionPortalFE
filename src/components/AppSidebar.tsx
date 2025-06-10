@@ -420,6 +420,12 @@ const navData = {
           icon: reportIcon,
           path: '/report/agent-login',
         },
+        {
+          title: 'Total Collection',
+          url: '/report/total-collection',
+          icon: reportIcon,
+          path: '/report/total-collection',
+        },
       ]
     },
     // {
