@@ -118,8 +118,6 @@ const AgentDetails = () => {
         { label: 'Device Model', key: 'device_model', sortable: true },
         { label: 'Device Make', key: 'device_make', sortable: true },
         { label: 'Device Serial No', key: 'device_serial_no', sortable: true },
-        { label: 'Agent Created By', key: 'agent_created_by', sortable: true },
-        { label: 'Agent Created On', key: 'agent_created_on', sortable: true },
         { label: 'Last Login Date Time', key: 'last_login_date_time', sortable: true },
         { label: 'Last Sync Date Time', key: 'last_sync_date_time', sortable: true },
     ], []);
