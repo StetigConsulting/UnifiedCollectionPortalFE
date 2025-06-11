@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import CustomizedMultipleSelectInputWithLabelString from '@/components/CustomizedMultipleSelectInputWithLabelString';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
-import { getAgencyById, getAllNonEnergyTypes, getAllPaymentModes, getLevels, getLevelsDiscomId, getListOfAllSupervisor } from '@/app/api-calls/department/api';
+import { getAgenciesWithDiscom, getAgencyById, getAllNonEnergyTypes, getAllPaymentModes, getLevels, getLevelsDiscomId, getListOfAllSupervisor } from '@/app/api-calls/department/api';
 import { createCounterCollector, getCollectorTypes } from '@/app/api-calls/agency/api';
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
 import { Loader2 } from 'lucide-react';
@@ -17,6 +17,7 @@ import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWi
 import { agentWorkingType, collectionTypePickList, collectorRolePicklist } from '@/lib/utils';
 import { useSession } from 'next-auth/react';
 import SuccessErrorModal from '@/components/SuccessErrorModal';
+import { checkIfUserHasActionAccess } from '@/helper';
 
 const AddCounterCollector = () => {
     const { data: session } = useSession()
@@ -26,6 +27,7 @@ const AddCounterCollector = () => {
     const { register, handleSubmit, formState: { errors }, setValue, watch, reset } = useForm<AddCounterCollectorFormData>({
         resolver: zodResolver(addCounterCollectorSchema),
         defaultValues: {
+            agencyId: null,
             initialBalance: 0,
             isPersonalNumberSameAsOffice: false,
             workingLevel: null
@@ -53,59 +55,10 @@ const AddCounterCollector = () => {
 
     const [supervisorList, setSupervisorList] = useState([])
 
-    useEffect(() => {
-        getWorkingLevel()
-        getAgencyData()
-        setIsLoading(true)
-        getAllPaymentModes().then((data) => {
-            setPermissions(
-                data?.data
-                    ?.filter((ite) => ite.mode_type == "Collection")
-                    ?.map((ite) => {
-                        return {
-                            label: ite.mode_name,
-                            value: ite.id,
-                        };
-                    })
-            );
-            setIsLoading(false)
-        }).catch((err) => { })
-        getAllNonEnergyTypes().then((data) => {
-            setNonEnergyTypes(
-                data?.data?.map((ite) => {
-                    return {
-                        label: ite.type_name,
-                        value: ite.id,
-                    };
-                })
-            );
-            setIsLoading(false)
-        })
-        getCollectorTypes().then((data) => {
-            setCollectorTypes(
-                data?.data
-                    ?.map((ite) => {
-                        return {
-                            label: ite.name,
-                            value: ite.id,
-                        };
-                    })
-            );
-            setIsLoading(false)
-        })
-        getListOfAllSupervisor(session?.user?.userId).then((res) => {
-            setSupervisorList(res?.data?.map(item => ({
-                ...item,
-                label: item?.supervisor_name,
-                value: item?.id
-            })))
-        }).catch(err => console.error(err))
-        setValue('initialBalance', 0);
-    }, []);
-
-    const getAgencyData = async () => {
+    const getAgencyData = async (id: number) => {
         try {
-            const agencyResponse = await getAgencyById(currentUserId);
+            console.log("formData", formData.agencyId, id);
+            const agencyResponse = await getAgencyById(formData.agencyId || id)
             const agencyData = agencyResponse.data;
             console.log("agencyData", agencyData);
             setAgencyData(agencyData);
@@ -208,7 +161,7 @@ const AddCounterCollector = () => {
         setIsSubmitting(true)
         try {
             let payload = {
-                "agency_id": currentUserId,
+                "agency_id": data.agencyId,
                 "agent_name": data.name,
                 "primary_phone": data.officePhoneNumber,
                 "secondary_phone": data.personalPhoneNumber,
@@ -369,227 +322,349 @@ const AddCounterCollector = () => {
     const [isErrorModalOpen, setIsErrorModalOpen] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState('')
 
+
+    const [agencyList, setAgencyList] = useState([])
+
+    const [isNotAgency, setIsNotAgency] = useState(false)
+
+    const getAgencyList = async () => {
+        setIsLoading(true);
+        try {
+            const response = await getAgenciesWithDiscom(session?.user?.discomId);
+            console.log("API Response:", response);
+            setAgencyList(
+                response?.data?.map((item) => ({
+                    ...item,
+                    label: item.agency_name,
+                    value: item.id,
+                }))
+            );
+
+        } catch (error) {
+            console.error("Failed to get agency:", error.data[Object.keys(error.data)[0]]);
+        } finally {
+            setIsLoading(false);
+        }
+
+    }
+
+    useEffect(() => {
+        //check if its a super admin or admin
+        if (
+            checkIfUserHasActionAccess({
+                backendScope: session?.user?.userScopes, currentAction: 'addOrEditAgent'
+            })) {
+            console.log("User has access to add or edit agent");
+            getAgencyList();
+            setIsNotAgency(true)
+        } else {
+            console.log("User doesnothas access to add or edit agent");
+            setValue('agencyId', currentUserId)
+            getAgentDetails(currentUserId)
+        }
+
+    }, []);
+
+    const getAgentDetails = async (id?: number) => {
+        if (id) {
+            getWorkingLevel()
+            getAgencyData(formData.agencyId || id)
+            setIsLoading(true)
+            getAllPaymentModes().then((data) => {
+                setPermissions(
+                    data?.data
+                        ?.filter((ite) => ite.mode_type == "Collection")
+                        ?.map((ite) => {
+                            return {
+                                label: ite.mode_name,
+                                value: ite.id,
+                            };
+                        })
+                );
+                setIsLoading(false)
+            }).catch((err) => { })
+            getAllNonEnergyTypes().then((data) => {
+                setNonEnergyTypes(
+                    data?.data?.map((ite) => {
+                        return {
+                            label: ite.type_name,
+                            value: ite.id,
+                        };
+                    })
+                );
+                setIsLoading(false)
+            })
+            getCollectorTypes().then((data) => {
+                setCollectorTypes(
+                    data?.data
+                        ?.map((ite) => {
+                            return {
+                                label: ite.name,
+                                value: ite.id,
+                            };
+                        })
+                );
+                setIsLoading(false)
+            })
+            getListOfAllSupervisor(id).then((res) => {
+                setSupervisorList(res?.data?.map(item => ({
+                    ...item,
+                    label: item?.supervisor_name,
+                    value: item?.id
+                })))
+            }).catch(err => console.error(err))
+            setValue('initialBalance', 0);
+        }
+    }
+
+    const agencyId = watch('agencyId');
+
     return (
         <AuthUserReusableCode pageTitle="Add Agent" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
-                    <CustomizedInputWithLabel
-                        containerClass='col-span-2'
-                        label="Name"
-                        placeholder="Enter Name"
-                        required
-                        {...register('name')}
-                        errors={errors.name}
-                    />
-                    <CustomizedInputWithLabel
-                        label="Office Phone Number"
-                        placeholder="Enter Phone Number"
-                        required
-                        type="number"
-                        requiredText='(OTP will be sent on this phone number)'
-                        {...register('officePhoneNumber')}
-                        errors={errors.officePhoneNumber}
-                    />
-                    <CustomizedInputWithLabel
-                        label="Personal Phone Number"
-                        placeholder="Enter Phone Number"
-                        type="number"
-                        {...register('personalPhoneNumber')}
-                        errors={errors.personalPhoneNumber}
-                        additionAction={<div className='flex gap-2 text-end'>
-                            <label className='text-themeColor flex-1 text-sm font-medium mt-1'
-                            // onClick={handlePersonalPhoneSameAsOffice}
-                            >Same as Office Phone Number</label>
-                            <input type="checkbox"
-                                className='self-center' onClick={handlePersonalPhoneSameAsOffice} />
-                        </div>}
-                    />
-                    <CustomizedInputWithLabel
-                        label="Validity Start Date"
-                        required
-                        type='date'
-                        {...register('fromValidity')}
-                        errors={errors.fromValidity}
-                    />
-                    <CustomizedInputWithLabel
-                        label="Validity End Date"
-                        required
-                        type='date'
-                        {...register('toValidity')}
-                        errors={errors.toValidity}
-                    />
-                    <CustomizedInputWithLabel
-                        label='Maximum Limit'
-                        placeholder="Enter Maximum Limit"
-                        required
-                        {...register('maximumLimit', { valueAsNumber: true })}
-                        errors={errors.maximumLimit}
-                    />
-                    <CustomizedSelectInputWithLabel
-                        label='Collector Type'
-                        required
-                        list={collectorTypes}
-                        {...register('collectorType')}
-                        errors={errors.collectorType}
-                    />
-                    <CustomizedSelectInputWithLabel
-                        label='Collector Role'
-                        required
-                        list={collectorRolePicklist}
-                        {...register('collectorRole')}
-                        // onChange={() => handleDisplayWorkingLevel(workingLevelActualLists, agencyWorkingLevel)}
-                        errors={errors.collectorRole}
-                    />
-                    <CustomizedSelectInputWithLabel
-                        label='Working Type'
-                        required
-                        list={agentWorkingType}
-                        {...register('workingType')}
-                        errors={errors.workingType}
-                    />
-
-                    <CustomizedInputWithLabel
-                        label="Initial Balance"
-                        type="number"
-                        placeholder="Enter Initial Balance"
-                        disabled
-                        {...register('initialBalance')}
-                        errors={errors.initialBalance}
-                    />
-                    <CustomizedSelectInputWithLabel
-                        label='Working Level'
-                        required
-                        list={workingLevel}
-                        {...register('workingLevel', { valueAsNumber: true })}
-                        errors={errors.workingLevel}
-                    />
-                    {
-                        formData.workingLevel != null && !Number.isNaN(formData.workingLevel) && (
-                            (agencyWorkingLevel == levelNameMappedWithId?.CIRCLE)) &&
-                        <CustomizedMultipleSelectInputWithLabelNumber
-                            label="Circle"
-                            errors={errors.circle}
-                            placeholder="Select Circle"
-                            list={circles}
-                            required={true}
-                            value={watch('circle') || []}
-                            onChange={(selectedValues) => {
-                                setValue('circle', selectedValues)
-                                if (selectedValues.length > 0) {
-                                    getDivisions(selectedValues[0]);
+                    {isNotAgency && (
+                        <CustomizedSelectInputWithLabel label='Agency'
+                            list={agencyList}
+                            containerClass='col-span-2'
+                            {...register('agencyId', {
+                                valueAsNumber: true,
+                                onChange: (e) => {
+                                    console.log("Agency ID changed:", e.target.value, formData.agencyId);
+                                    setValue('agencyId', e.target.value || null);
+                                    getAgentDetails(e.target.value)
                                 }
-                            }}
-                        />
-                    }
-                    {
-                        formData.workingLevel != null && !Number.isNaN(formData.workingLevel) &&
-                        ((agencyWorkingLevel == levelNameMappedWithId?.DIVISION) ||
-                            (formData.workingLevel == levelNameMappedWithId?.SUB_DIVISION ||
-                                formData.workingLevel == levelNameMappedWithId?.DIVISION ||
-                                formData.workingLevel == levelNameMappedWithId?.SECTION)) &&
-                        (agencyWorkingLevel != levelNameMappedWithId?.SUB_DIVISION
-                            && agencyWorkingLevel != levelNameMappedWithId?.SECTION) &&
-                        <CustomizedMultipleSelectInputWithLabelNumber
-                            label="Division"
-                            errors={errors.division}
-                            placeholder="Select Division"
-                            list={divisions}
-                            required={true}
-                            value={watch('division') || []}
-                            onChange={(selectedValues) => {
-                                setValue('division', selectedValues)
-                                if (selectedValues.length > 0) {
-                                    getSubDivisions(selectedValues[0]);
-                                }
-
-                            }}
-                        />
-                    }
-
-                    {
-                        formData.workingLevel != null
-                        && ((agencyWorkingLevel == levelNameMappedWithId?.SUB_DIVISION) ||
-                            (formData.workingLevel == levelNameMappedWithId?.SECTION
-                                || formData.workingLevel == levelNameMappedWithId?.SUB_DIVISION)) &&
-                        (agencyWorkingLevel != levelNameMappedWithId?.SECTION) && (
-                            <CustomizedMultipleSelectInputWithLabelNumber
-                                label="Sub Division"
-                                errors={errors.subDivision}
-                                placeholder="Select Sub Division"
-                                list={subDivisions}
-                                required={true}
-                                value={watch('subDivision') || []}
-                                onChange={(selectedValues) => {
-                                    setValue('subDivision', selectedValues)
-                                    if (selectedValues.length > 0) {
-                                        getSections(selectedValues[0]);
-                                    }
-                                }}
-                            />)
-                    }
-                    {formData.workingLevel != null &&
-                        formData.workingLevel == levelNameMappedWithId?.SECTION && (
-                            <CustomizedMultipleSelectInputWithLabelNumber
-                                label="Section"
-                                errors={errors.section}
-                                placeholder="Select Section"
-                                list={sections}
-                                required={true}
-                                value={watch('section') || []}
-                                onChange={(selectedValues) => setValue('section', selectedValues)}
-                            />)
-                    }
-                    <CustomizedMultipleSelectInputWithLabelNumber
-                        label="Permission"
-                        list={permissions}
-                        multi={true}
-                        required={true}
-                        placeholder="Select Permissions"
-                        errors={errors.permission}
-                        value={watch('permission') || []}
-                        onChange={(selectedValues) => setValue('permission', selectedValues)}
-                    />
-                    <CustomizedMultipleSelectInputWithLabelString
-                        label="Collection Type"
-                        errors={errors.collectionType}
-                        placeholder="Select Collection"
-                        list={collectionTypeList}
-                        required={true}
-                        value={watch('collectionType') || []}
-                        multi={true}
-                        onChange={(selectedValues) => setValue('collectionType', selectedValues)}
-                    />
-                    {watch("collectionType")?.includes("Non Energy") && (
-                        <CustomizedMultipleSelectInputWithLabelNumber
-                            label="Non Energy"
-                            list={nonEnergyTypes}
-                            multi={true}
-                            required={true}
-                            placeholder="Select Non Energy"
-                            errors={errors.nonEnergy}
-                            value={watch('nonEnergy') || []}
-                            onChange={(selectedValues) => setValue('nonEnergy', selectedValues)}
+                            })}
+                            errors={errors.agencyId}
                         />
                     )}
-                    <CustomizedMultipleSelectInputWithLabelNumber
-                        label="Select Supervisor"
-                        errors={errors.supervisor}
-                        placeholder="Select Supervisor"
-                        list={supervisorList}
-                        value={watch('supervisor') || []}
-                        onChange={(selectedValues) => setValue('supervisor', selectedValues)}
-                    />
+                    {
+                        agencyId && <>
+
+                            <CustomizedInputWithLabel
+                                containerClass='col-span-2'
+                                label="Name"
+                                placeholder="Enter Name"
+                                required
+                                {...register('name')}
+                                errors={errors.name}
+                            />
+                            <CustomizedInputWithLabel
+                                label="Office Phone Number"
+                                placeholder="Enter Phone Number"
+                                required
+                                type="number"
+                                requiredText='(OTP will be sent on this phone number)'
+                                {...register('officePhoneNumber')}
+                                errors={errors.officePhoneNumber}
+                            />
+                            <CustomizedInputWithLabel
+                                label="Personal Phone Number"
+                                placeholder="Enter Phone Number"
+                                type="number"
+                                {...register('personalPhoneNumber')}
+                                errors={errors.personalPhoneNumber}
+                                additionAction={<div className='flex gap-2 text-end'>
+                                    <label className='text-themeColor flex-1 text-sm font-medium mt-1'
+                                    // onClick={handlePersonalPhoneSameAsOffice}
+                                    >Same as Office Phone Number</label>
+                                    <input type="checkbox"
+                                        className='self-center' onClick={handlePersonalPhoneSameAsOffice} />
+                                </div>}
+                            />
+                            <CustomizedInputWithLabel
+                                label="Validity Start Date"
+                                required
+                                type='date'
+                                {...register('fromValidity')}
+                                errors={errors.fromValidity}
+                            />
+                            <CustomizedInputWithLabel
+                                label="Validity End Date"
+                                required
+                                type='date'
+                                {...register('toValidity')}
+                                errors={errors.toValidity}
+                            />
+                            <CustomizedInputWithLabel
+                                label='Maximum Limit'
+                                placeholder="Enter Maximum Limit"
+                                required
+                                {...register('maximumLimit', { valueAsNumber: true })}
+                                errors={errors.maximumLimit}
+                            />
+                            <CustomizedSelectInputWithLabel
+                                label='Collector Type'
+                                required
+                                list={collectorTypes}
+                                {...register('collectorType')}
+                                errors={errors.collectorType}
+                            />
+                            <CustomizedSelectInputWithLabel
+                                label='Collector Role'
+                                required
+                                list={collectorRolePicklist}
+                                {...register('collectorRole')}
+                                // onChange={() => handleDisplayWorkingLevel(workingLevelActualLists, agencyWorkingLevel)}
+                                errors={errors.collectorRole}
+                            />
+                            <CustomizedSelectInputWithLabel
+                                label='Working Type'
+                                required
+                                list={agentWorkingType}
+                                {...register('workingType')}
+                                errors={errors.workingType}
+                            />
+
+                            <CustomizedInputWithLabel
+                                label="Initial Balance"
+                                type="number"
+                                placeholder="Enter Initial Balance"
+                                disabled
+                                {...register('initialBalance')}
+                                errors={errors.initialBalance}
+                            />
+                            <CustomizedSelectInputWithLabel
+                                label='Working Level'
+                                required
+                                list={workingLevel}
+                                {...register('workingLevel', { valueAsNumber: true })}
+                                errors={errors.workingLevel}
+                            />
+                            {
+                                formData.workingLevel != null && !Number.isNaN(formData.workingLevel) && (
+                                    (agencyWorkingLevel == levelNameMappedWithId?.CIRCLE)) &&
+                                <CustomizedMultipleSelectInputWithLabelNumber
+                                    label="Circle"
+                                    errors={errors.circle}
+                                    placeholder="Select Circle"
+                                    list={circles}
+                                    required={true}
+                                    value={watch('circle') || []}
+                                    onChange={(selectedValues) => {
+                                        setValue('circle', selectedValues)
+                                        if (selectedValues.length > 0) {
+                                            getDivisions(selectedValues[0]);
+                                        }
+                                    }}
+                                />
+                            }
+                            {
+                                formData.workingLevel != null && !Number.isNaN(formData.workingLevel) &&
+                                ((agencyWorkingLevel == levelNameMappedWithId?.DIVISION) ||
+                                    (formData.workingLevel == levelNameMappedWithId?.SUB_DIVISION ||
+                                        formData.workingLevel == levelNameMappedWithId?.DIVISION ||
+                                        formData.workingLevel == levelNameMappedWithId?.SECTION)) &&
+                                (agencyWorkingLevel != levelNameMappedWithId?.SUB_DIVISION
+                                    && agencyWorkingLevel != levelNameMappedWithId?.SECTION) &&
+                                <CustomizedMultipleSelectInputWithLabelNumber
+                                    label="Division"
+                                    errors={errors.division}
+                                    placeholder="Select Division"
+                                    list={divisions}
+                                    required={true}
+                                    value={watch('division') || []}
+                                    onChange={(selectedValues) => {
+                                        setValue('division', selectedValues)
+                                        if (selectedValues.length > 0) {
+                                            getSubDivisions(selectedValues[0]);
+                                        }
+
+                                    }}
+                                />
+                            }
+
+                            {
+                                formData.workingLevel != null
+                                && ((agencyWorkingLevel == levelNameMappedWithId?.SUB_DIVISION) ||
+                                    (formData.workingLevel == levelNameMappedWithId?.SECTION
+                                        || formData.workingLevel == levelNameMappedWithId?.SUB_DIVISION)) &&
+                                (agencyWorkingLevel != levelNameMappedWithId?.SECTION) && (
+                                    <CustomizedMultipleSelectInputWithLabelNumber
+                                        label="Sub Division"
+                                        errors={errors.subDivision}
+                                        placeholder="Select Sub Division"
+                                        list={subDivisions}
+                                        required={true}
+                                        value={watch('subDivision') || []}
+                                        onChange={(selectedValues) => {
+                                            setValue('subDivision', selectedValues)
+                                            if (selectedValues.length > 0) {
+                                                getSections(selectedValues[0]);
+                                            }
+                                        }}
+                                    />)
+                            }
+                            {formData.workingLevel != null &&
+                                formData.workingLevel == levelNameMappedWithId?.SECTION && (
+                                    <CustomizedMultipleSelectInputWithLabelNumber
+                                        label="Section"
+                                        errors={errors.section}
+                                        placeholder="Select Section"
+                                        list={sections}
+                                        required={true}
+                                        value={watch('section') || []}
+                                        onChange={(selectedValues) => setValue('section', selectedValues)}
+                                    />)
+                            }
+                            <CustomizedMultipleSelectInputWithLabelNumber
+                                label="Permission"
+                                list={permissions}
+                                multi={true}
+                                required={true}
+                                placeholder="Select Permissions"
+                                errors={errors.permission}
+                                value={watch('permission') || []}
+                                onChange={(selectedValues) => setValue('permission', selectedValues)}
+                            />
+                            <CustomizedMultipleSelectInputWithLabelString
+                                label="Collection Type"
+                                errors={errors.collectionType}
+                                placeholder="Select Collection"
+                                list={collectionTypeList}
+                                required={true}
+                                value={watch('collectionType') || []}
+                                multi={true}
+                                onChange={(selectedValues) => setValue('collectionType', selectedValues)}
+                            />
+                            {watch("collectionType")?.includes("Non Energy") && (
+                                <CustomizedMultipleSelectInputWithLabelNumber
+                                    label="Non Energy"
+                                    list={nonEnergyTypes}
+                                    multi={true}
+                                    required={true}
+                                    placeholder="Select Non Energy"
+                                    errors={errors.nonEnergy}
+                                    value={watch('nonEnergy') || []}
+                                    onChange={(selectedValues) => setValue('nonEnergy', selectedValues)}
+                                />
+                            )}
+                            <CustomizedMultipleSelectInputWithLabelNumber
+                                label="Select Supervisor"
+                                errors={errors.supervisor}
+                                placeholder="Select Supervisor"
+                                list={supervisorList}
+                                value={watch('supervisor') || []}
+                                onChange={(selectedValues) => setValue('supervisor', selectedValues)}
+                            />
+                        </>
+                    }
                 </div>
                 <div className="flex justify-end mt-4">
-                    <Button type="submit" variant="default" disabled={isSubmitting}>
-                        {isSubmitting ? (
-                            <>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
-                            </>
-                        ) : (
-                            'Submit'
-                        )}
-                    </Button>
+                    {
+                        agencyId && (
+
+                            <Button type="submit" variant="default" disabled={isSubmitting}>
+                                {isSubmitting ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
+                                    </>
+                                ) : (
+                                    'Submit'
+                                )}
+                            </Button>
+                        )
+                    }
                 </div>
             </form>
             <SuccessErrorModal isOpen={isErrorModalOpen} onClose={() => setIsErrorModalOpen(false)}

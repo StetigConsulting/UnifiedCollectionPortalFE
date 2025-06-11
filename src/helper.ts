@@ -98,7 +98,8 @@ export const listOfActionScopes = [
   { action: 'dashboardPerformanceSummary', backendScopeName: 'TPCollectionWebPortal:dashboard-performance-summary:READ' },
   { action: 'disableVendorCode', backendScopeName: 'TPCollectionWebPortal:agency:EDIT_WITHOUT_VENDOR_ID' },
   { action: 'enabledUpdatePos', backendScopeName: 'TPCollectionWebPortal:pos_device_update:EDIT' },
-  { action: 'readNewsNotice', backendScopeName: 'TPCollectionWebPortal:news_notice:READ' }
+  { action: 'readNewsNotice', backendScopeName: 'TPCollectionWebPortal:news_notice:READ' },
+  { action: 'addOrEditAgent', backendScopeName: 'TPCollectionWebPortal:agent:EDIT_WITH_AGENCY' },
 ]
 
 export const checkIfUserHasActionAccess = ({ backendScope = [], currentAction }) => {

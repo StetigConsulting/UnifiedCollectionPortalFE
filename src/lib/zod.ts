@@ -521,6 +521,7 @@ export const editCollectorSchema = z.object({
 export type EditCollectorFormData = z.infer<typeof editCollectorSchema>;
 
 export const addCounterCollectorSchema = z.object({
+  agencyId: z.number().optional(),
   name: z.string().min(1, { message: "Name is required" }),
   isPersonalNumberSameAsOffice: z.boolean().optional(),
   officePhoneNumber: z

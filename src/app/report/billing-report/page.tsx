@@ -48,7 +48,7 @@ const BillingReport = () => {
             page: currentPage,
             page_size: formData?.pageSize,
             filter: {
-                date_range: {
+                bill_issue_date_range: {
                     from_date: formData?.fromDate,
                     to_date: formData?.toDate
                 }
@@ -88,7 +88,7 @@ const BillingReport = () => {
 
     const getPayload = (data) => {
         let filter = {
-            date_range: {
+            bill_issue_date_range: {
                 from_date: data?.fromDate,
                 to_date: data?.toDate
             }
