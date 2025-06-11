@@ -5,30 +5,45 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import ReactTable from "@/components/ReactTable";
 import AuthUserReusableCode from "@/components/AuthUserReusableCode";
-import { UserRoundMinus, UserRoundPlus } from "lucide-react";
+import { Loader2, UserRoundMinus, UserRoundPlus } from "lucide-react";
 import { activateAgentById, deactivateAgentById, getAllAgentByAgencyId } from "@/app/api-calls/agency/api";
-import { getLevels } from "@/app/api-calls/department/api";
+import { getAgenciesWithDiscom, getLevels } from "@/app/api-calls/department/api";
 import AlertPopup from "@/components/Agency/ViewAgency/AlertPopup";
 import { useSession } from "next-auth/react";
-import { formatDate } from "@/lib/utils";
+import { formatDate, getErrorMessage } from "@/lib/utils";
+import CustomizedSelectInputWithLabel from "@/components/CustomizedSelectInputWithLabel";
+
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ViewAgentFormData, viewAgentSchema } from "@/lib/zod";
+import { checkIfUserHasActionAccess } from "@/helper";
+
 
 const ViewCollector = () => {
     const { data: session } = useSession();
 
     const currentUserId = session?.user?.userId;
 
+    const {
+        register,
+        handleSubmit,
+        formState: { errors, isSubmitting },
+        setValue, watch
+    } = useForm({
+        resolver: zodResolver(viewAgentSchema),
+    });
+
     const [collectors, setCollectors] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [workingLevelList, setWorkingLevelList] = useState([])
 
-    useEffect(() => {
-        loadCollectors();
-    }, []);
+    const formData = watch();
 
-    const loadCollectors = async () => {
+    const loadCollectors = async (id: number) => {
         setIsLoading(true);
         try {
-            const response = await getAllAgentByAgencyId(currentUserId)
+            const response = await getAllAgentByAgencyId(id)
             const updatedCollectors = response.data.map((item) => ({
                 ...item,
                 workingLevelOffice: item?.working_level_office?.office_description
@@ -52,6 +67,7 @@ const ViewCollector = () => {
                     workingOffice: listOfLevel[item.working_level] || 'N/A',
                 }
             }));
+            setShowTable(true);
         } catch (error) {
             toast.error("Failed to load collectors.");
             console.error("Error fetching collectors:", error);
@@ -65,7 +81,7 @@ const ViewCollector = () => {
         try {
             await activateAgentById(id, currentUserId);
             toast.success("Agent activated successfully.");
-            loadCollectors();
+            loadCollectors(formData?.agencyId);
         } catch (error) {
             toast.error("Failed to activate the Agent.");
             console.error("Error activating Agent:", error);
@@ -79,7 +95,7 @@ const ViewCollector = () => {
         try {
             await deactivateAgentById(id, currentUserId);
             toast.success("Agent deactivated successfully.");
-            loadCollectors();
+            loadCollectors(formData?.agencyId);
         } catch (error) {
             toast.error("Failed to deactivate the Agent.");
             console.error("Error deactivating collector:", error);
@@ -122,9 +138,84 @@ const ViewCollector = () => {
         ),
     }));
 
+    const [agencyList, setAgencyList] = useState([])
+
+    const [showTable, setShowTable] = useState(false);
+
+    const getAgencyList = async () => {
+        setIsLoading(true);
+        try {
+            const response = await getAgenciesWithDiscom(session?.user?.discomId);
+            console.log("API Response:", response);
+            setAgencyList(
+                response?.data?.map((item) => ({
+                    ...item,
+                    label: item.agency_name,
+                    value: item.id,
+                }))
+            );
+
+        } catch (error) {
+            console.error("Failed to get agency:", getErrorMessage(error));
+        } finally {
+            setIsLoading(false);
+        }
+
+    }
+
+    const [isNotAgency, setIsNotAgency] = useState(false);
+
+    const onSubmit = (data: ViewAgentFormData) => {
+        loadCollectors(data?.agencyId)
+    };
+
+    useEffect(() => {
+        if (
+            checkIfUserHasActionAccess({
+                backendScope: session?.user?.userScopes,
+                currentAction: 'addOrEditAgent'
+            })) {
+            getAgencyList();
+            setIsNotAgency(true)
+        } else {
+            setValue('agencyId', session?.user?.userId)
+            loadCollectors(session?.user?.userId);
+            setIsNotAgency(false);
+        }
+    }, []);
+
     return (
         <AuthUserReusableCode pageTitle="View Agent" isLoading={isLoading}>
-            <ReactTable data={tableData} columns={columns} />
+            {
+                isNotAgency &&
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                    <div className="flex gap-4">
+                        <CustomizedSelectInputWithLabel label='Agency'
+                            list={agencyList}
+                            containerClass='flex-1'
+                            {...register('agencyId', {
+                                valueAsNumber: true
+                            })}
+                            errors={errors.agencyId}
+                        />
+                        <div className="col-span-1 mt-6 align-end">
+                            <Button type="submit" variant="default" disabled={isSubmitting}>
+                                {isSubmitting ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
+                                    </>
+                                ) : (
+                                    'Submit'
+                                )}
+                            </Button>
+                        </div>
+                    </div>
+                </form>
+            }
+            {
+                showTable &&
+                <ReactTable data={tableData} columns={columns} />
+            }
         </AuthUserReusableCode>
     );
 };

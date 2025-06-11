@@ -1940,3 +1940,12 @@ export const totalCollectionReportSchema = z.object({
 });
 
 export type TotalCollectionReportFormData = z.infer<typeof totalCollectionReportSchema>;
+
+export const viewAgentSchema = z.object({
+  agencyId: z.number({
+    invalid_type_error: 'Agency ID is required',
+    required_error: 'Agency ID is required'
+  })
+});
+
+export type ViewAgentFormData = z.infer<typeof viewAgentSchema>;

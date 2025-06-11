@@ -14,10 +14,11 @@ import { createCounterCollector, getCollectorTypes } from '@/app/api-calls/agenc
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
 import { Loader2 } from 'lucide-react';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
-import { agentWorkingType, collectionTypePickList, collectorRolePicklist } from '@/lib/utils';
+import { agentWorkingType, collectionTypePickList, collectorRolePicklist, getErrorMessage } from '@/lib/utils';
 import { useSession } from 'next-auth/react';
 import SuccessErrorModal from '@/components/SuccessErrorModal';
 import { checkIfUserHasActionAccess } from '@/helper';
+import AlertPopupWithState from '@/components/Agency/ViewAgency/AlertPopupWithState';
 
 const AddCounterCollector = () => {
     const { data: session } = useSession()
@@ -30,7 +31,7 @@ const AddCounterCollector = () => {
             agencyId: null,
             initialBalance: 0,
             isPersonalNumberSameAsOffice: false,
-            workingLevel: null
+            workingLevel: null,
         },
     });
 
@@ -341,7 +342,7 @@ const AddCounterCollector = () => {
             );
 
         } catch (error) {
-            console.error("Failed to get agency:", error.data[Object.keys(error.data)[0]]);
+            console.error("Failed to get agency:", getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }
@@ -418,6 +419,8 @@ const AddCounterCollector = () => {
     }
 
     const agencyId = watch('agencyId');
+
+    const [stateForConfirmationPopup, setStateForConfirmationPopup] = useState(false);
 
     return (
         <AuthUserReusableCode pageTitle="Add Agent" isLoading={isLoading}>
@@ -651,7 +654,7 @@ const AddCounterCollector = () => {
                     }
                 </div>
                 <div className="flex justify-end mt-4">
-                    {
+                    {/* {
                         agencyId && (
 
                             <Button type="submit" variant="default" disabled={isSubmitting}>
@@ -664,6 +667,31 @@ const AddCounterCollector = () => {
                                 )}
                             </Button>
                         )
+                    } */}
+                    {agencyId &&
+                        <AlertPopupWithState
+                            triggerCode={
+                                <Button
+                                    variant="default"
+                                    disabled={isSubmitting}
+                                    onClick={handleSubmit((e) => { setStateForConfirmationPopup(true); })}
+                                >
+                                    {isSubmitting ? (
+                                        <>
+                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
+                                        </>
+                                    ) : (
+                                        "Submit"
+                                    )}
+                                </Button>
+                            }
+                            handleContinue={handleSubmit(onSubmit)}
+                            title="Create Agent Creation"
+                            description="Are you sure you want to create this Agent?"
+                            continueButtonText="Yes"
+                            isOpen={stateForConfirmationPopup}
+                            setIsOpen={setStateForConfirmationPopup}
+                        />
                     }
                 </div>
             </form>
