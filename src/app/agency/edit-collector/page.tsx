@@ -17,6 +17,7 @@ import CustomizedMultipleSelectInputWithLabelNumber from "@/components/Customize
 import { useSession } from "next-auth/react";
 import { Loader2 } from "lucide-react";
 import SuccessErrorModal from "@/components/SuccessErrorModal";
+import AlertPopupWithState from "@/components/Agency/ViewAgency/AlertPopupWithState";
 
 const EditCollector = () => {
     const { register, handleSubmit, formState: { errors }, setValue, watch, setError, reset } = useForm<EditCollectorFormData>({
@@ -198,6 +199,8 @@ const EditCollector = () => {
         }
     }, [formData.workingType, formData.collectionType, setValue]);
 
+    const [stateForConfirmationPopup, setStateForConfirmationPopup] = useState(false);
+
     return (
         <AuthUserReusableCode pageTitle="Edit Agent" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -296,7 +299,31 @@ const EditCollector = () => {
                     />
                 </div>
                 <div className="flex justify-end mt-4">
-                    <Button type="submit" variant="default" disabled={isSubmitting}>
+                    <AlertPopupWithState
+                        triggerCode={
+                            <Button
+                                variant="default"
+                                disabled={isSubmitting}
+                                onClick={handleSubmit((e) => { setStateForConfirmationPopup(true); })}
+                            >
+                                {isSubmitting ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
+                                    </>
+                                ) : (
+                                    "Submit"
+                                )}
+                            </Button>
+                        }
+                        handleContinue={handleSubmit(onSubmit)}
+                        title="Confirm Edit Agent"
+                        description="Are you sure you want to edit this Agent?"
+                        continueButtonText="Yes"
+                        isOpen={stateForConfirmationPopup}
+                        setIsOpen={setStateForConfirmationPopup}
+                    />
+
+                    {/* <Button type="submit" variant="default" disabled={isSubmitting}>
                         {isSubmitting ? (
                             <>
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
@@ -304,7 +331,7 @@ const EditCollector = () => {
                         ) : (
                             'Submit'
                         )}
-                    </Button>
+                    </Button> */}
                 </div>
             </form>
             <SuccessErrorModal isOpen={isErrorModalOpen} onClose={() => setIsErrorModalOpen(false)}
