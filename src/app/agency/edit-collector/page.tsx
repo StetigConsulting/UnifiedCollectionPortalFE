@@ -53,13 +53,6 @@ const EditCollector = () => {
             );
             setIsLoading(false)
         })
-        getListOfAllSupervisor(session?.user?.userId).then((res) => {
-            setSupervisorList(res?.data?.map(item => ({
-                ...item,
-                label: item?.supervisor_name,
-                value: item?.id
-            })))
-        }).catch(err => console.error(err))
     }, []);
 
     const onSubmit = async (data: EditCollectorFormData) => {
@@ -141,6 +134,13 @@ const EditCollector = () => {
         try {
             const agencyResponse = await getAgencyById(String(id));
             const agencyData = agencyResponse.data;
+            await getListOfAllSupervisor(id).then((res) => {
+                setSupervisorList(res?.data?.map(item => ({
+                    ...item,
+                    label: item?.supervisor_name,
+                    value: item?.id
+                })))
+            }).catch(err => console.error(err))
             console.log("agencyData", agencyData);
             setAgencyData(agencyData);
 

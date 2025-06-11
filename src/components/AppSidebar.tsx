@@ -184,6 +184,14 @@ const navData = {
           icon: ReceiptText,
           path: '/admin/create-new-user',
         },
+      ]
+    },
+    {
+      title: "Agent Management",
+      icon: Folder,
+      url: "#",
+      path: '/agency/',
+      items: [
         {
           title: "Add Agent",
           icon: UserPlus2,
@@ -233,15 +241,7 @@ const navData = {
           title: "Create Supervisor",
           icon: UserPlus2,
           url: "/agency/add-new-supervisor",
-        }
-      ]
-    },
-    {
-      title: "Agent Management",
-      icon: Folder,
-      url: "#",
-      path: '/agency/',
-      items: [
+        },
         { title: "Edit Agent Area & Role", icon: Edit, url: "/department/edit-agent-area" },
         { title: "Reset Device", icon: MonitorCog, url: '/department/reset-device' },
       ]

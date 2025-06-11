@@ -686,7 +686,7 @@ const AddCounterCollector = () => {
                                 </Button>
                             }
                             handleContinue={handleSubmit(onSubmit)}
-                            title="Create Agent Creation"
+                            title="Confirm Agent Creation"
                             description="Are you sure you want to create this Agent?"
                             continueButtonText="Yes"
                             isOpen={stateForConfirmationPopup}

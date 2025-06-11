@@ -502,6 +502,7 @@ export const fileUploadSchema = z.object({
 });
 
 export const editCollectorSchema = z.object({
+  agencyId: z.number().optional(),
   collectorMobile: z.number().min(10, 'Mobile number must be at least 10 digits'),
   name: z.string().min(1, "Name is required"),
   agentId: z.number(),
