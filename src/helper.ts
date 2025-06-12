@@ -9,7 +9,7 @@ export const listOfUrlForScopes = [
   { url: "/department/edit-agency", backendScopeName: "TPCollectionWebPortal:agency:EDIT" },
   { url: "/department/extend-validity", backendScopeName: "TPCollectionWebPortal:agency:EXTEND_VALIDITY" },
   { url: "/department/view-agency", backendScopeName: "TPCollectionWebPortal:agency:READ" },
-  { url: "/department/view-agency/hisory", backendScopeName: "TPCollectionWebPortal:agency:READ" },
+  { url: "/department/view-agency/history", backendScopeName: "TPCollectionWebPortal:agency:READ" },
   { url: "/department/edit-agency-area", backendScopeName: "TPCollectionWebPortal:agency:CHANGE_AREA" },
   { url: "/department/agency-display-balance", backendScopeName: "TPCollectionWebPortal:agency-balance:READ" },//action
   { url: "/department/deactivate-agency", backendScopeName: "TPCollectionWebPortal:agency:DEACTIVATE" },//action
