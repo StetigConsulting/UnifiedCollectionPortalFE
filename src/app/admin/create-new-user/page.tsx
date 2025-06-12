@@ -6,10 +6,11 @@ import { toast } from 'sonner';
 import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
-import { urlsListWithTitle } from '@/lib/utils';
-import { getListOfAllUsers } from '@/app/api-calls/admin/api';
+import { getErrorMessage, urlsListWithTitle } from '@/lib/utils';
+import { activateSupervisorUser, deactivateSupervisorUser, getListOfAllUsers } from '@/app/api-calls/admin/api';
 import moment from 'moment';
-import { FileCog } from 'lucide-react';
+import { FileCog, Power, PowerOff } from 'lucide-react';
+import AlertPopup from '@/components/Agency/ViewAgency/AlertPopup';
 
 
 const CreateUserConfiguration = () => {
@@ -51,8 +52,67 @@ const CreateUserConfiguration = () => {
         fetchData();
     }, []);
 
+    const [selectedRow, setSelectedRow] = useState<any | null>(null);
+
+    const handleRowSelection = (row: any) => {
+        console.log(row)
+        setSelectedRow(row)
+    }
+
+    const activateUser = async (id: number) => {
+        setIsLoading(true);
+        try {
+            let payload = {
+                supervisor_id: id
+            }
+            await activateSupervisorUser(payload);
+            toast.success('Agency activated successfully');
+            fetchData();
+            setSelectedRow(null)
+        } catch (error) {
+            toast.error('Error ', getErrorMessage(error));
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    const deactivateUser = async (id: number) => {
+        setIsLoading(true);
+        try {
+            let payload = {
+                supervisor_id: id
+            }
+            await deactivateSupervisorUser(payload);
+            toast.success('Agency activated successfully');
+            fetchData();
+            setSelectedRow(null)
+        } catch (error) {
+            toast.error('Error ', getErrorMessage(error));
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    const getSelectedRowButton = () => {
+        if (selectedRow?.user_role !== 'SUPERVISOR') return null
+        return <div className="space-x-2">
+            {selectedRow?.is_active ? <AlertPopup triggerCode={<Button variant='destructive' className="cursor-pointer">
+                <PowerOff />
+                Deactivate
+            </Button>} handleContinue={() => deactivateUser(selectedRow.id)}
+                title='Confirm Deactivating' description='Are you sure you want to save the deactivate supervisor? Please review the details carefully before confirming.' continueButtonText='Confirm'
+            /> :
+                <AlertPopup triggerCode={<Button variant='success' className="cursor-pointer">
+                    <Power />
+                    Activate
+                </Button>} handleContinue={() => activateUser(selectedRow.id)}
+                    title='Confirm Activating' description='Are you sure you want to save the activate supervisor? Please review the details carefully before confirming.' continueButtonText='Confirm'
+                />}
+        </div>
+    }
+
     return (
-        <AuthUserReusableCode pageTitle="Create New User" isLoading={isLoading}>
+        <AuthUserReusableCode pageTitle='Portal User Management' isLoading={isLoading}>
             <div className='px-2'>
                 <ReactTable
                     data={structureTableData}
@@ -60,8 +120,14 @@ const CreateUserConfiguration = () => {
                     customActionButton={<Button variant="default" size="lg"
                         onClick={() => router.push(urlsListWithTitle.createNewUserForm.url)}
                     >
-                        <FileCog />Create New User
+                        <FileCog />Create
                     </Button>}
+                    isSelectable
+                    onRowSelect={handleRowSelection}
+                    onRowSelectButtons={
+                        getSelectedRowButton()
+                    }
+                    selectedRow={selectedRow}
                 />
             </div>
         </AuthUserReusableCode >

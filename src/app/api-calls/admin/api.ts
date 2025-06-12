@@ -196,6 +196,24 @@ export const getListOfAllUsers = async () => {
     }
 }
 
+export const activateSupervisorUser = async (data: any) => {
+    try {
+        const response = await api.put(`/v1/supervisors/activate`, data);
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
+export const deactivateSupervisorUser = async (data: any) => {
+    try {
+        const response = await api.put(`/v1/supervisors/deactivate`, data);
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
 export const getAllUserRoles = async () => {
     try {
         const response = await api.get(`/v1/user-roles/`);

@@ -180,7 +180,7 @@ export const urlsListWithTitle = {
   },
   createNewUserTable: {
     url: '/admin/create-new-user',
-    title: 'Create New User'
+    title: 'Portal User Management'
   },
   createNewUserForm: {
     url: '/admin/create-new-user/add',

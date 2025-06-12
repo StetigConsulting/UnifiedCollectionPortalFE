@@ -69,7 +69,7 @@ const CreateUserForm = () => {
     }, [])
 
     return (
-        <AuthUserReusableCode pageTitle="Create New User" isLoading={isLoading}>
+        <AuthUserReusableCode pageTitle='Portal User Management' isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <CustomizedSelectInputWithLabel
                     label="User Role"
