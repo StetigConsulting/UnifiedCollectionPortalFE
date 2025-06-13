@@ -236,6 +236,15 @@ export const updateAgentAreaRole = async (data: EditAgentRoleArea) => {
   }
 }
 
+export const updateAgentArea = async (data: any) => {
+  try {
+    const response = await api.put(`/v1/agents/change-area`, data)
+    return response.data;
+  } catch (error: any) {
+    throw error?.response?.data
+  }
+}
+
 export const addAgencyBankDeposit = async (data: AddAgencyBankDeposit) => {
   try {
     const response = await api.post(`/v1/agency-bank-deposits/`, data);

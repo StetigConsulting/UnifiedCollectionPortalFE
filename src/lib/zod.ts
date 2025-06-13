@@ -1141,6 +1141,21 @@ export const editAgentAreaSchema = z.object({
 
 export type editAgentAreaFormData = z.infer<typeof editAgentAreaSchema>;
 
+export const editAgentAreaViaAgencySchema = z.object({
+  agentId: z.number(),
+  agentMobileNumber: z.number().min(10, 'Mobile number must be at least 10 digits'),
+  agentName: z.string().optional(),
+  agencyName: z.string().optional(),
+  agentRole: z.string().nonempty('Agent Role is required'),
+  workingLevel: z.number().min(1, "Working Level is required"),
+  circle: z.array(z.number()).optional(),
+  division: z.array(z.number()).optional(),
+  subDivision: z.array(z.number()).optional(),
+  section: z.array(z.number()).optional(),
+});
+
+export type editAgentAreaViaAgencyFormData = z.infer<typeof editAgentAreaViaAgencySchema>;
+
 export const agentBankDepositSchema = z.object({
   collectorMobile: z.number().min(10, 'Mobile number must be at least 10 digits'),
   agentName: z.string().optional(),

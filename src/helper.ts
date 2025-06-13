@@ -11,6 +11,7 @@ export const listOfUrlForScopes = [
   { url: "/department/view-agency", backendScopeName: "TPCollectionWebPortal:agency:READ" },
   { url: "/department/view-agency/history", backendScopeName: "TPCollectionWebPortal:agency:READ" },
   { url: "/department/edit-agency-area", backendScopeName: "TPCollectionWebPortal:agency:CHANGE_AREA" },
+  { url: "/agency/edit-agent-area", backendScopeName: "TPCollectionWebPortal:agent:CHANGE_AREA" },
   { url: "/department/agency-display-balance", backendScopeName: "TPCollectionWebPortal:agency-balance:READ" },//action
   { url: "/department/deactivate-agency", backendScopeName: "TPCollectionWebPortal:agency:DEACTIVATE" },//action
   { url: "/department/activate-agency", backendScopeName: "TPCollectionWebPortal:agency:ACTIVATE" },//action

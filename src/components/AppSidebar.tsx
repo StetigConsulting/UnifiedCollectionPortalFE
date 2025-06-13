@@ -243,6 +243,7 @@ const navData = {
           url: "/agency/add-new-supervisor",
         },
         { title: "Edit Agent Area & Role", icon: Edit, url: "/department/edit-agent-area" },
+        { title: "Edit Agent Area", icon: Edit, url: "/agency/edit-agent-area" },
         { title: "Reset Device", icon: MonitorCog, url: '/department/reset-device' },
       ]
     },
