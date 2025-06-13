@@ -179,7 +179,7 @@ const navData = {
           path: '/admin/import',
         },
         {
-          title: 'Portal User Management',
+          title: 'Create new User',
           url: '/admin/create-new-user',
           icon: ReceiptText,
           path: '/admin/create-new-user',

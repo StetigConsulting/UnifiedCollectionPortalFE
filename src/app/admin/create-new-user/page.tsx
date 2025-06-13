@@ -112,7 +112,7 @@ const CreateUserConfiguration = () => {
     }
 
     return (
-        <AuthUserReusableCode pageTitle='Portal User Management' isLoading={isLoading}>
+        <AuthUserReusableCode pageTitle='Create new User' isLoading={isLoading}>
             <div className='px-2'>
                 <ReactTable
                     data={structureTableData}
@@ -122,12 +122,12 @@ const CreateUserConfiguration = () => {
                     >
                         <FileCog />Create
                     </Button>}
-                    isSelectable
-                    onRowSelect={handleRowSelection}
-                    onRowSelectButtons={
-                        getSelectedRowButton()
-                    }
-                    selectedRow={selectedRow}
+                // isSelectable
+                // onRowSelect={handleRowSelection}
+                // onRowSelectButtons={
+                //     getSelectedRowButton()
+                // }
+                // selectedRow={selectedRow}
                 />
             </div>
         </AuthUserReusableCode >
