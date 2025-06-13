@@ -18,6 +18,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ViewAgentFormData, viewAgentSchema } from "@/lib/zod";
 import { checkIfUserHasActionAccess } from "@/helper";
+import SuccessErrorModal from "@/components/SuccessErrorModal";
 
 
 const ViewCollector = () => {
@@ -83,7 +84,8 @@ const ViewCollector = () => {
             toast.success("Agent activated successfully.");
             loadCollectors(formData?.agencyId);
         } catch (error) {
-            toast.error("Failed to activate the Agent.");
+            setIsErrorModalOpen(true)
+            setErrorMessage("Error " + getErrorMessage(error));
             console.error("Error activating Agent:", error);
         } finally {
             setIsLoading(false);
@@ -97,8 +99,8 @@ const ViewCollector = () => {
             toast.success("Agent deactivated successfully.");
             loadCollectors(formData?.agencyId);
         } catch (error) {
-            toast.error("Failed to deactivate the Agent.");
-            console.error("Error deactivating collector:", error);
+            setIsErrorModalOpen(true)
+            setErrorMessage("Error " + getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }
@@ -185,6 +187,9 @@ const ViewCollector = () => {
         }
     }, []);
 
+    const [isErrorModalOpen, setIsErrorModalOpen] = useState<boolean>(false);
+    const [errorMessage, setErrorMessage] = useState('')
+
     return (
         <AuthUserReusableCode pageTitle="View Agent" isLoading={isLoading}>
             {
@@ -217,6 +222,8 @@ const ViewCollector = () => {
                 showTable &&
                 <ReactTable data={tableData} columns={columns} />
             }
+            <SuccessErrorModal isOpen={isErrorModalOpen} onClose={() => setIsErrorModalOpen(false)}
+                message={errorMessage} type="error" />
         </AuthUserReusableCode>
     );
 };

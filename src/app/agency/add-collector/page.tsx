@@ -646,7 +646,6 @@ const AddCounterCollector = () => {
                             <CustomizedMultipleSelectInputWithLabelNumber
                                 label="Select Supervisor"
                                 errors={errors.supervisor}
-                                required
                                 placeholder="Select Supervisor"
                                 list={supervisorList}
                                 value={watch('supervisor') || []}

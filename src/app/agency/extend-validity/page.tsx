@@ -87,15 +87,15 @@ const ExtendValidity = () => {
     useEffect(() => {
         if (selectedAgency) {
             const agency = agencies.find((item) => item.id === Number(selectedAgency));
-            if (agency && agency?.is_active === true) {
-                setValue('collectorId', agency.id || null);
-                setValue('currentValidityFrom', agency.validity_from_date || '');
-                setValue('currentValidityTo', agency.validity_to_date || '');
-                setValue('validityDateFrom', agency.validity_from_date || '');
-            } else if (agency && agency?.is_active === false) {
-                setIsErrorModalOpen(true)
-                setErrorMessage('Please activate the agent before extending validity')
-            }
+            // if (agency && agency?.is_active === true) {
+            setValue('collectorId', agency.id || null);
+            setValue('currentValidityFrom', agency.validity_from_date || '');
+            setValue('currentValidityTo', agency.validity_to_date || '');
+            setValue('validityDateFrom', agency.validity_from_date || '');
+            // } else if (agency && agency?.is_active === false) {
+            //     setIsErrorModalOpen(true)
+            //     setErrorMessage('Please activate the agent before extending validity')
+            // }
         }
     }, [selectedAgency, agencies, setValue]);
 
