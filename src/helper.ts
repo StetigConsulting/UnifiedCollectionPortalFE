@@ -100,6 +100,7 @@ export const listOfActionScopes = [
   { action: 'enabledUpdatePos', backendScopeName: 'TPCollectionWebPortal:pos_device_update:EDIT' },
   { action: 'readNewsNotice', backendScopeName: 'TPCollectionWebPortal:news_notice:READ' },
   { action: 'addOrEditAgent', backendScopeName: 'TPCollectionWebPortal:agent:EDIT_WITH_AGENCY' },
+  { action: 'disabledAadharEdit', backendScopeName: 'TPCollectionWebPortal:agent:EDIT_WITHOUT_AADHAR_NO' },
 ]
 
 export const checkIfUserHasActionAccess = ({ backendScope = [], currentAction }) => {

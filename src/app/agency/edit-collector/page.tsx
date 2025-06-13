@@ -18,6 +18,7 @@ import { useSession } from "next-auth/react";
 import { Loader2 } from "lucide-react";
 import SuccessErrorModal from "@/components/SuccessErrorModal";
 import AlertPopupWithState from "@/components/Agency/ViewAgency/AlertPopupWithState";
+import { checkIfUserHasActionAccess } from "@/helper";
 
 const EditCollector = () => {
     const { register, handleSubmit, formState: { errors }, setValue, watch, setError, reset } = useForm<EditCollectorFormData>({
@@ -72,7 +73,8 @@ const EditCollector = () => {
                 "non_energy_types": data.collectionType.includes("Non Energy") ? data.nonEnergy : [],
                 "collector_type": data.collectorType,
                 "work_type": data.workingType,
-                "supervisor_id": data?.supervisor?.[0]
+                "supervisor_id": data?.supervisor?.[0],
+                "aadhar_no": data.aadhaarNumber || null,
             }
             await editCollectorData(payload, currentUserId);
             toast.success('Agent edited successfully!');
@@ -101,7 +103,8 @@ const EditCollector = () => {
                 setValue('agentId', response.data.id)
                 let supervisorData = response.data.supervisor?.id ? [response.data.supervisor?.id] : []
                 setValue('supervisor', supervisorData)
-                getAgencyData(response.data.agency.id)
+                setValue('aadhaarNumber', response.data.aadharNo || null)
+                await getAgencyData(response.data.agency.id)
                 setValue('permission', response.data.collection_payment_modes.map((ite) => ite.id))
                 let collectionType = []
                 if (response.data.collection_type_energy) {
@@ -297,6 +300,14 @@ const EditCollector = () => {
                         value={watch('supervisor') || []}
                         onChange={(selectedValues) => setValue('supervisor', selectedValues)}
                     />
+
+                    <CustomizedInputWithLabel label='Aadhaar Number' errors={errors.aadhaarNumber}
+                        placeholder='Enter Aadhaar Number' type='number'
+                        disabled={checkIfUserHasActionAccess({
+                            backendScope: session?.user?.userScopes,
+                            currentAction: 'disabledAadharEdit'
+                        })}
+                        {...register('aadhaarNumber', { valueAsNumber: true })} />
                 </div>
                 <div className="flex justify-end mt-4">
                     <AlertPopupWithState

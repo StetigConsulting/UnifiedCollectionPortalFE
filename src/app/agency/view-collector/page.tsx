@@ -114,6 +114,7 @@ const ViewCollector = () => {
         { label: "Balance", key: "current_balance", sortable: true },
         { label: "From Validity", key: "validity_from_date", sortable: true },
         { label: "To Validity", key: "validity_to_date", sortable: true },
+        { label: 'Aadhaar Number', key: 'aadharNo', sortable: true },
     ], []);
 
     const tableData = collectors.map((item) => ({

@@ -164,7 +164,20 @@ const ReactTable = <T extends Record<string, any>>({
 
         const filename = `${fileName}_${formattedDate}_${formattedTime}.xlsx`;
 
-        const worksheet = XLSX.utils.json_to_sheet(data);
+        const exportData = data.map(row => {
+            const newRow = {};
+            visibleColumns.forEach(column => {
+                let value = row[column.key];
+                // Extract plain text if value is a React component
+                if (typeof value === "object" && value !== null) {
+                    value = value?.props?.children ?? '';
+                }
+                newRow[column.label] = value;
+            });
+            return newRow;
+        });
+
+        const worksheet = XLSX.utils.json_to_sheet(exportData);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');
         XLSX.writeFile(workbook, filename);
@@ -175,15 +188,12 @@ const ReactTable = <T extends Record<string, any>>({
             return '';
         }
 
-        // Convert other types to string
         let valueAsString = String(value);
 
-        // Escape double quotes and wrap the value in double quotes if it contains commas
         if (valueAsString.includes('"')) {
             valueAsString = `"${valueAsString.replace(/"/g, '""')}"`;
         }
 
-        // Wrap the value in double quotes if it contains commas, line breaks, or double quotes
         if (valueAsString.includes(',') || valueAsString.includes('\n')) {
             valueAsString = `"${valueAsString}"`;
         }

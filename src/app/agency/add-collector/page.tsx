@@ -185,7 +185,8 @@ const AddCounterCollector = () => {
                 "collector_type": parseInt(data.collectorType),
                 "work_type": data.workingType,
                 "collector_role": data.collectorRole,
-                "supervisor_id": data?.supervisor?.[0] || null
+                "supervisor_id": data?.supervisor?.[0] || null,
+                "aadhar_no": data.aadhaarNumber || null,
             }
             await createCounterCollector(payload, currentUserId);
             toast.success('Agent added successfully!');
@@ -651,6 +652,9 @@ const AddCounterCollector = () => {
                                 value={watch('supervisor') || []}
                                 onChange={(selectedValues) => setValue('supervisor', selectedValues)}
                             />
+                            <CustomizedInputWithLabel label='Aadhaar Number' errors={errors.aadhaarNumber}
+                                placeholder='Enter Aadhaar Number' type='number'
+                                {...register('aadhaarNumber', { valueAsNumber: true })} />
                         </>
                     }
                 </div>

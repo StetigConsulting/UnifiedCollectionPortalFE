@@ -517,6 +517,12 @@ export const editCollectorSchema = z.object({
     .min(1, "At least one collection type is required"),
   nonEnergy: z.array(z.number()).optional(),
   supervisor: z.array(z.number()).optional(),
+  aadhaarNumber: z
+    .any()
+    .optional()
+    .refine(value => !value || value.toString().length === 12, {
+      message: "Aadhaar number must be exactly 12 digits",
+    }),
 });
 
 export type EditCollectorFormData = z.infer<typeof editCollectorSchema>;
@@ -561,11 +567,17 @@ export const addCounterCollectorSchema = z.object({
     .min(1, { message: "At least one permission is required" }).optional(),
 
   collectionType: z
-    .array(z.string(), { message: "Collection type must be an array of strings" })
+    .array(z.string(), { message: "Collection type is required" })
     .min(1, { message: "At least one collection type is required" }),
 
   nonEnergy: z.array(z.number()).optional(),
   supervisor: z.array(z.number()).optional(),
+  aadhaarNumber: z
+    .any()
+    .optional()
+    .refine(value => !value || value.toString().length === 12, {
+      message: "Aadhaar number must be exactly 12 digits",
+    }),
 }).superRefine((data, ctx) => {
   if (data.collectionType.includes('Non Energy') && data?.nonEnergy?.length == 0) {
     ctx.addIssue({
