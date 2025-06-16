@@ -77,10 +77,9 @@ export const listOfUrlForScopes = [
   { url: '/admin/update-pos', backendScopeName: 'TPCollectionWebPortal:pos_device_update:READ' },
   { url: '/report/agent-login', backendScopeName: 'TPCollectionWebPortal:agent_login_history_report:READ' },
   { url: '/report/total-collection', backendScopeName: 'TPCollectionWebPortal:total_collection_report:READ' },
+  { url: '/report/collection-posting', backendScopeName: 'TPCollectionWebPortal:collection_posting_report:READ' },
   { url: '/', backendScopeName: '' }
 ];
-
-
 
 export const checkIfUserHasAccessToPage = ({ backendScope = [], currentUrl }) => {
   if (currentUrl === '/') {

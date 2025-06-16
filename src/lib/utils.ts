@@ -256,6 +256,11 @@ export const collectionTypePickList = [
   { label: 'Non Energy', value: 'Non Energy' }
 ]
 
+export const collectionPostingStatusPickList = [
+  { label: 'Posted', value: 'Posted' },
+  { label: 'Un Posted', value: 'UnPosted' }
+]
+
 export const getErrorMessage = (error: any) => {
   let errorMessage = error?.data ? error?.data[Object.keys(error?.data)[0]] : error?.error ? error?.error : error?.message;
   return errorMessage

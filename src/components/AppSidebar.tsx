@@ -427,6 +427,12 @@ const navData = {
           icon: reportIcon,
           path: '/report/total-collection',
         },
+        {
+          title: 'Collection Posting',
+          url: '/report/collection-posting',
+          icon: reportIcon,
+          path: '/report/collection-posting',
+        },
       ]
     },
     // {

@@ -1977,3 +1977,15 @@ export const viewAgentSchema = z.object({
 });
 
 export type ViewAgentFormData = z.infer<typeof viewAgentSchema>;
+
+export const collectionPostingReportSchema = z.object({
+  fromDate: z.string().min(1, "From Date is required"),
+  toDate: z.string().min(1, "To Date is required"),
+  collectionType: z.string().optional(),
+  status: z.string().optional(),
+  pageSize: z.number(
+    { invalid_type_error: 'Page size is required' }
+  ).min(1, "Page size is required"),
+});
+
+export type CollectionPostingReportFormData = z.infer<typeof collectionPostingReportSchema>;
