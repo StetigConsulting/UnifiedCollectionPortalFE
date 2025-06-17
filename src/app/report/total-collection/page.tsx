@@ -44,6 +44,8 @@ const TotalCollectionReport = () => {
 
     const [pageSize, setPageSize] = useState(formData?.pageSize)
 
+    const [agencyName, setAgencyName] = useState<string | null>(null);
+
     useEffect(() => {
         getWorkingLevel()
         // getReportData();
@@ -79,8 +81,6 @@ const TotalCollectionReport = () => {
 
     const getReportData = async (applyFilter = {}, page = 1) => {
 
-        let agencyDetails = agencyList.filter((item: any) => item.id === Number(formData?.agency))
-
         let payload = {
             page: currentPage,
             page_size: formData?.pageSize,
@@ -100,7 +100,7 @@ const TotalCollectionReport = () => {
                                     ? formData?.section?.map(Number)?.[0]
                                     : null,
                 },
-                ...formData?.agency && { agency_name: agencyDetails?.[0]?.agency_name },
+                ...formData?.agency && { agency_name: agencyName },
                 ...formData?.agent && { agent_id: formData?.agent },
             }
         };
@@ -174,7 +174,6 @@ const TotalCollectionReport = () => {
     }))
 
     const getPayload = (data) => {
-        let agencyDetails = agencyList.filter((item: any) => item.id === formData?.agency)
 
         let filter = {
             date_range: {
@@ -192,9 +191,10 @@ const TotalCollectionReport = () => {
                                 ? data?.section?.map(Number)?.[0]
                                 : null,
             },
-            ...formData?.agency && { agency_name: agencyDetails?.[0]?.agency_name },
+            ...formData?.agency && { agency_name: agencyName },
             ...formData?.agent && { agent_id: formData?.agent },
         }
+
         return filter
     }
 
@@ -397,6 +397,8 @@ const TotalCollectionReport = () => {
 
     const handleAgencySelect = (e) => {
         const agencyId = e.target.value;
+        let agencyDetails = agencyList.filter((item: any) => item.id === Number(agencyId))
+        setAgencyName(prev => agencyDetails?.[0]?.agency_name || null);
         setValue('agency', agencyId);
         setValue('agent', '');
         if (agencyId)
