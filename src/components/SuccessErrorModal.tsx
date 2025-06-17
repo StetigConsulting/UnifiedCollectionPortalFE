@@ -13,7 +13,7 @@ interface ModalProps {
     errorTable?: any;
 }
 
-const SuccessErrorModal: React.FC<ModalProps> = ({ isOpen, onClose, message, type, errorTable }) => {
+const SuccessErrorModal: React.FC<ModalProps> = ({ isOpen, onClose, message, type, errorTable = null }) => {
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="flex flex-col items-center justify-center p-6 w-auto min-w-1/2 max-w-2/3">
@@ -31,9 +31,12 @@ const SuccessErrorModal: React.FC<ModalProps> = ({ isOpen, onClose, message, typ
                 <button className="absolute top-2 right-2 text-gray-500 hover:text-gray-700" onClick={onClose}>
                     <X className="h-5 w-5" />
                 </button>
-                <div className='mt-4 w-full max-h-[300px] overflow-y-auto'>
-                    {errorTable}
-                </div>
+
+                {
+                    errorTable && <div className='mt-4 w-full max-h-[300px] overflow-y-auto'>
+                        {errorTable}
+                    </div>
+                }
             </DialogContent>
         </Dialog>
     );

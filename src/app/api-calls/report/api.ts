@@ -445,3 +445,28 @@ export const downloadCollectionPostingReport = async (data: any, type: any) => {
         throw error?.response?.data
     }
 }
+
+export const getReconciliationReport = async (data: any) => {
+    try {
+        const response = await api.post('/v1/common-reports/reconciliation-report/fetch', data);
+        return response.data;
+    } catch (error) {
+        throw error?.response?.data
+    }
+}
+
+export const downloadReconciliationReport = async (data: any, type: any) => {
+    try {
+        const response = await api.post(`/v1/common-reports/reconciliation-report/download/${type}`, data,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                responseType: "blob",
+            }
+        );
+        return response;
+    } catch (error) {
+        throw error?.response?.data
+    }
+}

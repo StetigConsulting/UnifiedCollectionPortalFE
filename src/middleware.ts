@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { auth } from "./app/auth";
 import {
-    SIGNIN
+    SIGNIN,
+    urlsListWithTitle
 } from "./lib/utils";
-import { checkIfUserHasAccessToPage, getLandingPageUrl } from "./helper";
+import { checkIfUserHasAccessToPage, checkIfUserHasActionAccess, getLandingPageUrl } from "./helper";
 
 export async function middleware(request: any) {
 
@@ -27,9 +28,21 @@ export async function middleware(request: any) {
             return NextResponse.redirect(new URL(SIGNIN, nextUrl));
         }
     } else {
-        if (!checkIfUserHasAccessToPage({ backendScope: session?.user?.userScopes, currentUrl: nextUrl.pathname.split('?')?.[0] })) {
-            return NextResponse.redirect(new URL(landingPage, nextUrl));
+        if (nextUrl.pathname.split('?')?.[0] === urlsListWithTitle.dashboard.url) {
+            ['dashboardBillUploadHistory', 'dashboardTransactionSummary', 'dashboardPerformanceSummary'].forEach((action) => {
+                const hasAccess = checkIfUserHasActionAccess({
+                    backendScope: session?.user?.userScopes,
+                    currentAction: action,
+                });
+                console.log(`User has access to ${action}:`, hasAccess,);
+                if (hasAccess) return NextResponse.next();
+            })
+        } else {
+            if (!checkIfUserHasAccessToPage({ backendScope: session?.user?.userScopes, currentUrl: nextUrl.pathname.split('?')?.[0] })) {
+                return NextResponse.redirect(new URL(landingPage, nextUrl));
+            }
         }
+
         if (nextUrl.pathname === SIGNIN) {
             return NextResponse.redirect(new URL(landingPage, nextUrl));
         }

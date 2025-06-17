@@ -10,7 +10,7 @@ import CustomizedSelectInputWithLabel from "@/components/CustomizedSelectInputWi
 import { Button } from "@/components/ui/button";
 import AuthUserReusableCode from "@/components/AuthUserReusableCode";
 import { Loader2 } from "lucide-react";
-import { getErrorMessage, tableDataPerPage } from "@/lib/utils";
+import { formatDate, getErrorMessage, tableDataPerPage } from "@/lib/utils";
 import { addAgencyBankDeposit, getAgenciesWithDiscom, getAgencyBankDepositHistory } from "@/app/api-calls/department/api";
 import { getAllBankList } from "@/app/api-calls/other/api";
 import { useSession } from "next-auth/react";
@@ -126,7 +126,7 @@ const AgentBankDeposit = () => {
         () => [
             { label: 'Agency Id', key: 'agency_id', sortable: true },
             { label: 'Agency Name', key: 'agency_name', sortable: true },
-            { label: 'Deposit Date', key: 'deposit_date', sortable: true },
+            { label: 'Deposit Date', key: 'depositDate', sortable: true },
             { label: 'Amount', key: 'amount', sortable: true, align: 'center' },
             { label: 'Bank Name', key: 'bank_name', sortable: true },
             { label: 'UTR No.', key: 'deposit_document', sortable: true },
@@ -173,7 +173,8 @@ const AgentBankDeposit = () => {
 
     const tableData = transactionHistory.map((item) => ({
         ...item,
-        entryDate: moment(item.entry_date).format('DD-MM-YYYY')
+        entryDate: formatDate(item.entry_date),
+        depositDate: formatDate(item.deposit_date),
     }))
 
     return (

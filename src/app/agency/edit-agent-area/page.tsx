@@ -137,8 +137,10 @@ const EditAgentAreaRoleForm = () => {
             }
 
             const response = await updateAgentArea(payload);
-            reset()
+
             toast.success("Agent updated successfully");
+            reset()
+            window.location.reload();
         } catch (error) {
             console.log(error);
             let errorMessage = getErrorMessage(error);

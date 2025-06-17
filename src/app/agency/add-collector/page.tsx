@@ -187,14 +187,18 @@ const AddCounterCollector = () => {
                 "collector_role": data.collectorRole,
                 "supervisor_id": data?.supervisor?.[0] || null,
                 "aadhar_no": data.aadhaarNumber || null,
+                "vendor_id": data.vendorId || null,
             }
             await createCounterCollector(payload, currentUserId);
             toast.success('Agent added successfully!');
             reset()
+            window.location.reload();
         } catch (error) {
             let errorMessage = error?.data ? error?.data[Object.keys(error?.data)[0]] : error?.error;
-            toast.error('Error: ' + errorMessage);
-            console.error('Error:', error);
+            setErrorMessage('Error: ' + getErrorMessage(error));
+            setIsErrorModalOpen(true)
+            // toast.error('Error: ' + errorMessage);
+            // console.error('Error:', error);
         } finally {
             setIsSubmitting(false)
         }
@@ -654,6 +658,9 @@ const AddCounterCollector = () => {
                             <CustomizedInputWithLabel label='Aadhaar Number' errors={errors.aadhaarNumber}
                                 placeholder='Enter Aadhaar Number' type='number'
                                 {...register('aadhaarNumber', { valueAsNumber: true })} />
+                            <CustomizedInputWithLabel label='Vendor Id' errors={errors.vendorId}
+                                placeholder='Enter Vendor Id'
+                                {...register('vendorId')} />
                         </>
                     }
                 </div>

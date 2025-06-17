@@ -120,6 +120,7 @@ const AgentDetails = () => {
         { label: 'Device Serial No', key: 'device_serial_no', sortable: true },
         { label: 'Last Login Date Time', key: 'last_login_date_time', sortable: true },
         { label: 'Last Sync Date Time', key: 'last_sync_date_time', sortable: true },
+        { label: 'Vendor ID', key: 'vendor_id', sortable: true },
     ], []);
 
     const [exportType, setExportType] = useState('')

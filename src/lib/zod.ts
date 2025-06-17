@@ -523,6 +523,7 @@ export const editCollectorSchema = z.object({
     .refine(value => !value || value.toString().length === 12, {
       message: "Aadhaar number must be exactly 12 digits",
     }),
+  vendorId: z.any().optional(),
 });
 
 export type EditCollectorFormData = z.infer<typeof editCollectorSchema>;
@@ -578,6 +579,7 @@ export const addCounterCollectorSchema = z.object({
     .refine(value => !value || value.toString().length === 12, {
       message: "Aadhaar number must be exactly 12 digits",
     }),
+  vendorId: z.any().optional(),
 }).superRefine((data, ctx) => {
   if (data.collectionType.includes('Non Energy') && data?.nonEnergy?.length == 0) {
     ctx.addIssue({
@@ -1989,3 +1991,17 @@ export const collectionPostingReportSchema = z.object({
 });
 
 export type CollectionPostingReportFormData = z.infer<typeof collectionPostingReportSchema>;
+
+
+export const reconciliationReportSchema = z.object({
+  fromDate: z.string().min(1, "From Date is required"),
+  toDate: z.string().min(1, "To Date is required"),
+  supervisor: z.string().optional(),
+  agency: z.string().optional(),
+  agencyName: z.any().optional(),
+  pageSize: z.number(
+    { invalid_type_error: 'Page size is required' }
+  ).min(1, "Page size is required"),
+});
+
+export type ReconciliationReportFormData = z.infer<typeof reconciliationReportSchema>;

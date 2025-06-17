@@ -13,6 +13,7 @@ import CustomizedInputWithLabel from "@/components/CustomizedInputWithLabel";
 import CustomizedMultipleSelectInputWithLabel from "@/components/CustomizedMultipleSelectInputWithLabelNumber";
 import CustomizedMultipleSelectInputWithLabelString from "@/components/CustomizedMultipleSelectInputWithLabelString";
 import CustomizedSelectInputWithLabel from "@/components/CustomizedSelectInputWithLabel";
+import SuccessErrorModal from "@/components/SuccessErrorModal";
 import { Button } from "@/components/ui/button";
 import { AgencyDataInterface } from "@/lib/interface";
 import { getErrorMessage } from "@/lib/utils";
@@ -48,6 +49,9 @@ const AddAgency = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
+
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState('')
 
   const onSubmit = async (data: FormData) => {
     const agencyData: AgencyDataInterface = {
@@ -93,7 +97,9 @@ const AddAgency = () => {
       // location.reload();
     } catch (error) {
       let errorMessage = getErrorMessage(error);
-      toast.error('Error: ' + errorMessage)
+      setErrorMessage('Error: ' + errorMessage);
+      setIsErrorModalOpen(true)
+      // toast.error('Error: ' + errorMessage)
     } finally {
       setIsSubmitting(false);
     }
@@ -544,6 +550,9 @@ const AddAgency = () => {
           </Button>
         </div>
       </form>
+
+      <SuccessErrorModal isOpen={isErrorModalOpen} onClose={() => setIsErrorModalOpen(false)}
+        message={errorMessage} type="error" />
     </AuthUserReusableCode>
   );
 };

@@ -75,6 +75,7 @@ const EditCollector = () => {
                 "work_type": data.workingType,
                 "supervisor_id": data?.supervisor?.[0],
                 "aadhar_no": data.aadhaarNumber || null,
+                "vendor_id": data.vendorId || null,
             }
             await editCollectorData(payload, currentUserId);
             toast.success('Agent edited successfully!');
@@ -104,6 +105,7 @@ const EditCollector = () => {
                 let supervisorData = response.data.supervisor?.id ? [response.data.supervisor?.id] : []
                 setValue('supervisor', supervisorData)
                 setValue('aadhaarNumber', response.data.aadharNo || null)
+                setValue('vendorId', response.data.vendor_id || null)
                 await getAgencyData(response.data.agency.id)
                 setValue('permission', response.data.collection_payment_modes.map((ite) => ite.id))
                 let collectionType = []
@@ -308,6 +310,10 @@ const EditCollector = () => {
                             currentAction: 'disabledAadharEdit'
                         })}
                         {...register('aadhaarNumber', { valueAsNumber: true })} />
+
+                    <CustomizedInputWithLabel label='Vendor Id' errors={errors.vendorId}
+                        placeholder='Enter Vendor Id'
+                        {...register('vendorId')} />
                 </div>
                 <div className="flex justify-end mt-4">
                     <AlertPopupWithState
