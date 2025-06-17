@@ -16,6 +16,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { ReconciliationReportFormData, reconciliationReportSchema } from '@/lib/zod';
 import { getAllAgentByAgencyId } from '@/app/api-calls/agency/api';
+import NormalReactTable from '@/components/NormalReactTable';
+import ReactTableReconciliation from '@/components/ReactTableReconciliation';
 
 const ReconciliationReport = () => {
     const { data: session } = useSession()
@@ -23,7 +25,30 @@ const ReconciliationReport = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1)
     const [totalPages, setTotalPages] = useState(1)
-    const [dataList, setDataList] = useState([]);
+    const [dataList, setDataList] = useState([{
+        "total": 3000,
+        "totalToPay": 3300,
+        "previousDayBalance": 200,
+        "totalWithSupervisor": 3500,
+        "date": "21/05/25",
+        "amount": 3200,
+        "balanceWithSupervisor": 300,
+        "data": [
+            {
+                "agentName": "Himanshu Agarkar",
+                "agentMobileNumber": "9876543210",
+                "amountToPay": 2500,
+                "amountPaid": 900
+            },
+            {
+                "agentName": "",
+                "agentMobileNumber": "9876543210",
+                "amountToPay": 3500,
+                "amountPaid": 2400
+            }
+        ]
+    }
+    ]);
 
     const [showTable, setShowTable] = useState(false)
 
@@ -84,17 +109,6 @@ const ReconciliationReport = () => {
             setIsLoading(false);
         }
     }
-
-    const columns = useMemo(() => [
-        { label: 'Agent Name', key: 'agent_name', sortable: true },
-        { label: 'Agent Mobile Number', key: 'agent_mobile', sortable: true },
-        { label: 'Toal Collection Amount', key: 'total_collection_amount', sortable: true },
-        { label: 'Acknowledgement Amount', key: 'acknowledgement_amount', sortable: true },
-    ], []);
-
-    const formatData = dataList.map((item) => ({
-        ...item,
-    }))
 
     const getPayload = (data) => {
 
@@ -209,9 +223,106 @@ const ReconciliationReport = () => {
 
     useEffect(() => {
         getAgencyList();
+        setSummaryTableData([{ sl_no: 1, amount_type: "Total Acknowledgement Pending", amount: 1500 },
+        { sl_no: 2, amount_type: "Total Amount With Supervisor", amount: 20000 },
+        { sl_no: 3, amount_type: "Amount deposited by Supervisor", amount: 18500 },
+        { sl_no: 4, amount_type: "Amount balance with Supervisor", amount: 1500 },])
     }, []);
 
-    console.log(formData)
+    const columns = useMemo(() => [
+        { label: 'Sl No.', key: 'index', sortable: true },
+        { label: 'Agent Mobile Number', key: 'agent_mobile', sortable: true },
+        { label: 'Agent Name', key: 'agent_name', sortable: true },
+        { label: 'Amount To Pay', key: 'amount_to_pay', sortable: true },
+        { label: 'Amount Paid', key: 'amount_paid', sortable: true },
+    ], []);
+
+    const formattedData = () => {
+        let data = [];
+        let index = 1;
+        dataList?.map((item) => {
+            let subdata = item?.data
+                ?.map((subItem) => ({
+                    index: index++,
+                    agent_name: subItem.agentName || "-",
+                    agent_mobile: subItem.agentMobileNumber,
+                    amount_to_pay: subItem.amountToPay,
+                    amount_paid: subItem.amountPaid,
+                }))
+            if (subdata?.length > 0) {
+                data.push(...subdata)
+            }
+            data.push(
+                {
+                    index: 'Total', amount_paid: item.total
+
+                },
+                {
+                    index: "Total Amount To Pay",
+                    amount_paid: item.totalToPay
+                },
+                {
+                    index: "Previous Day Balance",
+                    amount_paid: item.previousDayBalance
+                },
+                {
+                    index: "Total Amount With Supervisor",
+                    amount_paid: item.totalWithSupervisor
+                },
+                {
+                    index: "Date",
+                    agent_mobile: formatDate(item.date),
+                    agent_name: "Amount Deposited",
+                    amount_paid: item.amount
+                },
+                {
+                    index: "Balance With Supervisor",
+                    amount_paid: item.balanceWithSupervisor
+                }
+            );
+        })
+        return data
+    }
+
+    const columnsOther = useMemo(() => [
+        { label: 'Sl No.', key: 'index', sortable: true },
+        { label: 'Agent Name', key: 'agent_name', sortable: true },
+        { label: 'Agent Mobile Number', key: 'agent_mobile', sortable: true },
+        { label: 'Total Collection Amount', key: 'total_collection_amount', sortable: true },
+        { label: 'Acknowledgement Amount', key: 'acknowledgement_amount', sortable: true },
+    ], []);
+
+    const formattedDataOther = () => {
+        let data = [];
+        let index = 1;
+        dataList?.map((item) => {
+            let subdata = item?.data
+                ?.map((subItem) => ({
+                    index: index++,
+                    agent_name: subItem.agentName || "-",
+                    agent_mobile: subItem.agentMobileNumber,
+                    total_collection_amount: subItem.amountToPay,
+                    acknowledgement_amount: subItem.amountPaid,
+                }))
+            if (subdata?.length > 0) {
+                data.push(...subdata)
+            }
+            data.push(
+                {
+                    index: 'Total', total_collection_amount: item.total, acknowledgement_amount: item.total
+                }
+            );
+        })
+        return data
+    }
+
+    const [summaryTableData, setSummaryTableData] = useState([]);
+
+    const summaryTableColumn = useMemo(() => [
+        { label: 'Sl No.', key: 'sl_no' },
+        { label: 'Amount Type', key: 'amount_type' },
+        { label: 'Amount', key: 'amount' },
+    ], []);
 
     return (
         <AuthUserReusableCode pageTitle="Reconciliation Report" isLoading={isLoading}>
@@ -258,9 +369,11 @@ const ReconciliationReport = () => {
 
             </form>
 
-            <div className="overflow-x-auto mb-4 mt-4">
-                {/* {showTable && <ReactTable
-                    data={formatData}
+            <div className="overflow-x-auto mb-4 mt-4 flex flex-col gap-4">
+                {/* {showTable && */}
+                <ReactTableReconciliation
+                    data={formattedData()}
+                    avoidSrNo
                     columns={columns}
                     hideSearchAndOtherButtons
                     dynamicPagination
@@ -268,8 +381,22 @@ const ReconciliationReport = () => {
                     pageNumber={currentPage}
                     onPageChange={handlePageChange}
                     totalPageNumber={totalPages}
-                // handleExportFile={handleExportFile}
-                />} */}
+                />
+                {/* } */}
+
+                <ReactTableReconciliation
+                    data={formattedDataOther()}
+                    avoidSrNo
+                    columns={columnsOther}
+                    hideSearchAndOtherButtons
+                    dynamicPagination
+                    itemsPerPage={pageSize}
+                    pageNumber={currentPage}
+                    onPageChange={handlePageChange}
+                    totalPageNumber={totalPages}
+                />
+
+                <NormalReactTable data={summaryTableData} columns={summaryTableColumn} />
             </div>
         </AuthUserReusableCode>
     );
