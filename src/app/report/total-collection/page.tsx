@@ -85,6 +85,21 @@ const TotalCollectionReport = () => {
             page: currentPage,
             page_size: formData?.pageSize,
             filter: {
+                date_range: {
+                    from_date: formData.fromDate,
+                    to_date: formData.toDate
+                },
+                ...formData.workingLevel && {
+                    office_structure_id: formData.workingLevel === levelNameMappedWithId.CIRCLE
+                        ? formData?.circle?.map(Number)?.[0]
+                        : formData.workingLevel === levelNameMappedWithId.DIVISION
+                            ? formData?.division?.map(Number)?.[0]
+                            : formData.workingLevel === levelNameMappedWithId.SUB_DIVISION
+                                ? formData?.subDivision?.map(Number)?.[0]
+                                : formData.workingLevel === levelNameMappedWithId.SECTION
+                                    ? formData?.section?.map(Number)?.[0]
+                                    : null,
+                },
                 ...formData?.agency && { agency_name: agencyDetails?.[0]?.agency_name },
                 ...formData?.agent && { agent_id: formData?.agent },
             }

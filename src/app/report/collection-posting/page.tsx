@@ -92,6 +92,7 @@ const CollectionPosting = () => {
         { label: 'Receipt No.', key: 'receipt_no', sortable: true },
         { label: 'Vendor ID', key: 'vendor_id', sortable: true },
         { label: 'Pay Mode', key: 'pay_mode', sortable: true },
+        { label: 'DD Cheque No', key: 'dd_chq_no', sortable: true },
         { label: 'DD Cheque Date', key: 'dd_chq_date', sortable: true },
         { label: 'MICR', key: 'micr', sortable: true },
         { label: 'Device Id', key: 'device_id', sortable: true },
@@ -179,17 +180,11 @@ const CollectionPosting = () => {
 
     const getSelectedRowButton = () => {
         return <div className="space-x-4">
-            <Button variant="success" onClick={() => {
+            <Button variant="default" onClick={() => {
                 setModalType('request');
                 setShowTransactionModal(true);
             }}>
-                <Zap /> Request
-            </Button>
-            <Button variant="destructive" onClick={() => {
-                setModalType('response');
-                setShowTransactionModal(true);
-            }}>
-                <Zap /> Response
+                <Zap /> Request / Response
             </Button>
         </div>
     }
@@ -270,14 +265,17 @@ const CollectionPosting = () => {
                     </DialogClose>
 
                     <div className="flex items-center justify-between gap-4 mt-4">
-                        <Button className={`flex-1 ${modalType === 'request' ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'} text-white`}>
-                            {modalType === 'request' ? 'Request' : 'Response'}
+                        <Button className={`flex-1 bg-green-600 hover:bg-green-700 text-white`}>
+                            <Copy className="w-4 h-4" />Request
                         </Button>
-                        <Button variant="outline" className="flex items-center gap-2"
+                        <Button className={`flex-1 bg-red-600 hover:bg-red-700 text-white`}>
+                            <Copy className="w-4 h-4" />Response
+                        </Button>
+                        {/* <Button variant="outline" className="flex items-center gap-2"
                             onClick={handleCopy}>
                             <Copy className="w-4 h-4" />
                             Copy
-                        </Button>
+                        </Button> */}
                     </div>
 
                 </DialogContent>
