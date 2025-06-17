@@ -253,9 +253,9 @@ const CollectionPosting = () => {
             </div>}
 
             <Dialog open={showTransactionModal} onOpenChange={setShowTransactionModal}>
-                <DialogContent className="max-w-md">
+                <DialogContent className="max-w-6xl">
                     <DialogHeader>
-                        <DialogTitle>Transaction ID</DialogTitle>
+                        <DialogTitle>{selectedRow?.txn_id}</DialogTitle>
                     </DialogHeader>
 
                     <DialogClose asChild>
@@ -264,18 +264,38 @@ const CollectionPosting = () => {
                         </button>
                     </DialogClose>
 
-                    <div className="flex items-center justify-between gap-4 mt-4">
-                        <Button className={`flex-1 bg-green-600 hover:bg-green-700 text-white`}>
-                            <Copy className="w-4 h-4" />Request
-                        </Button>
-                        <Button className={`flex-1 bg-red-600 hover:bg-red-700 text-white`}>
-                            <Copy className="w-4 h-4" />Response
-                        </Button>
-                        {/* <Button variant="outline" className="flex items-center gap-2"
-                            onClick={handleCopy}>
-                            <Copy className="w-4 h-4" />
-                            Copy
-                        </Button> */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        {/* Request Box */}
+                        <div className="bg-green-500 text-white p-4 rounded relative">
+                            <div className="flex justify-between items-center mb-2">
+                                <h3 className="font-semibold">Request</h3>
+                                <button onClick={() => {
+                                    navigator.clipboard.writeText(selectedRow?.billing_server_request || '');
+                                    toast.success("Request copied to clipboard");
+                                }} className="text-white hover:underline">
+                                    Copy
+                                </button>
+                            </div>
+                            <div className="whitespace-pre-wrap text-sm max-h-[300px] overflow-y-auto">
+                                {selectedRow?.billing_server_request || 'No request data available.'}
+                            </div>
+                        </div>
+
+                        {/* Response Box */}
+                        <div className="bg-red-500 text-white p-4 rounded relative">
+                            <div className="flex justify-between items-center mb-2">
+                                <h3 className="font-semibold">Response</h3>
+                                <button onClick={() => {
+                                    navigator.clipboard.writeText(selectedRow?.billing_server_response || '');
+                                    toast.success("Response copied to clipboard");
+                                }} className="text-white hover:underline">
+                                    Copy
+                                </button>
+                            </div>
+                            <div className="whitespace-pre-wrap text-sm max-h-[300px] overflow-y-auto">
+                                {selectedRow?.billing_server_response || 'No response data available.'}
+                            </div>
+                        </div>
                     </div>
 
                 </DialogContent>
