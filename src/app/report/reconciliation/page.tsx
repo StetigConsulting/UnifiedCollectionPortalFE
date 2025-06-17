@@ -230,11 +230,11 @@ const ReconciliationReport = () => {
     }, []);
 
     const columns = useMemo(() => [
-        { label: 'Sl No.', key: 'index', sortable: true },
-        { label: 'Agent Mobile Number', key: 'agent_mobile', sortable: true },
-        { label: 'Agent Name', key: 'agent_name', sortable: true },
-        { label: 'Amount To Pay', key: 'amount_to_pay', sortable: true },
-        { label: 'Amount Paid', key: 'amount_paid', sortable: true },
+        { label: 'Sl No.', key: 'index' },
+        { label: 'Agent Mobile Number', key: 'agent_mobile' },
+        { label: 'Agent Name', key: 'agent_name' },
+        { label: 'Amount To Pay', key: 'amount_to_pay' },
+        { label: 'Amount Paid', key: 'amount_paid' },
     ], []);
 
     const formattedData = () => {
@@ -285,11 +285,11 @@ const ReconciliationReport = () => {
     }
 
     const columnsOther = useMemo(() => [
-        { label: 'Sl No.', key: 'index', sortable: true },
-        { label: 'Agent Name', key: 'agent_name', sortable: true },
-        { label: 'Agent Mobile Number', key: 'agent_mobile', sortable: true },
-        { label: 'Total Collection Amount', key: 'total_collection_amount', sortable: true },
-        { label: 'Acknowledgement Amount', key: 'acknowledgement_amount', sortable: true },
+        { label: 'Sl No.', key: 'index' },
+        { label: 'Agent Name', key: 'agent_name' },
+        { label: 'Agent Mobile Number', key: 'agent_mobile' },
+        { label: 'Total Collection Amount', key: 'total_collection_amount' },
+        { label: 'Acknowledgement Amount', key: 'acknowledgement_amount' },
     ], []);
 
     const formattedDataOther = () => {
