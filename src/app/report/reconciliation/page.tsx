@@ -7,7 +7,7 @@ import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
 import { exportPicklist, formatDate, getErrorMessage, tableDataPerPage } from '@/lib/utils';
-import { downloadCancelledTransactions, downloadTotalCollectionReport, getCancelledTransactions, getTotalCollectionReport } from '@/app/api-calls/report/api';
+import { downloadCancelledTransactions, downloadReconciliationReport, downloadTotalCollectionReport, getCancelledTransactions, getReconciliationReport, getTotalCollectionReport } from '@/app/api-calls/report/api';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
 import { getAgenciesWithDiscom, getAllPaymentModes, getLevels, getLevelsDiscomId, getListOfAllSupervisor } from '@/app/api-calls/department/api';
 import { useSession } from 'next-auth/react';
@@ -25,30 +25,7 @@ const ReconciliationReport = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1)
     const [totalPages, setTotalPages] = useState(1)
-    const [dataList, setDataList] = useState([{
-        "total": 3000,
-        "totalToPay": 3300,
-        "previousDayBalance": 200,
-        "totalWithSupervisor": 3500,
-        "date": "21/05/25",
-        "amount": 3200,
-        "balanceWithSupervisor": 300,
-        "data": [
-            {
-                "agentName": "Himanshu Agarkar",
-                "agentMobileNumber": "9876543210",
-                "amountToPay": 2500,
-                "amountPaid": 900
-            },
-            {
-                "agentName": "",
-                "agentMobileNumber": "9876543210",
-                "amountToPay": 3500,
-                "amountPaid": 2400
-            }
-        ]
-    }
-    ]);
+    const [dataList, setDataList] = useState([]);
 
     const [showTable, setShowTable] = useState(false)
 
@@ -97,10 +74,17 @@ const ReconciliationReport = () => {
 
         try {
             setIsLoading(true);
-            const response = await getTotalCollectionReport(payload);
+            const response = await getReconciliationReport(payload);
             setPageSize(formData?.pageSize);
             setShowTable(true)
-            setDataList(response.data.data);
+            setDataList([response.data.data]);
+            let data = response?.data?.data
+
+            setSummaryTableData(
+                [{ sl_no: 1, amount_type: "Total Acknowledgement Pending", amount: data?.total_acknowledge_pending },
+                { sl_no: 2, amount_type: "Total Amount With Supervisor", amount: data?.total_amt_with_supervisor },
+                { sl_no: 3, amount_type: "Amount deposited by Supervisor", amount: data?.amt_deposited_by_supervisor },
+                { sl_no: 4, amount_type: "Amount balance with Supervisor", amount: data?.amt_balance_with_supervisor }])
             setCurrentPage(page);
             setTotalPages(response.data.totalPages)
         } catch (error) {
@@ -134,10 +118,10 @@ const ReconciliationReport = () => {
         try {
             setIsLoading(true);
             let payload = getPayload(formData)
-            const response = await downloadTotalCollectionReport(payload, type)
+            const response = await downloadReconciliationReport(payload, type)
 
             const contentDisposition = response.headers["content-disposition"];
-            let filename = "TotalCollectionReport";
+            let filename = "ReconciliationReport";
 
             if (contentDisposition) {
                 const matches = contentDisposition.match(/filename="(.+)"/);
@@ -223,66 +207,64 @@ const ReconciliationReport = () => {
 
     useEffect(() => {
         getAgencyList();
-        setSummaryTableData([{ sl_no: 1, amount_type: "Total Acknowledgement Pending", amount: 1500 },
-        { sl_no: 2, amount_type: "Total Amount With Supervisor", amount: 20000 },
-        { sl_no: 3, amount_type: "Amount deposited by Supervisor", amount: 18500 },
-        { sl_no: 4, amount_type: "Amount balance with Supervisor", amount: 1500 },])
+        // setSummaryTableData([])
     }, []);
 
-    const columns = useMemo(() => [
-        { label: 'Sl No.', key: 'index' },
-        { label: 'Agent Mobile Number', key: 'agent_mobile' },
-        { label: 'Agent Name', key: 'agent_name' },
-        { label: 'Amount To Pay', key: 'amount_to_pay' },
-        { label: 'Amount Paid', key: 'amount_paid' },
-    ], []);
+    // const columns = useMemo(() => [
+    //     { label: 'Sl No.', key: 'index' },
+    //     { label: 'Agent Mobile Number', key: 'agent_mobile' },
+    //     { label: 'Agent Name', key: 'agent_name' },
+    //     { label: 'Amount To Pay', key: 'amount_to_pay' },
+    //     { label: 'Amount Paid', key: 'amount_paid' },
+    // ], []);
 
-    const formattedData = () => {
-        let data = [];
-        let index = 1;
-        dataList?.map((item) => {
-            let subdata = item?.data
-                ?.map((subItem) => ({
-                    index: index++,
-                    agent_name: subItem.agentName || "-",
-                    agent_mobile: subItem.agentMobileNumber,
-                    amount_to_pay: subItem.amountToPay,
-                    amount_paid: subItem.amountPaid,
-                }))
-            if (subdata?.length > 0) {
-                data.push(...subdata)
-            }
-            data.push(
-                {
-                    index: 'Total', amount_paid: item.total
+    // const formattedData = () => {
+    //     let data = [];
+    //     let index = 1;
+    //     dataList?.map((item) => {
+    //         let subdata = item?.data
+    //             ?.map((subItem) => ({
+    //                 index: index++,
+    //                 agent_name: subItem.agent_name || "-",
+    //                 agent_mobile: subItem.agent_mobile,
+    //                 amount_to_pay: subItem.amount_paid,
+    //                 amount_paid: subItem.amount_acknowledged_paid,
+    //             }))
+    //         if (subdata?.length > 0) {
+    //             data.push(...subdata)
+    //         }
+    //         data.push(
+    //             {
+    //                 index: 'Total',
+    //                 amount_paid: item.total
 
-                },
-                {
-                    index: "Total Amount To Pay",
-                    amount_paid: item.totalToPay
-                },
-                {
-                    index: "Previous Day Balance",
-                    amount_paid: item.previousDayBalance
-                },
-                {
-                    index: "Total Amount With Supervisor",
-                    amount_paid: item.totalWithSupervisor
-                },
-                {
-                    index: "Date",
-                    agent_mobile: formatDate(item.date),
-                    agent_name: "Amount Deposited",
-                    amount_paid: item.amount
-                },
-                {
-                    index: "Balance With Supervisor",
-                    amount_paid: item.balanceWithSupervisor
-                }
-            );
-        })
-        return data
-    }
+    //             },
+    //             {
+    //                 index: "Total Amount To Pay",
+    //                 amount_paid: item.totalToPay
+    //             },
+    //             {
+    //                 index: "Previous Day Balance",
+    //                 amount_paid: item.previousDayBalance
+    //             },
+    //             {
+    //                 index: "Total Amount With Supervisor",
+    //                 amount_paid: item.totalWithSupervisor
+    //             },
+    //             {
+    //                 index: "Date",
+    //                 agent_mobile: formatDate(item.date),
+    //                 agent_name: "Amount Deposited",
+    //                 amount_paid: item.amount
+    //             },
+    //             {
+    //                 index: "Balance With Supervisor",
+    //                 amount_paid: item.balanceWithSupervisor
+    //             }
+    //         );
+    //     })
+    //     return data
+    // }
 
     const columnsOther = useMemo(() => [
         { label: 'Sl No.', key: 'index' },
@@ -299,19 +281,22 @@ const ReconciliationReport = () => {
             let subdata = item?.data
                 ?.map((subItem) => ({
                     index: index++,
-                    agent_name: subItem.agentName || "-",
-                    agent_mobile: subItem.agentMobileNumber,
-                    total_collection_amount: subItem.amountToPay,
-                    acknowledgement_amount: subItem.amountPaid,
+                    agent_name: subItem.agent_name || "-",
+                    agent_mobile: subItem.agent_mobile,
+                    total_collection_amount: subItem.amount_paid,
+                    acknowledgement_amount: subItem.amount_acknowledged_paid,
                 }))
             if (subdata?.length > 0) {
                 data.push(...subdata)
             }
             data.push(
                 {
-                    index: 'Total', total_collection_amount: item.total, acknowledgement_amount: item.total
+                    index: 'Total',
+                    total_collection_amount: item.total_collection_amt_paid,
+                    acknowledgement_amount: item.total_amt_acknowledged_paid
                 }
             );
+
         })
         return data
     }
@@ -345,7 +330,7 @@ const ReconciliationReport = () => {
                             onChange: (e) => handleAgencySelect(e)
                         })} errors={errors.agency} />
                     <CustomizedSelectInputWithLabel label='Supervisor' list={supervisorList}
-                        {...register('supervisor')} />
+                        {...register('supervisor')} errors={errors.supervisor} />
                     <CustomizedInputWithLabel
                         label="Page Size"
                         {...register('pageSize', { valueAsNumber: true })}
@@ -371,7 +356,7 @@ const ReconciliationReport = () => {
 
             <div className="overflow-x-auto mb-4 mt-4 flex flex-col gap-4">
                 {/* {showTable && */}
-                <ReactTableReconciliation
+                {/* <ReactTableReconciliation
                     data={formattedData()}
                     avoidSrNo
                     columns={columns}
@@ -380,25 +365,29 @@ const ReconciliationReport = () => {
                     itemsPerPage={pageSize}
                     pageNumber={currentPage}
                     onPageChange={handlePageChange}
-                    totalPageNumber={totalPages}
-                />
+                    totalPageNumber={totalPages} */}
+                {/* /> */}
                 {/* } */}
 
-                <ReactTableReconciliation
-                    data={formattedDataOther()}
-                    avoidSrNo
-                    columns={columnsOther}
-                    hideSearchAndOtherButtons
-                    dynamicPagination
-                    itemsPerPage={pageSize}
-                    pageNumber={currentPage}
-                    onPageChange={handlePageChange}
-                    totalPageNumber={totalPages}
-                />
+                {showTable &&
+                    <>
+                        <ReactTableReconciliation
+                            data={formattedDataOther()}
+                            avoidSrNo
+                            columns={columnsOther}
+                            hideSearchAndOtherButtons
+                            dynamicPagination
+                            itemsPerPage={pageSize}
+                            pageNumber={currentPage}
+                            onPageChange={handlePageChange}
+                            totalPageNumber={totalPages}
+                        />
 
-                <NormalReactTable data={summaryTableData} columns={summaryTableColumn} />
+                        <NormalReactTable data={summaryTableData} columns={summaryTableColumn} />
+                    </>
+                }
             </div>
-        </AuthUserReusableCode>
+        </AuthUserReusableCode >
     );
 };
 

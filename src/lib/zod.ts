@@ -1996,8 +1996,8 @@ export type CollectionPostingReportFormData = z.infer<typeof collectionPostingRe
 export const reconciliationReportSchema = z.object({
   fromDate: z.string().min(1, "From Date is required"),
   toDate: z.string().min(1, "To Date is required"),
-  supervisor: z.string().optional(),
-  agency: z.string().optional(),
+  supervisor: z.string().min(1, "Supervisor is required"),
+  agency: z.string().min(1, "Agency is required"),
   agencyName: z.any().optional(),
   pageSize: z.number(
     { invalid_type_error: 'Page size is required' }
