@@ -78,7 +78,7 @@ export const listOfUrlForScopes = [
   { url: '/report/agent-login', backendScopeName: 'TPCollectionWebPortal:agent_login_history_report:READ' },
   { url: '/report/total-collection', backendScopeName: 'TPCollectionWebPortal:total_collection_report:READ' },
   { url: '/report/collection-posting', backendScopeName: 'TPCollectionWebPortal:collection_posting_report:READ' },
-  { url: '/report/reconciliation', backendScopeName: 'TPCollectionWebPortal:total_collection_report:READ' },
+  { url: '/report/reconciliation', backendScopeName: 'TPCollectionWebPortal:reconciliation_report:READ' },
   { url: '/', backendScopeName: '' }
 ];
 

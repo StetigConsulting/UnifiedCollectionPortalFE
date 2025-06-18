@@ -433,6 +433,12 @@ const navData = {
           icon: reportIcon,
           path: '/report/collection-posting',
         },
+        {
+          title: 'Reconciliation',
+          url: '/report/reconciliation',
+          icon: reportIcon,
+          path: '/report/reconciliation',
+        },
       ]
     },
     // {
