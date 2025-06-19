@@ -2,8 +2,25 @@ import { clsx, type ClassValue } from "clsx"
 import { BookOpenCheck } from "lucide-react";
 import { twMerge } from "tailwind-merge"
 
+import CryptoJS from "crypto-js";
+
 export const reportIcon = BookOpenCheck
 
+export const encryptParamsForMMI = (params) => {
+  const key = CryptoJS.enc.Utf8.parse("o0cy08efybyno4vb6frq96dej0k2d2f4"); // 32 bytes = 256-bit
+  const iv = CryptoJS.enc.Utf8.parse("e2iznwh2dpr6yjhg"); // Must be exactly 16 characters
+
+  const encrypted = CryptoJS.AES.encrypt(params, key, {
+    iv: iv,
+    mode: CryptoJS.mode.CBC,
+    padding: CryptoJS.pad.Pkcs7
+  });
+
+  // Get Base64 string
+  const encryptedBase64 = encrypted.toString();
+
+  return encryptedBase64
+}
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))

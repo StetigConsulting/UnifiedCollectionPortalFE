@@ -8,6 +8,7 @@ import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
 import { Button } from '@/components/ui/button';
+import { encryptParamsForMMI } from '@/lib/utils';
 import { mmiReportSchema, MmiReportSchemaData } from '@/lib/zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import moment from 'moment';
@@ -240,8 +241,9 @@ const MMI = () => {
             toDate: payload.toDate,
             fromDate: payload.fromDate,
         }).toString();
+        let encryptedParams = encryptParamsForMMI(queryParams);
 
-        const fullUrl = `${process.env.NEXT_PUBLIC_MMI_REPORTURL}/tata-power/#/tpReports/fieldforceactivity?${queryParams}`;
+        const fullUrl = `${process.env.NEXT_PUBLIC_MMI_REPORTURL}/tata-power/#/tpReports/fieldforceactivity?params=${encryptedParams}`;
         setIframeUrl(fullUrl);
         setShowIframe(true);
     };
