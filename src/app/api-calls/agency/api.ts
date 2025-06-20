@@ -263,7 +263,7 @@ export const uploadSupervisorDepositSlip = async (file: FormData) => {
 
 export const addSupervisorDeposit = async (data: any) => {
   try {
-    const response = await api.post(`/v1/supervisor-deposits/`, data);
+    const response = await api.post(`/v1/supervisor-bank-deposits/`, data);
     return response?.data;
   } catch (error) {
     throw error?.response?.data;
