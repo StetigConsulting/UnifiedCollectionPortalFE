@@ -18,6 +18,7 @@ import { getErrorMessage } from "@/lib/utils";
 import { getAllBankList } from "@/app/api-calls/other/api";
 import { useSession } from "next-auth/react";
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import SuccessErrorModal from "@/components/SuccessErrorModal";
 
 const SupervisorDeposit = () => {
   const { data: session } = useSession();
@@ -83,11 +84,15 @@ const SupervisorDeposit = () => {
         deposit_slip_file_name: fileUploadResponse?.data?.filePath,
       };
       await addSupervisorDeposit(payload);
-      toast.success("Supervisor Deposit added successfully");
+      setErrorMessage("Supervisor Deposit added successfully");
+      setErrorSuccessModalType('success');
+      setIsSuccessModalOpen(true);
       reset();
     } catch (error) {
       let errorMessage = getErrorMessage(error);
-      toast.error("Error: " + errorMessage);
+      setErrorMessage(errorMessage);
+      setErrorSuccessModalType('error');
+      setIsSuccessModalOpen(true);
     } finally {
       setIsSubmitting(false);
     }
@@ -127,6 +132,10 @@ const SupervisorDeposit = () => {
       toast.success('File selected for upload');
     }, 1000);
   };
+
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [errorSuccessModalType, setErrorSuccessModalType] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   return (
     <AuthUserReusableCode pageTitle="Supervisor Deposit" isLoading={isLoading}>
@@ -232,6 +241,12 @@ const SupervisorDeposit = () => {
           </Button>
         </div>
       </form>
+      <SuccessErrorModal
+        isOpen={isSuccessModalOpen}
+        onClose={() => setIsSuccessModalOpen(false)}
+        message={errorMessage}
+        type={errorSuccessModalType}
+      />
     </AuthUserReusableCode>
   );
 };
