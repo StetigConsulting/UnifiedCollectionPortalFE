@@ -2035,3 +2035,17 @@ export const reconciliationReportSchema = z.object({
 });
 
 export type ReconciliationReportFormData = z.infer<typeof reconciliationReportSchema>;
+
+export const supervisorBankDepositTableSchema = z.object({
+  dateFrom: z.string().min(1, "From date is required"),
+  dateTo: z.string().min(1, "To date is required"),
+  agencyName: z.string().optional(),
+  pageSize: z.number({
+    invalid_type_error: 'Page size is required'
+  }).min(1, "Page size is required"),
+}).refine((data) => new Date(data.dateFrom) <= new Date(data.dateTo), {
+  message: "From date must be before or equal to To date",
+  path: ["dateTo"],
+});
+
+export type SupervisorBankDepositTableSchemaData = z.infer<typeof supervisorBankDepositTableSchema>;

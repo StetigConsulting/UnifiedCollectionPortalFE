@@ -79,6 +79,9 @@ export const listOfUrlForScopes = [
   { url: '/report/total-collection', backendScopeName: 'TPCollectionWebPortal:total_collection_report:READ' },
   { url: '/report/collection-posting', backendScopeName: 'TPCollectionWebPortal:collection_posting_report:READ' },
   { url: '/report/reconciliation', backendScopeName: 'TPCollectionWebPortal:reconciliation_report:READ' },
+  { url: '/report/reconciliation', backendScopeName: 'TPCollectionWebPortal:reconciliation_report:READ' },
+  { url: '/agency/supervisor-deposit', backendScopeName: 'TPCollectionWebPortal:supervisor_bank_deposit:ALL' },
+  { url: '/report/supervisor-bank-deposit', backendScopeName: 'TPCollectionWebPortal:supervisor_bank_deposit:READ' },
   { url: '/', backendScopeName: '' }
 ];
 

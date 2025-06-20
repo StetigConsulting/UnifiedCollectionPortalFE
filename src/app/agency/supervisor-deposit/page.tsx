@@ -70,8 +70,7 @@ const SupervisorDeposit = () => {
       setIsSubmitting(true);
       const fileUploadResponse = await uploadSupervisorDepositSlip(formData);
       let payload = {
-        discom_id: session?.user?.discomId,
-        supervisor_id: session?.user?.id, // or get from form if needed
+        supervisor_id: session?.user?.id,
         bank_name: data.bank,
         deposit_date: data.depositDate,
         amount: data.depositAmount,
@@ -132,9 +131,12 @@ const SupervisorDeposit = () => {
               <span className="text-red-500">{errors.depositSlip.message}</span>
             )}
         </div>
-        <div className="flex gap-4 mt-4">
+        <div className="flex gap-4 mt-4 align-end">
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? <Loader2 className="animate-spin" /> : "Submit"}
+            {isSubmitting ? <>
+              <Loader2 className="animate-spin" /> Submitting
+            </>
+              : "Submit"}
           </Button>
           <Button type="button" variant="secondary" onClick={() => reset()}>
             Cancel

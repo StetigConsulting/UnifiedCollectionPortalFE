@@ -470,3 +470,26 @@ export const downloadReconciliationReport = async (data: any, type: any) => {
         throw error?.response?.data
     }
 }
+
+export const getSupervisorBankDepositReport = async (data: any) => {
+    try {
+        const response = await api.post('/v1/supervisor-bank-deposits/fetch', data);
+        return response.data;
+    } catch (error) {
+        throw error?.response?.data;
+    }
+}
+
+export const downloadSlipSupervisorBankDeposit = async (data: any) => {
+    try {
+        const response = await api.get(`/v1/supervisor-bank-deposits/download/deposit-slip/${data}`, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+            responseType: "blob",
+        });
+        return response;
+    } catch (error) {
+        throw error?.response?.data;
+    }
+}

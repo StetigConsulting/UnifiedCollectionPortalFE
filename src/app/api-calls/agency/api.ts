@@ -250,7 +250,7 @@ export const reverseAgentBalance = async (data: any) => {
 // Supervisor Deposit Functions
 export const uploadSupervisorDepositSlip = async (file: FormData) => {
   try {
-    const response = await api.post(`/v1/supervisor-deposits/upload`, file, {
+    const response = await api.post(`/v1/supervisor-bank-deposits/upload`, file, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
