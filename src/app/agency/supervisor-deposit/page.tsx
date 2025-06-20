@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -9,7 +9,7 @@ import CustomizedInputWithLabel from "@/components/CustomizedInputWithLabel";
 import CustomizedSelectInputWithLabel from "@/components/CustomizedSelectInputWithLabel";
 import { Button } from "@/components/ui/button";
 import AuthUserReusableCode from "@/components/AuthUserReusableCode";
-import { Loader2 } from "lucide-react";
+import { Loader2, Upload } from "lucide-react";
 import {
   addSupervisorDeposit,
   uploadSupervisorDepositSlip,
@@ -17,6 +17,7 @@ import {
 import { getErrorMessage } from "@/lib/utils";
 import { getAllBankList } from "@/app/api-calls/other/api";
 import { useSession } from "next-auth/react";
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const SupervisorDeposit = () => {
   const { data: session } = useSession();
@@ -41,6 +42,10 @@ const SupervisorDeposit = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [bankList, setBankList] = useState([]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [fileName, setFileName] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     getBankList();
@@ -88,6 +93,41 @@ const SupervisorDeposit = () => {
     }
   };
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const isAllowed = file.type.startsWith('image/') || file.type === 'application/pdf';
+    if (!isAllowed) {
+      toast.error('Only image or PDF files are allowed');
+      setValue('depositSlip', null as any);
+      setFileName('');
+      return;
+    }
+    setValue('depositSlip', [file]);
+    setFileName(file.name);
+  };
+
+  const handleUploadClick = () => {
+    setIsDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setIsDialogOpen(false);
+    setFileName(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const handleUpload = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsUploading(true);
+    // Simulate upload delay
+    setTimeout(() => {
+      setIsUploading(false);
+      setIsDialogOpen(false);
+      toast.success('File selected for upload');
+    }, 1000);
+  };
+
   return (
     <AuthUserReusableCode pageTitle="Supervisor Deposit" isLoading={isLoading}>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -121,25 +161,74 @@ const SupervisorDeposit = () => {
           />
         </div>
         <div>
+          <Button type="button" onClick={handleUploadClick}>  <Upload size={24} /> Upload Deposit Slip Photo</Button>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogContent>
+              <div className="space-y-4">
+                <DialogHeader>
+                  <DialogTitle>Upload Deposit Slip</DialogTitle>
+                </DialogHeader>
+                <div className="border border-dashed border-gray-300 rounded-md p-4 text-center">
+                  <input
+                    type="file"
+                    accept="image/*,application/pdf"
+                    id="file-upload"
+                    className="hidden"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                  />
+                  <label htmlFor="file-upload" className="flex flex-col items-center cursor-pointer">
+                    <Upload size={24} />
+                    <p className="text-sm text-gray-600">
+                      Drag & drop files or <span className="text-blue-500">Browse</span>
+                    </p>
+                    <p className="text-xs text-gray-400">Only image or PDF format is supported, size limit 5MB</p>
+                  </label>
+                  {fileName && <p className="text-sm text-green-500 mt-2">{fileName}</p>}
+                </div>
+                <DialogFooter>
+                  <div className="flex justify-end space-x-4">
+                    <DialogClose asChild>
+                      <Button variant="outline" disabled={isUploading} type="button" onClick={handleDialogClose}>
+                        Cancel
+                      </Button>
+                    </DialogClose>
+                    <Button type="button" variant="default" disabled={isUploading || !fileName} onClick={handleUpload}>
+                      {isUploading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Uploading...
+                        </>
+                      ) : (
+                        'Upload'
+                      )}
+                    </Button>
+                  </div>
+                </DialogFooter>
+              </div>
+            </DialogContent>
+          </Dialog>
+          {/* Hide the default file input */}
           <input
             type="file"
             accept="image/*,application/pdf"
             {...register("depositSlip")}
+            style={{ display: 'none' }}
           />
           {errors.depositSlip &&
             typeof errors.depositSlip.message === "string" && (
               <span className="text-red-500">{errors.depositSlip.message}</span>
             )}
         </div>
-        <div className="flex gap-4 mt-4 align-end">
+        <div className="mt-4 text-end">
+          <Button type="button" variant="outline" onClick={() => reset()} className="mr-4">
+            Cancel
+          </Button>
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? <>
               <Loader2 className="animate-spin" /> Submitting
             </>
               : "Submit"}
-          </Button>
-          <Button type="button" variant="secondary" onClick={() => reset()}>
-            Cancel
           </Button>
         </div>
       </form>
