@@ -1191,6 +1191,36 @@ export const agentBankDepositSchema = z.object({
 
 export type AgentBankDepositFormData = z.infer<typeof agentBankDepositSchema>;
 
+// Supervisor Deposit Schema
+export const supervisorDepositSchema = z.object({
+  depositAmount: z
+    .number()
+    .min(1, 'Deposit amount must be at least 1')
+    .positive('Deposit amount must be a positive number'),
+  depositDate: z
+    .string()
+    .nonempty('Deposit Date is required'),
+  txnRefNo: z
+    .string()
+    .nonempty('Reference Number is required')
+    .min(1, 'Reference Number cannot be empty'),
+  depositSlip: z
+    .any()
+    .refine((val) => val && val.length > 0, {
+      message: 'Deposit slip is required',
+    })
+    .refine((val) => {
+      if (!val || val.length === 0) return false;
+      const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+      return allowedTypes.includes(val[0].type);
+    }, {
+      message: 'Only PDF, JPG, or PNG files are allowed.',
+    }),
+  bank: z.string().nonempty('Bank is required'),
+});
+
+export type SupervisorDepositFormData = z.infer<typeof supervisorDepositSchema>;
+
 export const agencyBankDepositSchema = z.object({
   agencyId: z.number({
     invalid_type_error: 'Please select Agency'
@@ -2005,3 +2035,17 @@ export const reconciliationReportSchema = z.object({
 });
 
 export type ReconciliationReportFormData = z.infer<typeof reconciliationReportSchema>;
+
+export const supervisorBankDepositTableSchema = z.object({
+  dateFrom: z.string().min(1, "From date is required"),
+  dateTo: z.string().min(1, "To date is required"),
+  agencyName: z.string().optional(),
+  pageSize: z.number({
+    invalid_type_error: 'Page size is required'
+  }).min(1, "Page size is required"),
+}).refine((data) => new Date(data.dateFrom) <= new Date(data.dateTo), {
+  message: "From date must be before or equal to To date",
+  path: ["dateTo"],
+});
+
+export type SupervisorBankDepositTableSchemaData = z.infer<typeof supervisorBankDepositTableSchema>;

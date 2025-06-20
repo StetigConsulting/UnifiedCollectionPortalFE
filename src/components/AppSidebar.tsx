@@ -184,6 +184,7 @@ const navData = {
           icon: ReceiptText,
           path: '/admin/create-new-user',
         },
+
       ]
     },
     {
@@ -245,6 +246,12 @@ const navData = {
         { title: "Edit Agent Area & Role", icon: Edit, url: "/department/edit-agent-area" },
         { title: "Edit Agent Area", icon: Edit, url: "/agency/edit-agent-area" },
         { title: "Reset Device", icon: MonitorCog, url: '/department/reset-device' },
+        {
+          title: 'Supervisor Bank Deposit',
+          url: '/agency/supervisor-deposit',
+          icon: ReceiptText,
+          path: '/agency/supervisor-deposit',
+        },
       ]
     },
     // {
@@ -438,6 +445,12 @@ const navData = {
           url: '/report/reconciliation',
           icon: reportIcon,
           path: '/report/reconciliation',
+        },
+        {
+          title: 'Supervisor Bank Deposit',
+          url: '/report/supervisor-bank-deposit',
+          icon: reportIcon,
+          path: '/report/supervisor-bank-deposit',
         },
       ]
     },
