@@ -36,6 +36,7 @@ export const dashboardSchema = object({
 export const addAgencySchema = z
   .object({
     agencyName: z.string().nonempty("Agency Name is required"),
+    inheritVendorId: z.boolean().optional(),
     vendorId: z.string().optional(),
     registeredAddress: z.string().nonempty("Registered Address is required"),
     woNumber: z.string().optional(),

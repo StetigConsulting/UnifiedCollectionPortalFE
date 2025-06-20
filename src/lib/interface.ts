@@ -24,6 +24,7 @@ export interface AgencyDataInterface {
     non_energy_types?: number[];
     working_level_offices: number[];
     collector_types?: number[];
+    is_inherited_vendor_id?: boolean;
 }
 
 export interface rechargeAgencyInterface {

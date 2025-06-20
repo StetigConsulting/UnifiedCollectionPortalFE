@@ -43,6 +43,8 @@ const AddAgency = () => {
     resolver: zodResolver(addAgencySchema),
     defaultValues: {
       workingLevel: null,
+      inheritVendorId: false,
+      vendorId: "",
     }
   });
 
@@ -73,7 +75,8 @@ const AddAgency = () => {
       payment_remarks: data.paymentRemark || "",
       collection_payment_modes: data.permission.map(Number),
       working_level: Number(data.workingLevel),
-      vendor_id: data.vendorId || "",
+      is_inherited_vendor_id: data.inheritVendorId,
+      vendor_id: data?.inheritVendorId ? data.vendorId : "",
       collection_type_energy: data.collectionType.includes("Energy"),
       collection_type_non_energy: data.collectionType.includes("Non-Energy"),
       is_active: true,
@@ -96,9 +99,22 @@ const AddAgency = () => {
       reset();
       // location.reload();
     } catch (error) {
-      let errorMessage = getErrorMessage(error);
-      setErrorMessage('Error: ' + errorMessage);
-      setIsErrorModalOpen(true)
+      let errorData = error?.data;
+      let messages = [];
+
+      // Collect all string values from the error data
+      for (const key in errorData) {
+        if (typeof errorData[key] === 'string') {
+          messages.push(errorData[key]);
+        }
+      }
+
+      if (messages.length === 0) {
+        messages.push(getErrorMessage(error));
+      }
+
+      setErrorMessage(messages.join('\n'));
+      setIsErrorModalOpen(true);
       // toast.error('Error: ' + errorMessage)
     } finally {
       setIsSubmitting(false);
@@ -305,6 +321,8 @@ const AddAgency = () => {
     })
   }
 
+  const inheritVendorId = watch('inheritVendorId');
+
   return (
     <AuthUserReusableCode pageTitle="Add Agency" isLoading={isLoading}>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -316,6 +334,21 @@ const AddAgency = () => {
             errors={errors.agencyName}
             placeholder="Enter Agency Name"
             {...register("agencyName")}
+          />
+          <CustomizedInputWithLabel
+            label="Vendor ID"
+            type="text"
+            containerClass="col-span-2"
+            disabled={!inheritVendorId}
+            errors={errors.vendorId}
+            {...register('vendorId')}
+            additionAction={<div className='flex gap-2'>
+              <input type="checkbox"
+                className='self-center'
+                {...register('inheritVendorId')}
+              />
+              <label className='flex-1 text-sm font-medium mt-1'>Inherit Vendor ID</label>
+            </div>}
           />
           <CustomizedInputWithLabel
             containerClass="col-span-2"
@@ -496,13 +529,13 @@ const AddAgency = () => {
               />
             )
           }
-          <CustomizedInputWithLabel
+          {/* <CustomizedInputWithLabel
             label="Vendor ID"
             errors={errors.vendorId}
             containerClass=""
             placeholder="Enter vendor ID"
             {...register("vendorId")}
-          />
+          /> */}
           <CustomizedMultipleSelectInputWithLabel
             label="Permissions"
             errors={errors.permission}
