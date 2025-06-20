@@ -75,7 +75,7 @@ const SupervisorDeposit = () => {
       setIsSubmitting(true);
       const fileUploadResponse = await uploadSupervisorDepositSlip(formData);
       let payload = {
-        supervisor_id: session?.user?.id,
+        supervisor_id: session?.user?.userId,
         bank_name: data.bank,
         deposit_date: data.depositDate,
         amount: data.depositAmount,
