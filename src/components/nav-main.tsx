@@ -54,13 +54,20 @@ export function NavMain({
         } else {
 
           if (item.url === urlsListWithTitle.dashboard.url) {
-            ['dashboardBillUploadHistory', 'dashboardTransactionSummary', 'dashboardPerformanceSummary'].forEach((action) => {
-              const hasAccess = checkIfUserHasActionAccess({
+            const hasAnyDashboardAccess = [
+              'dashboardBillUploadHistory',
+              'dashboardTransactionSummary',
+              'dashboardPerformanceSummary'
+            ].some((action) =>
+              checkIfUserHasActionAccess({
                 backendScope: session?.user?.userScopes,
                 currentAction: action,
-              });
-              if (!hasAccess) return null;
-            })
+              })
+            );
+
+            if (!hasAnyDashboardAccess) {
+              return null; // Don't render the dashboard menu item
+            }
 
           } else {
             const hasAccessToParent = checkIfUserHasAccessToPage({ backendScope: session?.user?.userScopes, currentUrl: item.path || item.url });
