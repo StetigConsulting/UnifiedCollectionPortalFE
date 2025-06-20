@@ -1192,7 +1192,6 @@ export const agentBankDepositSchema = z.object({
 
 export type AgentBankDepositFormData = z.infer<typeof agentBankDepositSchema>;
 
-// Supervisor Deposit Schema
 export const supervisorDepositSchema = z.object({
   depositAmount: z
     .number()
@@ -1202,9 +1201,7 @@ export const supervisorDepositSchema = z.object({
     .string()
     .nonempty('Deposit Date is required'),
   txnRefNo: z
-    .string()
-    .nonempty('Reference Number is required')
-    .min(1, 'Reference Number cannot be empty'),
+    .string().optional(),
   depositSlip: z
     .any()
     .refine((val) => val && val.length > 0, {
@@ -1217,7 +1214,7 @@ export const supervisorDepositSchema = z.object({
     }, {
       message: 'Only PDF, JPG, or PNG files are allowed.',
     }),
-  bank: z.string().nonempty('Bank is required'),
+  bank: z.string().optional(),
 });
 
 export type SupervisorDepositFormData = z.infer<typeof supervisorDepositSchema>;
@@ -1237,8 +1234,7 @@ export const agencyBankDepositSchema = z.object({
     .nonempty('Deposit Date is required'),
   txnRefNo: z
     .string()
-    .nonempty('Transaction Ref No is required')
-    .min(1, 'Transaction Ref No cannot be empty'),
+    .optional(),
   bank: z.string().nonempty('Bank is required'),
 });
 
@@ -2041,6 +2037,7 @@ export const supervisorBankDepositTableSchema = z.object({
   dateFrom: z.string().min(1, "From date is required"),
   dateTo: z.string().min(1, "To date is required"),
   agencyName: z.string().optional(),
+  agencyId: z.string().optional(),
   pageSize: z.number({
     invalid_type_error: 'Page size is required'
   }).min(1, "Page size is required"),

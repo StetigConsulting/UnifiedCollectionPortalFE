@@ -28,6 +28,7 @@ const SupervisorBankDepositReport = () => {
     const {
         register,
         handleSubmit,
+        setValue,
         formState: { errors },
         watch,
     } = useForm<SupervisorBankDepositTableSchemaData>({
@@ -48,7 +49,7 @@ const SupervisorBankDepositReport = () => {
             setAgencyList(
                 response?.data?.map((item) => ({
                     label: item.agency_name,
-                    value: item.agency_name,
+                    value: item.id,
                 }))
             );
         } catch (err) {
@@ -109,7 +110,7 @@ const SupervisorBankDepositReport = () => {
         { label: "Deposit Amount", key: "amount", sortable: true, align: "center" },
         { label: "Bank Ref. No.", key: "txn_ref_no", sortable: true },
         { label: "Slip Image", key: "slip" },
-        { label: "Created Date", key: "created_date", sortable: true },
+        { label: "Created Date", key: "created_on_date", sortable: true },
     ], []);
 
     const handleSearch = () => {
@@ -172,8 +173,17 @@ const SupervisorBankDepositReport = () => {
         slip: item?.deposit_slip_file_name ?
             <Eye className='pointer' onClick={() => handleGetSlip(item?.id)} /> : '-',
         deposit_date: formatDate(item?.deposit_date),
-        created_date: formatDate(item?.created_date),
+        created_on_date: formatDate(item?.created_on_date),
     }));
+
+    console.log(watch());
+
+    const handleAgencyChange = (e) => {
+
+        const agency = agencyList.find(item => item.value === parseInt(e.target.value));
+
+        setValue("agencyName", agency?.label || '');
+    };
 
     return (
         <AuthUserReusableCode pageTitle="Supervisor Bank Deposit Report" isLoading={isLoading}>
@@ -194,8 +204,8 @@ const SupervisorBankDepositReport = () => {
                     <CustomizedSelectInputWithLabel
                         label="Agency Name"
                         list={agencyList}
-                        {...register("agencyName")}
-                        errors={errors.agencyName}
+                        {...register("agencyId", { onChange: (e) => handleAgencyChange(e) })}
+                        errors={errors.agencyId}
                     />
                     <CustomizedInputWithLabel
                         label="Page Size"

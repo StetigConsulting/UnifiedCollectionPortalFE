@@ -155,13 +155,16 @@ const SupervisorDeposit = () => {
           />
           <CustomizedInputWithLabel
             label="Reference Number"
-            required={true}
             errors={errors.txnRefNo}
             {...register("txnRefNo")}
           />
         </div>
         <div>
           <Button type="button" onClick={handleUploadClick}>  <Upload size={24} /> Upload Deposit Slip Photo</Button>
+          {errors.depositSlip &&
+            typeof errors.depositSlip.message === "string" && (
+              <p className="text-red-500 text-xs mt-1">{errors.depositSlip.message}</p>
+            )}
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogContent>
               <div className="space-y-4">
@@ -215,10 +218,7 @@ const SupervisorDeposit = () => {
             {...register("depositSlip")}
             style={{ display: 'none' }}
           />
-          {errors.depositSlip &&
-            typeof errors.depositSlip.message === "string" && (
-              <span className="text-red-500">{errors.depositSlip.message}</span>
-            )}
+
         </div>
         <div className="mt-4 text-end">
           <Button type="button" variant="outline" onClick={() => reset()} className="mr-4">
