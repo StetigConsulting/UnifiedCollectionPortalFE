@@ -157,7 +157,7 @@ const SupervisorDeposit = () => {
           />
           <CustomizedSelectInputWithLabel
             label="Bank"
-            required={true}
+            // required={true}
             list={bankList}
             errors={errors.bank}
             {...register("bank")}
