@@ -12,6 +12,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye } from "lucide-react";
 import { supervisorBankDepositTableSchema, SupervisorBankDepositTableSchemaData } from "@/lib/zod";
+import { getAgenciesWithDiscom } from '@/app/api-calls/department/api';
+import { useSession } from 'next-auth/react';
+import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
 
 const SupervisorBankDepositReport = () => {
     const [data, setData] = useState([]);
@@ -19,6 +22,8 @@ const SupervisorBankDepositReport = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [showTable, setShowTable] = useState(false);
+    const { data: session } = useSession();
+    const [agencyList, setAgencyList] = useState([]);
 
     const {
         register,
@@ -36,6 +41,24 @@ const SupervisorBankDepositReport = () => {
     });
 
     const formData = watch();
+
+    const fetchAgencies = async () => {
+        try {
+            const response = await getAgenciesWithDiscom(session?.user?.discomId);
+            setAgencyList(
+                response?.data?.map((item) => ({
+                    label: item.agency_name,
+                    value: item.agency_name,
+                }))
+            );
+        } catch (err) {
+            console.log('Failed to load agencies', err);
+        }
+    };
+
+    useEffect(() => {
+        fetchAgencies();
+    }, []);
 
     const fetchReport = async (applyFilter = {}, page = 1) => {
         let payload = {
@@ -168,8 +191,9 @@ const SupervisorBankDepositReport = () => {
                         {...register("dateTo")}
                         errors={errors.dateTo}
                     />
-                    <CustomizedInputWithLabel
+                    <CustomizedSelectInputWithLabel
                         label="Agency Name"
+                        list={agencyList}
                         {...register("agencyName")}
                         errors={errors.agencyName}
                     />
