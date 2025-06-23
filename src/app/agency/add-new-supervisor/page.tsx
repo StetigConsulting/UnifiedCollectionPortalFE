@@ -1,15 +1,17 @@
 'use client';
 
+import { activateSupervisorUser, deactivateSupervisorUser } from '@/app/api-calls/admin/api';
 import { createSupervisor, getListOfAllSupervisor } from '@/app/api-calls/department/api';
+import AlertPopup from '@/components/Agency/ViewAgency/AlertPopup';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode'
 import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
-import NormalReactTable from '@/components/NormalReactTable';
+import ReactTable from '@/components/ReactTable';
 import SuccessErrorModal from '@/components/SuccessErrorModal';
 import { Button } from '@/components/ui/button';
 import { getErrorMessage } from '@/lib/utils';
 import { AddSupervisorFormData, addSupervisorSchema } from '@/lib/zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Power, PowerOff } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
@@ -93,6 +95,64 @@ const AddNewSupervisor = () => {
         srNo: idx + 1
     }))
 
+    const [selectedRow, setSelectedRow] = useState<any | null>(null);
+
+    const handleRowSelection = (row: any) => {
+        console.log(row)
+        setSelectedRow(row)
+    }
+
+    const activateUser = async (id: number) => {
+        setIsLoading(true);
+        try {
+            let payload = {
+                supervisor_id: id
+            }
+            await activateSupervisorUser(payload);
+            toast.success('Supervisor activated successfully');
+            getAllListOfSupervisor();
+            setSelectedRow(null)
+        } catch (error) {
+            toast.error('Error ', getErrorMessage(error));
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    const deactivateUser = async (id: number) => {
+        setIsLoading(true);
+        try {
+            let payload = {
+                supervisor_id: id
+            }
+            await deactivateSupervisorUser(payload);
+            toast.success('Supervisor deactivated successfully');
+            getAllListOfSupervisor();
+            setSelectedRow(null)
+        } catch (error) {
+            toast.error('Error ', getErrorMessage(error));
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    const getSelectedRowButton = () => {
+        return <div className="space-x-2">
+            {selectedRow?.is_active ? <AlertPopup triggerCode={<Button variant='destructive' className="cursor-pointer">
+                <PowerOff />
+                Deactivate
+            </Button>} handleContinue={() => deactivateUser(selectedRow.id)}
+                title='Confirm Deactivating' description='Are you sure you want to save the deactivate supervisor? Please review the details carefully before confirming.' continueButtonText='Confirm'
+            /> :
+                <AlertPopup triggerCode={<Button variant='success' className="cursor-pointer">
+                    <Power />
+                    Activate
+                </Button>} handleContinue={() => activateUser(selectedRow.id)}
+                    title='Confirm Activating' description='Are you sure you want to save the activate supervisor? Please review the details carefully before confirming.' continueButtonText='Confirm'
+                />}
+        </div>
+    }
+
     return (
         <AuthUserReusableCode pageTitle="Add New Supervisor" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -130,7 +190,17 @@ const AddNewSupervisor = () => {
             </form>
 
             <div className="mt-8">
-                <NormalReactTable columns={columns} data={tableData} />
+                <ReactTable
+                    columns={columns}
+                    data={tableData}
+                    isSelectable
+                    hideSearchAndOtherButtons
+                    onRowSelect={handleRowSelection}
+                    onRowSelectButtons={
+                        getSelectedRowButton()
+                    }
+                    selectedRow={selectedRow}
+                />
             </div>
 
             <SuccessErrorModal
