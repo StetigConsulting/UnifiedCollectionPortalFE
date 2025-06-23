@@ -37,7 +37,9 @@ const RechargeEntry = () => {
     const [agencies, setAgencies] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const [rechargeAbleBalance, setRechargeableBalance] = useState('');
+    const [rechargeAbleBalance, setRechargeableBalance] = useState(0);
+
+    const [showBalance, setShowBalance] = useState(false);
 
     const getAgentList = async () => {
         setIsLoading(true);
@@ -61,17 +63,17 @@ const RechargeEntry = () => {
 
     useEffect(() => {
         getAgentList()
-        getAgencyBalance()
     }, []);
 
-    const getAgencyBalance = async () => {
+    const getAgencyBalance = async (id: number) => {
         setIsLoading(true);
         try {
-            const response = await getAgencyRechargeableBalance(currentUserId);
+            const response = await getAgencyRechargeableBalance(id);
             console.log("API recharge:", response);
             setRechargeableBalance(
                 response?.data?.rechargeableAgentWalletBalance
             );
+            setShowBalance(true)
 
         } catch (error) {
             console.error("Failed to get agent:", error?.data[Object.keys(error?.data)[0]]);
@@ -91,8 +93,8 @@ const RechargeEntry = () => {
             const response = await rechargeAgentById(payload, currentUserId);
             toast.success("Agent recharged successfully");
             console.log("API Response:", response);
-            getAgencyBalance()
-            // location.reload()
+            // getAgencyBalance()
+            location.reload()
             reset();
         } catch (error) {
             let errorMessage = getErrorMessage(error);
@@ -128,12 +130,15 @@ const RechargeEntry = () => {
             try {
                 setIsLoading(true);
                 const response = await getAgentByPhoneNumber(mobileNumber);
-                setValue('agencyName', response.data.agent_name)
+                setValue('agentName', response.data.agent_name)
+                setValue('agencyName', response.data.agency?.agency_name)
                 setValue('agencyId', response.data.id)
+                setValue('agentId', response.data.agency?.id)
                 setValue('phoneNumber', response.data.primary_phone || '');
                 setValue('transactionType', 'Recharge')
                 setValue('currentBalance', response.data.current_balance);
                 setValue('maximumRecharge', response?.data?.maximum_limit)
+                await getAgencyBalance(response?.data?.agency?.id)
                 setShowRestFields(true)
             } catch (error) {
                 let errorMessage = getErrorMessage(error);
@@ -153,11 +158,11 @@ const RechargeEntry = () => {
 
     return (
         <AuthUserReusableCode pageTitle="Recharge Agent" isLoading={isLoading}>
-            <div className="mb-4 p-2 bg-lightThemeColor rounded-md">
+            {showBalance && <div className="mb-4 p-2 bg-lightThemeColor rounded-md">
                 <span className="text-sm">
                     Available Agency Balance For Recharge : ₹ {rechargeAbleBalance}
                 </span>
-            </div>
+            </div>}
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div className='space-y-2'>
                     <div className="col-span-2">
@@ -188,11 +193,32 @@ const RechargeEntry = () => {
                     <>
                         <div className="grid grid-cols-2 gap-4">
                             <CustomizedInputWithLabel
-                                label="Agent ID"
+                                label="Agency Id"
                                 required={true}
                                 errors={errors.agencyId}
                                 disabled
-                                {...register("agencyId", { valueAsNumber: true })}
+                                {...register("agencyId")}
+                            />
+                            <CustomizedInputWithLabel
+                                label="Agency Name"
+                                required={true}
+                                errors={errors.agencyName}
+                                disabled
+                                {...register("agencyName")}
+                            />
+                            <CustomizedInputWithLabel
+                                label="Agent Id"
+                                required={true}
+                                errors={errors.agentId}
+                                disabled
+                                {...register("agentId", { valueAsNumber: true })}
+                            />
+                            <CustomizedInputWithLabel
+                                label="Agent Name"
+                                required={true}
+                                errors={errors.agentName}
+                                disabled
+                                {...register("agentName")}
                             />
                             <CustomizedInputWithLabel
                                 label="Phone Number"
@@ -201,13 +227,7 @@ const RechargeEntry = () => {
                                 disabled
                                 {...register("phoneNumber")}
                             />
-                            <CustomizedInputWithLabel
-                                label="Agent Name"
-                                required={true}
-                                errors={errors.agencyName}
-                                disabled
-                                {...register("agencyName")}
-                            />
+
                             <CustomizedInputWithLabel
                                 label="Transaction Type"
                                 required={true}

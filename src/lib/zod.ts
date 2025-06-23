@@ -504,6 +504,7 @@ export const fileUploadSchema = z.object({
 
 export const editCollectorSchema = z.object({
   agencyId: z.number().optional(),
+  agencyName: z.string().optional(),
   collectorMobile: z.number().min(10, 'Mobile number must be at least 10 digits'),
   name: z.string().min(1, "Name is required"),
   agentId: z.number(),
@@ -623,6 +624,8 @@ export const rechargeSchemaCollector = z.object({
   collectorMobile: z.number().min(10, 'Mobile number must be at least 10 digits'),
   agencyId: z.number(),
   agencyName: z.string().min(1, "Agency Name is required"),
+  agentId: z.number(),
+  agentName: z.string().min(1, "Agent Name is required"),
   phoneNumber: z.string().min(10, "Phone Number should be 10 digits"),
   maximumRecharge: z.number().positive("Maximum recharge must be greater than 0"),
   amount: z.number().positive("Amount must be greater than 0"),

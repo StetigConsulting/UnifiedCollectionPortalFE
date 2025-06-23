@@ -19,12 +19,14 @@ import { AgencyDataInterface } from "@/lib/interface";
 import { getErrorMessage } from "@/lib/utils";
 import { addAgencySchema } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
+import { Loader2, Info } from "lucide-react";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 type FormData = z.infer<typeof addAgencySchema>;
 
@@ -342,12 +344,24 @@ const AddAgency = () => {
             disabled={!inheritVendorId}
             errors={errors.vendorId}
             {...register('vendorId')}
-            additionAction={<div className='flex gap-2'>
+            additionAction={<div className='flex gap-2 items-center'>
               <input type="checkbox"
                 className='self-center'
                 {...register('inheritVendorId')}
               />
-              <label className='flex-1 text-sm font-medium mt-1'>Inherit Vendor ID</label>
+              <label className='flex-1 text-sm font-medium mt-1 flex items-center gap-1'>
+                Inherit Vendor ID
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span tabIndex={0} className="cursor-pointer"><Info className="w-4 h-4 text-black-500" /></span>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">
+                      All agents under this agency will inherit the Vendor ID of agency
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </label>
             </div>}
           />
           <CustomizedInputWithLabel

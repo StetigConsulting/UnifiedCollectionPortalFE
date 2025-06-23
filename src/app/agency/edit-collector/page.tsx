@@ -102,6 +102,8 @@ const EditCollector = () => {
                 setValue('collectorType', response.data.collector_type.id)
                 setValue('workingType', response.data.work_type)
                 setValue('agentId', response.data.id)
+                setValue('agencyId', response.data.agency.id)
+                setValue('agencyName', response.data.agency.agency_name)
                 let supervisorData = response.data.supervisor?.id ? [response.data.supervisor?.id] : []
                 setValue('supervisor', supervisorData)
                 setValue('aadhaarNumber', response.data.aadharNo || null)
@@ -234,6 +236,18 @@ const EditCollector = () => {
                             </Button>
                         </div>
                     </div>
+                    <CustomizedInputWithLabel
+                        label="Agency ID"
+                        disabled
+                        {...register("agencyId")}
+                        errors={errors.agencyId}
+                    />
+                    <CustomizedInputWithLabel
+                        label="Agency Name"
+                        disabled
+                        {...register("agencyName")}
+                        errors={errors.agencyName}
+                    />
                     <CustomizedInputWithLabel
                         label="Agent Name"
                         placeholder="Enter Name"
