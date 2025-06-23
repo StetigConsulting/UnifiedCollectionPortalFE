@@ -132,8 +132,8 @@ const RechargeEntry = () => {
                 const response = await getAgentByPhoneNumber(mobileNumber);
                 setValue('agentName', response.data.agent_name)
                 setValue('agencyName', response.data.agency?.agency_name)
-                setValue('agencyId', response.data.id)
-                setValue('agentId', response.data.agency?.id)
+                setValue('agentId', response.data.id)
+                setValue('agencyId', response.data.agency?.id)
                 setValue('phoneNumber', response.data.primary_phone || '');
                 setValue('transactionType', 'Recharge')
                 setValue('currentBalance', response.data.current_balance);
