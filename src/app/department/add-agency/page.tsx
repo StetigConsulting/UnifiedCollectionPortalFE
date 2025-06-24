@@ -351,7 +351,7 @@ const AddAgency = () => {
               />
               <label className='flex-1 text-sm font-medium mt-1 flex items-center gap-1'>
                 Inherit Vendor ID
-                <TooltipProvider>
+                {inheritVendorId && <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <span tabIndex={0} className="cursor-pointer"><Info className="w-4 h-4 text-black-500" /></span>
@@ -360,7 +360,7 @@ const AddAgency = () => {
                       All agents under this agency will inherit the Vendor ID of agency
                     </TooltipContent>
                   </Tooltip>
-                </TooltipProvider>
+                </TooltipProvider>}
               </label>
             </div>}
           />

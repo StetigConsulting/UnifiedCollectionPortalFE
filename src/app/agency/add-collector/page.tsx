@@ -47,7 +47,7 @@ const AddCounterCollector = () => {
     const [subDivisions, setSubDivisions] = useState([]);
     const [sections, setSections] = useState([]);
 
-    const [agencyData, setAgencyData] = useState({ working_level: null, maximum_limit: null });
+    const [agencyData, setAgencyData] = useState({ working_level: null, maximum_limit: null, is_inherited_vendor_id: false });
 
     const [collectionTypeList, setCollectionTypeList] = useState(collectionTypePickList)
 
@@ -659,7 +659,7 @@ const AddCounterCollector = () => {
                                 placeholder='Enter Aadhaar Number' type='number'
                                 {...register('aadhaarNumber', { valueAsNumber: true })} />
                             <CustomizedInputWithLabel label='Vendor Id' errors={errors.vendorId}
-                                placeholder='Enter Vendor Id'
+                                placeholder='Enter Vendor Id' disabled={agencyData?.is_inherited_vendor_id}
                                 {...register('vendorId')} />
                         </>
                     }

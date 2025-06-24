@@ -327,6 +327,10 @@ const EditCollector = () => {
 
                     <CustomizedInputWithLabel label='Vendor Id' errors={errors.vendorId}
                         placeholder='Enter Vendor Id'
+                        disabled={checkIfUserHasActionAccess({
+                            backendScope: session?.user?.userScopes,
+                            currentAction: 'disabledVendorIdEdit'
+                        })}
                         {...register('vendorId')} />
                 </div>
                 <div className="flex justify-end mt-4">
