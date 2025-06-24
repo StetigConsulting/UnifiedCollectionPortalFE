@@ -7,14 +7,16 @@ import { Button } from '@/components/ui/button';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { extendValiditySchema } from '@/lib/zod';
+import { extendValidityFilterSchema, extendValiditySchema } from '@/lib/zod';
 import { z } from 'zod';
 import { extendValidity, getAgenciesWithDiscom, getAgencyById } from '@/app/api-calls/department/api';
 import { toast } from 'sonner';
 import { useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
-import { formatDate } from '@/lib/utils';
+import { formatDate, exportPicklist, tableDataPerPage } from '@/lib/utils';
+import ReactTable from '@/components/ReactTable';
+import { getAgencyExtendValidityLogs, downloadAgencyExtendValidityLogs } from '@/app/api-calls/report/api';
 
 type FormData = z.infer<typeof extendValiditySchema>;
 
@@ -31,7 +33,9 @@ const ExtendValidity = () => {
         let payload = {
             agency_id: data.agencyId,
             validity_from_date: data.newFromValidity,
-            validity_to_date: data.newToValidity
+            validity_to_date: data.newToValidity,
+            extension_document_no: data.amendmentDocumentNumber,
+            extension_date: data.amendmentDocumentDate
         }
 
         try {
@@ -47,6 +51,8 @@ const ExtendValidity = () => {
                 currentToValidity: '',
                 newFromValidity: '',
                 newToValidity: '',
+                amendmentDocumentNumber: '',
+                amendmentDocumentDate: '',
             });
             if (agencyIdFromUrl) {
                 const url = new URL(window.location.href);
@@ -144,8 +150,147 @@ const ExtendValidity = () => {
 
     const formData = watch();
 
+    // Filter and Table State
+    const [tableData, setTableData] = useState([]);
+    const [tableLoading, setTableLoading] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [pageSize, setPageSize] = useState(tableDataPerPage);
+
+    // Filter form
+    const { register: filterRegister, handleSubmit: handleFilterSubmit, setValue: setFilterValue, watch: filterWatch, formState: { errors: filterErrors, isValid: filterIsValid } } = useForm({
+        resolver: zodResolver(extendValidityFilterSchema),
+        mode: 'onChange',
+        defaultValues: {
+            fromDate: '',
+            toDate: '',
+            dateType: 'created_on',
+            amendmentDocumentNo: '',
+            pageSize: tableDataPerPage,
+            agencyId: '',
+        }
+    });
+
+    const fetchTableData = async (filters = {}, page = 1) => {
+        setTableLoading(true);
+        try {
+            const filterValues = { ...filterWatch(), ...filters };
+            const payload = {
+                page,
+                page_size: Number(filterValues.pageSize),
+                filter: {
+                    ...(filterValues.dateType === 'created_on' ? {
+                        creation_date_range: {
+                            from_date: filterValues.fromDate,
+                            to_date: filterValues.toDate
+                        }
+                    } : {
+                        extension_date_range: {
+                            from_date: filterValues.fromDate,
+                            to_date: filterValues.toDate
+                        }
+                    }),
+                    ...(filterValues.agencyId && { agency_id: Number(filterValues.agencyId) }),
+                    ...(filterValues.amendmentDocumentNo && { extension_document_no: filterValues.amendmentDocumentNo })
+                }
+            };
+            const res = await getAgencyExtendValidityLogs(payload);
+            console.log("API Response:", res);
+            setTableData(res?.data?.data || []);
+            setCurrentPage(page);
+            setTotalPages(res.totalPages || 1);
+            setPageSize(payload.page_size);
+        } catch (err) {
+            setTableData([]);
+            setTotalPages(1);
+        } finally {
+            setTableLoading(false);
+        }
+    };
+
+    const columns = [
+        { label: 'Agency Name', key: 'agency_name' },
+        { label: 'Validity From', key: 'validity_from_date' },
+        { label: 'Validity To', key: 'validity_to_date' },
+        { label: 'Amendment Document Number', key: 'extension_document_no' },
+        { label: 'Amendment Document Date', key: 'extension_date' },
+        { label: 'Created On', key: 'created_on' },
+        { label: 'Created By', key: 'created_by_user' },
+    ];
+
+    const formatData = tableData.map((item) => ({
+        ...item,
+        validity_from_date: formatDate(item.validity_from_date),
+        validity_to_date: formatDate(item.validity_to_date),
+        extension_date: formatDate(item.extension_date),
+        created_on: formatDate(item.created_on),
+    }));
+
+    const handlePageChange = (page) => {
+        fetchTableData({}, page);
+    };
+
+    const onFilterSubmit = (data) => {
+        fetchTableData(data, 1);
+    };
+
+    const [exportType, setExportType] = useState('');
+    const [exportLoading, setExportLoading] = useState(false);
+
+    const handleExportFile = async (type) => {
+        setExportType(type);
+        setExportLoading(true);
+        try {
+            const filterValues = filterWatch();
+            const payload = {
+                page: currentPage,
+                page_size: Number(filterValues.pageSize),
+                filter: {
+                    ...(filterValues.dateType === 'created_on' ? {
+                        creation_date_range: {
+                            from_date: filterValues.fromDate,
+                            to_date: filterValues.toDate
+                        }
+                    } : {
+                        extension_date_range: {
+                            from_date: filterValues.fromDate,
+                            to_date: filterValues.toDate
+                        }
+                    }),
+                    ...(filterValues.agencyId && { agency_id: Number(filterValues.agencyId) }),
+                    ...(filterValues.amendmentDocumentNo && { extension_document_no: filterValues.amendmentDocumentNo })
+                }
+            };
+            const response = await downloadAgencyExtendValidityLogs(payload, type);
+            const contentDisposition = response.headers["content-disposition"];
+            let filename = "ExtendValidityLogs";
+            if (contentDisposition) {
+                const matches = contentDisposition.match(/filename="(.+)"/);
+                if (matches && matches.length > 1) {
+                    filename = matches[1];
+                }
+            }
+            const blob = new Blob([response.data], { type: response.headers['content-type'] });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        } catch (err) {
+            toast.error('Export failed');
+        } finally {
+            setExportLoading(false);
+            setExportType('');
+        }
+    };
+
+    console.log("Table Data:", errors);
+
     return (
-        <AuthUserReusableCode pageTitle="Extend Validity" isLoading={isLoading}>
+        <AuthUserReusableCode pageTitle="Extend Validity" isLoading={isLoading || tableLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                     {/* <CustomizedSelectInputWithLabel
@@ -217,6 +362,22 @@ const ExtendValidity = () => {
                         required
                         {...register('newToValidity')}
                     />
+                    <CustomizedInputWithLabel
+                        label="Amendment Document Number"
+                        errors={errors.amendmentDocumentNumber}
+                        containerClass=""
+                        placeholder="Enter Amendment Document Number"
+                        required
+                        {...register('amendmentDocumentNumber')}
+                    />
+                    <CustomizedInputWithLabel
+                        label="Amendment Document Date"
+                        errors={errors.amendmentDocumentDate}
+                        containerClass=""
+                        type="date"
+                        required
+                        {...register('amendmentDocumentDate')}
+                    />
                 </div>
                 <div className="flex justify-end mt-4">
                     <Button type="submit" variant="default" disabled={isSubmitting}>
@@ -226,6 +387,75 @@ const ExtendValidity = () => {
                     </Button>
                 </div>
             </form>
+            {/* Filter and Table Section */}
+            <div className="mt-8">
+                <form className="grid grid-cols-5 gap-4" onSubmit={handleFilterSubmit(onFilterSubmit)}>
+                    <CustomizedInputWithLabel
+                        label="From Date"
+                        type="date"
+                        {...filterRegister('fromDate')}
+                        errors={filterErrors.fromDate}
+                    />
+                    <CustomizedInputWithLabel
+                        label="To Date"
+                        type="date"
+                        {...filterRegister('toDate')}
+                        errors={filterErrors.toDate}
+                    />
+                    <CustomizedSelectInputWithLabel
+                        label="Date Type"
+                        list={[
+                            { label: 'Created On', value: 'created_on' },
+                            { label: 'Amendment Document Date', value: 'extension_date' },
+                        ]}
+                        {...filterRegister('dateType')}
+                        errors={filterErrors.dateType}
+                    />
+                    <CustomizedSelectInputWithLabel
+                        label="Agency"
+                        list={agencyList}
+                        {...filterRegister('agencyId')}
+                        errors={filterErrors.agencyId}
+                    />
+                    <CustomizedInputWithLabel
+                        label="Amendment Document No."
+                        {...filterRegister('amendmentDocumentNo')}
+                        errors={filterErrors.amendmentDocumentNo}
+                    />
+                    <CustomizedInputWithLabel
+                        label="Page Size"
+                        type="number"
+                        {...filterRegister('pageSize', { valueAsNumber: true })}
+                        errors={filterErrors.pageSize}
+                    />
+                    <div className='mt-6'>
+                        <Button variant='default' type='submit'>Search</Button>
+                    </div>
+                    <CustomizedSelectInputWithLabel
+                        label="Export"
+                        placeholder="Export to"
+                        list={exportPicklist}
+                        value={exportType}
+                        onChange={(e) => handleExportFile(e.target.value)}
+                        containerClass=""
+                        disabled={!filterIsValid || exportLoading}
+                        errors={undefined}
+                    />
+                </form>
+                <div className='mt-4'>
+                    <ReactTable
+                        data={formatData}
+                        columns={columns}
+                        avoidSrNo={false}
+                        itemsPerPage={pageSize}
+                        dynamicPagination
+                        pageNumber={currentPage}
+                        totalPageNumber={totalPages}
+                        onPageChange={handlePageChange}
+                        hideSearchAndOtherButtons
+                    />
+                </div>
+            </div>
         </AuthUserReusableCode>
     );
 };

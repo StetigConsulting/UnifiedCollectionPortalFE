@@ -401,6 +401,13 @@ export const extendValiditySchema = z.object({
     .refine((value) => !isNaN(Date.parse(value)), {
       message: "Validity date must be a valid date",
     }),
+  amendmentDocumentNumber: z.string().nonempty("Amendment Document Number is required"),
+  amendmentDocumentDate: z
+    .string()
+    .nonempty("Amendment Document Date is required")
+    .refine((value) => !isNaN(Date.parse(value)), {
+      message: "Amendment Document Date must be a valid date",
+    }),
 }).superRefine((data, ctx) => {
   const currentFrom = new Date(data.currentFromValidity);
   const currentTo = new Date(data.currentToValidity);
@@ -429,6 +436,17 @@ export const extendValiditySchema = z.object({
       code: z.ZodIssueCode.custom,
     });
   }
+});
+
+export const extendValidityFilterSchema = z.object({
+  fromDate: z.string().min(1, 'From Date is required'),
+  toDate: z.string().min(1, 'To Date is required'),
+  dateType: z.string().min(1, 'Date Type is required'),
+  agencyId: z.string().min(1, 'Agency is required'),
+  amendmentDocumentNo: z.string().optional(),
+  pageSize: z.number({
+    invalid_type_error: 'Page size is required'
+  }).min(1, "Page size is required"),
 });
 
 export const resetDeviceSchema = z.object({
