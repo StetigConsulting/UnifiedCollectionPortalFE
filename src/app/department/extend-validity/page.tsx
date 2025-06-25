@@ -198,8 +198,8 @@ const ExtendValidity = () => {
             console.log("API Response:", res);
             setTableData(res?.data?.data || []);
             setCurrentPage(page);
-            setTotalPages(res.totalPages || 1);
-            setPageSize(payload.page_size);
+            setTotalPages(res?.data?.totalPages || 1);
+            setPageSize(res?.data?.pageSize);
         } catch (err) {
             setTableData([]);
             setTotalPages(1);
