@@ -17,6 +17,7 @@ import { useSession } from 'next-auth/react';
 import { formatDate, exportPicklist, tableDataPerPage } from '@/lib/utils';
 import ReactTable from '@/components/ReactTable';
 import { getAgencyExtendValidityLogs, downloadAgencyExtendValidityLogs } from '@/app/api-calls/report/api';
+import moment from 'moment';
 
 type FormData = z.infer<typeof extendValiditySchema>;
 
@@ -223,7 +224,7 @@ const ExtendValidity = () => {
         validity_from_date: formatDate(item.validity_from_date),
         validity_to_date: formatDate(item.validity_to_date),
         extension_date: formatDate(item.extension_date),
-        created_on: formatDate(item.created_on),
+        created_on: moment(item.created_on).format('DD/MM/YYYY, HH:MM:SS'),
     }));
 
     const handlePageChange = (page) => {

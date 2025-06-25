@@ -136,7 +136,7 @@ const EditCollector = () => {
         }
     }
 
-    const [agencyData, setAgencyData] = useState({})
+    const [agencyData, setAgencyData] = useState({ is_inherited_vendor_id: false, vendor_id: '' })
 
     const getAgencyData = async (id: number) => {
         try {
@@ -332,6 +332,11 @@ const EditCollector = () => {
                             currentAction: 'disabledVendorIdEdit'
                         })}
                         {...register('vendorId')} />
+                    {
+                        agencyData?.is_inherited_vendor_id &&
+                        <CustomizedInputWithLabel label='Inherited Agency Vendor Id'
+                            value={agencyData?.vendor_id} disabled />
+                    }
                 </div>
                 <div className="flex justify-end mt-4">
                     <AlertPopupWithState

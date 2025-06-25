@@ -47,7 +47,7 @@ const AddCounterCollector = () => {
     const [subDivisions, setSubDivisions] = useState([]);
     const [sections, setSections] = useState([]);
 
-    const [agencyData, setAgencyData] = useState({ working_level: null, maximum_limit: null, is_inherited_vendor_id: false });
+    const [agencyData, setAgencyData] = useState({ working_level: null, maximum_limit: null, is_inherited_vendor_id: false, vendor_id: '' });
 
     const [collectionTypeList, setCollectionTypeList] = useState(collectionTypePickList)
 
@@ -661,6 +661,11 @@ const AddCounterCollector = () => {
                             <CustomizedInputWithLabel label='Vendor Id' errors={errors.vendorId}
                                 placeholder='Enter Vendor Id' disabled={agencyData?.is_inherited_vendor_id}
                                 {...register('vendorId')} />
+                            {
+                                agencyData?.is_inherited_vendor_id &&
+                                <CustomizedInputWithLabel label='Inherited Agency Vendor Id'
+                                    value={agencyData?.vendor_id} disabled />
+                            }
                         </>
                     }
                 </div>
