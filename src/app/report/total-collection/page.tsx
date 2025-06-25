@@ -67,7 +67,6 @@ const TotalCollectionReport = () => {
                     return acc;
                 }, {});
 
-            console.log(levelIdMap)
             setWorkingLevelList(data?.data
                 ?.filter((item) => item.levelType === "MAIN")
                 ?.map((item) => ({
@@ -123,7 +122,7 @@ const TotalCollectionReport = () => {
             setCurrentPage(page);
             setTotalPages(response.data.totalPages)
         } catch (error) {
-            console.log(getErrorMessage(error))
+            console.error(getErrorMessage(error))
         } finally {
             setIsLoading(false);
         }
@@ -370,7 +369,7 @@ const TotalCollectionReport = () => {
                 value: item?.id,
             })))
         } catch (err) {
-            console.log(err)
+            console.error(err)
         } finally {
             setIsLoading(false)
         }

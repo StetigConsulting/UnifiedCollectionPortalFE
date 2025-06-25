@@ -88,7 +88,7 @@ const ReconciliationReport = () => {
             setCurrentPage(page);
             setTotalPages(response.data.totalPages)
         } catch (error) {
-            console.log(getErrorMessage(error))
+            console.error(getErrorMessage(error))
         } finally {
             setIsLoading(false);
         }
@@ -170,7 +170,7 @@ const ReconciliationReport = () => {
                 value: item?.id,
             })))
         } catch (err) {
-            console.log(err)
+            console.error(err)
         } finally {
             setIsLoading(false)
         }

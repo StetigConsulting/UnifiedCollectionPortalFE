@@ -93,8 +93,6 @@ const ColorCodingLogic = () => {
 
             const transformedData = transformRules(response?.data);
             setColorLogicEntries(transformedData);
-
-            console.log(response);
         } catch (error) {
             console.error('Failed to get data:', error);
         } finally {

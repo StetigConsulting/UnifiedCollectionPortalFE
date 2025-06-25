@@ -43,8 +43,6 @@ const AgentLoginReport = () => {
                 label: `${item?.agency_name} - ${item?.phone}`,
                 value: item?.id,
             })))
-        } catch (err) {
-            console.log(err)
         } finally {
             setIsLoading(false)
         }
@@ -106,7 +104,7 @@ const AgentLoginReport = () => {
             setShowTable(true)
             setIsLoading(false);
         } catch (error) {
-            console.log(getErrorMessage(error))
+            console.error(getErrorMessage(error))
         } finally {
             setIsLoading(false);
         }

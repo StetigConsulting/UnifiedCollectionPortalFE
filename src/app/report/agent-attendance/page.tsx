@@ -75,7 +75,6 @@ const AgentAttendanceReport = () => {
                     return acc;
                 }, {});
 
-            console.log(levelIdMap)
             setWorkingLevelList(data?.data
                 ?.filter((item) => item.levelType === "MAIN")
                 ?.map((item) => ({
@@ -106,7 +105,6 @@ const AgentAttendanceReport = () => {
             // setCurrentPage(page);
             // setTotalPages(response.data.totalPages)
         } catch (error) {
-            console.log(getErrorMessage(error))
             toast.error(getErrorMessage(error))
         } finally {
             setIsLoading(false);

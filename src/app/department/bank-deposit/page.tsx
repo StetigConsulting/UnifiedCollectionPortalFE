@@ -87,12 +87,10 @@ const AgentBankDeposit = () => {
             const response = await addAgencyBankDeposit(payload);
 
             toast.success("Agency Bank deposit added successfully");
-            console.log("API Response:", response);
             reset();
             getDepositHistory()
         } catch (error) {
             let errorMessage = getErrorMessage(error);
-            console.log(errorMessage)
             toast.error('Error: ' + errorMessage)
         } finally {
             setIsSubmitting(false);
@@ -160,7 +158,7 @@ const AgentBankDeposit = () => {
             setTransactionHistory(response.data.data);
             setCurrentPage(page);
         } catch (error) {
-            console.log(getErrorMessage(error))
+            console.error(getErrorMessage(error))
         } finally {
             setIsLoading(false);
         }

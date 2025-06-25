@@ -140,7 +140,7 @@ const ResetDeviceCollector = () => {
                 date: moment(item?.created_on).format('DD-MM-YYYY')
             })))
         } catch (error) {
-            console.log('Error: ' + getErrorMessage(error))
+            console.error('Error: ' + getErrorMessage(error))
         } finally {
             setIsLoading(false)
         }

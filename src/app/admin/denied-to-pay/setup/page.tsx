@@ -36,7 +36,6 @@ const SetupDeniedToPay = () => {
     const formData = watch();
 
     const onSubmit = async (data: FormData) => {
-        console.log("Form Data:", data);
         try {
             let payload: DeniedToPayInterface = {
                 "discom_id": session?.user?.discomId,

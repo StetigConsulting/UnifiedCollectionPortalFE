@@ -36,12 +36,10 @@ const CreateUserForm = () => {
             }
 
             const response = await createUser(payload);
-            console.log('Submitted Data:', data);
             toast.success("User Created Successfully!");
             reset();
         } catch (error) {
             toast.error("Error: " + getErrorMessage(error));
-            console.error(error);
         } finally {
             setIsSubmitting(false);
         }

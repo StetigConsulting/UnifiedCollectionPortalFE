@@ -84,7 +84,7 @@ const OTPPopup: React.FC<OTPPopupProps> = ({ sendOTP, setResendTimer, isOpen, se
             }
 
         } catch (error) {
-            console.log("An unexpected error occurred. Please try again.", error)
+            console.error("An unexpected error occurred. Please try again.", error)
         } finally {
             setIsValidating(false);
         }

@@ -187,7 +187,7 @@ const EditIncentivePage = () => {
                 setValue('circle', [data?.office_structure?.id])
             }
         } catch (error) {
-            console.log(error)
+            console.error(error)
         } finally {
             setIsLoading(false)
         }

@@ -245,14 +245,11 @@ const AddCollectorIncentive = () => {
                     return acc;
                 }, {});
 
-            console.log(levelIdMap)
             setLevelNameMappedWithId(levelIdMap)
             setValue(`incentives.0.levelMapWithId`, levelIdMap);
         })
         setIsLoading(false)
     }
-
-    console.log(errors)
 
     return (
         <AuthUserReusableCode pageTitle="Add Incentive" isLoading={isLoading}>

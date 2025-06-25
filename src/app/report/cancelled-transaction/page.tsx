@@ -100,7 +100,7 @@ const CancelTransaction = () => {
             setCurrentPage(page);
             setTotalPages(response.data.totalPages)
         } catch (error) {
-            console.log(getErrorMessage(error))
+            console.error(getErrorMessage(error))
         } finally {
             setIsLoading(false);
         }

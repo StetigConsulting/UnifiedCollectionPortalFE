@@ -83,13 +83,10 @@ const EditReceiptsForPostpaid = () => {
                 };
                 const response = await editReceiptForPostpaid(payload);
                 setIsSubmitting(true);
-                console.log("API Response:", response);
-                setIsLoading(true)
                 router.push('/admin/receipt-for-postpaid')
             }
             toast.success('Number of Receipts Rule Updated Successfully');
         } catch (error) {
-            console.log(error)
             toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsSubmitting(false);
@@ -220,7 +217,6 @@ const EditReceiptsForPostpaid = () => {
         setIsLoading(true)
         try {
             const response = await getReceiptForPostpaidById(id);
-            console.log("API Response:", response);
             let payload = {
                 receiptsPerMonth: response?.data?.json_rule?.receipt_per_month_per_bill,
                 receiptsPerDay: response?.data?.json_rule?.receipt_per_day_per_bill,
@@ -273,13 +269,11 @@ const EditReceiptsForPostpaid = () => {
                 setValue('receipts.0.circle', [data?.office_structure?.id])
             }
         } catch (error) {
-            console.log(error)
+            console.error(error)
         } finally {
             setIsLoading(false)
         }
     }
-
-    console.log(errors, receipts)
 
     return (
         <AuthUserReusableCode pageTitle="Receipts for Postpaid" isLoading={isLoading}>
@@ -304,9 +298,7 @@ const EditReceiptsForPostpaid = () => {
                                             list={listOfPicklist[index]?.circle}
                                             placeholder="Select Circle Type"
                                             value={watch(`receipts.${index}.circle`) || []}
-                                            // onChange={(selectedValues) => setValue(`receipts.${index}.circle`, selectedValues)}
                                             onChange={(selectedValues) => handleCircleChange(index, selectedValues, receipts[index].applicableLevel)}
-                                        // multi={receipts[index].applicableLevel == levelNameMappedWithId.CIRCLE}
                                         />
                                     }
                                     {receipts[index].applicableLevel && receipts[index].applicableLevel != levelNameMappedWithId.CIRCLE && (
@@ -316,9 +308,7 @@ const EditReceiptsForPostpaid = () => {
                                             list={listOfPicklist[index]?.division}
                                             disabled={receipts[index]?.circle?.length == 0}
                                             value={watch(`receipts.${index}.division`) || []}
-                                            // onChange={(selectedValues) => setValue(`receipts.${index}.division`, selectedValues)}
                                             onChange={(selectedValues) => handleDivisionChange(index, selectedValues, receipts[index].applicableLevel)}
-                                            // multi={receipts[index].applicableLevel == levelNameMappedWithId.DIVISION}
                                             errors={errors?.receipts?.[index]?.division}
                                         />
                                     )}
@@ -331,8 +321,6 @@ const EditReceiptsForPostpaid = () => {
                                                 disabled={receipts[index]?.division?.length == 0}
                                                 value={watch(`receipts.${index}.subDivision`) || []}
                                                 onChange={(selectedValues) => handleSubDivisionChange(index, selectedValues, receipts[index].applicableLevel)}
-                                                // onChange={(selectedValues) => setValue(`receipts.${index}.subDivision`, selectedValues)}
-                                                // multi={receipts[index].applicableLevel == levelNameMappedWithId.DIVISION}
                                                 errors={errors?.receipts?.[index]?.subDivision}
                                             />
                                         )}
@@ -347,7 +335,6 @@ const EditReceiptsForPostpaid = () => {
                                                 required={true}
                                                 disabled={receipts[index]?.subDivision?.length == 0}
                                                 value={watch(`receipts.${index}.section`) || []}
-                                                // multi={receipts[index]?.applicableLevel == levelNameMappedWithId.SECTION}
                                                 onChange={(selectedValues) => setValue(`receipts.${index}.section`, selectedValues)}
                                             />
                                         )

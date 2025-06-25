@@ -68,7 +68,6 @@ const AddCollectorTypeSetup = () => {
             }))
             setIsErrorModalOpened(true)
             setErrorMessage(error.error)
-            console.log(flattenedErrors);
             setErrorValidationIssues(flattenedErrors);
         } finally {
             setIsSubmitting(false);

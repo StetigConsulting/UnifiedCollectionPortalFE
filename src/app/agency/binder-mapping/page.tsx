@@ -72,7 +72,6 @@ const BinderMapping = () => {
         } catch (error) {
             let errorMessage = getErrorMessage(error);
             toast.error('Error: ' + errorMessage);
-            console.error('Error:', error);
         } finally {
             setIsSubmitting(false)
         }
@@ -96,7 +95,6 @@ const BinderMapping = () => {
                 setShowRestFields(true)
                 await getListOfAllBinders(response.data.id)
             } catch (error) {
-                console.log(error.message);
                 let errorMessage = getErrorMessage(error);
                 toast.error('Error: ' + errorMessage || error.message)
                 setShowRestFields(false)

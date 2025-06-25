@@ -42,7 +42,6 @@ const EclConsumerMapping: React.FC = () => {
             }
 
             const contentType = response.headers["content-disposition"];
-            console.log(contentType)
             let extension = "csv";
 
             const blob = new Blob([response.data], { type: contentType });
@@ -129,7 +128,6 @@ const EclConsumerMapping: React.FC = () => {
             setIsErrorModalOpen(true);
             setSelectedFile(null)
             setErrorMessage(error.error)
-            console.log(flattenedErrors);
             setErrorValidationIssues(flattenedErrors || []);
             // toast.error('Error: ' + getErrorMessage(error));
         } finally {

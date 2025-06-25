@@ -18,7 +18,7 @@ const ChangeSection = () => {
     });
 
     const onSubmit = (data: FormData) => {
-        // Remove console.log statements
+
     };
 
     return (

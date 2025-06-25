@@ -74,7 +74,6 @@ const AddPaymentConfiguration: React.FC = () => {
             // toast.error('Error: ' + (error.error));
             setIsErrorModalOpened(true)
             setErrorMessage(error.error)
-            console.log(flattenedErrors);
             setErrorValidationIssues(flattenedErrors);
         } finally {
             setIsSubmitting(false);

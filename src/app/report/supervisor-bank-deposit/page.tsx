@@ -53,7 +53,7 @@ const SupervisorBankDepositReport = () => {
                 }))
             );
         } catch (err) {
-            console.log('Failed to load agencies', err);
+            console.error('Failed to load agencies', err);
         }
     };
 

@@ -80,7 +80,6 @@ const DailyEnergyCollection = () => {
                     return acc;
                 }, {});
 
-            console.log(levelIdMap)
             setWorkingLevelList(data?.data
                 ?.filter((item) => item.levelType === "MAIN")
                 ?.map((item) => ({
@@ -117,7 +116,7 @@ const DailyEnergyCollection = () => {
             setCurrentPage(page);
             setTotalPages(response.data.totalPages)
         } catch (error) {
-            console.log(getErrorMessage(error))
+            console.error(getErrorMessage(error))
         } finally {
             setIsLoading(false);
         }
@@ -166,7 +165,6 @@ const DailyEnergyCollection = () => {
     }))
 
     const getPayload = (data) => {
-        console.log(data)
         let filter = {
             ...data?.dateType === 'transaction_date' && {
                 transaction_date_range: {

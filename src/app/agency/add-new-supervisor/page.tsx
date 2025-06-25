@@ -81,7 +81,7 @@ const AddNewSupervisor = () => {
             const response = await getListOfAllSupervisor(session?.user?.userId)
             setSupervisorList(response?.data)
         } catch (error) {
-            console.log('Error: ' + getErrorMessage(error))
+            console.error('Error: ' + getErrorMessage(error))
         } finally {
             setIsLoading(false)
         }
@@ -96,7 +96,6 @@ const AddNewSupervisor = () => {
     const [selectedRow, setSelectedRow] = useState<any | null>(null);
 
     const handleRowSelection = (row: any) => {
-        console.log(row)
         setSelectedRow(row)
     }
 

@@ -72,7 +72,6 @@ const DeniedEnergyConsumer = () => {
                     return acc;
                 }, {});
 
-            console.log(levelIdMap)
             setWorkingLevelList(data?.data
                 ?.filter((item) => item.levelType === "MAIN")
                 ?.map((item) => ({
@@ -109,7 +108,7 @@ const DeniedEnergyConsumer = () => {
             setCurrentPage(page);
             setTotalPages(response.data.totalPages)
         } catch (error) {
-            console.log(getErrorMessage(error))
+            console.error(getErrorMessage(error))
         } finally {
             setIsLoading(false);
         }
@@ -335,8 +334,6 @@ const DeniedEnergyConsumer = () => {
         const payload = getPayload(formData)
         getReportData(payload, page)
     }
-
-    // console.log("dataList", errors)
 
     return (
         <AuthUserReusableCode pageTitle="Denied to Pay Consumer Non Energy Report" isLoading={isLoading}>

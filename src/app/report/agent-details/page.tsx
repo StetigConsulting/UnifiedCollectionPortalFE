@@ -82,7 +82,7 @@ const AgentDetails = () => {
             setTotalPages(response.data.totalPages)
             setIsLoading(false);
         } catch (error) {
-            console.log(getErrorMessage(error))
+            console.error(getErrorMessage(error))
         } finally {
             setIsLoading(false);
         }
