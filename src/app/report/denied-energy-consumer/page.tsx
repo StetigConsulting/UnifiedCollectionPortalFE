@@ -74,7 +74,6 @@ const DeniedEnergyConsumer = () => {
                     return acc;
                 }, {});
 
-            console.log(levelIdMap)
             setWorkingLevelList(data?.data
                 ?.filter((item) => item.levelType === "MAIN")
                 ?.map((item) => ({
@@ -232,9 +231,7 @@ const DeniedEnergyConsumer = () => {
     };
 
     const handleWorkingLevelChange = (selectedValue) => {
-        console.log("selectedValue", selectedValue.target.value)
         if (!selectedValue.target.value) {
-            console.log("selectedValuedd", selectedValue.target.value)
             setValue('workingLevel', null)
             clearErrors('workingLevel')
             setValue('circle', []);
@@ -243,7 +240,6 @@ const DeniedEnergyConsumer = () => {
             setValue('section', []);
             return
         } else {
-            console.log("selectedValuedd", selectedValue.target.value)
             setValue('workingLevel', parseInt(selectedValue.target.value))
             clearErrors('workingLevel')
             setValue('circle', []);

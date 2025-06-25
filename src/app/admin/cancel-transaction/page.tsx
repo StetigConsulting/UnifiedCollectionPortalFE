@@ -35,7 +35,6 @@ const CancelTransactionPage = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const onSubmit = async (data: any) => {
-        console.log("Searching with:", data);
         let payload = {
             record_type: data?.type,
             record_id: data?.recordId,
@@ -46,7 +45,6 @@ const CancelTransactionPage = () => {
         try {
             setIsLoading(true);
             const response = await getAllListOfReceipts(payload);
-            console.log("Response:", response);
             setDataList(response?.data || []);
         } catch (error) {
             console.log(getErrorMessage(error))
@@ -95,7 +93,6 @@ const CancelTransactionPage = () => {
             await cancelTransactionWithId(payload);
             toast.success('Transaction cancelled successfully!');
         } catch (error) {
-            console.error('Error cancelling transaction:', error);
             setErrorMessage(getErrorMessage(error));
             setIsErrorModalOpened(true);
         } finally {

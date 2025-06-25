@@ -20,7 +20,7 @@ const CreateDepartmentUserForm = () => {
     });
 
     const onSubmit = (data: FormData) => {
-        console.log(data);
+        // Remove console.log statements
     };
 
     const handleCancel = () => {

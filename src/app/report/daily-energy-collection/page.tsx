@@ -358,8 +358,6 @@ const DailyEnergyCollection = () => {
         getReportData(payload, page)
     }
 
-    console.log(errors)
-
     const [agencyList, setAgencyList] = useState([]);
 
     const getAgencyList = async () => {

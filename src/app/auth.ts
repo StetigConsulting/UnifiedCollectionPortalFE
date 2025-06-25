@@ -39,8 +39,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     // tokenExpiry: Date.now() + 1 * 60 * 1000,
                 };
 
-                console.log(Date.now(), Date.now() + Number(credentials.expires_in))
-
                 try {
                     const userRoleResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL_BACKEND}/v1/tp-users/user-info`, {
                         method: "GET",
@@ -53,7 +51,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
                     if (userRoleResponse.ok) {
                         const roleData = await userRoleResponse.json();
-                        console.log('userRoleResponse', roleData)
                         user.id = String(roleData?.data?.id);
                         user.userName = roleData?.data?.user_name;
                         user.userId = parseInt(roleData?.data?.id);
@@ -93,7 +90,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             const tokenExpiry = token.tokenExpiry as number;
 
             if (Date.now() < tokenExpiry) {
-                console.log(Date.now(), tokenExpiry)
                 return token;
             }
 
@@ -101,7 +97,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         },
         async session({ session, token }) {
             if (!token || !token.accessToken) {
-                console.log("Session expired, logging out...");
                 return null;
             }
             session.user.id = token.id as string;
@@ -142,10 +137,7 @@ async function refreshAccessToken(token) {
 
         const refreshedTokens = await response.json();
 
-        // console.log('token tefff', refreshedTokens)
-
         if (response.status === 401) {
-            console.error("Refresh token expired, logging out user.");
             return {
                 ...token,
                 error: "RefreshAccessTokenError",

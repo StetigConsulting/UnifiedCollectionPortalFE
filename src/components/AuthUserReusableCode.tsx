@@ -58,7 +58,6 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
     }
 
     useEffect(() => {
-        console.log('session', session, status)
         // if (session == null) {
         //     console.log('session expired', session, status)
         //     toast.error('Session Expired')

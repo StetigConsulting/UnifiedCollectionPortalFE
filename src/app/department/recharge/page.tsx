@@ -48,7 +48,6 @@ const Recharge = () => {
             const url = new URL(window.location.href);
             url.search = '';
             window.history.pushState({}, '', url.href);
-            console.log("API Response:", response);
             reset({
                 agency: null,
                 agencyName: "",
@@ -77,7 +76,6 @@ const Recharge = () => {
         setIsLoading(true);
         try {
             const response = await getAgenciesWithDiscom(session?.user?.discomId);
-            console.log("API Response:", response);
             setAgencyList(
                 response?.data?.map((item) => ({
                     ...item,
@@ -131,7 +129,6 @@ const Recharge = () => {
         try {
             const response = await getAgencyById(id);
             const agency = response.data;
-            console.log("Agency Data:", agency);
             setValue('agency', agency.id);
             setValue('agencyId', agency.id || null);
             setValue('agencyName', agency.agency_name || '');

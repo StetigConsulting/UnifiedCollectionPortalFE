@@ -71,8 +71,6 @@ const AddNewSupervisor = () => {
         { label: 'Mobile No.', key: 'phone' },
     ];
 
-    console.log(errors)
-
     useEffect(() => {
         getAllListOfSupervisor()
     }, [])

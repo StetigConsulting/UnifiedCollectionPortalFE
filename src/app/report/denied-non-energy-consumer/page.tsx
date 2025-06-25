@@ -241,9 +241,7 @@ const DeniedEnergyConsumer = () => {
     };
 
     const handleWorkingLevelChange = (selectedValue) => {
-        console.log("selectedValue", selectedValue.target.value)
         if (!selectedValue.target.value) {
-            console.log("selectedValueddss", selectedValue.target.value)
             setValue('workingLevel', null)
             clearErrors('workingLevel')
             setValue('circle', []);
@@ -252,7 +250,6 @@ const DeniedEnergyConsumer = () => {
             setValue('section', []);
             return
         } else {
-            console.log("selectedValuedd", selectedValue.target.value)
             setValue('workingLevel', parseInt(selectedValue.target.value))
             clearErrors('workingLevel')
             setValue('circle', []);

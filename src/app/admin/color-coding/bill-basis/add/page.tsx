@@ -89,11 +89,9 @@ const AddBillBasis = () => {
             } else {
                 response = await createColorCodingBillBasis(payload);
             }
-            console.log('Submitting Data:', response.data);
             toast.success('Color coding rules saved successfully!');
             router.replace(urlsListWithTitle.billBasis.url);
         } catch (error) {
-            console.log('Error:', error?.error)
             toast.error('Error: ' + error?.error);
         } finally {
             setIsSubmitting(false);
@@ -117,7 +115,6 @@ const AddBillBasis = () => {
         setIsLoading(true);
         try {
             const response = await getBusinessRuleDateById(id);
-            console.log("API Response:", response.data.json_rule.bill_basis);
             let fetchedData = response.data.json_rule.bill_basis.map((data, index) => {
                 return {
                     fontType: data.bill_type,

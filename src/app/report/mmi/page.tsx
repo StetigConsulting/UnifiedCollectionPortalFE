@@ -56,7 +56,6 @@ const MMI = () => {
             const data = await res.json();
             if (!res.ok) throw new Error(data.error);
             setAccessToken(data?.access_token)
-            console.log('Access Token from backend:', data.access_token);
         } catch (err) {
             console.error('Token fetch error:', err.message);
         }
@@ -73,7 +72,6 @@ const MMI = () => {
                     return acc;
                 }, {});
 
-            console.log(levelIdMap)
             setWorkingLevelList(data?.data
                 ?.filter((item) => item.levelType === "MAIN")
                 ?.map((item) => ({
@@ -93,7 +91,6 @@ const MMI = () => {
         getWorkingLevel()
         getAgencyByDiscom()
         getRosourceByDiscomId(session?.user?.discomId).then((res) => {
-            console.log(res)
             const logoValue = res.data.find(item => item.name === "Name")?.value;
             setDiscomName(logoValue);
         })
@@ -250,13 +247,11 @@ const MMI = () => {
 
     const [iframeUrl, setIframeUrl] = useState('')
     const [showIframe, setShowIframe] = useState(false)
-    console.log(iframeUrl, 'errors', errors)
 
     const [agenciesList, setAgenciesList] = useState([])
 
     const getAgencyByDiscom = async () => {
         await getAgenciesWithDiscom(session?.user?.discomId).then(res => {
-            console.log(res.data)
             setAgenciesList(res.data.map((item) => {
                 return {
                     value: item.id,
@@ -278,7 +273,6 @@ const MMI = () => {
         }
         setIsLoading(true)
         const res = await getAllAgentByAgencyId(agencyId);
-        console.log(res)
         if (res?.data) {
             setAgentList(
                 res.data.map((agent) => ({

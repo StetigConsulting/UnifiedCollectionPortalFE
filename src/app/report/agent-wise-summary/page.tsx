@@ -58,7 +58,6 @@ const AgentWiseSummary = () => {
                     return acc;
                 }, {});
 
-            console.log(levelIdMap)
             setWorkingLevelList(data?.data
                 ?.filter((item) => item.levelType === "MAIN")
                 ?.map((item) => ({
@@ -171,7 +170,6 @@ const AgentWiseSummary = () => {
     ], []);
 
     const getPayload = (data) => {
-        console.log(data)
         let filter = {
             ...data?.dateType === 'transaction_date' && {
                 transaction_date_range: {
@@ -362,8 +360,6 @@ const AgentWiseSummary = () => {
         getReportData(payload, page)
     }
 
-    console.log(errors)
-
     const getColumnsByReportType = (type) => {
         if (agentReportKeyValue?.agentWise === type) {
             return columnsAgentWise
@@ -485,7 +481,6 @@ const AgentWiseSummary = () => {
                     pageNumber={currentPage}
                     onPageChange={handlePageChange}
                     totalPageNumber={totalPages}
-                // handleExportFile={handleExportFile}
                 />}
             </div>
         </AuthUserReusableCode>

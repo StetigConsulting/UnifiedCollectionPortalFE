@@ -106,10 +106,7 @@ const ViewBalance = () => {
         // ),
     }));
 
-    console.log(tableData)
-
     const handleRowSelection = (row: any) => {
-        console.log(row)
         setSelectedRow(row)
     }
 

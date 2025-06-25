@@ -105,11 +105,9 @@ const AddColorCodingLogic = () => {
             } else {
                 response = await createColorCodingLogic(payload);
             }
-            console.log('Submitting Data:', response.data);
             toast.success('Color coding rules saved successfully!');
             router.push('/admin/color-coding/logic');
         } catch (error) {
-            console.log('Error:', error?.error)
             toast.error('Error: ' + error?.error);
         } finally {
             setIsSubmitting(false);
@@ -133,7 +131,6 @@ const AddColorCodingLogic = () => {
         setIsLoading(true);
         try {
             const response = await getBusinessRuleDateById(id);
-            console.log("API Response:", response.data.json_rule.ranges);
             let fetchedData = response.data.json_rule.ranges.map((data, index) => {
                 return {
                     value1Type: data.R1.type,

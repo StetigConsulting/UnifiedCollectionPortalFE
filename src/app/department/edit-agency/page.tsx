@@ -55,7 +55,6 @@ const EditAgency = () => {
             setIsSubmitting(true);
             const response = await editAgency(payload);
             toast.success("Agency edited successfully");
-            console.log("API Response:", response);
             reset({
                 agency: null,
                 agencyId: null,
@@ -103,7 +102,6 @@ const EditAgency = () => {
                 label: response.data.agency_name,
                 value: response.data.id,
             }]);
-            console.log("Agency Data:", agency);
             setValue('agencyId', agency.id || null);
             setValue('agencyName', agency.agency_name || '');
             setValue('phoneNumber', agency.phone || '');
@@ -115,7 +113,6 @@ const EditAgency = () => {
             setValue('vendorCode', agency.vendor_id || '');
             let paymentMode = [];
             paymentMode = agency.collection_payment_modes?.map((item) => item.id);
-            console.log("Payment Mode", paymentMode, agency.collection_payment_modes);
             setValue('permission', paymentMode || []);
             let collectionType = [];
             if (agency.collection_type_energy) {
@@ -161,7 +158,6 @@ const EditAgency = () => {
         setIsLoading(true);
         try {
             const response = await getAgenciesWithDiscom(session?.user?.discomId);
-            console.log("API Response:", response);
             setAgencyList(
                 response?.data?.map((item) => ({
                     ...item,
@@ -195,7 +191,6 @@ const EditAgency = () => {
                 setValue('vendorCode', agency.vendor_id || '');
                 let paymentMode = [];
                 paymentMode = agency.collection_payment_modes?.map((item) => item.id);
-                console.log("Payment Mode", paymentMode, agency.collection_payment_modes);
                 setValue('permission', paymentMode || []);
                 let collectionType = [];
                 if (agency.collection_type_energy) {

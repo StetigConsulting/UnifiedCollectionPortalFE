@@ -409,8 +409,6 @@ const TotalCollectionReport = () => {
         getAgencyList();
     }, []);
 
-    console.log(formData)
-
     return (
         <AuthUserReusableCode pageTitle="Total Collection" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="flex items-center gap-4">

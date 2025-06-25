@@ -199,7 +199,6 @@ const ViewAgency = () => {
     }]
 
     const handleRowSelection = (row: any) => {
-        console.log(row)
         setSelectedRow(row)
     }
 

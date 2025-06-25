@@ -270,8 +270,6 @@ const EditIncentivePage = () => {
 
     const incentive = watch()
 
-    console.log(incentive)
-
     return (
         <AuthUserReusableCode pageTitle="Edit Incentive" isLoading={isLoading}>
             <form onSubmit={handleSubmit(handleSave)} className="space-y-6">

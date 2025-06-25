@@ -105,7 +105,6 @@ const AgentBankDeposit = () => {
         setIsLoading(true);
         try {
             const response = await getAgenciesWithDiscom(session?.user?.discomId);
-            console.log("API Response:", response);
             setAgencyList(
                 response?.data?.map((item) => ({
                     ...item,

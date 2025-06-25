@@ -126,7 +126,6 @@ const EditAgencyArea = () => {
         setIsLoading(true);
         try {
             const response = await getAgenciesWithDiscom(session?.user?.discomId);
-            console.log("API Response:", response);
             setAgencies(
                 response?.data?.map((item) => ({
                     ...item,
@@ -171,8 +170,6 @@ const EditAgencyArea = () => {
     const formData = watch()
     const selectedAgency = watch('agency')
 
-    console.log(formData);
-
     const handleSetAllLevelData = async (data) => {
         try {
             handleWorkingLevelChange('')
@@ -181,14 +178,11 @@ const EditAgencyArea = () => {
             let workingLevelOffices = data?.working_level_offices?.map(item => item.id) || []
             let parentOfficeList = data?.parent_office_structure_hierarchy
 
-            console.log(parentOfficeList, workingLevelOffices)
-
             let circleId = parentOfficeList.filter(item => item?.office_structure_level_id === levelNameMappedWithId.CIRCLE)
             if (circleId.length > 0) {
                 setValue('circle', [circleId[0]?.id]);
                 setIsLoading(true)
                 let divisionId = parentOfficeList.filter(item => item?.office_structure_level_id === levelNameMappedWithId.DIVISION)
-                console.log('division', divisionId)
                 await getDivisions(circleId[0]?.id)
                 if (divisionId.length > 0) {
                     setValue('division', [divisionId[0].id]);

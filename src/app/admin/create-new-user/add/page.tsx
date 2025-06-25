@@ -41,8 +41,6 @@ const CreateUserForm = () => {
     const [modalType, setModaltype] = useState('error')
     const [errorMessage, setErrorMessage] = useState('');
 
-    console.log(errors)
-
     const onSubmit = async (data: CreateNewUserFormData) => {
         setIsSubmitting(true);
         try {
@@ -60,7 +58,6 @@ const CreateUserForm = () => {
             }
 
             const response = await createUser(payload);
-            console.log('Submitted Data:', data);
             setModaltype('success')
             setIsErrorModalOpened(true);
             setErrorMessage('New Supervisor Created Successfully');
@@ -203,7 +200,6 @@ const CreateUserForm = () => {
                         valueAsNumber: true, onChange: (e) => {
                             let value = Number(e.target.value);
                             let selected = userRolesList?.filter((item) => item.value == value)
-                            console.log(value, selected, userRolesList);
                             if (selected.length > 0 && selected[0]?.office_structure) {
                                 setValue('needOfficeStructure', selected[0]?.office_structure);
                             } else {

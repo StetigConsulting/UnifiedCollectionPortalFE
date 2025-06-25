@@ -50,7 +50,6 @@ const ReceiptsForPostpaid = () => {
             } else {
                 setDiscomWiseData(transformedData);
             }
-            console.log(response);
         } catch (error) {
             console.error('Failed to get agency:', error);
         } finally {

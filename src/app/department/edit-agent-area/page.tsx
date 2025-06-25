@@ -141,7 +141,6 @@ const EditAgentAreaRoleForm = () => {
             reset()
             toast.success("Agent updated successfully");
         } catch (error) {
-            console.log(error);
             let errorMessage = getErrorMessage(error);
             toast.error('Error: ' + errorMessage)
         } finally {
@@ -150,7 +149,6 @@ const EditAgentAreaRoleForm = () => {
     };
 
     const handleGetAgentData = async () => {
-        console.log(formData.agentMobileNumber, !isNaN(formData.agentMobileNumber), formData.agentMobileNumber.toString().length)
         const mobileNumber = Number(formData.agentMobileNumber);
         if (!isNaN(mobileNumber) && mobileNumber.toString().length === 10) {
             try {
@@ -166,7 +164,6 @@ const EditAgentAreaRoleForm = () => {
                 setValue('agentRole', response.data.collector_role)
                 setShowRestFields(true)
             } catch (error) {
-                console.log(error);
                 let errorMessage = getErrorMessage(error);
                 toast.error('Error: ' + errorMessage)
                 setShowRestFields(false)
@@ -184,21 +181,17 @@ const EditAgentAreaRoleForm = () => {
 
     const handleSetAllLevelData = async (data) => {
         try {
-            console.log('working level', agencyData, data)
             handleWorkingLevelChange('')
             setIsLoading(true)
             let workingLevelOfficeId = data?.working_level_office?.id
             let workingLevelOffices = workingLevelOfficeId ? [workingLevelOfficeId] : []
             let parentOfficeList = data?.parent_office_structure_hierarchy
 
-            console.log('parent', parentOfficeList, workingLevelOffices)
-
             let circleId = parentOfficeList.filter(item => item?.office_structure_level_id === levelIdMapWithLevelName.CIRCLE)
             if (circleId.length > 0) {
                 setValue('circle', [circleId[0]?.id]);
                 setIsLoading(true)
                 let divisionId = parentOfficeList.filter(item => item?.office_structure_level_id === levelIdMapWithLevelName.DIVISION)
-                console.log('division', divisionId)
                 await getDivisions(circleId[0]?.id)
                 if (divisionId.length > 0) {
                     setValue('division', [divisionId[0].id]);
@@ -209,10 +202,8 @@ const EditAgentAreaRoleForm = () => {
                         setValue('subDivision', [subDivisionId[0].id])
                         setIsLoading(true)
                         await getSections(subDivisionId[0].id)
-                        console.log('in section', workingLevelOffices)
                         setValue('section', workingLevelOffices)
                     } else {
-                        console.log('in subdivision')
                         setValue('subDivision', workingLevelOffices)
                     }
                 } else {
@@ -222,7 +213,6 @@ const EditAgentAreaRoleForm = () => {
                 setValue('circle', workingLevelOffices)
             }
         } catch (error) {
-            console.log(error)
         } finally {
             setIsLoading(false)
         }
@@ -239,7 +229,6 @@ const EditAgentAreaRoleForm = () => {
                 }, {});
 
             setLevelIdMapWithLevelName(levelIdMap)
-            console.log(levelIdMap)
             let levelsList = data?.data
                 ?.filter((ite) => ite.levelType == "MAIN")
                 ?.map((ite) => {
@@ -268,8 +257,6 @@ const EditAgentAreaRoleForm = () => {
             });
 
             const workingLevel = agencyData?.working_level;
-
-            console.log(workingLevel, workingLevelActualLists)
 
             handleDisplayWorkingLevel(workingLevelActualLists, agencyData?.working_level, role)
             const agencyLevel = workingLevelActualLists.find((lvl) => lvl.value === workingLevel);
@@ -300,14 +287,11 @@ const EditAgentAreaRoleForm = () => {
 
     const handleDisplayWorkingLevel = (levels, agencyWorkingLevel, role = formData?.agentRole) => {
         const agencyLevel = levels.find((lvl) => lvl.value === agencyWorkingLevel);
-        console.log(levels, agencyWorkingLevel, formData.agentRole, agencyLevel)
 
         if (agencyLevel) {
             if (role === 'Door To Door') {
-                console.log('setting door to door')
                 levels = levels.filter((lvl) => lvl.value > agencyLevel.value);
             } else {
-                console.log('setting ohter')
                 levels = levels.filter((lvl) => lvl.value >= agencyLevel.value);
             }
         }

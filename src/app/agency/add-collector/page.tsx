@@ -58,10 +58,8 @@ const AddCounterCollector = () => {
 
     const getAgencyData = async (id: number) => {
         try {
-            console.log("formData", formData.agencyId, id);
-            const agencyResponse = await getAgencyById(formData.agencyId || id)
+            const agencyResponse = await getAgencyById(id)
             const agencyData = agencyResponse.data;
-            console.log("agencyData", agencyData);
             setAgencyData(agencyData);
 
             const levelsResponse = await getLevels(session?.user?.discomId);
@@ -83,11 +81,7 @@ const AddCounterCollector = () => {
             setWorkingLevelActualLists(levels);
             setAgencyWorkingLevel(agencyData?.working_level);
 
-            console.log(agencyData?.working_level)
-
             const agencyWorkingLevel = agencyData?.working_level;
-
-            console.log(levels)
 
             handleDisplayWorkingLevel(levels, agencyWorkingLevel)
             const agencyLevel = levels.find((lvl) => lvl.value === agencyWorkingLevel);
@@ -99,8 +93,6 @@ const AddCounterCollector = () => {
                 };
             })
 
-            console.log(agencyLevel.value, levelData)
-
             if (agencyLevel.value == levelIdMap.CIRCLE) {
                 setCircles(levelData)
             } else if (agencyLevel.value == levelIdMap.DIVISION) {
@@ -110,8 +102,6 @@ const AddCounterCollector = () => {
             } else if (agencyLevel.value == levelIdMap.SECTION) {
                 setSections(levelData)
             }
-
-            // setValue('workingLevel', agencyData?.working_level)
 
             setPermissions(agencyData?.collection_payment_modes
                 ?.map((ite) => {
@@ -197,8 +187,6 @@ const AddCounterCollector = () => {
             let errorMessage = error?.data ? error?.data[Object.keys(error?.data)[0]] : error?.error;
             setErrorMessage('Error: ' + getErrorMessage(error));
             setIsErrorModalOpen(true)
-            // toast.error('Error: ' + errorMessage);
-            // console.error('Error:', error);
         } finally {
             setIsSubmitting(false)
         }
@@ -288,7 +276,6 @@ const AddCounterCollector = () => {
     }, [formData.workingLevel]);
 
     const handlePersonalPhoneSameAsOffice = () => {
-        console.log(formData)
         if (formData.isPersonalNumberSameAsOffice === false) {
             setValue('isPersonalNumberSameAsOffice', true)
             setValue('personalPhoneNumber', formData.officePhoneNumber)
@@ -310,13 +297,11 @@ const AddCounterCollector = () => {
                     return acc;
                 }, {});
 
-            console.log(levelIdMap)
             setLevelNameMappedWithId(levelIdMap)
         })
     }
 
     useEffect(() => {
-        console.log(formData)
         if (formData.workingType === 'Offline' && formData?.collectionType?.includes('Non Energy')) {
             setErrorMessage('Error: Non Energy Collection Type can only be assigned to Online Work Type Agents')
             setIsErrorModalOpen(true)
@@ -337,7 +322,6 @@ const AddCounterCollector = () => {
         setIsLoading(true);
         try {
             const response = await getAgenciesWithDiscom(session?.user?.discomId);
-            console.log("API Response:", response);
             setAgencyList(
                 response?.data?.map((item) => ({
                     ...item,
@@ -355,16 +339,13 @@ const AddCounterCollector = () => {
     }
 
     useEffect(() => {
-        //check if its a super admin or admin
         if (
             checkIfUserHasActionAccess({
                 backendScope: session?.user?.userScopes, currentAction: 'addOrEditAgent'
             })) {
-            console.log("User has access to add or edit agent");
             getAgencyList();
             setIsNotAgency(true)
         } else {
-            console.log("User doesnothas access to add or edit agent");
             setValue('agencyId', currentUserId)
             getAgentDetails(currentUserId)
         }
@@ -438,7 +419,6 @@ const AddCounterCollector = () => {
                             {...register('agencyId', {
                                 valueAsNumber: true,
                                 onChange: (e) => {
-                                    console.log("Agency ID changed:", e.target.value, formData.agencyId);
                                     setValue('agencyId', e.target.value || null);
                                     getAgentDetails(e.target.value)
                                 }
@@ -665,20 +645,6 @@ const AddCounterCollector = () => {
                     }
                 </div>
                 <div className="flex justify-end mt-4">
-                    {/* {
-                        agencyId && (
-
-                            <Button type="submit" variant="default" disabled={isSubmitting}>
-                                {isSubmitting ? (
-                                    <>
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
-                                    </>
-                                ) : (
-                                    'Submit'
-                                )}
-                            </Button>
-                        )
-                    } */}
                     {agencyId &&
                         <AlertPopupWithState
                             triggerCode={

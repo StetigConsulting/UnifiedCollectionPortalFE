@@ -174,7 +174,6 @@ const CollectionPosting = () => {
     const [selectedRow, setSelectedRow] = useState<any | null>(null);
 
     const handleRowSelection = (row: any) => {
-        console.log(row)
         setSelectedRow(row)
     }
 
@@ -193,7 +192,6 @@ const CollectionPosting = () => {
     const [modalType, setModalType] = useState<'request' | 'response'>('request');
 
     const handleCopy = () => {
-        console.log('Copying transaction ID:', selectedRow);
         if (modalType === 'request') {
             navigator.clipboard.writeText(selectedRow?.billing_server_request || '');
             toast.success('Request copied to clipboard');

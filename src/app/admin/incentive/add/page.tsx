@@ -56,8 +56,6 @@ const AddCollectorIncentive = () => {
 
     const incentives = watch('incentives');
 
-    console.log(incentives)
-
     const onSubmit = async (data: FormData) => {
         try {
             setIsSubmitting(true);
@@ -87,7 +85,6 @@ const AddCollectorIncentive = () => {
                 }
             }
             const response = await addCollectorIncentive(payload);
-            console.log("API Response:", response);
             setIsLoading(true)
             router.push(urlsListWithTitle.incentive.url)
             toast.success('Collector incentive added Successfully');

@@ -176,12 +176,8 @@ const SupervisorBankDepositReport = () => {
         created_on_date: formatDate(item?.created_on_date),
     }));
 
-    console.log(watch());
-
     const handleAgencyChange = (e) => {
-
         const agency = agencyList.find(item => item.value === parseInt(e.target.value));
-
         setValue("agencyName", agency?.label || '');
     };
 

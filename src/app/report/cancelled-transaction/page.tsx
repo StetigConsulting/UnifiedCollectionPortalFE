@@ -64,7 +64,6 @@ const CancelTransaction = () => {
                     return acc;
                 }, {});
 
-            console.log(levelIdMap)
             setWorkingLevelList(data?.data
                 ?.filter((item) => item.levelType === "MAIN")
                 ?.map((item) => ({
@@ -135,7 +134,6 @@ const CancelTransaction = () => {
     }))
 
     const getPayload = (data) => {
-        console.log(data)
         let filter = {
             date_range: {
                 from_date: data.fromDate,
@@ -315,8 +313,6 @@ const CancelTransaction = () => {
         let payload = getPayload(formData)
         getReportData(payload, page)
     }
-
-    console.log(errors)
 
     return (
         <AuthUserReusableCode pageTitle="Cancelled Transaction report" isLoading={isLoading}>

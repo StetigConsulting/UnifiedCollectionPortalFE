@@ -56,11 +56,9 @@ const ECLFlaggedCustomer = () => {
             } else {
                 response = await createColorCodingEcl(payload);
             }
-            console.log('Submitting Data:', response.data);
             toast.success("ECL Flagged Customer's Bill Background Updated Successfully");
             router.push('/admin/color-coding');
         } catch (error) {
-            console.error('Error:', error);
             toast.error('Error: ' + error?.error);
         }
     };
@@ -83,7 +81,6 @@ const ECLFlaggedCustomer = () => {
             const response = await getColorCodingEclFlag(session?.user?.discomId);
             setValue('backgroundColor', response?.data?.[0]?.json_rule?.bg_color_code || '');
             setValue('id', response?.data?.[0]?.id || null)
-            console.log(response);
         } catch (error) {
             console.error('Failed to get agency:', error);
         } finally {

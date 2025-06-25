@@ -29,7 +29,6 @@ const CreateUserConfiguration = () => {
         setIsLoading(true);
         try {
             const data = await getListOfAllUsers();
-            // console.log('data', data.data);
             setUsers(data?.data);
         } catch (error) {
             console.error('Error fetching users:', error);

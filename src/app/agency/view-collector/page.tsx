@@ -71,7 +71,6 @@ const ViewCollector = () => {
             setShowTable(true);
         } catch (error) {
             toast.error("Failed to load collectors.");
-            console.error("Error fetching collectors:", error);
         } finally {
             setIsLoading(false);
         }
@@ -86,7 +85,6 @@ const ViewCollector = () => {
         } catch (error) {
             setIsErrorModalOpen(true)
             setErrorMessage("Error " + getErrorMessage(error));
-            console.error("Error activating Agent:", error);
         } finally {
             setIsLoading(false);
         }
@@ -149,7 +147,6 @@ const ViewCollector = () => {
         setIsLoading(true);
         try {
             const response = await getAgenciesWithDiscom(session?.user?.discomId);
-            console.log("API Response:", response);
             setAgencyList(
                 response?.data?.map((item) => ({
                     ...item,

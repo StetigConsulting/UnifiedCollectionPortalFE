@@ -93,7 +93,6 @@ const AgentLoginReport = () => {
             ...formData?.agent && { agent_id: formData?.agent },
         }
 
-        console.log(payload)
         payload = {
             ...payload,
             ...applyFilter

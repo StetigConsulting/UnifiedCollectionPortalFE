@@ -39,7 +39,6 @@ const NewsNoticeForm = () => {
             setValue('tid', response?.data?.posDeviceDetails?.[0]?.tid)
             setValue('deviceStatus', response?.data?.posDeviceDetails?.[0]?.status)
             setValue('deviceSerial', response?.data?.posDeviceDetails?.[0]?.m_pos_device_serial_number)
-            console.log("response", response?.data?.posDetailRegisteredDeviceList);
             setPosDeviceDetailsList(response?.data?.posDetailRegisteredDeviceList)
             setShowButton(true)
         } catch (error) {
