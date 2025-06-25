@@ -243,41 +243,44 @@ const ExtendValidity = () => {
         try {
             const filterValues = filterWatch();
             const payload = {
-                page: currentPage,
-                page_size: Number(filterValues.pageSize),
-                filter: {
-                    ...(filterValues.dateType === 'created_on' ? {
-                        creation_date_range: {
-                            from_date: filterValues.fromDate,
-                            to_date: filterValues.toDate
-                        }
-                    } : {
-                        extension_date_range: {
-                            from_date: filterValues.fromDate,
-                            to_date: filterValues.toDate
-                        }
-                    }),
-                    ...(filterValues.agencyId && { agency_id: Number(filterValues.agencyId) }),
-                    ...(filterValues.amendmentDocumentNo && { extension_document_no: filterValues.amendmentDocumentNo })
-                }
-            };
+                ...(filterValues.dateType === 'created_on' ? {
+                    creation_date_range: {
+                        from_date: filterValues.fromDate,
+                        to_date: filterValues.toDate
+                    }
+                } : {
+                    extension_date_range: {
+                        from_date: filterValues.fromDate,
+                        to_date: filterValues.toDate
+                    }
+                }),
+                ...(filterValues.agencyId && { agency_id: Number(filterValues.agencyId) }),
+                ...(filterValues.amendmentDocumentNo && { extension_document_no: filterValues.amendmentDocumentNo })
+            }
             const response = await downloadAgencyExtendValidityLogs(payload, type);
             const contentDisposition = response.headers["content-disposition"];
             let filename = "ExtendValidityLogs";
+
             if (contentDisposition) {
                 const matches = contentDisposition.match(/filename="(.+)"/);
                 if (matches && matches.length > 1) {
                     filename = matches[1];
                 }
             }
-            const blob = new Blob([response.data], { type: response.headers['content-type'] });
+
+            const contentType = response.headers["content-disposition"];
+            let extension = type;
+
+            const blob = new Blob([response.data], { type: contentType });
             const url = window.URL.createObjectURL(blob);
+
             const a = document.createElement("a");
             a.href = url;
-            a.download = filename;
+            a.download = filename.includes(`.${extension}`) ? filename : `${filename}.${extension}`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
+
             window.URL.revokeObjectURL(url);
         } catch (err) {
             toast.error('Export failed');

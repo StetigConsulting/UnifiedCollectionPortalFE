@@ -84,7 +84,7 @@ const RechargeEntry = () => {
 
     const onSubmit = async (data: RechargeCollectorFormData) => {
         let payload = {
-            "agent_id": data.agencyId,
+            "agent_id": data.agentId,
             "recharge_amount": data.amount,
             "remarks": data.remark
         }

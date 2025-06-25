@@ -105,6 +105,7 @@ export const listOfActionScopes = [
   { action: 'readNewsNotice', backendScopeName: 'TPCollectionWebPortal:news_notice:READ' },
   { action: 'addOrEditAgent', backendScopeName: 'TPCollectionWebPortal:agent:EDIT_WITH_AGENCY' },
   { action: 'disabledAadharEdit', backendScopeName: 'TPCollectionWebPortal:agent:EDIT_WITHOUT_AADHAR_NO' },
+  { action: 'disabledVendorIdEdit', backendScopeName: 'TPCollectionWebPortal:agent:EDIT_WITHOUT_VENDOR_ID' },
 ]
 
 export const checkIfUserHasActionAccess = ({ backendScope = [], currentAction }) => {
