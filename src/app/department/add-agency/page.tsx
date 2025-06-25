@@ -352,29 +352,7 @@ const AddAgency = () => {
                 {...register('inheritVendorId')}
               />
               <label className='flex-1 text-sm font-medium mt-1 flex items-center gap-1'>
-                Inherit Vendor ID
-                {inheritVendorId && <TooltipProvider>
-                  <Tooltip open={isTooltipOpen} onOpenChange={setIsTooltipOpen}>
-                    <TooltipTrigger asChild>
-                      <span
-                        tabIndex={0}
-                        className="cursor-pointer"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setIsTooltipOpen(!isTooltipOpen);
-                        }}
-                        onMouseEnter={(e) => e.preventDefault()}
-                        onMouseLeave={(e) => e.preventDefault()}
-                      >
-                        <Info className="w-4 h-4 text-black-500" />
-                      </span>
-                    </TooltipTrigger>
-                    <TooltipContent side="right">
-                      All agents under this agency will inherit the Vendor ID of agency
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>}
+                Inherit Vendor ID (All agents under this agency will inherit the Vendor ID of agency, if Checked)
               </label>
             </div>}
           />
