@@ -201,6 +201,7 @@ const ReconciliationReport = () => {
         setAgencyName(prev => agencyDetails?.[0]?.agency_name || null);
         setValue('agency', agencyId);
         setValue('supervisor', '');
+        setSupervisorList([]);
         if (agencyId)
             getSupervisorList(agencyId);
     }

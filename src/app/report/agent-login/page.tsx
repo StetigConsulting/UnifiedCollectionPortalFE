@@ -73,7 +73,9 @@ const AgentLoginReport = () => {
         const agencyId = e.target.value;
         setValue('agency', agencyId);
         setValue('agent', '');
-        getAgentList(agencyId);
+        setAgentList([]);
+        if (agencyId)
+            getAgentList(agencyId);
     }
 
     useEffect(() => {
