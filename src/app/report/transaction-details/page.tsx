@@ -271,10 +271,16 @@ const TransactionDetailsReport = () => {
         { label: 'Agency Name', key: 'agency_name', sortable: true },
         { label: 'Collector Mobile No.', key: 'collector_mobile', sortable: true },
         { label: 'Collector Name', key: 'collector_name', sortable: true },
-        { label: 'Consumer No.', key: 'consumer_no', sortable: true },
         { label: 'Consumer Name', key: 'consumer_name', sortable: true },
-        { label: 'Transaction Date and Time', key: 'transaction_date_time', sortable: true },
-        { label: 'Transaction Amount', key: 'transaction_amount', sortable: true },
+        { label: 'Consumer No.', key: 'consumer_no', sortable: true },
+        { label: 'Transaction Amount', key: 'txn_amt', sortable: true },
+        { label: 'Transaction Date and Time', key: 'txn_date_time', sortable: true },
+        { label: 'Transaction Id', key: 'txn_id', sortable: true },
+        { label: 'Upload Date Time', key: 'upload_date_time', sortable: true },
+        { label: 'Agency Closing Balance', key: 'agency_closing_balance', sortable: true },
+        { label: 'Agency Opening Balance', key: 'agency_opening_balance', sortable: true },
+        { label: 'Agent Closing Balance', key: 'collector_closing_balance', sortable: true },
+        { label: 'Agent Opening Balance', key: 'collector_opening_balance', sortable: true },
     ], []);
 
     const onSubmit = (data) => {
