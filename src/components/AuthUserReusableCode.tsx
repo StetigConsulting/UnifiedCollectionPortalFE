@@ -57,16 +57,6 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
         setIsFetchingResource(false)
     }
 
-    useEffect(() => {
-        console.log('session', session, status)
-        // if (session == null) {
-        //     console.log('session expired', session, status)
-        //     toast.error('Session Expired')
-        //     // handleSignOut();
-        //     // router.push('/auth/signin');
-        // }
-    }, [session])
-
     const onSignOut = async (event: React.MouseEvent) => {
         event.preventDefault();
         await handleSignOut();

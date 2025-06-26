@@ -40,8 +40,6 @@ export function NavMain({
 }) {
   const pathname = usePathname();
 
-  console.log(pathname)
-
   return (
     <SidebarMenu>
       {items.map((item) => {

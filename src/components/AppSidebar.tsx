@@ -452,6 +452,12 @@ const navData = {
           icon: reportIcon,
           path: '/report/supervisor-bank-deposit',
         },
+        {
+          title: 'Transaction Details',
+          url: '/report/transaction-details',
+          icon: reportIcon,
+          path: '/report/transaction-details',
+        },
       ]
     },
     // {
