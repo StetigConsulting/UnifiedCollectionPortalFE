@@ -143,11 +143,13 @@ const EditCollector = () => {
             const agencyResponse = await getAgencyById(String(id));
             const agencyData = agencyResponse.data;
             await getListOfAllSupervisor(id).then((res) => {
-                setSupervisorList(res?.data?.map(item => ({
-                    ...item,
-                    label: item?.supervisor_name,
-                    value: item?.id
-                })))
+                setSupervisorList(res?.data
+                    ?.filter(item => item?.is_active === true)
+                    ?.map(item => ({
+                        ...item,
+                        label: item?.supervisor_name,
+                        value: item?.id
+                    })))
             }).catch(err => console.error(err))
             console.log("agencyData", agencyData);
             setAgencyData(agencyData);

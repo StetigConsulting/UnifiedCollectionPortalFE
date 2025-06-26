@@ -413,11 +413,13 @@ const AddCounterCollector = () => {
                 setIsLoading(false)
             })
             getListOfAllSupervisor(id).then((res) => {
-                setSupervisorList(res?.data?.map(item => ({
-                    ...item,
-                    label: item?.supervisor_name,
-                    value: item?.id
-                })))
+                setSupervisorList(res?.data
+                    ?.filter(item => item?.is_active === true)
+                    ?.map(item => ({
+                        ...item,
+                        label: item?.supervisor_name,
+                        value: item?.id
+                    })))
             }).catch(err => console.error(err))
             setValue('initialBalance', 0);
         }
