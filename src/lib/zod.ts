@@ -456,18 +456,32 @@ export const extendValiditySchema = z
     }
   });
 
-export const extendValidityFilterSchema = z.object({
-  fromDate: z.string().min(1, "From Date is required"),
-  toDate: z.string().min(1, "To Date is required"),
-  dateType: z.string().min(1, "Date Type is required"),
-  agencyId: z.string().min(1, "Agency is required"),
-  amendmentDocumentNo: z.string().optional(),
-  pageSize: z
-    .number({
-      invalid_type_error: "Page size is required",
-    })
-    .min(1, "Page size is required"),
-});
+export const extendValidityFilterSchema = z
+  .object({
+    fromDate: z.string().min(1, "From Date is required"),
+    toDate: z.string().min(1, "To Date is required"),
+    dateType: z.string().min(1, "Date Type is required"),
+    agencyId: z.string().min(1, "Agency is required"),
+    amendmentDocumentNo: z.string().optional(),
+    pageSize: z
+      .number({
+        invalid_type_error: "Page size is required",
+      })
+      .min(1, "Page size is required"),
+  })
+  .superRefine((data, ctx) => {
+    if (data.fromDate && data.toDate) {
+      const from = new Date(data.fromDate);
+      const to = new Date(data.toDate);
+      if (from > to) {
+        ctx.addIssue({
+          path: ["toDate"],
+          code: z.ZodIssueCode.custom,
+          message: "To Date cannot be before From Date",
+        });
+      }
+    }
+  });
 
 export const resetDeviceSchema = z.object({
   mobileNumber: z
@@ -2008,21 +2022,35 @@ export const CancelTransactionSchema = z
 
 export type CancelTransactionFormData = z.infer<typeof CancelTransactionSchema>;
 
-export const agentWiseSummaryReportSchema = z.object({
-  fromDate: z.string().min(1, "From Date is required"),
-  toDate: z.string().min(1, "To Date is required"),
-  dateType: z.string().min(1, "Date Type is required"),
-  reportType: z.string().nonempty("Report Type is required"),
-  workingLevel: z.any().optional(),
-  circle: z.array(z.number()).optional(),
-  division: z.array(z.number()).optional(),
-  subDivision: z.array(z.number()).optional(),
-  section: z.array(z.number()).optional(),
-  agencyName: z.string().optional(),
-  pageSize: z
-    .number({ invalid_type_error: "Page size is required" })
-    .min(1, "Page size is required"),
-});
+export const agentWiseSummaryReportSchema = z
+  .object({
+    fromDate: z.string().min(1, "From Date is required"),
+    toDate: z.string().min(1, "To Date is required"),
+    dateType: z.string().min(1, "Date Type is required"),
+    reportType: z.string().nonempty("Report Type is required"),
+    workingLevel: z.any().optional(),
+    circle: z.array(z.number()).optional(),
+    division: z.array(z.number()).optional(),
+    subDivision: z.array(z.number()).optional(),
+    section: z.array(z.number()).optional(),
+    agencyName: z.string().optional(),
+    pageSize: z
+      .number({ invalid_type_error: "Page size is required" })
+      .min(1, "Page size is required"),
+  })
+  .superRefine((data, ctx) => {
+    if (data.fromDate && data.toDate) {
+      const from = new Date(data.fromDate);
+      const to = new Date(data.toDate);
+      if (from > to) {
+        ctx.addIssue({
+          path: ["toDate"],
+          code: z.ZodIssueCode.custom,
+          message: "To Date cannot be before From Date",
+        });
+      }
+    }
+  });
 
 export type AgentWiseSummaryReportData = z.infer<
   typeof agentWiseSummaryReportSchema
@@ -2122,18 +2150,32 @@ export type CancelledTransactionReportFormData = z.infer<
   typeof cancelledTransactionReport
 >;
 
-export const billingReportSchema = z.object({
-  fromDate: z.string().min(1, "From Date is required"),
-  toDate: z.string().min(1, "To Date is required"),
-  workingLevel: z.any().optional(),
-  circle: z.array(z.number()).optional(),
-  division: z.array(z.number()).optional(),
-  subDivision: z.array(z.number()).optional(),
-  section: z.array(z.number()).optional(),
-  pageSize: z
-    .number({ invalid_type_error: "Page size is required" })
-    .min(1, "Page size is required"),
-});
+export const billingReportSchema = z
+  .object({
+    fromDate: z.string().min(1, "From Date is required"),
+    toDate: z.string().min(1, "To Date is required"),
+    workingLevel: z.any().optional(),
+    circle: z.array(z.number()).optional(),
+    division: z.array(z.number()).optional(),
+    subDivision: z.array(z.number()).optional(),
+    section: z.array(z.number()).optional(),
+    pageSize: z
+      .number({ invalid_type_error: "Page size is required" })
+      .min(1, "Page size is required"),
+  })
+  .superRefine((data, ctx) => {
+    if (data.fromDate && data.toDate) {
+      const from = new Date(data.fromDate);
+      const to = new Date(data.toDate);
+      if (from > to) {
+        ctx.addIssue({
+          path: ["toDate"],
+          code: z.ZodIssueCode.custom,
+          message: "To Date cannot be before From Date",
+        });
+      }
+    }
+  });
 
 export type BillingReportFormData = z.infer<typeof billingReportSchema>;
 
@@ -2170,21 +2212,35 @@ export const agentLoginReportSchema = z.object({
 
 export type AgentLoginReportFormData = z.infer<typeof agentLoginReportSchema>;
 
-export const totalCollectionReportSchema = z.object({
-  fromDate: z.string().min(1, "From Date is required"),
-  toDate: z.string().min(1, "To Date is required"),
-  workingLevel: z.any().optional(),
-  circle: z.array(z.number()).optional(),
-  division: z.array(z.number()).optional(),
-  subDivision: z.array(z.number()).optional(),
-  section: z.array(z.number()).optional(),
-  agent: z.string().optional(),
-  agency: z.string().optional(),
-  agencyName: z.any().optional(),
-  pageSize: z
-    .number({ invalid_type_error: "Page size is required" })
-    .min(1, "Page size is required"),
-});
+export const totalCollectionReportSchema = z
+  .object({
+    fromDate: z.string().min(1, "From Date is required"),
+    toDate: z.string().min(1, "To Date is required"),
+    workingLevel: z.any().optional(),
+    circle: z.array(z.number()).optional(),
+    division: z.array(z.number()).optional(),
+    subDivision: z.array(z.number()).optional(),
+    section: z.array(z.number()).optional(),
+    agent: z.string().optional(),
+    agency: z.string().optional(),
+    agencyName: z.any().optional(),
+    pageSize: z
+      .number({ invalid_type_error: "Page size is required" })
+      .min(1, "Page size is required"),
+  })
+  .superRefine((data, ctx) => {
+    if (data.fromDate && data.toDate) {
+      const from = new Date(data.fromDate);
+      const to = new Date(data.toDate);
+      if (from > to) {
+        ctx.addIssue({
+          path: ["toDate"],
+          code: z.ZodIssueCode.custom,
+          message: "To Date cannot be before From Date",
+        });
+      }
+    }
+  });
 
 export type TotalCollectionReportFormData = z.infer<
   typeof totalCollectionReportSchema
@@ -2199,30 +2255,58 @@ export const viewAgentSchema = z.object({
 
 export type ViewAgentFormData = z.infer<typeof viewAgentSchema>;
 
-export const collectionPostingReportSchema = z.object({
-  fromDate: z.string().min(1, "From Date is required"),
-  toDate: z.string().min(1, "To Date is required"),
-  collectionType: z.string().optional(),
-  status: z.string().optional(),
-  pageSize: z
-    .number({ invalid_type_error: "Page size is required" })
-    .min(1, "Page size is required"),
-});
+export const collectionPostingReportSchema = z
+  .object({
+    fromDate: z.string().min(1, "From Date is required"),
+    toDate: z.string().min(1, "To Date is required"),
+    collectionType: z.string().optional(),
+    status: z.string().optional(),
+    pageSize: z
+      .number({ invalid_type_error: "Page size is required" })
+      .min(1, "Page size is required"),
+  })
+  .superRefine((data, ctx) => {
+    if (data.fromDate && data.toDate) {
+      const from = new Date(data.fromDate);
+      const to = new Date(data.toDate);
+      if (from > to) {
+        ctx.addIssue({
+          path: ["toDate"],
+          code: z.ZodIssueCode.custom,
+          message: "To Date cannot be before From Date",
+        });
+      }
+    }
+  });
 
 export type CollectionPostingReportFormData = z.infer<
   typeof collectionPostingReportSchema
 >;
 
-export const reconciliationReportSchema = z.object({
-  fromDate: z.string().min(1, "From Date is required"),
-  toDate: z.string().min(1, "To Date is required"),
-  supervisor: z.string().min(1, "Supervisor is required"),
-  agency: z.string().min(1, "Agency is required"),
-  agencyName: z.any().optional(),
-  pageSize: z
-    .number({ invalid_type_error: "Page size is required" })
-    .min(1, "Page size is required"),
-});
+export const reconciliationReportSchema = z
+  .object({
+    fromDate: z.string().min(1, "From Date is required"),
+    toDate: z.string().min(1, "To Date is required"),
+    supervisor: z.string().min(1, "Supervisor is required"),
+    agency: z.string().min(1, "Agency is required"),
+    agencyName: z.any().optional(),
+    pageSize: z
+      .number({ invalid_type_error: "Page size is required" })
+      .min(1, "Page size is required"),
+  })
+  .superRefine((data, ctx) => {
+    if (data.fromDate && data.toDate) {
+      const from = new Date(data.fromDate);
+      const to = new Date(data.toDate);
+      if (from > to) {
+        ctx.addIssue({
+          path: ["toDate"],
+          code: z.ZodIssueCode.custom,
+          message: "To Date cannot be before From Date",
+        });
+      }
+    }
+  });
 
 export type ReconciliationReportFormData = z.infer<
   typeof reconciliationReportSchema

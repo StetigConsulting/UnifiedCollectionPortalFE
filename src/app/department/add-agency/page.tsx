@@ -99,7 +99,7 @@ const AddAgency = () => {
       const response = await createAgency(agencyData);
       toast.success("Agency created successfully");
       reset();
-      // location.reload();
+      window.location.reload();
     } catch (error) {
       let errorData = error?.data;
       let messages = [];

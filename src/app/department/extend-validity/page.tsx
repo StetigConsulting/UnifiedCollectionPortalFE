@@ -224,7 +224,7 @@ const ExtendValidity = () => {
         validity_from_date: formatDate(item.validity_from_date),
         validity_to_date: formatDate(item.validity_to_date),
         extension_date: formatDate(item.extension_date),
-        created_on: moment(item.created_on).format('DD/MM/YYYY, HH:MM:SS'),
+        created_on: moment(item.created_on).format('DD/MM/YYYY, HH:mm:ss'),
     }));
 
     const handlePageChange = (page) => {

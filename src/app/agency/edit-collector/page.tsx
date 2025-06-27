@@ -332,7 +332,7 @@ const EditCollector = () => {
                         disabled={checkIfUserHasActionAccess({
                             backendScope: session?.user?.userScopes,
                             currentAction: 'disabledVendorIdEdit'
-                        })}
+                        }) || agencyData?.is_inherited_vendor_id}
                         {...register('vendorId')} />
                     {
                         agencyData?.is_inherited_vendor_id &&
