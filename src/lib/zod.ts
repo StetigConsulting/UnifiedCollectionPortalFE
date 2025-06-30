@@ -2352,3 +2352,44 @@ export const transactionDetailsReportSchema = z.object({
 export type TransactionDetailsReportFormData = z.infer<
   typeof transactionDetailsReportSchema
 >;
+
+export const agencySecurityDepositSchema = z.object({
+  agencyId: z.number({ invalid_type_error: 'Please select Agency' }),
+  bgAmount: z.number({ invalid_type_error: 'BG Amount is required' }).min(1, 'BG Amount must be at least 1'),
+  paymentDate: z.string().nonempty('Payment Date is required'),
+  paymentMode: z.string().nonempty('Payment Mode is required'),
+  transactionId: z.string().optional(),
+  chequeDdNo: z.string().optional(),
+  chequeDdDate: z.string().optional(),
+  bgValidityFrom: z.string().nonempty('BG Validity From is required'),
+  bgValidityTo: z.string().nonempty('BG Validity To is required'),
+  claimPeriod: z.string().optional(),
+  remarks: z.string().optional(),
+  upload: z
+    .any()
+    .optional()
+    .refine(
+      (val) => {
+        if (!val || val.length === 0) return true;
+        const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
+        return allowedTypes.includes(val[0].type);
+      },
+      {
+        message: "Only PDF, JPG, or PNG files are allowed.",
+      }
+    ),
+});
+
+export type AgencySecurityDepositFormData = z.infer<typeof agencySecurityDepositSchema>;
+
+export const agencySecurityDepositHistoryFilterSchema = z.object({
+  agencyId: z.number({ invalid_type_error: 'Agency is required' }),
+  transactionId: z.string().optional(),
+  createdOnFrom: z.string().optional(),
+  createdOnTo: z.string().optional(),
+  paymentFrom: z.string().optional(),
+  paymentTo: z.string().optional(),
+  pageSize: z.number({ invalid_type_error: 'Page size is required' }).min(1, 'Page size is required'),
+});
+
+export type AgencySecurityDepositHistoryFilterFormData = z.infer<typeof agencySecurityDepositHistoryFilterSchema>;

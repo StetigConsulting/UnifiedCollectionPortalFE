@@ -15,6 +15,7 @@ type CustomizedSelectInputWithLabelProps = {
     list: SelectOption[];
     placeholder?: string;
     removeDefaultOption?: boolean;
+    hideLabel?: boolean;
 } & React.SelectHTMLAttributes<HTMLSelectElement>;
 
 const CustomizedSelectInputWithLabel: React.FC<CustomizedSelectInputWithLabelProps> = ({
@@ -25,13 +26,14 @@ const CustomizedSelectInputWithLabel: React.FC<CustomizedSelectInputWithLabelPro
     list = [],
     placeholder,
     removeDefaultOption,
+    hideLabel = false,
     ...props
 }) => {
     return (
         <div className={`flex flex-col ${containerClass}`} title={props.title}>
-            <label htmlFor={props.id || 'select-input'} className="block text-sm font-medium text-gray-700 mb-1">
+            {hideLabel ? null : <label htmlFor={props.id || 'select-input'} className="block text-sm font-medium text-gray-700 mb-1">
                 {label}{required && <span className="text-red-500 ml-1">*</span>}
-            </label>
+            </label>}
             <select
                 {...props}
                 id={props.id || 'select-input'}

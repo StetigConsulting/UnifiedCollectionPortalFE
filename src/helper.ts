@@ -338,6 +338,10 @@ export const listOfUrlForScopes = [
     url: "/report/transaction-details",
     backendScopeName: "TPCollectionWebPortal:transaction_details_report:READ",
   },
+  {
+    url: "/department/agency-security-deposit",
+    backendScopeName: "TPCollectionWebPortal:agency_security_deposit:READ",
+  },
   { url: "/", backendScopeName: "" },
 ];
 
