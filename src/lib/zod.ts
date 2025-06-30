@@ -71,14 +71,6 @@ export const addAgencySchema = z
       .optional(),
     validityFromDate: z.string().nonempty("Validity From Date is required"),
     validityToDate: z.string().nonempty("Validity To Date is required"),
-    paymentDate: z.string().optional(),
-    transactionId: z.string().optional(),
-    initialBalance: z.number({
-      required_error: "Initial Balance is required",
-      invalid_type_error: "Initial Balance must",
-    }),
-    paymentMode: z.string().nonempty("Payment Mode is required"),
-    paymentRemark: z.string().optional(),
     workingLevel: z.number({
       required_error: "Working Level is required",
     }),
