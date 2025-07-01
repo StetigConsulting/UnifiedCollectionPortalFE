@@ -309,7 +309,7 @@ const AgencySecurityDeposit = () => {
     { label: "Agency", key: "agency_name" },
     { label: "Amount", key: "bg_amount" },
     { label: "Payment Date", key: "payment_date" },
-    { label: "Payment Mode", key: "payment_mode_formatted" },
+    { label: "Payment Mode", key: "payment_mode" },
     { label: "Transaction ID", key: "transaction_id" },
     { label: "Cheque/DD No.", key: "dd_cheque_no" },
     { label: "Cheque/DD Date", key: "dd_cheque_date" },
