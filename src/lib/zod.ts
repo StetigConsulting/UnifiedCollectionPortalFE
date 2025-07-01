@@ -2349,27 +2349,31 @@ export const agencySecurityDepositSchema = z.object({
   agencyId: z.number({ invalid_type_error: 'Please select Agency' }),
   bgAmount: z.number({ invalid_type_error: 'BG Amount is required' }).min(1, 'BG Amount must be at least 1'),
   paymentDate: z.string().nonempty('Payment Date is required'),
-  paymentMode: z.string().nonempty('Payment Mode is required'),
+  paymentMode: z.number({ invalid_type_error: 'Payment Mode is required' }),
   transactionId: z.string().optional(),
   chequeDdNo: z.string().optional(),
   chequeDdDate: z.string().optional(),
+  chequeDdBankName: z.string().optional(),
   bgValidityFrom: z.string().nonempty('BG Validity From is required'),
   bgValidityTo: z.string().nonempty('BG Validity To is required'),
   claimPeriod: z.string().optional(),
   remarks: z.string().optional(),
-  upload: z
-    .any()
-    .optional()
-    .refine(
-      (val) => {
-        if (!val || val.length === 0) return true;
-        const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
-        return allowedTypes.includes(val[0].type);
-      },
-      {
-        message: "Only PDF, JPG, or PNG files are allowed.",
-      }
-    ),
+  upload: z.union([
+    z
+      .any()
+      .optional()
+      .refine(
+        (val) => {
+          if (!val || val.length === 0) return true;
+          const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
+          return allowedTypes.includes(val[0].type);
+        },
+        {
+          message: "Only PDF, JPG, or PNG files are allowed.",
+        }
+      ),
+    z.string()
+  ]),
 });
 
 export type AgencySecurityDepositFormData = z.infer<typeof agencySecurityDepositSchema>;

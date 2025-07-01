@@ -19,7 +19,7 @@ import {
   exportPicklist,
 } from "@/lib/utils";
 import ReactTable from "@/components/ReactTable";
-import { Eye, Loader2, Download } from "lucide-react";
+import { Eye, Loader2, Download, Edit } from "lucide-react";
 import { useSession } from "next-auth/react";
 
 import {
@@ -30,9 +30,11 @@ import {
   getAgencySecurityDepositHistory,
   downloadAgencySecurityDepositHistory,
   downloadUploadedFileSecurityDeposit,
+  editAgencySecurityDeposit,
 } from "@/app/api-calls/department/api";
 import SuccessErrorModal from "@/components/SuccessErrorModal";
 import AlertPopupWithState from "@/components/Agency/ViewAgency/AlertPopupWithState";
+import moment from "moment";
 
 const AgencySecurityDeposit = () => {
   const { data: session } = useSession();
@@ -47,6 +49,9 @@ const AgencySecurityDeposit = () => {
   const [paymentModes, setPaymentModes] = useState([]);
   const [exportType, setExportType] = useState("");
   const [exportLoading, setExportLoading] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
+
+  const [isEditing, setIsEditing] = useState(false);
 
   const {
     register,
@@ -145,9 +150,9 @@ const AgencySecurityDeposit = () => {
   const onSubmit = async (data: AgencySecurityDepositFormData) => {
     setIsSubmitting(true);
     try {
-      let fileName = null;
       console.log(data);
-      if (data?.upload.length > 0) {
+      let fileName = null;
+      if (data?.upload?.length > 0 && typeof data.upload !== "string") {
         const formDataUpload = new FormData();
         formDataUpload.append("file", data.upload[0]);
 
@@ -155,10 +160,13 @@ const AgencySecurityDeposit = () => {
           formDataUpload
         );
         fileName = fileUploadRes?.data?.filePath;
+      } else if (typeof data.upload === "string") {
+        fileName = data?.upload;
       }
 
       const payload = {
-        agency_id: data.agencyId,
+        ...(isEditing && { id: selectedRow?.id }),
+        ...(!isEditing && { agency_id: data.agencyId }),
         bg_amount: data.bgAmount,
         payment_date: data.paymentDate,
         validity_from_date: data.bgValidityFrom,
@@ -173,6 +181,9 @@ const AgencySecurityDeposit = () => {
         ...(data?.chequeDdNo && {
           dd_cheque_no: data.chequeDdNo,
         }),
+        ...(data?.chequeDdBankName && {
+          dd_cheque_bank_name: data.chequeDdBankName,
+        }),
         ...(data?.claimPeriod && {
           claim_period: data.claimPeriod,
         }),
@@ -183,13 +194,26 @@ const AgencySecurityDeposit = () => {
           upload_file_name: fileName,
         }),
       };
-      const res = await addAgencySecurityDeposit(payload);
-      setSuccessErrorModalState({
-        isOpen: true,
-        message: res?.message,
-        type: "success",
-      });
-      reset();
+
+      if (isEditing) {
+        const res = await editAgencySecurityDeposit(payload);
+        setSuccessErrorModalState({
+          isOpen: true,
+          message: res?.message,
+          type: "success",
+        });
+        reset();
+        setIsEditing(false);
+        setSelectedRow(null);
+      } else {
+        const res = await addAgencySecurityDeposit(payload);
+        setSuccessErrorModalState({
+          isOpen: true,
+          message: res?.message,
+          type: "success",
+        });
+        reset();
+      }
     } catch (e) {
       setSuccessErrorModalState({
         isOpen: true,
@@ -285,10 +309,11 @@ const AgencySecurityDeposit = () => {
     { label: "Agency", key: "agency_name" },
     { label: "Amount", key: "bg_amount" },
     { label: "Payment Date", key: "payment_date" },
-    { label: "Payment Mode", key: "payment_mode" },
+    { label: "Payment Mode", key: "payment_mode_formatted" },
     { label: "Transaction ID", key: "transaction_id" },
     { label: "Cheque/DD No.", key: "dd_cheque_no" },
     { label: "Cheque/DD Date", key: "dd_cheque_date" },
+    { label: "Cheque/DD Bank Name", key: "dd_cheque_bank_name" },
     { label: "BG Validity From", key: "validity_from_date" },
     { label: "BG Validity To", key: "validity_to_date" },
     { label: "Claim Period", key: "claim_period" },
@@ -298,7 +323,9 @@ const AgencySecurityDeposit = () => {
 
   const formatData = tableData.map((item) => ({
     ...item,
-    payment_date: item.payment_date ? formatDate(item.payment_date) : "",
+    payment_mode_formatted: item.payment_date
+      ? formatDate(item.payment_date)
+      : "",
     payment_mode: item.security_deposit_payment_mode?.mode_name,
     cheque_dd_date: item.cheque_dd_date ? formatDate(item.cheque_dd_date) : "",
     bg_validity_from: item.bg_validity_from
@@ -315,7 +342,34 @@ const AgencySecurityDeposit = () => {
     ),
   }));
 
-  const [stateForConfirmationPopup, setStateForConfirmationPopup] = useState(false);
+  const [stateForConfirmationPopup, setStateForConfirmationPopup] =
+    useState(false);
+
+  const handleRowSelection = (row) => {
+    setSelectedRow(row);
+  };
+
+  const handleEdit = () => {
+    console.log(selectedRow);
+    setIsEditing(true);
+    setValue("agencyId", selectedRow?.agency_id);
+    setValue("bgAmount", selectedRow?.bg_amount);
+    let paymentDate = selectedRow?.payment_date
+      ? moment(selectedRow.payment_date).format("YYYY-MM-DD")
+      : "";
+    console.log(paymentDate, selectedRow?.payment_date);
+    setValue("paymentDate", paymentDate);
+    setValue("paymentMode", selectedRow?.security_deposit_payment_mode?.id);
+    setValue("transactionId", selectedRow?.transaction_id || "");
+    setValue("chequeDdNo", selectedRow?.dd_cheque_no || "");
+    setValue("chequeDdDate", selectedRow?.dd_cheque_date || "");
+    setValue("chequeDdBankName", selectedRow?.dd_cheque_bank_name || "");
+    setValue("bgValidityFrom", selectedRow?.validity_from_date);
+    setValue("bgValidityTo", selectedRow?.validity_to_date);
+    setValue("claimPeriod", selectedRow?.claim_period || "");
+    setValue("remarks", selectedRow?.remarks || "");
+    setValue("upload", selectedRow?.uploaded_file_name || "");
+  };
 
   return (
     <AuthUserReusableCode
@@ -330,6 +384,7 @@ const AgencySecurityDeposit = () => {
             containerClass=""
             placeholder="Select Agency"
             list={agencyList}
+            disabled={isEditing}
             required
             {...register("agencyId", {
               valueAsNumber: true,
@@ -360,7 +415,7 @@ const AgencySecurityDeposit = () => {
             placeholder="Select Payment Mode"
             list={paymentModes}
             required
-            {...register("paymentMode")}
+            {...register("paymentMode", { valueAsNumber: true })}
           />
           <CustomizedInputWithLabel
             label="Transaction ID"
@@ -382,6 +437,13 @@ const AgencySecurityDeposit = () => {
             containerClass=""
             type="date"
             {...register("chequeDdDate")}
+          />
+          <CustomizedInputWithLabel
+            label="Cheque/DD Bank Name"
+            errors={errors.chequeDdBankName}
+            containerClass=""
+            type="text"
+            {...register("chequeDdBankName")}
           />
           <CustomizedInputWithLabel
             label="BG Validity From"
@@ -418,6 +480,15 @@ const AgencySecurityDeposit = () => {
             errors={errors.upload}
             type="file"
             accept=".pdf,.jpg,.jpeg,.png"
+            additionAction={
+              isEditing &&
+              typeof formData.upload === "string" &&
+              formData.upload && (
+                <div className="text-xs mt-1 text-gray-600">
+                  Current file: {formData.upload}
+                </div>
+              )
+            }
             {...register("upload")}
           />
         </div>
@@ -453,10 +524,32 @@ const AgencySecurityDeposit = () => {
 
       {!isNaN(formData?.agencyId) && formData?.agencyId && (
         <div className="mt-4">
-          <div className="flex items-center gap-4 mb-2">
-            <h2 className="text-lg font-semibold mb-4 flex-1">
+          <div className="flex items-center gap-4 mb-4">
+            <h2 className="text-lg font-semibold align-middle flex-1">
               Bank Guarantee History
             </h2>
+            {selectedRow &&
+              (() => {
+                const today = new Date();
+                const validityFrom = selectedRow?.validity_from_date
+                  ? new Date(selectedRow.validity_from_date)
+                  : null;
+                const validityTo = selectedRow?.validity_to_date
+                  ? new Date(selectedRow.validity_to_date)
+                  : null;
+
+                const isWithinValidityPeriod =
+                  validityFrom &&
+                  validityTo &&
+                  today >= validityFrom &&
+                  today <= validityTo;
+
+                return isWithinValidityPeriod ? (
+                  <Button onClick={handleEdit} variant="default">
+                    <Edit /> Edit
+                  </Button>
+                ) : null;
+              })()}
             <CustomizedSelectInputWithLabel
               label="Export"
               placeholder="Export to"
@@ -471,13 +564,15 @@ const AgencySecurityDeposit = () => {
           <ReactTable
             data={formatData}
             columns={columns}
-            avoidSrNo={false}
             itemsPerPage={pageSize}
             dynamicPagination={true}
             pageNumber={currentPage}
             totalPageNumber={totalPages}
             onPageChange={handlePageChange}
             hideSearchAndOtherButtons
+            isSelectable
+            selectedRow={selectedRow}
+            onRowSelect={handleRowSelection}
           />
         </div>
       )}

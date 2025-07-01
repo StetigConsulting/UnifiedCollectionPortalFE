@@ -304,6 +304,15 @@ export const addAgencySecurityDeposit = async (data: any) => {
   }
 }
 
+export const editAgencySecurityDeposit = async (data: any) => {
+  try {
+    const response = await api.put(`/v1/agency-security-deposits/`, data)
+    return response.data;
+  } catch (error) {
+    throw error?.response?.data
+  }
+}
+
 export const getAgencySecurityDepositHistory = async (data: any) => {
   try {
     const response = await api.post(`/v1/agency-security-deposits/fetch`, data)
