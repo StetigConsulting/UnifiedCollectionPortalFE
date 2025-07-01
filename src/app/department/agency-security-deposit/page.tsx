@@ -308,14 +308,14 @@ const AgencySecurityDeposit = () => {
   const columns = [
     { label: "Agency", key: "agency_name" },
     { label: "Amount", key: "bg_amount" },
-    { label: "Payment Date", key: "payment_date" },
+    { label: "Payment Date", key: "payment_mode_formatted" },
     { label: "Payment Mode", key: "payment_mode" },
     { label: "Transaction ID", key: "transaction_id" },
     { label: "Cheque/DD No.", key: "dd_cheque_no" },
-    { label: "Cheque/DD Date", key: "dd_cheque_date" },
+    { label: "Cheque/DD Date", key: "dd_cheque_date_formatted" },
     { label: "Cheque/DD Bank Name", key: "dd_cheque_bank_name" },
-    { label: "BG Validity From", key: "validity_from_date" },
-    { label: "BG Validity To", key: "validity_to_date" },
+    { label: "BG Validity From", key: "bg_validity_from_formatted" },
+    { label: "BG Validity To", key: "bg_validity_to_formatted" },
     { label: "Claim Period", key: "claim_period" },
     { label: "Remarks", key: "remarks" },
     { label: "File Uploaded", key: "upload" },
@@ -327,11 +327,15 @@ const AgencySecurityDeposit = () => {
       ? formatDate(item.payment_date)
       : "",
     payment_mode: item.security_deposit_payment_mode?.mode_name,
-    cheque_dd_date: item.cheque_dd_date ? formatDate(item.cheque_dd_date) : "",
-    bg_validity_from: item.bg_validity_from
-      ? formatDate(item.bg_validity_from)
+    dd_cheque_date_formatted: item.dd_cheque_date
+      ? formatDate(item.dd_cheque_date)
       : "",
-    bg_validity_to: item.bg_validity_to ? formatDate(item.bg_validity_to) : "",
+    bg_validity_from_formatted: item.validity_from_date
+      ? formatDate(item.validity_from_date)
+      : "",
+    bg_validity_to_formatted: item.validity_to_date
+      ? formatDate(item.validity_to_date)
+      : "",
     upload: item.uploaded_file_name ? (
       <Download
         className="pointer"
