@@ -108,7 +108,7 @@ const ReactTable = <T extends Record<string, any>>({
 
 
     const totalPages = Math.ceil(sortedData.length / itemsPerPage);
-    const paginatedData = sortedData.slice(
+    const paginatedData = dynamicPagination ? sortedData : sortedData.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );

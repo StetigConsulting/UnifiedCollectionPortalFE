@@ -2389,3 +2389,9 @@ export const agencySecurityDepositHistoryFilterSchema = z.object({
 });
 
 export type AgencySecurityDepositHistoryFilterFormData = z.infer<typeof agencySecurityDepositHistoryFilterSchema>;
+
+export const posDeviceReportFilterSchema = z.object({
+  pageSize: z.number({ invalid_type_error: 'Page size is required' }).min(1, 'Page size is required'),
+});
+
+export type PosDeviceReportFilterFormData = z.infer<typeof posDeviceReportFilterSchema>;
