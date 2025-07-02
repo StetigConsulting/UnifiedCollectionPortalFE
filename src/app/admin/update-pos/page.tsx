@@ -180,8 +180,6 @@ const NewsNoticeForm = () => {
     }
   };
 
-  console.log('test',posDevicePage)
-
   useEffect(() => {
     fetchReportData();
   }, []);

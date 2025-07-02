@@ -11,7 +11,7 @@ import {
 
 interface PaginationComponentProps {
     totalPages: number;
-    pageNumber: number;
+    pageNumber?: number;
     onPageChange?: (page: number) => void;
 }
 
