@@ -2216,6 +2216,7 @@ export const totalCollectionReportSchema = z
     agent: z.string().optional(),
     agency: z.string().optional(),
     agencyName: z.any().optional(),
+    levelWithIdMap: z.any().optional(),
     pageSize: z
       .number({ invalid_type_error: "Page size is required" })
       .min(1, "Page size is required"),
@@ -2229,6 +2230,87 @@ export const totalCollectionReportSchema = z
           path: ["toDate"],
           code: z.ZodIssueCode.custom,
           message: "To Date cannot be before From Date",
+        });
+      }
+    }
+
+    const level = data.workingLevel;
+    const map = data.levelWithIdMap;
+
+    console.log(level, map)
+
+    if (level === map?.SECTION) {
+      if (!data.circle.length) {
+        ctx.addIssue({
+          path: ["circle"],
+          code: z.ZodIssueCode.custom,
+          message: "Circle is required",
+        });
+      }
+      if (!data.division.length) {
+        ctx.addIssue({
+          path: ["division"],
+          code: z.ZodIssueCode.custom,
+          message: "Division is required",
+        });
+      }
+      if (!data.subDivision.length) {
+        ctx.addIssue({
+          path: ["subDivision"],
+          code: z.ZodIssueCode.custom,
+          message: "Sub Division is required",
+        });
+      }
+      if (!data.section.length) {
+        ctx.addIssue({
+          path: ["section"],
+          code: z.ZodIssueCode.custom,
+          message: "Section is required",
+        });
+      }
+    } else if (level === map?.SUB_DIVISION) {
+      if (!data.circle.length) {
+        ctx.addIssue({
+          path: ["circle"],
+          code: z.ZodIssueCode.custom,
+          message: "Circle is required",
+        });
+      }
+      if (!data.division.length) {
+        ctx.addIssue({
+          path: ["division"],
+          code: z.ZodIssueCode.custom,
+          message: "Division is required",
+        });
+      }
+      if (!data.subDivision.length) {
+        ctx.addIssue({
+          path: ["subDivision"],
+          code: z.ZodIssueCode.custom,
+          message: "Sub Division is required",
+        });
+      }
+    } else if (level === map?.DIVISION) {
+      if (!data.circle.length) {
+        ctx.addIssue({
+          path: ["circle"],
+          code: z.ZodIssueCode.custom,
+          message: "Circle is required",
+        });
+      }
+      if (!data.division.length) {
+        ctx.addIssue({
+          path: ["division"],
+          code: z.ZodIssueCode.custom,
+          message: "Division is required",
+        });
+      }
+    } else if (level === map?.CIRCLE) {
+      if (!data.circle.length) {
+        ctx.addIssue({
+          path: ["circle"],
+          code: z.ZodIssueCode.custom,
+          message: "Circle is required",
         });
       }
     }
@@ -2346,16 +2428,18 @@ export type TransactionDetailsReportFormData = z.infer<
 >;
 
 export const agencySecurityDepositSchema = z.object({
-  agencyId: z.number({ invalid_type_error: 'Please select Agency' }),
-  bgAmount: z.number({ invalid_type_error: 'BG Amount is required' }).min(1, 'BG Amount must be at least 1'),
-  paymentDate: z.string().nonempty('Payment Date is required'),
-  paymentMode: z.number({ invalid_type_error: 'Payment Mode is required' }),
+  agencyId: z.number({ invalid_type_error: "Please select Agency" }),
+  bgAmount: z
+    .number({ invalid_type_error: "BG Amount is required" })
+    .min(1, "BG Amount must be at least 1"),
+  paymentDate: z.string().nonempty("Payment Date is required"),
+  paymentMode: z.number({ invalid_type_error: "Payment Mode is required" }),
   transactionId: z.string().optional(),
   chequeDdNo: z.string().optional(),
   chequeDdDate: z.string().optional(),
   chequeDdBankName: z.string().optional(),
-  bgValidityFrom: z.string().nonempty('BG Validity From is required'),
-  bgValidityTo: z.string().nonempty('BG Validity To is required'),
+  bgValidityFrom: z.string().nonempty("BG Validity From is required"),
+  bgValidityTo: z.string().nonempty("BG Validity To is required"),
   claimPeriod: z.string().optional(),
   remarks: z.string().optional(),
   upload: z.union([
@@ -2372,26 +2456,36 @@ export const agencySecurityDepositSchema = z.object({
           message: "Only PDF, JPG, or PNG files are allowed.",
         }
       ),
-    z.string()
+    z.string(),
   ]),
 });
 
-export type AgencySecurityDepositFormData = z.infer<typeof agencySecurityDepositSchema>;
+export type AgencySecurityDepositFormData = z.infer<
+  typeof agencySecurityDepositSchema
+>;
 
 export const agencySecurityDepositHistoryFilterSchema = z.object({
-  agencyId: z.number({ invalid_type_error: 'Agency is required' }),
+  agencyId: z.number({ invalid_type_error: "Agency is required" }),
   transactionId: z.string().optional(),
   createdOnFrom: z.string().optional(),
   createdOnTo: z.string().optional(),
   paymentFrom: z.string().optional(),
   paymentTo: z.string().optional(),
-  pageSize: z.number({ invalid_type_error: 'Page size is required' }).min(1, 'Page size is required'),
+  pageSize: z
+    .number({ invalid_type_error: "Page size is required" })
+    .min(1, "Page size is required"),
 });
 
-export type AgencySecurityDepositHistoryFilterFormData = z.infer<typeof agencySecurityDepositHistoryFilterSchema>;
+export type AgencySecurityDepositHistoryFilterFormData = z.infer<
+  typeof agencySecurityDepositHistoryFilterSchema
+>;
 
 export const posDeviceReportFilterSchema = z.object({
-  pageSize: z.number({ invalid_type_error: 'Page size is required' }).min(1, 'Page size is required'),
+  pageSize: z
+    .number({ invalid_type_error: "Page size is required" })
+    .min(1, "Page size is required"),
 });
 
-export type PosDeviceReportFilterFormData = z.infer<typeof posDeviceReportFilterSchema>;
+export type PosDeviceReportFilterFormData = z.infer<
+  typeof posDeviceReportFilterSchema
+>;

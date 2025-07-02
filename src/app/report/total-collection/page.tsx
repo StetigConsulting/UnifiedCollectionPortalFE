@@ -67,7 +67,7 @@ const TotalCollectionReport = () => {
                     return acc;
                 }, {});
 
-            console.log(levelIdMap)
+            setValue('levelWithIdMap', levelIdMap)
             setWorkingLevelList(data?.data
                 ?.filter((item) => item.levelType === "MAIN")
                 ?.map((item) => ({
