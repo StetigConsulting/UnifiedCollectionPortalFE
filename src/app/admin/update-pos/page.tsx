@@ -50,14 +50,12 @@ const NewsNoticeForm = () => {
   );
   const [posDeviceList, setPosDeviceList] = useState([]);
   const [posDevicePage, setPosDevicePage] = useState(1);
-  const [posDevicePageSize, setPosDevicePageSize] = useState(tableDataPerPage);
   const [posDeviceTotalPages, setPosDeviceTotalPages] = useState(1);
   const [posDeviceExportType, setPosDeviceExportType] = useState("");
-  const [posDeviceSearchTrigger, setPosDeviceSearchTrigger] = useState(0);
 
   const filterForm = useFilterForm<PosDeviceReportFilterFormData>({
     resolver: filterZodResolver(posDeviceReportFilterSchema),
-    defaultValues: { pageSize: posDevicePageSize},
+    defaultValues: { pageSize: tableDataPerPage},
   });
 
   const { register: filterRegister, handleSubmit: handleFilterSubmit, formState: { errors: filterErrors }, setValue: setFilterValue } = filterForm;
@@ -151,19 +149,29 @@ const NewsNoticeForm = () => {
     { label: "MID", key: "mid" },
     { label: "TID", key: "tid" },
     { label: "OS version", key: "os_version" },
+    { label: "Registration Date", key: "registration_date" },
+    { label: "Status", key: "status" },
   ];
 
   const filterFormData = filterForm.watch();
 
-  const fetchReportData = async () => {
+  const fetchReportData = async (filter={},page=1) => {
     setIsLoading(true);
     try {
       let payload = {
         page: posDevicePage,
         page_size: filterFormData?.pageSize,
       };
+
+      payload = {
+        ...payload,
+        ...filter,
+        page: page
+      }
+
       const res = await fetchPosDeviceReport(payload);
       setPosDeviceList(res?.data?.data || []);
+      setPosDevicePage(res?.data?.currentPage || 1)
       setPosDeviceTotalPages(res?.data?.totalPages || 1);
     } catch (error) {
       toast.error("Failed to fetch POS Device List: " + getErrorMessage(error));
@@ -171,6 +179,8 @@ const NewsNoticeForm = () => {
       setIsLoading(false);
     }
   };
+
+  console.log('test',posDevicePage)
 
   useEffect(() => {
     fetchReportData();
@@ -214,8 +224,13 @@ const NewsNoticeForm = () => {
     }
   };
 
+  const handleFilterSubmitDeviceList = (data:any) => {
+    fetchReportData({},1)
+  }
+
   const handlePosDevicePageChange = (page) => {
     setPosDevicePage(page);
+    fetchReportData({},page)
   };
 
   return (
@@ -329,7 +344,7 @@ const NewsNoticeForm = () => {
 
       <div className="mt-4">
         <h3 className="text-lg font-bold mb-2">POS Device List</h3>
-        <form onSubmit={handleFilterSubmit(fetchReportData)} className="flex gap-4 mb-4">
+        <form onSubmit={handleFilterSubmit(handleFilterSubmitDeviceList)} className="flex gap-4 mb-4">
           <CustomizedInputWithLabel
             label="Page Size"
             type="number"
