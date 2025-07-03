@@ -6,6 +6,7 @@ import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
+import { getErrorMessage } from '@/lib/utils';
 
 const CollectorWiseReport = () => {
     const [dateFrom, setDateFrom] = useState('');
@@ -45,8 +46,7 @@ const CollectorWiseReport = () => {
             setReportData(response);
             setFilteredData(response);
         } catch (error) {
-            console.error('Error fetching data:', error);
-            toast.error('Failed to load data.');
+            toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }

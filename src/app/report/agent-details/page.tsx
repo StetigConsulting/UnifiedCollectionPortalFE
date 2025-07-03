@@ -82,7 +82,7 @@ const AgentDetails = () => {
             setTotalPages(response.data.totalPages)
             setIsLoading(false);
         } catch (error) {
-            console.error(getErrorMessage(error))
+            toast.error('Error: ' + getErrorMessage(error))
         } finally {
             setIsLoading(false);
         }
@@ -166,7 +166,7 @@ const AgentDetails = () => {
 
             window.URL.revokeObjectURL(url);
         } catch (error) {
-            console.error("Error downloading the report:", error);
+            toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
             setExportType('')

@@ -7,7 +7,7 @@ import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWi
 import ReactTable from '@/components/ReactTable';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import { deleteBusinessRule, getListOfReceiptForPostpaid } from '@/app/api-calls/admin/api';
-import { urlsListWithTitle } from '@/lib/utils';
+import { getErrorMessage, urlsListWithTitle } from '@/lib/utils';
 import { Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useSession } from 'next-auth/react';
@@ -134,8 +134,7 @@ const ReceiptsForPostpaid = () => {
             toast.success('Number of Receipts rule deleted successfully');
             getListOfAllReceipt()
         } catch (error) {
-            let msg = error?.error
-            console.error('Failed to delete receipt:', msg);
+            toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }

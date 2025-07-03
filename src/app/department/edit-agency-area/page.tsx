@@ -15,6 +15,7 @@ import { Loader2 } from "lucide-react";
 import AlertPopup from "@/components/Agency/ViewAgency/AlertPopup";
 import AlertPopupWithState from "@/components/Agency/ViewAgency/AlertPopupWithState";
 import { useSession } from "next-auth/react";
+import { getErrorMessage } from "@/lib/utils";
 
 const EditAgencyArea = () => {
     const { data: session } = useSession()
@@ -135,7 +136,7 @@ const EditAgencyArea = () => {
             );
 
         } catch (error) {
-            console.error("Failed to create agency:", error.data[Object.keys(error.data)[0]]);
+            console.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }
@@ -160,8 +161,7 @@ const EditAgencyArea = () => {
             getAgencyList()
             reset()
         } catch (error) {
-            toast.error("Failed to update agency details.");
-            console.error("Error:", error);
+            toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsSubmitting(false);
         }

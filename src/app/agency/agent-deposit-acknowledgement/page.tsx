@@ -45,7 +45,6 @@ const AgentDepositAcknowledgement = () => {
             loadDepositAcknowledgementDetails();
         } catch (error) {
             toast.error("Error: " + getErrorMessage(error));
-            console.error("Error: ", error);
         } finally {
             setIsLoading(false);
         }

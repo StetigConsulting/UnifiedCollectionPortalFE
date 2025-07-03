@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
 import { Button } from '@/components/ui/button';
 import { useSession } from 'next-auth/react';
-import { exportPicklist, formatDate, urlsListWithTitle } from '@/lib/utils';
+import { exportPicklist, formatDate, getErrorMessage, urlsListWithTitle } from '@/lib/utils';
 import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import * as XLSX from 'xlsx';
 
@@ -91,7 +91,7 @@ const ViewAgency = () => {
             getAgencyList();
             setSelectedRow(null)
         } catch (error) {
-            console.error('Failed to activate agency:', error);
+            toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }
@@ -105,7 +105,7 @@ const ViewAgency = () => {
             getAgencyList();
             setSelectedRow(null)
         } catch (error) {
-            console.error('Failed to deactivate agency:', error);
+            toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }

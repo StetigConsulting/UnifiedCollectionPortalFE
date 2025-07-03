@@ -64,7 +64,7 @@ const AgentBankDeposit = () => {
             })
             setBankList(listOfBanks)
         } catch (error) {
-            console.error("Failed to get agent:", error?.data[Object.keys(error?.data)[0]]);
+            console.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }
@@ -112,7 +112,7 @@ const AgentBankDeposit = () => {
             );
 
         } catch (error) {
-            console.error("Failed to get agency:", error.data[Object.keys(error.data)[0]]);
+            console.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }
@@ -158,7 +158,7 @@ const AgentBankDeposit = () => {
             setTransactionHistory(response.data.data);
             setCurrentPage(page);
         } catch (error) {
-            console.error(getErrorMessage(error))
+            console.error('Error: ' + getErrorMessage(error))
         } finally {
             setIsLoading(false);
         }

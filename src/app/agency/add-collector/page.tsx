@@ -184,7 +184,6 @@ const AddCounterCollector = () => {
             reset()
             window.location.reload();
         } catch (error) {
-            let errorMessage = error?.data ? error?.data[Object.keys(error?.data)[0]] : error?.error;
             setErrorMessage('Error: ' + getErrorMessage(error));
             setIsErrorModalOpen(true)
         } finally {
@@ -401,7 +400,7 @@ const AddCounterCollector = () => {
                         label: item?.supervisor_name,
                         value: item?.id
                     })))
-            }).catch(err => console.error(err))
+            })
             setValue('initialBalance', 0);
         }
     }

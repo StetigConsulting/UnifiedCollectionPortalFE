@@ -60,7 +60,6 @@ const EditIncentivePage = () => {
             router.push(urlsListWithTitle.incentive.url)
             toast.success('Incentive data saved!');
         } catch (error) {
-            console.error('Error saving incentive:', error);
             toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsSubmitting(false);
@@ -151,7 +150,7 @@ const EditIncentivePage = () => {
             setValue('currentPercentage', response.data.current_amount);
             setValue('arrearPercentage', response.data.arrear_amount);
         } catch (error) {
-            console.error('Error fetching incentive details:', error);
+            toast.error('Error: ' + getErrorMessage(error));
         } finally {
             // setIsLoading(false)
         }

@@ -26,8 +26,7 @@ const NonEnergyTypeConfiguration = () => {
             const data = await getAllNonEnergyTypes();
             setNonEnergyTypes(data.data);
         } catch (error) {
-            console.error('Error fetching non-energy types:', error);
-            toast.error('Error: ' + getErrorMessage(error));
+            console.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }

@@ -15,6 +15,7 @@ import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import { createColorCodingLogic, getBusinessRuleDateById, updateColorCodingLogic } from '@/app/api-calls/admin/api';
 import moment from 'moment';
 import { useSession } from 'next-auth/react';
+import { getErrorMessage } from '@/lib/utils';
 
 type FormData = z.infer<typeof colorCodingLogicSchema>;
 
@@ -142,7 +143,7 @@ const AddColorCodingLogic = () => {
             })
             setValue('colorCodings', fetchedData);
         } catch (error) {
-            console.error("Failed to create agency:", error.data[Object.keys(error.data)[0]]);
+            console.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }

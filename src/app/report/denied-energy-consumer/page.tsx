@@ -110,7 +110,7 @@ const DeniedEnergyConsumer = () => {
             setCurrentPage(page);
             setTotalPages(response.data.totalPages)
         } catch (error) {
-            console.error(getErrorMessage(error))
+            toast.error('Error: ' + getErrorMessage(error))
         } finally {
             setIsLoading(false);
         }

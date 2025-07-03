@@ -121,7 +121,6 @@ const NewsNoticeForm = () => {
       reset();
       setShowButton(false);
     } catch (error) {
-      console.error("Error: " + getErrorMessage(error));
       setErrorMessage("Error: Failed to save the status!");
       setPopupType("error");
       setIsErrorModalOpened(true);

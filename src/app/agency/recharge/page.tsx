@@ -54,7 +54,7 @@ const RechargeEntry = () => {
             );
 
         } catch (error) {
-            console.error("Failed to get agent:", error?.data[Object.keys(error?.data)[0]]);
+            console.error("Failed to get agent:", getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }
@@ -74,7 +74,7 @@ const RechargeEntry = () => {
             setShowBalance(true)
 
         } catch (error) {
-            console.error("Failed to get agent:", error?.data[Object.keys(error?.data)[0]]);
+            console.error("Failed to get agent:", getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }

@@ -15,6 +15,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { AgentWiseSummaryReportData, agentWiseSummaryReportSchema } from '@/lib/zod';
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
+import { toast } from 'sonner';
 
 const AgentWiseSummary = () => {
     const { data: session } = useSession()
@@ -98,7 +99,7 @@ const AgentWiseSummary = () => {
             setCurrentPage(page);
             setTotalPages(response.data.totalPages)
         } catch (error) {
-            console.error(getErrorMessage(error))
+            toast.error('Error: ' + getErrorMessage(error))
         } finally {
             setIsLoading(false);
         }
@@ -347,7 +348,7 @@ const AgentWiseSummary = () => {
 
             window.URL.revokeObjectURL(url);
         } catch (error) {
-            console.error("Error downloading the report:", error);
+            toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
             setExportType('')

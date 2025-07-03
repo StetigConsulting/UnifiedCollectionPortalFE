@@ -72,7 +72,7 @@ const ExtendValidity = () => {
             );
 
         } catch (error) {
-            console.error("Failed to get agent:", error?.data[Object.keys(error?.data)[0]]);
+            console.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }

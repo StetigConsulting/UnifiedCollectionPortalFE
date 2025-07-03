@@ -77,7 +77,6 @@ const EditAgency = () => {
             }
             getAgencyList();
         } catch (error) {
-            console.error("Failed to edit agency:", error.data[Object.keys(error.data)[0]]);
             let errorMessage = getErrorMessage(error);
             toast.error(errorMessage)
         } finally {
@@ -167,7 +166,7 @@ const EditAgency = () => {
             );
 
         } catch (error) {
-            console.error("Failed to create agency:", error.data[Object.keys(error.data)[0]]);
+            console.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }

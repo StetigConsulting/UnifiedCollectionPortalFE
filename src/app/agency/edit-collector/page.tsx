@@ -83,7 +83,6 @@ const EditCollector = () => {
         } catch (error) {
             let errorMessage = getErrorMessage(error);
             toast.error('Error: ' + errorMessage);
-            console.error('Error:', error);
         } finally {
             setIsSubmitting(false)
         }

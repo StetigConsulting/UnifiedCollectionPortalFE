@@ -100,7 +100,7 @@ const CancelTransaction = () => {
             setCurrentPage(page);
             setTotalPages(response.data.totalPages)
         } catch (error) {
-            console.error(getErrorMessage(error))
+            toast.error('Error: ' + getErrorMessage(error))
         } finally {
             setIsLoading(false);
         }
@@ -301,7 +301,7 @@ const CancelTransaction = () => {
 
             window.URL.revokeObjectURL(url);
         } catch (error) {
-            console.error("Error downloading the report:", error);
+            toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
             setExportType('')

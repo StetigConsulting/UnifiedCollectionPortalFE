@@ -301,7 +301,7 @@ const AgentAttendanceReport = () => {
             window.URL.revokeObjectURL(url);
             setExportType('')
         } catch (error) {
-            console.error("Error downloading the report:", error);
+            toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
             setExportType('')

@@ -30,7 +30,6 @@ export async function POST(req: NextRequest) {
             );
         }
     } catch (error) {
-        console.error('Error validating OTP:', error);
         return NextResponse.json({ message: 'Error validating OTP' }, { status: 500 });
     }
 }

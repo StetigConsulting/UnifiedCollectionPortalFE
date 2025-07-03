@@ -297,8 +297,7 @@ const AgencySecurityDeposit = () => {
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error("Error downloading file:", error);
-      toast.error("Failed to download");
+      toast.error('Error: ' + getErrorMessage(error));
     } finally {
       setIsLoading(false);
     }

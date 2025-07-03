@@ -156,7 +156,7 @@ const ViewCollector = () => {
             );
 
         } catch (error) {
-            console.error("Failed to get agency:", getErrorMessage(error));
+            console.error("Error:", getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }

@@ -73,8 +73,7 @@ const AgentDepositAcknowledgementReport = () => {
             setCurrentPage(page);
             setTotalPages(response.data.totalPages)
         } catch (error) {
-            console.error('Error fetching data:', error);
-            toast.error('Failed to load data.');
+            toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }

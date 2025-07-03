@@ -60,7 +60,6 @@ const Recharge = () => {
             });
             getAgencyList()
         } catch (error) {
-            console.error("Failed to recharge agency:", error.data[Object.keys(error.data)[0]]);
             let errorMessage = getErrorMessage(error);
             toast.error(errorMessage)
         } finally {
@@ -85,7 +84,7 @@ const Recharge = () => {
             );
 
         } catch (error) {
-            console.error("Failed to get agency:", error.data[Object.keys(error.data)[0]]);
+            console.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }
