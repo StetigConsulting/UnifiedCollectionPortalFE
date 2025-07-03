@@ -10,6 +10,7 @@ import { Upload, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { fileUploadSchema } from '@/lib/zod';
 import { uploadOfficeStructureLevel } from '@/app/api-calls/admin/api';
+import { getErrorMessage } from '@/lib/utils';
 
 interface CreateNewLevelUploadPopupProps {
     fetchData: () => void;
@@ -64,8 +65,7 @@ const CreateNewLevelUploadPopup: React.FC<CreateNewLevelUploadPopupProps> = ({ f
             setIsDialogOpen(false);
             fetchData();
         } catch (error) {
-            console.error('File upload failed:', error);
-            toast.error('Failed to upload file. Please try again.');
+            toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsUploading(false);
         }

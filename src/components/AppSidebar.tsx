@@ -319,11 +319,6 @@ const navData = {
           url: "/report/collector-top-up-history",
         },
         {
-          title: "Transaction Record",
-          icon: reportIcon,
-          url: "/report/transaction-record",
-        },
-        {
           title: "Login History",
           icon: reportIcon,
           url: "/report/login-history",

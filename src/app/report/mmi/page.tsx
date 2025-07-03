@@ -57,7 +57,7 @@ const MMI = () => {
             if (!res.ok) throw new Error(data.error);
             setAccessToken(data?.access_token)
         } catch (err) {
-            console.error('Token fetch error:', err.message);
+            console.error('Error:', err.message);
         }
     }
 

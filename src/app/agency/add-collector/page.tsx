@@ -58,7 +58,6 @@ const AddCounterCollector = () => {
 
     const getAgencyData = async (id: number) => {
         try {
-            console.log("formData", formData.agencyId, id);
             const agencyResponse = await getAgencyById(id || formData.agencyId)
             const agencyData = agencyResponse.data;
             setAgencyData(agencyData);
@@ -354,7 +353,6 @@ const AddCounterCollector = () => {
     }, []);
 
     const getAgentDetails = async (id?: number) => {
-        console.log('id passed in function', id)
         if (id) {
             getWorkingLevel()
             getAgencyData(id || formData.agencyId)

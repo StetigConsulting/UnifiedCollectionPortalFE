@@ -2323,8 +2323,6 @@ export const totalCollectionReportSchema = z
     const level = data.workingLevel;
     const map = data.levelWithIdMap;
 
-    console.log(level, map)
-
     if (level === map?.SECTION) {
       if (!data.circle.length) {
         ctx.addIssue({

@@ -57,6 +57,7 @@ const NewsNoticeForm = () => {
             const response = await getAllNewsList();
             setNewsList(response?.data || []);
         } catch (error) {
+            setNewsList([]);
             console.error('Error: ' + getErrorMessage(error));
         }
         finally {

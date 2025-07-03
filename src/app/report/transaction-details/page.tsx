@@ -184,7 +184,7 @@ const TransactionDetailsReport = () => {
                 value: item?.id,
             })));
         } catch (err) {
-            console.log(err);
+            console.error(err);
         } finally {
             setIsLoading(false);
         }
@@ -254,7 +254,6 @@ const TransactionDetailsReport = () => {
             const payload = buildTransactionDetailsPayload(filters, page, true);
             const response = await getTransactionDetailsReport(payload);
             setDataList(response.data.data || []);
-            console.log(response.data.data);
             setShowTable(true);
             setCurrentPage(page);
             setTotalPages(response.data.totalPages || 1);

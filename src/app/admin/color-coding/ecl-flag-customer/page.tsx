@@ -12,6 +12,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { createColorCodingEcl, deleteBusinessRule, getColorCodingEclFlag, updateColorCodingEcl } from '@/app/api-calls/admin/api';
 import { useSession } from 'next-auth/react';
+import { getErrorMessage } from '@/lib/utils';
 
 type BackgroundColorFormType = z.infer<typeof colorCodingEclSchema>;
 
@@ -97,8 +98,7 @@ const ECLFlaggedCustomer = () => {
             toast.success('ECL flag deleted successfully');
             getEclFlagCustomer()
         } catch (error) {
-            let msg = error?.error
-            console.error('Failed to delete:', msg);
+            toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }
