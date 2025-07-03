@@ -188,8 +188,7 @@ const NewsNoticeForm = () => {
     setPosDeviceExportType(type);
     setIsLoading(true);
     try {
-      const exportType = type.toLowerCase();
-      const response = await exportPosDeviceReport(exportType);
+      const response = await exportPosDeviceReport(type);
       const contentDisposition = response.headers?.["content-disposition"];
       let filename = "POSDeviceList";
       if (contentDisposition) {
@@ -198,18 +197,14 @@ const NewsNoticeForm = () => {
           filename = matches[1];
         }
       }
-      let contentType = response.headers?.["content-type"];
-      if (!contentType) {
-        if (exportType === 'csv') contentType = 'text/csv';
-        else if (exportType === 'xlsx') contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-        else if (exportType === 'pdf') contentType = 'application/pdf';
-        else contentType = 'application/octet-stream';
-      }
+      let contentType = response.headers?.["content-disposition"];
+      let extension = type;
+
       const blob = new Blob([response.data], { type: contentType });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = filename.includes(`.${exportType}`) ? filename : `${filename}.${exportType}`;
+      a.download = filename.includes(`.${extension}`) ? filename : `${filename}.${extension}`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
