@@ -184,7 +184,12 @@ const navData = {
           icon: ReceiptText,
           path: '/admin/create-new-user',
         },
-
+        {
+          title: 'Agency Security Deposit',
+          url: '/department/agency-security-deposit',
+          icon: PiggyBank,
+          path: '/department/agency-security-deposit',
+        }
       ]
     },
     {
@@ -451,6 +456,12 @@ const navData = {
           url: '/report/supervisor-bank-deposit',
           icon: reportIcon,
           path: '/report/supervisor-bank-deposit',
+        },
+        {
+          title: 'Transaction Details',
+          url: '/report/transaction-details',
+          icon: reportIcon,
+          path: '/report/transaction-details',
         },
       ]
     },

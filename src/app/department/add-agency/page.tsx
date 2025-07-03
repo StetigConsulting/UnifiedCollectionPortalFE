@@ -25,8 +25,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
-import { TooltipProvider } from "@/components/ui/tooltip";
 
 type FormData = z.infer<typeof addAgencySchema>;
 
@@ -40,14 +38,14 @@ const AddAgency = () => {
     formState: { errors },
     setValue,
     watch,
-    reset
+    reset,
   } = useForm<FormData>({
     resolver: zodResolver(addAgencySchema),
     defaultValues: {
       workingLevel: null,
       inheritVendorId: false,
       vendorId: "",
-    }
+    },
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -57,7 +55,7 @@ const AddAgency = () => {
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
 
   const [isErrorModalOpen, setIsErrorModalOpen] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState('')
+  const [errorMessage, setErrorMessage] = useState("");
 
   const onSubmit = async (data: FormData) => {
     const agencyData: AgencyDataInterface = {
@@ -73,10 +71,6 @@ const AddAgency = () => {
       max_agent: data.maximumAgent || 0,
       validity_from_date: data.validityFromDate,
       validity_to_date: data.validityToDate,
-      payment_date: data.paymentDate || "",
-      transaction_id: data.transactionId || "",
-      security_deposit_payment_mode: Number(data.paymentMode) || undefined,
-      payment_remarks: data.paymentRemark || "",
       collection_payment_modes: data.permission.map(Number),
       working_level: Number(data.workingLevel),
       is_inherited_vendor_id: data.inheritVendorId,
@@ -87,28 +81,31 @@ const AddAgency = () => {
       non_energy_types: data.collectionType.includes("Non-Energy")
         ? data.nonEnergy.map(Number)
         : undefined,
-      working_level_offices: data.workingLevel === levelNameMappedWithId.CIRCLE
-        ? data.circle.map(Number)
-        : data.workingLevel === levelNameMappedWithId.DIVISION
+      working_level_offices:
+        data.workingLevel === levelNameMappedWithId.CIRCLE
+          ? data.circle.map(Number)
+          : data.workingLevel === levelNameMappedWithId.DIVISION
           ? data.division.map(Number)
           : data.workingLevel === levelNameMappedWithId.SUB_DIVISION
-            ? data.subDivision.map(Number)
-            : data.workingLevel === levelNameMappedWithId.SECTION ? data.section.map(Number) : [],
+          ? data.subDivision.map(Number)
+          : data.workingLevel === levelNameMappedWithId.SECTION
+          ? data.section.map(Number)
+          : [],
     };
 
     try {
       setIsSubmitting(true);
       const response = await createAgency(agencyData);
       toast.success("Agency created successfully");
-      reset();
-      // location.reload();
+      // reset();
+      window.location.reload();
     } catch (error) {
       let errorData = error?.data;
       let messages = [];
 
       // Collect all string values from the error data
       for (const key in errorData) {
-        if (typeof errorData[key] === 'string') {
+        if (typeof errorData[key] === "string") {
           messages.push(errorData[key]);
         }
       }
@@ -117,7 +114,7 @@ const AddAgency = () => {
         messages.push(getErrorMessage(error));
       }
 
-      setErrorMessage(messages.join('\n'));
+      setErrorMessage(messages.join("\n"));
       setIsErrorModalOpen(true);
       // toast.error('Error: ' + errorMessage)
     } finally {
@@ -154,7 +151,7 @@ const AddAgency = () => {
         if (Object.keys(changes).includes("workingLevel")) {
           let newValue = changes["workingLevel"];
           if (Number.isNaN(newValue?.new)) {
-            setValue('workingLevel', null);
+            setValue("workingLevel", null);
           }
           if (newValue?.new) {
             setValue("circle", []);
@@ -174,7 +171,10 @@ const AddAgency = () => {
           setDivisions([]);
           setSubDivisions([]);
           setSections([]);
-          if (newValue?.new?.length > 0 && formData.workingLevel !== levelNameMappedWithId.CIRCLE) {
+          if (
+            newValue?.new?.length > 0 &&
+            formData.workingLevel !== levelNameMappedWithId.CIRCLE
+          ) {
             getDivisions(newValue?.new[0]);
           }
         }
@@ -185,7 +185,11 @@ const AddAgency = () => {
           setValue("section", []);
           setSubDivisions([]);
           setSections([]);
-          if (newValue?.new.length > 0 && (formData.workingLevel === levelNameMappedWithId.SUB_DIVISION || formData.workingLevel === levelNameMappedWithId.SECTION)) {
+          if (
+            newValue?.new.length > 0 &&
+            (formData.workingLevel === levelNameMappedWithId.SUB_DIVISION ||
+              formData.workingLevel === levelNameMappedWithId.SECTION)
+          ) {
             getSubDivisions(newValue?.new[0]);
           }
         }
@@ -194,7 +198,10 @@ const AddAgency = () => {
           let newValue = changes["subDivision"];
           setValue("section", []);
           setSections([]);
-          if (newValue?.new.length > 0 && formData.workingLevel === levelNameMappedWithId.SECTION) {
+          if (
+            newValue?.new.length > 0 &&
+            formData.workingLevel === levelNameMappedWithId.SECTION
+          ) {
             getSections(newValue?.new[0]);
           }
         }
@@ -204,31 +211,35 @@ const AddAgency = () => {
   }, [formData]);
 
   useEffect(() => {
-    getWorkingLevel()
-    getAllPaymentModes().then((data) => {
-      setPermissions(
-        data?.data
-          ?.filter((ite) => ite.mode_type == "Collection")
-          ?.map((ite) => {
-            return {
-              label: ite.mode_name,
-              value: ite.id,
-            };
-          })
-      );
-    }).catch((err) => { })
-    getAllGlobalPaymentMode().then((data) => {
-      setPaymentMethods(
-        data?.data
-          ?.filter((ite) => ite.mode_type == "Security Deposit")
-          ?.map((ite) => {
-            return {
-              label: ite.mode_name,
-              value: ite.id,
-            };
-          })
-      );
-    }).catch((err) => { })
+    getWorkingLevel();
+    getAllPaymentModes()
+      .then((data) => {
+        setPermissions(
+          data?.data
+            ?.filter((ite) => ite.mode_type == "Collection")
+            ?.map((ite) => {
+              return {
+                label: ite.mode_name,
+                value: ite.id,
+              };
+            })
+        );
+      })
+      .catch((err) => {});
+    getAllGlobalPaymentMode()
+      .then((data) => {
+        setPaymentMethods(
+          data?.data
+            ?.filter((ite) => ite.mode_type == "Security Deposit")
+            ?.map((ite) => {
+              return {
+                label: ite.mode_name,
+                value: ite.id,
+              };
+            })
+        );
+      })
+      .catch((err) => {});
     getAllNonEnergyTypes().then((data) => {
       setNonEnergyTypes(
         data?.data?.map((ite) => {
@@ -238,7 +249,7 @@ const AddAgency = () => {
           };
         })
       );
-    })
+    });
     getLevelsDiscomId(session?.user?.discomId).then((data) => {
       setCircles(
         data?.data?.officeStructure?.map((ite) => {
@@ -248,7 +259,7 @@ const AddAgency = () => {
           };
         })
       );
-    })
+    });
 
     getLevels(session?.user?.discomId).then((data) => {
       setWorkingLevel(
@@ -261,71 +272,83 @@ const AddAgency = () => {
             };
           })
       );
-    })
-
-    setValue('initialBalance', 0);
+    });
   }, []);
 
   const getDivisions = (id) => {
-    setIsLoading(true)
-    getLevelsDiscomId(id).then((data) => {
-      setDivisions(
-        data?.data?.officeStructure?.map((ite) => {
-          return {
-            value: ite.id,
-            label: ite.office_description,
-          };
-        })
-      );
-    }).finally(() => { setIsLoading(false); });
+    setIsLoading(true);
+    getLevelsDiscomId(id)
+      .then((data) => {
+        setDivisions(
+          data?.data?.officeStructure?.map((ite) => {
+            return {
+              value: ite.id,
+              label: ite.office_description,
+            };
+          })
+        );
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const getSubDivisions = (id) => {
-    setIsLoading(true)
-    getLevelsDiscomId(id).then((data) => {
-      setSubDivisions(
-        data?.data?.officeStructure?.map((ite) => {
-          return {
-            value: ite.id,
-            label: ite.office_description,
-          };
-        })
-      );
-    }).finally(() => { setIsLoading(false); })
+    setIsLoading(true);
+    getLevelsDiscomId(id)
+      .then((data) => {
+        setSubDivisions(
+          data?.data?.officeStructure?.map((ite) => {
+            return {
+              value: ite.id,
+              label: ite.office_description,
+            };
+          })
+        );
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const getSections = (id) => {
-    setIsLoading(true)
-    getLevelsDiscomId(id).then((data) => {
-      setSections(
-        data?.data?.officeStructure?.map((ite) => {
-          return {
-            value: ite.id,
-            label: ite.office_description,
-          };
-        })
-      );
-    }).finally(() => { setIsLoading(false); });
+    setIsLoading(true);
+    getLevelsDiscomId(id)
+      .then((data) => {
+        setSections(
+          data?.data?.officeStructure?.map((ite) => {
+            return {
+              value: ite.id,
+              label: ite.office_description,
+            };
+          })
+        );
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
-  const [levelNameMappedWithId, setLevelNameMappedWithId] = useState<Record<string, number>>({})
+  const [levelNameMappedWithId, setLevelNameMappedWithId] = useState<
+    Record<string, number>
+  >({});
 
   const getWorkingLevel = () => {
     getLevels(session?.user?.discomId).then((data) => {
       let levelIdMap = data?.data
         ?.filter((item) => item.levelType === "MAIN")
         .reduce((acc, item) => {
-          let levelName = item.levelName.replace(' ', "_");
+          let levelName = item.levelName.replace(" ", "_");
           acc[levelName] = item.id;
           return acc;
         }, {});
 
-      setLevelNameMappedWithId(levelIdMap)
-      setValue('levelWithIdMap', levelIdMap)
-    })
-  }
+      setLevelNameMappedWithId(levelIdMap);
+      setValue("levelWithIdMap", levelIdMap);
+    });
+  };
 
-  const inheritVendorId = watch('inheritVendorId');
+  const inheritVendorId = watch("inheritVendorId");
 
   return (
     <AuthUserReusableCode pageTitle="Add Agency" isLoading={isLoading}>
@@ -345,38 +368,20 @@ const AddAgency = () => {
             containerClass="col-span-2"
             disabled={!inheritVendorId}
             errors={errors.vendorId}
-            {...register('vendorId')}
-            additionAction={<div className='flex gap-2 items-center'>
-              <input type="checkbox"
-                className='self-center'
-                {...register('inheritVendorId')}
-              />
-              <label className='flex-1 text-sm font-medium mt-1 flex items-center gap-1'>
-                Inherit Vendor ID
-                {inheritVendorId && <TooltipProvider>
-                  <Tooltip open={isTooltipOpen} onOpenChange={setIsTooltipOpen}>
-                    <TooltipTrigger asChild>
-                      <span
-                        tabIndex={0}
-                        className="cursor-pointer"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setIsTooltipOpen(!isTooltipOpen);
-                        }}
-                        onMouseEnter={(e) => e.preventDefault()}
-                        onMouseLeave={(e) => e.preventDefault()}
-                      >
-                        <Info className="w-4 h-4 text-black-500" />
-                      </span>
-                    </TooltipTrigger>
-                    <TooltipContent side="right">
-                      All agents under this agency will inherit the Vendor ID of agency
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>}
-              </label>
-            </div>}
+            {...register("vendorId")}
+            additionAction={
+              <div className="flex gap-2 items-center">
+                <input
+                  type="checkbox"
+                  className="self-center"
+                  {...register("inheritVendorId")}
+                />
+                <label className="flex-1 text-sm font-medium mt-1 flex items-center gap-1">
+                  Inherit Vendor ID (All agents under this agency will inherit
+                  the Vendor ID of agency, if Checked)
+                </label>
+              </div>
+            }
           />
           <CustomizedInputWithLabel
             containerClass="col-span-2"
@@ -435,64 +440,26 @@ const AddAgency = () => {
             placeholder="Enter Maximum Agent"
             {...register("maximumAgent")}
           />
-          <div className="grid grid-cols-3 gap-4 col-span-2">
-            <CustomizedInputWithLabel
-              label="Validity From Date"
-              errors={errors.validityFromDate}
-              containerClass=""
-              required={true}
-              placeholder="Choose Validity Date"
-              type="date"
-              {...register("validityFromDate")}
-            />
-            <CustomizedInputWithLabel
-              label="Validity To Date"
-              errors={errors.validityToDate}
-              containerClass=""
-              required={true}
-              placeholder="Choose Validity Date"
-              type="date"
-              {...register("validityToDate")}
-            />
-            <CustomizedInputWithLabel
-              label="Security Deposit Payment Date"
-              errors={errors.paymentDate}
-              placeholder="Choose Payment Date"
-              type="date"
-              {...register("paymentDate")}
-            />
-          </div>
+
           <CustomizedInputWithLabel
-            label="Transaction ID"
-            errors={errors.transactionId}
+            label="Validity From Date"
+            errors={errors.validityFromDate}
             containerClass=""
-            placeholder="Enter Transaction ID"
-            {...register("transactionId")}
-          />
-          <CustomizedInputWithLabel
-            label="Initial Balance"
             required={true}
-            errors={errors.initialBalance}
-            disabled
-            placeholder="Enter Initial Balance"
-            {...register("initialBalance")}
-          />
-          <CustomizedSelectInputWithLabel
-            label="Payment Mode"
-            errors={errors.paymentMode}
-            required={true}
-            containerClass=""
-            list={paymentModes}
-            placeholder="Select Payment Mode"
-            {...register("paymentMode")}
+            placeholder="Choose Validity Date"
+            type="date"
+            {...register("validityFromDate")}
           />
           <CustomizedInputWithLabel
-            label="Payment Remark"
-            errors={errors.paymentRemark}
+            label="Validity To Date"
+            errors={errors.validityToDate}
             containerClass=""
-            placeholder="Enter Payment Remark"
-            {...register("paymentRemark")}
+            required={true}
+            placeholder="Choose Validity Date"
+            type="date"
+            {...register("validityToDate")}
           />
+
           <CustomizedSelectInputWithLabel
             label="Working Level"
             errors={errors.workingLevel}
@@ -502,33 +469,36 @@ const AddAgency = () => {
             list={workingLevel}
             {...register("workingLevel", { valueAsNumber: true })}
           />
-          {formData.workingLevel != null &&
+          {formData.workingLevel != null && (
             <CustomizedMultipleSelectInputWithLabel
               label="Circle"
               errors={errors.circle}
               required={true}
               list={circles}
               placeholder="Select Circle Type"
-              value={watch('circle') || []}
-              onChange={(selectedValues) => setValue('circle', selectedValues)}
+              value={watch("circle") || []}
+              onChange={(selectedValues) => setValue("circle", selectedValues)}
               multi={formData.workingLevel == levelNameMappedWithId.CIRCLE}
             />
-          }
-          {formData.workingLevel != null && formData.workingLevel != levelNameMappedWithId.CIRCLE && (
-            <CustomizedMultipleSelectInputWithLabel
-              label="Division"
-              required={true}
-              list={divisions}
-              disabled={formData?.circle?.length == 0}
-              value={watch('division') || []}
-              onChange={(selectedValues) => setValue('division', selectedValues)}
-              multi={formData.workingLevel == levelNameMappedWithId.DIVISION}
-              errors={errors.division}
-            />
           )}
-          {
-            formData.workingLevel != null && (formData.workingLevel == levelNameMappedWithId.SECTION
-              || formData.workingLevel == levelNameMappedWithId.SUB_DIVISION) && (
+          {formData.workingLevel != null &&
+            formData.workingLevel != levelNameMappedWithId.CIRCLE && (
+              <CustomizedMultipleSelectInputWithLabel
+                label="Division"
+                required={true}
+                list={divisions}
+                disabled={formData?.circle?.length == 0}
+                value={watch("division") || []}
+                onChange={(selectedValues) =>
+                  setValue("division", selectedValues)
+                }
+                multi={formData.workingLevel == levelNameMappedWithId.DIVISION}
+                errors={errors.division}
+              />
+            )}
+          {formData.workingLevel != null &&
+            (formData.workingLevel == levelNameMappedWithId.SECTION ||
+              formData.workingLevel == levelNameMappedWithId.SUB_DIVISION) && (
               <CustomizedMultipleSelectInputWithLabel
                 label="Sub Division"
                 errors={errors.subDivision}
@@ -536,14 +506,17 @@ const AddAgency = () => {
                 list={subDivisions}
                 required={true}
                 disabled={formData?.division?.length == 0}
-                value={watch('subDivision') || []}
-                multi={formData.workingLevel == levelNameMappedWithId.SUB_DIVISION}
-                onChange={(selectedValues) => setValue('subDivision', selectedValues)}
+                value={watch("subDivision") || []}
+                multi={
+                  formData.workingLevel == levelNameMappedWithId.SUB_DIVISION
+                }
+                onChange={(selectedValues) =>
+                  setValue("subDivision", selectedValues)
+                }
               />
-            )
-          }
-          {
-            formData.workingLevel != null && formData.workingLevel == levelNameMappedWithId.SECTION && (
+            )}
+          {formData.workingLevel != null &&
+            formData.workingLevel == levelNameMappedWithId.SECTION && (
               <CustomizedMultipleSelectInputWithLabel
                 label="Section"
                 errors={errors.section}
@@ -551,12 +524,13 @@ const AddAgency = () => {
                 list={sections}
                 required={true}
                 disabled={formData?.subDivision?.length == 0}
-                value={watch('section') || []}
+                value={watch("section") || []}
                 multi={formData.workingLevel == levelNameMappedWithId.SECTION}
-                onChange={(selectedValues) => setValue('section', selectedValues)}
+                onChange={(selectedValues) =>
+                  setValue("section", selectedValues)
+                }
               />
-            )
-          }
+            )}
           {/* <CustomizedInputWithLabel
             label="Vendor ID"
             errors={errors.vendorId}
@@ -570,9 +544,11 @@ const AddAgency = () => {
             placeholder="Select permission"
             list={permissions}
             required={true}
-            value={watch('permission') || []}
+            value={watch("permission") || []}
             multi={true}
-            onChange={(selectedValues) => setValue('permission', selectedValues)}
+            onChange={(selectedValues) =>
+              setValue("permission", selectedValues)
+            }
           />
           <CustomizedMultipleSelectInputWithLabelString
             label="Collection Type"
@@ -583,21 +559,25 @@ const AddAgency = () => {
               { label: "Non-Energy", value: "Non-Energy" },
             ]}
             required={true}
-            value={watch('collectionType') || []}
+            value={watch("collectionType") || []}
             multi={true}
-            onChange={(selectedValues) => setValue('collectionType', selectedValues)}
+            onChange={(selectedValues) =>
+              setValue("collectionType", selectedValues)
+            }
           />
 
           {formData?.collectionType &&
-            formData?.collectionType?.includes("Non-Energy") ? (
+          formData?.collectionType?.includes("Non-Energy") ? (
             <CustomizedMultipleSelectInputWithLabel
               label="Non Energy"
               list={nonEnergyTypes}
               required={true}
               errors={errors.nonEnergy}
-              value={watch('nonEnergy') || []}
+              value={watch("nonEnergy") || []}
               multi={true}
-              onChange={(selectedValues) => setValue('nonEnergy', selectedValues)}
+              onChange={(selectedValues) =>
+                setValue("nonEnergy", selectedValues)
+              }
             />
           ) : (
             <></>
@@ -605,15 +585,23 @@ const AddAgency = () => {
         </div>
         <div className="flex justify-end mt-4">
           <Button type="submit" variant="default" disabled={isSubmitting}>
-            {isSubmitting ? <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
-            </> : "Submit"}
+            {isSubmitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
+              </>
+            ) : (
+              "Submit"
+            )}
           </Button>
         </div>
       </form>
 
-      <SuccessErrorModal isOpen={isErrorModalOpen} onClose={() => setIsErrorModalOpen(false)}
-        message={errorMessage} type="error" />
+      <SuccessErrorModal
+        isOpen={isErrorModalOpen}
+        onClose={() => setIsErrorModalOpen(false)}
+        message={errorMessage}
+        type="error"
+      />
     </AuthUserReusableCode>
   );
 };

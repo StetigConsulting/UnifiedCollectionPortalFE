@@ -64,7 +64,8 @@ const DailyAgentCollection = () => {
                     acc[levelName] = item.id;
                     return acc;
                 }, {});
-
+            setValue('levelMapWithId',levelIdMap)
+            console.log(levelIdMap)
             setWorkingLevelList(data?.data
                 ?.filter((item) => item.levelType === "MAIN")
                 ?.map((item) => ({
@@ -431,7 +432,7 @@ const DailyAgentCollection = () => {
                         {...register('pageSize', { valueAsNumber: true })}
                         errors={errors.pageSize}
                     />
-                    <div className='self-end mb-1'>
+                    <div className='mt-6'>
                         <Button variant='default' type='submit'>Search</Button>
                     </div>
                     <CustomizedSelectInputWithLabel

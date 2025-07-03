@@ -60,7 +60,7 @@ const CreateUserForm = () => {
             const response = await createUser(payload);
             setModaltype('success')
             setIsErrorModalOpened(true);
-            setErrorMessage('New Supervisor Created Successfully');
+            setErrorMessage('New User Created Successfully');
             reset();
         } catch (error) {
             setIsErrorModalOpened(true);

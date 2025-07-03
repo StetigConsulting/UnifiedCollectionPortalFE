@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { getErrorMessage } from '@/lib/utils';
 import { AddSupervisorFormData, addSupervisorSchema } from '@/lib/zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2, Power, PowerOff } from 'lucide-react';
+import { Loader2, UserRoundMinus, UserRoundPlus } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
@@ -64,7 +64,7 @@ const AddNewSupervisor = () => {
     };
 
     const columns = [
-        { label: 'Sr. No', key: 'srNo' },
+        { label: 'Action', key: 'action' },
         { label: 'Agency Name', key: 'agencyName' },
         { label: 'Supervisor ID', key: 'id' },
         { label: 'Supervisor Name', key: 'supervisor_name' },
@@ -90,14 +90,17 @@ const AddNewSupervisor = () => {
     const tableData = supervisorList.map((item, idx) => ({
         ...item,
         agencyName: item?.agency?.agency_name,
-        srNo: idx + 1
+        action: <div className="space-x-2">
+            {item?.is_active ? <AlertPopup triggerCode={<UserRoundMinus className="text-red-500 cursor-pointer" />}
+                handleContinue={() => deactivateUser(item.id)}
+                title='Confirm Deactivating' description='Are you sure you want to save the deactivate supervisor? Please review the details carefully before confirming.' continueButtonText='Confirm'
+            /> :
+                <AlertPopup triggerCode={<UserRoundPlus className="text-themeColor cursor-pointer" />}
+                    handleContinue={() => activateUser(item.id)}
+                    title='Confirm Activating' description='Are you sure you want to save the activate supervisor? Please review the details carefully before confirming.' continueButtonText='Confirm'
+                />}
+        </div>
     }))
-
-    const [selectedRow, setSelectedRow] = useState<any | null>(null);
-
-    const handleRowSelection = (row: any) => {
-        setSelectedRow(row)
-    }
 
     const activateUser = async (id: number) => {
         setIsLoading(true);
@@ -107,8 +110,7 @@ const AddNewSupervisor = () => {
             }
             await activateSupervisorUser(payload);
             toast.success('Supervisor activated successfully');
-            getAllListOfSupervisor();
-            setSelectedRow(null)
+            await getAllListOfSupervisor();
         } catch (error) {
             toast.error('Error ', getErrorMessage(error));
         } finally {
@@ -124,30 +126,12 @@ const AddNewSupervisor = () => {
             }
             await deactivateSupervisorUser(payload);
             toast.success('Supervisor deactivated successfully');
-            getAllListOfSupervisor();
-            setSelectedRow(null)
+            await getAllListOfSupervisor();
         } catch (error) {
             toast.error('Error ', getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }
-    }
-
-    const getSelectedRowButton = () => {
-        return <div className="space-x-2">
-            {selectedRow?.is_active ? <AlertPopup triggerCode={<Button variant='destructive' className="cursor-pointer">
-                <PowerOff />
-                Deactivate
-            </Button>} handleContinue={() => deactivateUser(selectedRow.id)}
-                title='Confirm Deactivating' description='Are you sure you want to save the deactivate supervisor? Please review the details carefully before confirming.' continueButtonText='Confirm'
-            /> :
-                <AlertPopup triggerCode={<Button variant='success' className="cursor-pointer">
-                    <Power />
-                    Activate
-                </Button>} handleContinue={() => activateUser(selectedRow.id)}
-                    title='Confirm Activating' description='Are you sure you want to save the activate supervisor? Please review the details carefully before confirming.' continueButtonText='Confirm'
-                />}
-        </div>
     }
 
     return (
@@ -190,13 +174,13 @@ const AddNewSupervisor = () => {
                 <ReactTable
                     columns={columns}
                     data={tableData}
-                    isSelectable
                     hideSearchAndOtherButtons
-                    onRowSelect={handleRowSelection}
-                    onRowSelectButtons={
-                        getSelectedRowButton()
-                    }
-                    selectedRow={selectedRow}
+                // isSelectable
+                // onRowSelect={handleRowSelection}
+                // onRowSelectButtons={
+                //     getSelectedRowButton()
+                // }
+                // selectedRow={selectedRow}
                 />
             </div>
 

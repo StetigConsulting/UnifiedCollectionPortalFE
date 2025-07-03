@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Pagination,
     PaginationContent,
@@ -11,11 +11,17 @@ import {
 
 interface PaginationComponentProps {
     totalPages: number;
+    pageNumber?: number;
     onPageChange?: (page: number) => void;
 }
 
-const PaginationComponent: React.FC<PaginationComponentProps> = ({ totalPages, onPageChange }) => {
-    const [currentPage, setCurrentPage] = useState<number>(1);
+const PaginationComponent: React.FC<PaginationComponentProps> = ({ totalPages, onPageChange,pageNumber }) => {
+
+    const [currentPage, setCurrentPage] = useState<number>(pageNumber || 1);
+
+    useEffect(() => {
+        setCurrentPage(pageNumber || 1);
+    }, [pageNumber]);
 
     const handlePageClick = (page: number) => {
         setCurrentPage(page);

@@ -67,6 +67,7 @@ const TotalCollectionReport = () => {
                     return acc;
                 }, {});
 
+            setValue('levelWithIdMap', levelIdMap)
             setWorkingLevelList(data?.data
                 ?.filter((item) => item.levelType === "MAIN")
                 ?.map((item) => ({
@@ -400,6 +401,7 @@ const TotalCollectionReport = () => {
         setAgencyName(prev => agencyDetails?.[0]?.agency_name || null);
         setValue('agency', agencyId);
         setValue('agent', '');
+        setAgentList([]);
         if (agencyId)
             getAgentList(agencyId);
     }

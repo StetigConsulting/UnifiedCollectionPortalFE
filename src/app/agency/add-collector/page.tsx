@@ -47,7 +47,7 @@ const AddCounterCollector = () => {
     const [subDivisions, setSubDivisions] = useState([]);
     const [sections, setSections] = useState([]);
 
-    const [agencyData, setAgencyData] = useState({ working_level: null, maximum_limit: null, is_inherited_vendor_id: false });
+    const [agencyData, setAgencyData] = useState({ working_level: null, maximum_limit: null, is_inherited_vendor_id: false, vendor_id: '' });
 
     const [collectionTypeList, setCollectionTypeList] = useState(collectionTypePickList)
 
@@ -58,7 +58,8 @@ const AddCounterCollector = () => {
 
     const getAgencyData = async (id: number) => {
         try {
-            const agencyResponse = await getAgencyById(id)
+            console.log("formData", formData.agencyId, id);
+            const agencyResponse = await getAgencyById(id || formData.agencyId)
             const agencyData = agencyResponse.data;
             setAgencyData(agencyData);
 
@@ -353,9 +354,10 @@ const AddCounterCollector = () => {
     }, []);
 
     const getAgentDetails = async (id?: number) => {
+        console.log('id passed in function', id)
         if (id) {
             getWorkingLevel()
-            getAgencyData(formData.agencyId || id)
+            getAgencyData(id || formData.agencyId)
             setIsLoading(true)
             getAllPaymentModes().then((data) => {
                 setPermissions(
@@ -394,11 +396,13 @@ const AddCounterCollector = () => {
                 setIsLoading(false)
             })
             getListOfAllSupervisor(id).then((res) => {
-                setSupervisorList(res?.data?.map(item => ({
-                    ...item,
-                    label: item?.supervisor_name,
-                    value: item?.id
-                })))
+                setSupervisorList(res?.data
+                    ?.filter(item => item?.is_active === true)
+                    ?.map(item => ({
+                        ...item,
+                        label: item?.supervisor_name,
+                        value: item?.id
+                    })))
             }).catch(err => console.error(err))
             setValue('initialBalance', 0);
         }
@@ -641,6 +645,11 @@ const AddCounterCollector = () => {
                             <CustomizedInputWithLabel label='Vendor Id' errors={errors.vendorId}
                                 placeholder='Enter Vendor Id' disabled={agencyData?.is_inherited_vendor_id}
                                 {...register('vendorId')} />
+                            {
+                                agencyData?.is_inherited_vendor_id &&
+                                <CustomizedInputWithLabel label='Inherited Agency Vendor Id'
+                                    value={agencyData?.vendor_id} disabled />
+                            }
                         </>
                     }
                 </div>

@@ -15,6 +15,7 @@ type CustomizedSelectInputWithLabelProps = {
     list: SelectOption[];
     placeholder?: string;
     removeDefaultOption?: boolean;
+    hideLabel?: boolean;
 } & React.SelectHTMLAttributes<HTMLSelectElement>;
 
 const CustomizedSelectInputWithLabel: React.FC<CustomizedSelectInputWithLabelProps> = ({
@@ -25,21 +26,22 @@ const CustomizedSelectInputWithLabel: React.FC<CustomizedSelectInputWithLabelPro
     list = [],
     placeholder,
     removeDefaultOption,
+    hideLabel = false,
     ...props
 }) => {
     return (
         <div className={`flex flex-col ${containerClass}`} title={props.title}>
-            <label htmlFor={props.id || 'select-input'} className="block text-sm font-medium text-gray-700 mb-1">
+            {hideLabel ? null : <label htmlFor={props.id || 'select-input'} className="block text-sm font-medium text-gray-700 mb-1">
                 {label}{required && <span className="text-red-500 ml-1">*</span>}
-            </label>
+            </label>}
             <select
                 {...props}
                 id={props.id || 'select-input'}
                 className={`bg-white border border-gray-300 rounded-md shadow-sm w-full px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-500 focus:border-blue-500 transition-all ease-in-out disabled:bg-gray-100 disabled:cursor-not-allowed h-[40px]`}
             >
                 {!removeDefaultOption && <option value="">{placeholder || 'Select an option'}</option>}
-                {list.map((data) => (
-                    <option key={data.id || data.value} value={data.value}>{data.label}</option>
+                {list.map((data,index) => (
+                    <option key={data.id || data.value+'_'+index} value={data.value}>{data.label}</option>
                 ))}
             </select>
 

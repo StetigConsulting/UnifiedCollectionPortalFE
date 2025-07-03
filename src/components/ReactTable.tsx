@@ -108,7 +108,7 @@ const ReactTable = <T extends Record<string, any>>({
 
 
     const totalPages = Math.ceil(sortedData.length / itemsPerPage);
-    const paginatedData = sortedData.slice(
+    const paginatedData = dynamicPagination ? sortedData : sortedData.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );
@@ -360,7 +360,7 @@ const ReactTable = <T extends Record<string, any>>({
             {
                 (dynamicPagination && totalPageNumber > 0) &&
                 <div style={{ marginTop: '10px', textAlign: 'center' }}>
-                    <PaginationComponent totalPages={totalPageNumber} onPageChange={onPageChange} />
+                    <PaginationComponent totalPages={totalPageNumber} onPageChange={onPageChange} pageNumber={pageNumber} />
                 </div>
             }
         </div >

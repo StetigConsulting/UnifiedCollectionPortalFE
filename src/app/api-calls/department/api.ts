@@ -282,6 +282,70 @@ export const createSupervisor = async (data: any) => {
   }
 }
 
+export const uploadAgencySecurityDepositFile = async (file: FormData) => {
+  try {
+    const response = await api.post(`/v1/agency-security-deposits/upload`, file, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error?.response?.data;
+  }
+};
+
+export const addAgencySecurityDeposit = async (data: any) => {
+  try {
+    const response = await api.post(`/v1/agency-security-deposits/`, data)
+    return response.data;
+  } catch (error) {
+    throw error?.response?.data
+  }
+}
+
+export const editAgencySecurityDeposit = async (data: any) => {
+  try {
+    const response = await api.put(`/v1/agency-security-deposits/`, data)
+    return response.data;
+  } catch (error) {
+    throw error?.response?.data
+  }
+}
+
+export const getAgencySecurityDepositHistory = async (data: any) => {
+  try {
+    const response = await api.post(`/v1/agency-security-deposits/fetch`, data)
+    return response.data;
+  } catch (error) {
+    throw error?.response?.data
+  }
+};
+
+export const downloadAgencySecurityDepositHistory = async (payload: any, type: string) => {
+  const response = await api.post(`/v1/agency-security-deposits/download/${type}`, payload, {
+    responseType: 'blob',
+  });
+  return response;
+};
+
+export const downloadUploadedFileSecurityDeposit = async (data: any) => {
+  try {
+    const response = await api.get(
+      `/v1/agency-security-deposits/download/${data}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        responseType: "blob",
+      }
+    );
+    return response;
+  } catch (error) {
+    throw error?.response?.data;
+  }
+};
+
 export {
   getAllPaymentModes,
   getAllNonEnergyTypes,

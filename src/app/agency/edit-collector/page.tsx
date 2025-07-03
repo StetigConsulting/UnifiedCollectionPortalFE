@@ -135,18 +135,20 @@ const EditCollector = () => {
         }
     }
 
-    const [agencyData, setAgencyData] = useState({})
+    const [agencyData, setAgencyData] = useState({ is_inherited_vendor_id: false, vendor_id: '' })
 
     const getAgencyData = async (id: number) => {
         try {
             const agencyResponse = await getAgencyById(String(id));
             const agencyData = agencyResponse.data;
             await getListOfAllSupervisor(id).then((res) => {
-                setSupervisorList(res?.data?.map(item => ({
-                    ...item,
-                    label: item?.supervisor_name,
-                    value: item?.id
-                })))
+                setSupervisorList(res?.data
+                    ?.filter(item => item?.is_active === true)
+                    ?.map(item => ({
+                        ...item,
+                        label: item?.supervisor_name,
+                        value: item?.id
+                    })))
             }).catch(err => console.error(err))
             setAgencyData(agencyData);
 
@@ -328,8 +330,13 @@ const EditCollector = () => {
                         disabled={checkIfUserHasActionAccess({
                             backendScope: session?.user?.userScopes,
                             currentAction: 'disabledVendorIdEdit'
-                        })}
+                        }) || agencyData?.is_inherited_vendor_id}
                         {...register('vendorId')} />
+                    {
+                        agencyData?.is_inherited_vendor_id &&
+                        <CustomizedInputWithLabel label='Inherited Agency Vendor Id'
+                            value={agencyData?.vendor_id} disabled />
+                    }
                 </div>
                 <div className="flex justify-end mt-4">
                     <AlertPopupWithState
