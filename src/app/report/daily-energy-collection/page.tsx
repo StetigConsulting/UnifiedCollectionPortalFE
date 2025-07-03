@@ -79,7 +79,7 @@ const DailyEnergyCollection = () => {
                     acc[levelName] = item.id;
                     return acc;
                 }, {});
-
+            setValue('levelMapWithId',levelIdMap)
             console.log(levelIdMap)
             setWorkingLevelList(data?.data
                 ?.filter((item) => item.levelType === "MAIN")
@@ -394,9 +394,9 @@ const DailyEnergyCollection = () => {
                         {...register('dateType')} errors={errors?.dateType} />
                     <CustomizedSelectInputWithLabel label='Agent Role' list={agentRolePicklist}
                         {...register('agentRole')} errors={errors?.agentRole} />
-                    <CustomizedSelectInputWithLabel label='Agency Name' list={agencyList}
-                        title={formData?.agencyName}
-                        {...register('agencyName')} errors={errors?.agencyName} />
+                        <CustomizedSelectInputWithLabel label='Agency Name' list={agencyList}
+                            title={formData?.agencyName}
+                            {...register('agencyName')} errors={errors?.agencyName} />
                     <CustomizedSelectInputWithLabel label='Collection Mode' list={permissions}
                         {...register('collectionMode', {})} errors={errors?.collectionMode} />
                     <CustomizedSelectInputWithLabel label='Applicable Level' list={workingLevelList}
