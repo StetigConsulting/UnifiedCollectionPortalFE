@@ -119,9 +119,12 @@ export const fetchPosDeviceReport = async (data:any) => {
 
 export const exportPosDeviceReport = async (type:any) => {
     try {
-        const response = await api.post(`/v1/common-reports/pos-device-report/download/${type}`, {
-            responseType: 'blob',
-        });
+        const response = await api.post(`/v1/common-reports/pos-device-report/download/${type}`, {}, {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            responseType: "blob",
+          });
         return response;
     } catch (error) {
         throw error?.response?.data;

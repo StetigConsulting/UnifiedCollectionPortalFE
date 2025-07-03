@@ -352,7 +352,7 @@ const NewsNoticeForm = () => {
             placeholder="Export to"
             list={exportPicklist}
             value={posDeviceExportType}
-            onChange={(e) => handlePosDeviceExport(e.target.value)}
+            onChange={(e) => e.target.value && handlePosDeviceExport(e.target.value)}
             containerClass=""
           />
         </form>
