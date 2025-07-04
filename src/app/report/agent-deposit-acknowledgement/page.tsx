@@ -6,7 +6,7 @@ import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
-import { formatDate, tableDataPerPage } from '@/lib/utils';
+import { formatDate, getErrorMessage, tableDataPerPage } from '@/lib/utils';
 import { getDepositAcknowledgementReport } from '@/app/api-calls/report/api';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
 import { agentDepositReportSchema, AgentDepositReportSchemaData } from '@/lib/zod';
