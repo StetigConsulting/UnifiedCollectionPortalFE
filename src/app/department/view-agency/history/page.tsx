@@ -55,7 +55,6 @@ const ViewHistory = () => {
     const formData = watch()
 
     const getBalanceHistory = async (applyFilter = {}, page = 1) => {
-        console.log(page)
         let payload = {
             page: currentPage,
             page_size: tableDataPerPage,
@@ -83,7 +82,6 @@ const ViewHistory = () => {
             setCurrentPage(page);
             setIsLoading(false);
         } catch (error) {
-            console.log(getErrorMessage(error))
             toast.error('Error: ' + getErrorMessage(error));
         }
     }

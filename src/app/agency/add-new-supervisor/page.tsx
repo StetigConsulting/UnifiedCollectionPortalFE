@@ -71,8 +71,6 @@ const AddNewSupervisor = () => {
         { label: 'Mobile No.', key: 'phone' },
     ];
 
-    console.log(errors)
-
     useEffect(() => {
         getAllListOfSupervisor()
     }, [])
@@ -83,7 +81,7 @@ const AddNewSupervisor = () => {
             const response = await getListOfAllSupervisor(session?.user?.userId)
             setSupervisorList(response?.data)
         } catch (error) {
-            console.log('Error: ' + getErrorMessage(error))
+            console.error('Error: ' + getErrorMessage(error))
         } finally {
             setIsLoading(false)
         }

@@ -13,7 +13,7 @@ import { Loader2 } from 'lucide-react';
 import { colorCodingBillBasisSchema } from '@/lib/zod';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import { createColorCodingBillBasis, getBusinessRuleDateById, updateColorCodingBillBasis } from '@/app/api-calls/admin/api';
-import { urlsListWithTitle } from '@/lib/utils';
+import { getErrorMessage, urlsListWithTitle } from '@/lib/utils';
 import { useSession } from 'next-auth/react';
 
 type FormData = z.infer<typeof colorCodingBillBasisSchema>;
@@ -89,11 +89,9 @@ const AddBillBasis = () => {
             } else {
                 response = await createColorCodingBillBasis(payload);
             }
-            console.log('Submitting Data:', response.data);
             toast.success('Color coding rules saved successfully!');
             router.replace(urlsListWithTitle.billBasis.url);
         } catch (error) {
-            console.log('Error:', error?.error)
             toast.error('Error: ' + error?.error);
         } finally {
             setIsSubmitting(false);
@@ -117,7 +115,6 @@ const AddBillBasis = () => {
         setIsLoading(true);
         try {
             const response = await getBusinessRuleDateById(id);
-            console.log("API Response:", response.data.json_rule.bill_basis);
             let fetchedData = response.data.json_rule.bill_basis.map((data, index) => {
                 return {
                     fontType: data.bill_type,
@@ -126,7 +123,7 @@ const AddBillBasis = () => {
             })
             setValue('fonts', fetchedData);
         } catch (error) {
-            console.error("Failed to create agency:", error.data[Object.keys(error.data)[0]]);
+            console.error('Error: ', error);
         } finally {
             setIsLoading(false);
         }

@@ -47,7 +47,6 @@ const ResetDeviceCollector = () => {
     });
 
     const onSubmit = async (data: FormData) => {
-        console.log(collectorId)
         setIsLoading(true)
         try {
             const response = await resetDeviceById(collectorId)
@@ -100,7 +99,6 @@ const ResetDeviceCollector = () => {
                 // setCollectorType([{ id: response?.data?.collector_type?.id, label: response?.data?.collector_type?.name }]);
                 const registeredResponse = await getRegisteredDevices(response?.data?.id);
                 const historyResponse = await loadHistoryLog(response?.data?.id)
-                console.log(historyResponse)
                 setCollectorId(response?.data?.id)
                 setValue("collectorName", response?.data?.agent_name);
                 setValue("agencyName", response?.data?.agency?.agency_name);
@@ -142,7 +140,7 @@ const ResetDeviceCollector = () => {
                 date: moment(item?.created_on).format('DD-MM-YYYY')
             })))
         } catch (error) {
-            console.log('Error: ' + getErrorMessage(error))
+            console.error('Error: ' + getErrorMessage(error))
         } finally {
             setIsLoading(false)
         }

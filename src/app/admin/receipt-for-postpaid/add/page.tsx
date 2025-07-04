@@ -53,8 +53,6 @@ const AddReceiptsForPostpaid = () => {
     const receipts = watch('receipts');
     const configRule = watch('configRule');
 
-    console.log(receipts)
-
     const onSubmit = async (data: FormData) => {
         try {
             for (const receipt of data.receipts) {
@@ -82,8 +80,6 @@ const AddReceiptsForPostpaid = () => {
                 };
                 const response = await createReceiptForPostpaid(payload);
                 setIsSubmitting(true);
-                console.log("API Response:", response);
-                setIsLoading(true)
                 router.push(urlsListWithTitle.receiptForPostpaid.url)
             }
             toast.success('Number of Receipts Rule added Successfully');
@@ -229,13 +225,10 @@ const AddReceiptsForPostpaid = () => {
                     return acc;
                 }, {});
 
-            console.log(levelIdMap)
             setLevelNameMappedWithId(levelIdMap)
             setValue(`receipts.0.levelMapWithId`, levelIdMap);
         })
     }
-
-    console.log(receipts, configRule, errors)
 
     return (
         <AuthUserReusableCode pageTitle="Receipts for Postpaid" isLoading={isLoading}>
@@ -270,7 +263,6 @@ const AddReceiptsForPostpaid = () => {
                                             list={listOfPicklist[index]?.circle}
                                             placeholder="Select Circle Type"
                                             value={watch(`receipts.${index}.circle`) || []}
-                                            // onChange={(selectedValues) => setValue(`receipts.${index}.circle`, selectedValues)}
                                             onChange={(selectedValues) => handleCircleChange(index, selectedValues, receipts[index].applicableLevel)}
                                         />
                                         {receipts[index].applicableLevel != levelNameMappedWithId.CIRCLE && (
@@ -280,7 +272,6 @@ const AddReceiptsForPostpaid = () => {
                                                 list={listOfPicklist[index]?.division}
                                                 disabled={receipts[index]?.circle?.length == 0}
                                                 value={watch(`receipts.${index}.division`) || []}
-                                                // onChange={(selectedValues) => setValue(`receipts.${index}.division`, selectedValues)}
                                                 onChange={(selectedValues) => handleDivisionChange(index, selectedValues, receipts[index].applicableLevel)}
                                                 errors={errors?.receipts?.[index]?.division}
                                             />
@@ -294,7 +285,6 @@ const AddReceiptsForPostpaid = () => {
                                                     disabled={receipts[index]?.division?.length == 0}
                                                     value={watch(`receipts.${index}.subDivision`) || []}
                                                     onChange={(selectedValues) => handleSubDivisionChange(index, selectedValues, receipts[index].applicableLevel)}
-                                                    // onChange={(selectedValues) => setValue(`receipts.${index}.subDivision`, selectedValues)}
                                                     errors={errors?.receipts?.[index]?.subDivision}
                                                 />
                                             )
@@ -310,7 +300,6 @@ const AddReceiptsForPostpaid = () => {
                                                     required={true}
                                                     disabled={receipts[index]?.subDivision?.length == 0}
                                                     value={watch(`receipts.${index}.section`) || []}
-
                                                     onChange={(selectedValues) => setValue(`receipts.${index}.section`, selectedValues)}
                                                 />
                                             )

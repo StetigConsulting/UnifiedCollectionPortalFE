@@ -68,7 +68,6 @@ const AddCollectorTypeSetup = () => {
             }))
             setIsErrorModalOpened(true)
             setErrorMessage(error.error)
-            console.log(flattenedErrors);
             setErrorValidationIssues(flattenedErrors);
         } finally {
             setIsSubmitting(false);
@@ -79,7 +78,7 @@ const AddCollectorTypeSetup = () => {
         router.back();
     };
 
-    const [collectorTypeList, setCollectorTypeList] = useState()
+    const [collectorTypeList, setCollectorTypeList] = useState<{ label: string, value: number }[]>([])
 
     const getPicklist = async () => {
         try {
@@ -87,6 +86,7 @@ const AddCollectorTypeSetup = () => {
             const response = await getAllGlobalCollectorTypes();
             setCollectorTypeList(response.data?.map((item) => ({ label: item.name, value: item.id })) || []);
         } catch (error) {
+            setCollectorTypeList([])
             console.error(error);
         } finally {
             setIsLoading(false)
@@ -99,6 +99,7 @@ const AddCollectorTypeSetup = () => {
             const response = await getCollectorTypes();
             setValue('collectorType', response.data.map((item => item?.id)) || []);
         } catch (error) {
+            setValue('collectorType', [])
             console.error('Failed to fetch payment methods:', error);
         } finally {
             setIsLoading(false);

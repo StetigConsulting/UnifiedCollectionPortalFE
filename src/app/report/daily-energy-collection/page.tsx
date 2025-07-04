@@ -80,7 +80,6 @@ const DailyEnergyCollection = () => {
                     return acc;
                 }, {});
             setValue('levelMapWithId',levelIdMap)
-            console.log(levelIdMap)
             setWorkingLevelList(data?.data
                 ?.filter((item) => item.levelType === "MAIN")
                 ?.map((item) => ({
@@ -117,7 +116,7 @@ const DailyEnergyCollection = () => {
             setCurrentPage(page);
             setTotalPages(response.data.totalPages)
         } catch (error) {
-            console.log(getErrorMessage(error))
+            toast.error('Error: ' + getErrorMessage(error))
         } finally {
             setIsLoading(false);
         }
@@ -166,7 +165,6 @@ const DailyEnergyCollection = () => {
     }))
 
     const getPayload = (data) => {
-        console.log(data)
         let filter = {
             ...data?.dateType === 'transaction_date' && {
                 transaction_date_range: {
@@ -345,7 +343,7 @@ const DailyEnergyCollection = () => {
 
             window.URL.revokeObjectURL(url);
         } catch (error) {
-            console.error("Error downloading the report:", error);
+            toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
             setExportType('')
@@ -357,8 +355,6 @@ const DailyEnergyCollection = () => {
         let payload = getPayload(formData)
         getReportData(payload, page)
     }
-
-    console.log(errors)
 
     const [agencyList, setAgencyList] = useState([]);
 

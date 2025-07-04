@@ -64,7 +64,6 @@ const CancelTransaction = () => {
                     return acc;
                 }, {});
 
-            console.log(levelIdMap)
             setWorkingLevelList(data?.data
                 ?.filter((item) => item.levelType === "MAIN")
                 ?.map((item) => ({
@@ -101,7 +100,7 @@ const CancelTransaction = () => {
             setCurrentPage(page);
             setTotalPages(response.data.totalPages)
         } catch (error) {
-            console.log(getErrorMessage(error))
+            toast.error('Error: ' + getErrorMessage(error))
         } finally {
             setIsLoading(false);
         }
@@ -135,7 +134,6 @@ const CancelTransaction = () => {
     }))
 
     const getPayload = (data) => {
-        console.log(data)
         let filter = {
             date_range: {
                 from_date: data.fromDate,
@@ -303,7 +301,7 @@ const CancelTransaction = () => {
 
             window.URL.revokeObjectURL(url);
         } catch (error) {
-            console.error("Error downloading the report:", error);
+            toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
             setExportType('')
@@ -315,8 +313,6 @@ const CancelTransaction = () => {
         let payload = getPayload(formData)
         getReportData(payload, page)
     }
-
-    console.log(errors)
 
     return (
         <AuthUserReusableCode pageTitle="Cancelled Transaction report" isLoading={isLoading}>

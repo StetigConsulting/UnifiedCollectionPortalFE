@@ -6,7 +6,7 @@ import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
-import { formatDate, tableDataPerPage } from '@/lib/utils';
+import { formatDate, getErrorMessage, tableDataPerPage } from '@/lib/utils';
 import { downloadSlipAgentBankDeposit, getAgentBankDepositReport, getDepositAcknowledgementReport } from '@/app/api-calls/report/api';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -79,8 +79,7 @@ const AgentDepositAcknowledgementReport = () => {
             setCurrentPage(page);
             setTotalPages(response.data.totalPages)
         } catch (error) {
-            console.error('Error fetching data:', error);
-            toast.error('Failed to load data.');
+            toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }
@@ -145,8 +144,7 @@ const AgentDepositAcknowledgementReport = () => {
             document.body.removeChild(a);
             window.URL.revokeObjectURL(url);
         } catch (error) {
-            console.error('Error downloading file:', error);
-            toast.error('Failed to download');
+            toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }

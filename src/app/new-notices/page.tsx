@@ -17,7 +17,6 @@ const AdminNewsNotices = () => {
         try {
             const response = await getNewsNoticesForUser()
             setNewsList(response?.data || [])
-            console.log('News / Notices:', response)
         } catch (error) {
             console.error('Error fetching news/notices:', error)
         }

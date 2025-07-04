@@ -13,6 +13,7 @@ import { Loader2 } from "lucide-react";
 import { extendAgentValidityById, getAllAgentByAgencyId } from "@/app/api-calls/agency/api";
 import { useSession } from "next-auth/react";
 import SuccessErrorModal from "@/components/SuccessErrorModal";
+import { getErrorMessage } from "@/lib/utils";
 
 const ExtendValidity = () => {
 
@@ -49,13 +50,10 @@ const ExtendValidity = () => {
             setIsSubmitting(true);
             const response = await extendAgentValidityById(payload, currentUserId);
             toast.success("Agent Validity udpated successfully");
-            console.log("API Response:", response);
             reset();
         } catch (error) {
-            // console.error("Failed to edit agency:", error.data[Object.keys(error.data)[0]]);
-            let errorMessage = error?.data && error?.data[Object.keys(error?.data)[0]] || error?.error
-            console.log(errorMessage)
-            toast.error('Error: ' + errorMessage || error?.error)
+            let errorMessage = getErrorMessage(error)
+            toast.error('Error: ' + errorMessage)
         } finally {
             setIsSubmitting(false);
         }
@@ -65,7 +63,6 @@ const ExtendValidity = () => {
         setIsLoading(true);
         try {
             const response = await getAllAgentByAgencyId(currentUserId);
-            console.log("API Response:", response);
             setAgencies(
                 response?.data?.map((item) => ({
                     ...item,
@@ -75,7 +72,7 @@ const ExtendValidity = () => {
             );
 
         } catch (error) {
-            console.error("Failed to get agent:", error?.data[Object.keys(error?.data)[0]]);
+            console.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }
@@ -110,7 +107,6 @@ const ExtendValidity = () => {
                         label="Collector Name"
                         list={agencies}
                         required={true}
-                        // containerClass="col-span-2"
                         errors={errors.collectorName}
                         {...register("collectorName")}
                     />

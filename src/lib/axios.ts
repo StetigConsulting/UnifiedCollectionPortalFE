@@ -36,7 +36,6 @@ const refreshAccessToken = async (refreshToken: string) => {
         };
     } catch (error) {
         if (error.response?.status === 401) {
-            console.error("Refresh token expired, logging out...");
             localStorage.removeItem('csrf_token');
             // await signOut();
         } else {
@@ -80,7 +79,6 @@ api.interceptors.response.use(
                 originalRequest.headers.Authorization = `Bearer ${newTokens.accessToken}`;
                 return api(originalRequest);
             } catch (refreshError) {
-                console.error("Token refresh failed, logging out...");
                 toast.error("Your session has expired. Please log in again.");
                 await signOut();
                 window.location.href = '/';

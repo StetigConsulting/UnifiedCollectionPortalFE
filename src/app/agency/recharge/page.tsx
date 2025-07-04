@@ -45,7 +45,6 @@ const RechargeEntry = () => {
         setIsLoading(true);
         try {
             const response = await getAllAgentByAgencyId(currentUserId);
-            console.log("API Response:", response);
             setAgencies(
                 response?.data?.map((item) => ({
                     ...item,
@@ -55,7 +54,7 @@ const RechargeEntry = () => {
             );
 
         } catch (error) {
-            console.error("Failed to get agent:", error?.data[Object.keys(error?.data)[0]]);
+            console.error("Failed to get agent:", getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }
@@ -69,14 +68,13 @@ const RechargeEntry = () => {
         setIsLoading(true);
         try {
             const response = await getAgencyRechargeableBalance(id);
-            console.log("API recharge:", response);
             setRechargeableBalance(
                 response?.data?.rechargeableAgentWalletBalance
             );
             setShowBalance(true)
 
         } catch (error) {
-            console.error("Failed to get agent:", error?.data[Object.keys(error?.data)[0]]);
+            console.error("Failed to get agent:", getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }
@@ -92,13 +90,10 @@ const RechargeEntry = () => {
             setIsSubmitting(true);
             const response = await rechargeAgentById(payload, currentUserId);
             toast.success("Agent recharged successfully");
-            console.log("API Response:", response);
-            // getAgencyBalance()
             location.reload()
             reset();
         } catch (error) {
             let errorMessage = getErrorMessage(error);
-            console.log(errorMessage)
             toast.error('Error: ' + errorMessage)
         } finally {
             setIsSubmitting(false);

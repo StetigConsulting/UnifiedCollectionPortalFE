@@ -15,6 +15,7 @@ import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import { createColorCodingLogic, getBusinessRuleDateById, updateColorCodingLogic } from '@/app/api-calls/admin/api';
 import moment from 'moment';
 import { useSession } from 'next-auth/react';
+import { getErrorMessage } from '@/lib/utils';
 
 type FormData = z.infer<typeof colorCodingLogicSchema>;
 
@@ -105,11 +106,9 @@ const AddColorCodingLogic = () => {
             } else {
                 response = await createColorCodingLogic(payload);
             }
-            console.log('Submitting Data:', response.data);
             toast.success('Color coding rules saved successfully!');
             router.push('/admin/color-coding/logic');
         } catch (error) {
-            console.log('Error:', error?.error)
             toast.error('Error: ' + error?.error);
         } finally {
             setIsSubmitting(false);
@@ -133,7 +132,6 @@ const AddColorCodingLogic = () => {
         setIsLoading(true);
         try {
             const response = await getBusinessRuleDateById(id);
-            console.log("API Response:", response.data.json_rule.ranges);
             let fetchedData = response.data.json_rule.ranges.map((data, index) => {
                 return {
                     value1Type: data.R1.type,
@@ -145,7 +143,7 @@ const AddColorCodingLogic = () => {
             })
             setValue('colorCodings', fetchedData);
         } catch (error) {
-            console.error("Failed to create agency:", error.data[Object.keys(error.data)[0]]);
+            console.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }

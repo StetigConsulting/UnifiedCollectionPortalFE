@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { deleteBusinessRule, getBusinessRuleDateById, getColorCodingBillBasis, getColorCodingLogic } from '@/app/api-calls/admin/api';
 import moment from 'moment';
 import { useSession } from 'next-auth/react';
+import { getErrorMessage } from '@/lib/utils';
 
 const ColorCodingLogic = () => {
     const { data: session } = useSession()
@@ -45,8 +46,7 @@ const ColorCodingLogic = () => {
             toast.success('Receipt deleted successfully');
             getListOfData()
         } catch (error) {
-            let msg = error?.error
-            console.error('Failed to delete receipt:', msg);
+            toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }
@@ -93,8 +93,6 @@ const ColorCodingLogic = () => {
 
             const transformedData = transformRules(response?.data);
             setColorLogicEntries(transformedData);
-
-            console.log(response);
         } catch (error) {
             console.error('Failed to get data:', error);
         } finally {

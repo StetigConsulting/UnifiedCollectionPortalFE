@@ -40,7 +40,6 @@ const NewsNoticeForm = () => {
             setIsErrorModalOpened(true)
             reset()
             getAllNewsForDiscom();
-            console.log("response", response);
         } catch (error) {
             // toast.error('Error: ' + getErrorMessage(error));
             setErrorMessage('Error: ' + getErrorMessage(error))
@@ -58,7 +57,8 @@ const NewsNoticeForm = () => {
             const response = await getAllNewsList();
             setNewsList(response?.data || []);
         } catch (error) {
-            console.log('Error: ' + getErrorMessage(error));
+            setNewsList([]);
+            console.error('Error: ' + getErrorMessage(error));
         }
         finally {
             setIsLoading(false);
@@ -89,7 +89,6 @@ const NewsNoticeForm = () => {
     const [selectedRow, setSelectedRow] = useState<any | null>(null);
 
     const handleRowSelection = (row: any) => {
-        console.log(row)
         setSelectedRow(row)
     }
 
@@ -107,7 +106,6 @@ const NewsNoticeForm = () => {
             setIsErrorModalOpened(true)
             getAllNewsForDiscom()
         } catch (error) {
-            console.error('Error: ' + getErrorMessage(error))
             setErrorMessage('Error: Failed to delete record!')
             setPopupType('error')
             setIsErrorModalOpened(true)

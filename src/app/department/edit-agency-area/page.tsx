@@ -15,6 +15,7 @@ import { Loader2 } from "lucide-react";
 import AlertPopup from "@/components/Agency/ViewAgency/AlertPopup";
 import AlertPopupWithState from "@/components/Agency/ViewAgency/AlertPopupWithState";
 import { useSession } from "next-auth/react";
+import { getErrorMessage } from "@/lib/utils";
 
 const EditAgencyArea = () => {
     const { data: session } = useSession()
@@ -126,7 +127,6 @@ const EditAgencyArea = () => {
         setIsLoading(true);
         try {
             const response = await getAgenciesWithDiscom(session?.user?.discomId);
-            console.log("API Response:", response);
             setAgencies(
                 response?.data?.map((item) => ({
                     ...item,
@@ -136,7 +136,7 @@ const EditAgencyArea = () => {
             );
 
         } catch (error) {
-            console.error("Failed to create agency:", error.data[Object.keys(error.data)[0]]);
+            console.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }
@@ -161,8 +161,7 @@ const EditAgencyArea = () => {
             getAgencyList()
             reset()
         } catch (error) {
-            toast.error("Failed to update agency details.");
-            console.error("Error:", error);
+            toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsSubmitting(false);
         }
@@ -170,8 +169,6 @@ const EditAgencyArea = () => {
 
     const formData = watch()
     const selectedAgency = watch('agency')
-
-    console.log(formData);
 
     const handleSetAllLevelData = async (data) => {
         try {
@@ -181,14 +178,11 @@ const EditAgencyArea = () => {
             let workingLevelOffices = data?.working_level_offices?.map(item => item.id) || []
             let parentOfficeList = data?.parent_office_structure_hierarchy
 
-            console.log(parentOfficeList, workingLevelOffices)
-
             let circleId = parentOfficeList.filter(item => item?.office_structure_level_id === levelNameMappedWithId.CIRCLE)
             if (circleId.length > 0) {
                 setValue('circle', [circleId[0]?.id]);
                 setIsLoading(true)
                 let divisionId = parentOfficeList.filter(item => item?.office_structure_level_id === levelNameMappedWithId.DIVISION)
-                console.log('division', divisionId)
                 await getDivisions(circleId[0]?.id)
                 if (divisionId.length > 0) {
                     setValue('division', [divisionId[0].id]);
@@ -210,7 +204,7 @@ const EditAgencyArea = () => {
                 setValue('circle', workingLevelOffices)
             }
         } catch (error) {
-            console.log(error)
+            console.error(error)
         } finally {
             setIsLoading(false)
         }

@@ -40,11 +40,6 @@ export async function handleSignOut() {
         }
     });
 
-    // if (response.ok) {
-    //     console.error("Logout API failed:", response.statusText);
-    //     return { message: "Failed to log out. Please try again." };
-    // }
-
     await signOut({
         redirectTo: '/auth/signin',
         redirect: true,

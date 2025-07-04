@@ -18,7 +18,7 @@ const ChangeSection = () => {
     });
 
     const onSubmit = (data: FormData) => {
-        console.log(data);
+
     };
 
     return (

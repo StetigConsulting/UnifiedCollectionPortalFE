@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import ReactTable from '@/components/ReactTable';
+import { getErrorMessage } from '@/lib/utils';
 
 const CollectorTopUpHistory = () => {
     const [dateFrom, setDateFrom] = useState('');
@@ -28,8 +29,7 @@ const CollectorTopUpHistory = () => {
             setTopUpData(response);
             setFilteredData(response);
         } catch (error) {
-            console.error('Error fetching top-up history:', error);
-            toast.error('Failed to load top-up history.');
+            toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }

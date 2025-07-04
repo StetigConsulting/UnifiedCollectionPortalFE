@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import ReactTable from '@/components/ReactTable';
+import { getErrorMessage } from '@/lib/utils';
 
 const DailyAgentCollection = () => {
     const [dateFrom, setDateFrom] = useState('');
@@ -52,8 +53,7 @@ const DailyAgentCollection = () => {
             setData(response);
             setFilteredData(response);
         } catch (error) {
-            console.error('Error fetching data:', error);
-            toast.error('Failed to load data.');
+            toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }

@@ -12,6 +12,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { createColorCodingEcl, deleteBusinessRule, getColorCodingEclFlag, updateColorCodingEcl } from '@/app/api-calls/admin/api';
 import { useSession } from 'next-auth/react';
+import { getErrorMessage } from '@/lib/utils';
 
 type BackgroundColorFormType = z.infer<typeof colorCodingEclSchema>;
 
@@ -56,11 +57,9 @@ const ECLFlaggedCustomer = () => {
             } else {
                 response = await createColorCodingEcl(payload);
             }
-            console.log('Submitting Data:', response.data);
             toast.success("ECL Flagged Customer's Bill Background Updated Successfully");
             router.push('/admin/color-coding');
         } catch (error) {
-            console.error('Error:', error);
             toast.error('Error: ' + error?.error);
         }
     };
@@ -83,7 +82,6 @@ const ECLFlaggedCustomer = () => {
             const response = await getColorCodingEclFlag(session?.user?.discomId);
             setValue('backgroundColor', response?.data?.[0]?.json_rule?.bg_color_code || '');
             setValue('id', response?.data?.[0]?.id || null)
-            console.log(response);
         } catch (error) {
             console.error('Failed to get agency:', error);
         } finally {
@@ -100,8 +98,7 @@ const ECLFlaggedCustomer = () => {
             toast.success('ECL flag deleted successfully');
             getEclFlagCustomer()
         } catch (error) {
-            let msg = error?.error
-            console.error('Failed to delete:', msg);
+            toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }

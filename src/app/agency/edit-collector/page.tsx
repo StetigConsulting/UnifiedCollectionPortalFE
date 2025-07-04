@@ -83,7 +83,6 @@ const EditCollector = () => {
         } catch (error) {
             let errorMessage = getErrorMessage(error);
             toast.error('Error: ' + errorMessage);
-            console.error('Error:', error);
         } finally {
             setIsSubmitting(false)
         }
@@ -120,7 +119,6 @@ const EditCollector = () => {
                 setValue('collectionType', collectionType)
                 setValue('nonEnergy', response.data.non_energy_types.map((ite) => ite.id))
             } catch (error) {
-                console.log(error.message);
                 let errorMessage = getErrorMessage(error);
                 toast.error('Error: ' + errorMessage || error.message)
                 setShowRestFields(false)
@@ -151,7 +149,6 @@ const EditCollector = () => {
                         value: item?.id
                     })))
             }).catch(err => console.error(err))
-            console.log("agencyData", agencyData);
             setAgencyData(agencyData);
 
             let collectionTypesList = [];

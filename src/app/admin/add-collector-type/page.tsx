@@ -26,7 +26,6 @@ const CollectorTypeConfiguration = () => {
             const response = await getCollectorTypes();
             setCollectorTypes(response.data);
         } catch (error) {
-            console.error('Error fetching collector types:', error);
             toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);

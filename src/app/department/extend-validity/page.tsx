@@ -14,7 +14,7 @@ import { toast } from 'sonner';
 import { useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
-import { formatDate, exportPicklist, tableDataPerPage } from '@/lib/utils';
+import { formatDate, exportPicklist, tableDataPerPage, getErrorMessage } from '@/lib/utils';
 import ReactTable from '@/components/ReactTable';
 import { getAgencyExtendValidityLogs, downloadAgencyExtendValidityLogs } from '@/app/api-calls/report/api';
 import moment from 'moment';
@@ -43,7 +43,6 @@ const ExtendValidity = () => {
             setIsSubmitting(true);
             const response = await extendValidity(payload);
             toast.success("Validity extended successfully");
-            console.log("API Response:", response);
             getAgencyList()
             reset({
                 agencyName: null,
@@ -61,8 +60,7 @@ const ExtendValidity = () => {
                 window.history.pushState({}, '', url.href);
             }
         } catch (error) {
-            console.error("Failed to extend validity:", error);
-            let errorMessage = error?.data ? error?.data[Object.keys(error?.data)[0]] : error.error;
+            let errorMessage = getErrorMessage(error);
             toast.error(errorMessage)
         } finally {
             setIsSubmitting(false);
@@ -89,7 +87,6 @@ const ExtendValidity = () => {
         try {
             const response = await getAgencyById(id);
             const agency = response.data;
-            console.log("Agency Data:", agency);
             setValue('agencyId', agency.id || '');
             setValue('agencyName', agency.id || '');
             setValue('currentFromValidity', agency.validity_start_date || '');
@@ -114,7 +111,6 @@ const ExtendValidity = () => {
         setIsLoading(true);
         try {
             const response = await getAgenciesWithDiscom(session?.user?.discomId);
-            console.log("API Response:", response);
             setAgencyList(
                 response?.data?.map((item) => ({
                     ...item,
@@ -124,7 +120,6 @@ const ExtendValidity = () => {
             );
 
         } catch (error) {
-            console.error("Failed to get agency:", error.data[Object.keys(error.data)[0]]);
         } finally {
             setIsLoading(false);
         }
@@ -146,8 +141,6 @@ const ExtendValidity = () => {
             }
         }
     }, [selectedAgency, agencyList]);
-
-    console.log(errors)
 
     const formData = watch();
 
@@ -196,7 +189,6 @@ const ExtendValidity = () => {
                 }
             };
             const res = await getAgencyExtendValidityLogs(payload);
-            console.log("API Response:", res);
             setTableData(res?.data?.data || []);
             setCurrentPage(page);
             setTotalPages(res?.data?.totalPages || 1);
@@ -290,8 +282,6 @@ const ExtendValidity = () => {
             setExportType('');
         }
     };
-
-    console.log("Table Data:", errors);
 
     return (
         <AuthUserReusableCode pageTitle="Extend Validity" isLoading={isLoading || tableLoading}>

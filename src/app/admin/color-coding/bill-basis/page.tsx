@@ -8,7 +8,7 @@ import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import ReactTable from '@/components/ReactTable';
 import { toast } from 'sonner';
 import { deleteBusinessRule, getColorCodingBillBasis } from '@/app/api-calls/admin/api';
-import { urlsListWithTitle } from '@/lib/utils';
+import { getErrorMessage, urlsListWithTitle } from '@/lib/utils';
 import { useSession } from 'next-auth/react';
 
 const BillBasis = () => {
@@ -44,8 +44,7 @@ const BillBasis = () => {
             toast.success('Receipt deleted successfully');
             getListOfData()
         } catch (error) {
-            let msg = error?.error
-            console.error('Failed to delete receipt:', msg);
+            toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }

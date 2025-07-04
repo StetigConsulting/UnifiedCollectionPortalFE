@@ -44,7 +44,6 @@ const RechargeEntry = () => {
         setIsLoading(true);
         try {
             const response = await getAllAgentByAgencyId(currentUserId);
-            console.log("API Response:", response);
             setAgencies(
                 response?.data?.map((item) => ({
                     ...item,
@@ -54,7 +53,7 @@ const RechargeEntry = () => {
             );
 
         } catch (error) {
-            console.error("Failed to get agent:", error?.data[Object.keys(error?.data)[0]]);
+            console.error("Error:", getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }
@@ -69,13 +68,12 @@ const RechargeEntry = () => {
         setIsLoading(true);
         try {
             const response = await getAgencyRechargeableBalance(currentUserId);
-            console.log("API recharge:", response);
             setRechargeableBalance(
                 response?.data?.rechargeableAgentWalletBalance
             );
 
         } catch (error) {
-            console.error("Failed to get agent:", error?.data[Object.keys(error?.data)[0]]);
+            console.error("Error:", getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }
@@ -91,13 +89,10 @@ const RechargeEntry = () => {
             setIsSubmitting(true);
             const response = await reverseAgentBalance(payload);
             toast.success("Agent Balance Reversed Successfully");
-            console.log("API Response:", response);
             getAgencyBalance()
-            // location.reload()
             reset();
         } catch (error) {
             let errorMessage = getErrorMessage(error);
-            console.log(errorMessage)
             toast.error('Error: ' + errorMessage)
         } finally {
             setIsSubmitting(false);
@@ -182,7 +177,6 @@ const RechargeEntry = () => {
                     </div>
                 </div>
                 {
-                    // showRestFields &&
                     <>
                         <div className="grid grid-cols-2 gap-4">
                             <CustomizedInputWithLabel
@@ -263,11 +257,6 @@ const RechargeEntry = () => {
                                 isOpen={stateForConfirmationPopup}
                                 setIsOpen={setStateForConfirmationPopup}
                             />
-                            {/* <Button type="submit" variant="default" disabled={isSubmitting || !showRestFields}>
-                                {isSubmitting ? <>
-                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
-                                </> : "Submit"}
-                            </Button> */}
                         </div>
                     </>
                 }

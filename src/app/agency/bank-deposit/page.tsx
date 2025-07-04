@@ -59,7 +59,7 @@ const AgentBankDeposit = () => {
             })
             setBankList(listOfBanks)
         } catch (error) {
-            console.error("Failed to get agent:", error?.data[Object.keys(error?.data)[0]]);
+            console.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }
@@ -70,12 +70,9 @@ const AgentBankDeposit = () => {
         const formData = new FormData();
         formData.append('file', data.depositSlip[0]);
 
-        console.log(data.depositSlip);
-
         try {
             setIsSubmitting(true);
             const fileUploadResponse = await uploadAgentBankDepositSlip(formData);
-            console.log("API Response:", fileUploadResponse);
 
             let payload = {
                 "discom_id": session?.user?.discomId,
@@ -93,7 +90,6 @@ const AgentBankDeposit = () => {
             reset()
         } catch (error) {
             let errorMessage = getErrorMessage(error);
-            console.log(errorMessage)
             toast.error('Error: ' + errorMessage)
         } finally {
             setIsSubmitting(false);

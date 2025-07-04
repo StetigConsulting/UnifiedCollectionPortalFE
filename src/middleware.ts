@@ -13,8 +13,6 @@ export async function middleware(request: any) {
     const isAuthenticated = !!session?.user;
     let landingPage = getLandingPageUrl(session?.user?.userScopes)
 
-    console.log("Is Authenticated:", isAuthenticated, session);
-
     if (nextUrl.pathname === '/debug-env') {
         return NextResponse.next();
     }
@@ -34,7 +32,6 @@ export async function middleware(request: any) {
                     backendScope: session?.user?.userScopes,
                     currentAction: action,
                 });
-                console.log(`User has access to ${action}:`, hasAccess,);
                 if (hasAccess) return NextResponse.next();
             })
         } else {

@@ -64,7 +64,7 @@ const AgentBankDeposit = () => {
             })
             setBankList(listOfBanks)
         } catch (error) {
-            console.error("Failed to get agent:", error?.data[Object.keys(error?.data)[0]]);
+            console.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }
@@ -87,12 +87,10 @@ const AgentBankDeposit = () => {
             const response = await addAgencyBankDeposit(payload);
 
             toast.success("Agency Bank deposit added successfully");
-            console.log("API Response:", response);
             reset();
             getDepositHistory()
         } catch (error) {
             let errorMessage = getErrorMessage(error);
-            console.log(errorMessage)
             toast.error('Error: ' + errorMessage)
         } finally {
             setIsSubmitting(false);
@@ -105,7 +103,6 @@ const AgentBankDeposit = () => {
         setIsLoading(true);
         try {
             const response = await getAgenciesWithDiscom(session?.user?.discomId);
-            console.log("API Response:", response);
             setAgencyList(
                 response?.data?.map((item) => ({
                     ...item,
@@ -115,7 +112,7 @@ const AgentBankDeposit = () => {
             );
 
         } catch (error) {
-            console.error("Failed to get agency:", error.data[Object.keys(error.data)[0]]);
+            console.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }
@@ -161,7 +158,7 @@ const AgentBankDeposit = () => {
             setTransactionHistory(response.data.data);
             setCurrentPage(page);
         } catch (error) {
-            console.log(getErrorMessage(error))
+            console.error('Error: ' + getErrorMessage(error))
         } finally {
             setIsLoading(false);
         }

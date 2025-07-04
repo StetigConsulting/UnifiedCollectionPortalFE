@@ -43,8 +43,6 @@ const AgentLoginReport = () => {
                 label: `${item?.agency_name} - ${item?.phone}`,
                 value: item?.id,
             })))
-        } catch (err) {
-            console.log(err)
         } finally {
             setIsLoading(false)
         }
@@ -95,7 +93,6 @@ const AgentLoginReport = () => {
             ...formData?.agent && { agent_id: formData?.agent },
         }
 
-        console.log(payload)
         payload = {
             ...payload,
             ...applyFilter
@@ -109,7 +106,7 @@ const AgentLoginReport = () => {
             setShowTable(true)
             setIsLoading(false);
         } catch (error) {
-            console.log(getErrorMessage(error))
+            toast.error('Error: ' + getErrorMessage(error))
         } finally {
             setIsLoading(false);
         }
@@ -181,7 +178,7 @@ const AgentLoginReport = () => {
 
             window.URL.revokeObjectURL(url);
         } catch (error) {
-            console.error("Error downloading the report:", error);
+            toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
             setExportType('')

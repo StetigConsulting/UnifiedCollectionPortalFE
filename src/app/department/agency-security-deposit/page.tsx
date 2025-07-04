@@ -150,7 +150,6 @@ const AgencySecurityDeposit = () => {
   const onSubmit = async (data: AgencySecurityDepositFormData) => {
     setIsSubmitting(true);
     try {
-      console.log(data);
       let fileName = null;
       if (data?.upload?.length > 0 && typeof data.upload !== "string") {
         const formDataUpload = new FormData();
@@ -298,8 +297,7 @@ const AgencySecurityDeposit = () => {
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error("Error downloading file:", error);
-      toast.error("Failed to download");
+      toast.error('Error: ' + getErrorMessage(error));
     } finally {
       setIsLoading(false);
     }
@@ -354,14 +352,12 @@ const AgencySecurityDeposit = () => {
   };
 
   const handleEdit = () => {
-    console.log(selectedRow);
     setIsEditing(true);
     setValue("agencyId", selectedRow?.agency_id);
     setValue("bgAmount", selectedRow?.bg_amount);
     let paymentDate = selectedRow?.payment_date
       ? moment(selectedRow.payment_date).format("YYYY-MM-DD")
       : "";
-    console.log(paymentDate, selectedRow?.payment_date);
     setValue("paymentDate", paymentDate);
     setValue("paymentMode", selectedRow?.security_deposit_payment_mode?.id);
     setValue("transactionId", selectedRow?.transaction_id || "");

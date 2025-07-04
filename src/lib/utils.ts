@@ -242,13 +242,11 @@ export const urlsListWithTitle = {
 };
 
 export function getTitleByUrl(url) {
-  console.log(url)
   if (url.includes('type=reverse')) {
     return 'Reverse';
   }
   const cleanUrl = url.split('?')[0];
   const entry = Object.values(urlsListWithTitle).find(item => item.url === cleanUrl);
-  console.log('entry', entry)
   return entry ? entry.title : cleanUrl.split('/').pop().replaceAll('-', ' ');
 }
 

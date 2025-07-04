@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
-import { formatDate } from '@/lib/utils';
+import { formatDate, getErrorMessage } from '@/lib/utils';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import ReactTable from '@/components/ReactTable';
 import CreateNewLevelPopup from '@/components/OfficeStructure/CreateNewLevelPopup';
@@ -34,8 +34,7 @@ const OfficeStructurePage = () => {
             const maxLevel = data.data.length > 0 ? Math.max(...data.data.map((item) => item.level || 1)) + 1 : 1;
             setMaxLevel(maxLevel);
         } catch (error) {
-            console.error('Error fetching data:', error.message);
-            toast.error(error.message);
+            console.error('Error: ' + getErrorMessage(error));
             setOfficeStructureData([]);
         } finally {
             setLoading(false);

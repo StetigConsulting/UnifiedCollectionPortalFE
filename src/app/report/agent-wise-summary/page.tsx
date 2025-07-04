@@ -15,6 +15,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { AgentWiseSummaryReportData, agentWiseSummaryReportSchema } from '@/lib/zod';
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
+import { toast } from 'sonner';
 
 const AgentWiseSummary = () => {
     const { data: session } = useSession()
@@ -58,7 +59,6 @@ const AgentWiseSummary = () => {
                     return acc;
                 }, {});
 
-            console.log(levelIdMap)
             setWorkingLevelList(data?.data
                 ?.filter((item) => item.levelType === "MAIN")
                 ?.map((item) => ({
@@ -99,7 +99,7 @@ const AgentWiseSummary = () => {
             setCurrentPage(page);
             setTotalPages(response.data.totalPages)
         } catch (error) {
-            console.log(getErrorMessage(error))
+            toast.error('Error: ' + getErrorMessage(error))
         } finally {
             setIsLoading(false);
         }
@@ -171,7 +171,6 @@ const AgentWiseSummary = () => {
     ], []);
 
     const getPayload = (data) => {
-        console.log(data)
         let filter = {
             ...data?.dateType === 'transaction_date' && {
                 transaction_date_range: {
@@ -349,7 +348,7 @@ const AgentWiseSummary = () => {
 
             window.URL.revokeObjectURL(url);
         } catch (error) {
-            console.error("Error downloading the report:", error);
+            toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
             setExportType('')
@@ -361,8 +360,6 @@ const AgentWiseSummary = () => {
         let payload = getPayload(formData)
         getReportData(payload, page)
     }
-
-    console.log(errors)
 
     const getColumnsByReportType = (type) => {
         if (agentReportKeyValue?.agentWise === type) {
@@ -485,7 +482,6 @@ const AgentWiseSummary = () => {
                     pageNumber={currentPage}
                     onPageChange={handlePageChange}
                     totalPageNumber={totalPages}
-                // handleExportFile={handleExportFile}
                 />}
             </div>
         </AuthUserReusableCode>

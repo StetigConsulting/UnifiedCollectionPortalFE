@@ -13,6 +13,7 @@ import { changeAgentRole, getAgentDetailsById, getAllNonEnergyTypes } from '@/ap
 import CustomizedMultipleSelectInputWithLabelString from '@/components/CustomizedMultipleSelectInputWithLabelString';
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
 import { toast } from 'sonner';
+import { getErrorMessage } from '@/lib/utils';
 
 type FormData = z.infer<typeof changeCollectorRoleSchema>;
 
@@ -36,8 +37,7 @@ const ChangeCollectorRole = () => {
             toast.success('Counter Collector added successfully!');
             reset()
         } catch (error) {
-            let errorMessage = error?.data ? error?.data[Object.keys(error?.data)[0]] : error?.error;
-            toast.error('Error: ' + errorMessage);
+            toast.error('Error: ' + getErrorMessage(error));
         }
     };
 

@@ -75,7 +75,6 @@ const NewsNoticeForm = () => {
         "deviceSerial",
         response?.data?.posDeviceDetails?.[0]?.m_pos_device_serial_number
       );
-      console.log("response", response?.data?.posDetailRegisteredDeviceList);
       setPosDeviceDetailsList(response?.data?.posDetailRegisteredDeviceList);
       setShowButton(true);
     } catch (error) {
@@ -122,7 +121,6 @@ const NewsNoticeForm = () => {
       reset();
       setShowButton(false);
     } catch (error) {
-      console.error("Error: " + getErrorMessage(error));
       setErrorMessage("Error: Failed to save the status!");
       setPopupType("error");
       setIsErrorModalOpened(true);

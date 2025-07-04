@@ -88,7 +88,7 @@ const ReconciliationReport = () => {
             setCurrentPage(page);
             setTotalPages(response.data.totalPages)
         } catch (error) {
-            console.log(getErrorMessage(error))
+            toast.error('Error: ' + getErrorMessage(error))
         } finally {
             setIsLoading(false);
         }
@@ -145,7 +145,7 @@ const ReconciliationReport = () => {
 
             window.URL.revokeObjectURL(url);
         } catch (error) {
-            console.error("Error downloading the report:", error);
+            toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
             setExportType('')
@@ -170,7 +170,7 @@ const ReconciliationReport = () => {
                 value: item?.id,
             })))
         } catch (err) {
-            console.log(err)
+            console.error(err)
         } finally {
             setIsLoading(false)
         }

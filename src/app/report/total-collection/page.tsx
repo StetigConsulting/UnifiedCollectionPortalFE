@@ -123,7 +123,7 @@ const TotalCollectionReport = () => {
             setCurrentPage(page);
             setTotalPages(response.data.totalPages)
         } catch (error) {
-            console.log(getErrorMessage(error))
+            toast.error('Error: ' + getErrorMessage(error))
         } finally {
             setIsLoading(false);
         }
@@ -345,7 +345,7 @@ const TotalCollectionReport = () => {
 
             window.URL.revokeObjectURL(url);
         } catch (error) {
-            console.error("Error downloading the report:", error);
+            toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
             setExportType('')
@@ -370,7 +370,7 @@ const TotalCollectionReport = () => {
                 value: item?.id,
             })))
         } catch (err) {
-            console.log(err)
+            console.error(err)
         } finally {
             setIsLoading(false)
         }
@@ -389,7 +389,7 @@ const TotalCollectionReport = () => {
                 }))
             );
         } catch (error) {
-            console.error(getErrorMessage(error));
+            console.error('Error: ', getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }
@@ -409,8 +409,6 @@ const TotalCollectionReport = () => {
     useEffect(() => {
         getAgencyList();
     }, []);
-
-    console.log(formData)
 
     return (
         <AuthUserReusableCode pageTitle="Total Collection" isLoading={isLoading}>

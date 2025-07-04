@@ -72,7 +72,6 @@ const BinderMapping = () => {
         } catch (error) {
             let errorMessage = getErrorMessage(error);
             toast.error('Error: ' + errorMessage);
-            console.error('Error:', error);
         } finally {
             setIsSubmitting(false)
         }
@@ -96,7 +95,6 @@ const BinderMapping = () => {
                 setShowRestFields(true)
                 await getListOfAllBinders(response.data.id)
             } catch (error) {
-                console.log(error.message);
                 let errorMessage = getErrorMessage(error);
                 toast.error('Error: ' + errorMessage || error.message)
                 setShowRestFields(false)
@@ -143,7 +141,6 @@ const BinderMapping = () => {
     const selectedBinder = watch('binder') || [];
 
     const handleBinderChange = (officeStructureId: number) => {
-        console.log(officeStructureId, selectedBinder)
         let updatedSelection = [...selectedBinder];
 
         if (updatedSelection.includes(officeStructureId)) {
@@ -151,13 +148,10 @@ const BinderMapping = () => {
         } else {
             updatedSelection.push(officeStructureId);
         }
-        console.log(officeStructureId, updatedSelection)
 
         setValue('binder', updatedSelection, { shouldValidate: true });
     };
 
-
-    console.log(selectedBinder)
     return (
         <AuthUserReusableCode pageTitle="Pseudo Level Mapping" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
