@@ -167,7 +167,6 @@ const EditAgentAreaRoleForm = () => {
                 setValue('agentRole', response.data.collector_role)
                 setValue('workingLevel', (response.data.working_level))
                 setShowRestFields(true)
-                console.log(workingLevel)
             } catch (error) {
                 let errorMessage = getErrorMessage(error);
                 toast.error('Error: ' + errorMessage)
@@ -318,17 +317,6 @@ const EditAgentAreaRoleForm = () => {
 
     const [isErrorModalOpen, setIsErrorModalOpen] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState('')
-
-    useEffect(() => {
-        const subscription = watch((value, { name }) => {
-          if (name === 'workingLevel') {
-            console.log('workingLevelchanged to', value.workingLevel);
-          }
-        });
-        return () => subscription.unsubscribe();
-      }, [watch]);
-
-      console.log(formData)
 
     return (
         <AuthUserReusableCode pageTitle="Edit Agent Area & Role" isLoading={isLoading}>
