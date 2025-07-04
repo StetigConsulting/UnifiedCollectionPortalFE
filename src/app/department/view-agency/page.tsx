@@ -114,7 +114,7 @@ const ViewAgency = () => {
     const columns = useMemo(
         () => [
             // { label: 'Action', key: 'action', sortable: false, ignored: true },
-            { label: 'Agency ID', key: 'id', sortable: true },
+            { label: 'Agency ID', key: 'id', sortable: true, ignored:false},
             { label: 'Agency Name', key: 'agencyName', sortable: true },
             { label: 'Current Balance', key: 'current_balance', sortable: true, align: 'center' },
             { label: 'Balance allocated to agents', key: 'agents_allocated_balance', sortable: true, align: 'center' },
@@ -224,6 +224,8 @@ const ViewAgency = () => {
         </div>
     }
 
+    const visibleColumns = columns.filter(column => !column?.ignored);
+
     const exportToExcel = () => {
         const now = new Date();
         const formattedDate = now.toLocaleDateString('en-GB').split('/').reverse().join('');
@@ -233,7 +235,19 @@ const ViewAgency = () => {
 
         const filename = `${'ViewAgency'}_${formattedDate}_${formattedTime}.xlsx`;
 
-        const worksheet = XLSX.utils.json_to_sheet(tableData);
+        const exportData = tableData.map(row => {
+            const newRow = {};
+            visibleColumns.forEach(column => {
+                let value = row[column.key];
+                if (typeof value === "object" && value !== null) {
+                    value = value?.props?.children ?? '';
+                }
+                newRow[column.label] = value;
+            });
+            return newRow;
+        });
+
+        const worksheet = XLSX.utils.json_to_sheet(exportData);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');
         XLSX.writeFile(workbook, filename);
@@ -268,7 +282,7 @@ const ViewAgency = () => {
         const filename = `${'ViewAgency'}_${formattedDate}_${formattedTime}.csv`;
 
         const csvData = tableData.map((row) =>
-            columns
+            visibleColumns
                 .map((col) => convertToCSVString(row[col.key]))
                 .join(',')
         );
