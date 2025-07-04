@@ -25,6 +25,7 @@ const CancelTransactionPage = () => {
         handleSubmit,
         control,
         formState: { errors },
+        setValue,
     } = useForm<CancelTransactionFormData>({
         resolver: zodResolver(CancelTransactionSchema),
         defaultValues: {},
@@ -111,7 +112,12 @@ const CancelTransactionPage = () => {
                         label="Type"
                         placeholder="Select Type"
                         list={cancelTransactionTypePicklist}
-                        {...register('type')}
+                        {...register('type',{
+                            onChange: e => {
+                                setValue('recordId','')
+                                setValue('transactionDate','')
+                            }
+                        })}
                         errors={errors?.type as any}
                     />
 

@@ -185,7 +185,7 @@ const ExtendValidity = () => {
                         }
                     }),
                     ...(filterValues.agencyId && { agency_id: Number(filterValues.agencyId) }),
-                    ...(filterValues.amendmentDocumentNo && { extension_document_no: filterValues.amendmentDocumentNo })
+                    ...(filterValues.amendmentDocumentNo && { extension_document_no: filterValues.amendmentDocumentNo.trim() })
                 }
             };
             const res = await getAgencyExtendValidityLogs(payload);

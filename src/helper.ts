@@ -168,6 +168,11 @@ export const listOfUrlForScopes = [
       "TPCollectionWebPortal:collector_incentive_applicability:ALL",
   },
   {
+    url: "/admin/incentive/edit",
+    backendScopeName:
+      "TPCollectionWebPortal:collector_incentive_applicability:ALL",
+  },
+  {
     url: "/admin/import",
     backendScopeName: "TPCollectionWebPortal:business_rules:ALL",
   },

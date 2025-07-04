@@ -98,6 +98,8 @@ const ConsumerMinimumPayableMapping: React.FC = () => {
             toast.error('Only .csv, .xls, or .xlsx files are allowed');
             return;
         }
+
+        setSelectedFile(file)
     };
 
     const [errorMessage, setErrorMessage] = useState('')
