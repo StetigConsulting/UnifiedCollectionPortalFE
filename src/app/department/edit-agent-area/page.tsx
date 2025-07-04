@@ -31,7 +31,10 @@ const EditAgentAreaRoleForm = () => {
         reset,
         clearErrors
     } = useForm<editAgentAreaFormData>({
-        resolver: zodResolver(editAgentAreaSchema)
+        resolver: zodResolver(editAgentAreaSchema),
+        defaultValues: {
+            workingLevel: undefined
+        }
     });
 
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -162,7 +165,9 @@ const EditAgentAreaRoleForm = () => {
                 await handleSetAllLevelData(response.data)
                 await getAgencyData(response?.data?.agency?.id, response?.data?.collector_role)
                 setValue('agentRole', response.data.collector_role)
+                setValue('workingLevel', (response.data.working_level))
                 setShowRestFields(true)
+                console.log(workingLevel)
             } catch (error) {
                 let errorMessage = getErrorMessage(error);
                 toast.error('Error: ' + errorMessage)
@@ -314,6 +319,17 @@ const EditAgentAreaRoleForm = () => {
     const [isErrorModalOpen, setIsErrorModalOpen] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState('')
 
+    useEffect(() => {
+        const subscription = watch((value, { name }) => {
+          if (name === 'workingLevel') {
+            console.log('workingLevelchanged to', value.workingLevel);
+          }
+        });
+        return () => subscription.unsubscribe();
+      }, [watch]);
+
+      console.log(formData)
+
     return (
         <AuthUserReusableCode pageTitle="Edit Agent Area & Role" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -371,6 +387,7 @@ const EditAgentAreaRoleForm = () => {
                             placeholder="Select Working level"
                             list={workingLevel}
                             {...register("workingLevel", { valueAsNumber: true, onChange: handleWorkingLevelChange })}
+                            value={formData.workingLevel || ''}
                         />
                         {formData.workingLevel != null && !Number.isNaN(formData.workingLevel) && (
                             (agencyData.working_level == levelIdMapWithLevelName?.CIRCLE)) &&
