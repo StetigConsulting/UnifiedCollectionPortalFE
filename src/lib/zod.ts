@@ -2573,3 +2573,14 @@ export const posDeviceReportFilterSchema = z.object({
 export type PosDeviceReportFilterFormData = z.infer<
   typeof posDeviceReportFilterSchema
 >;
+
+export const agentTransferSchema = z.object({
+  fromAgencyId: z.number({ required_error: 'From Agency is required' }).refine(val => !!val, 'From Agency is required'),
+  toAgencyId: z.number({ required_error: 'To Agency is required' }).refine(val => !!val, 'To Agency is required'),
+  agents: z.array(z.number()).min(1, 'Select at least one agent to transfer'),
+}).refine(data => data.fromAgencyId !== data.toAgencyId, {
+  message: 'From and To Agency must be different',
+  path: ['toAgencyId'],
+});
+
+export type AgentTransferFormData = z.infer<typeof agentTransferSchema>;
