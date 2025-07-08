@@ -132,6 +132,12 @@ const navData = {
           url: '/admin/update-pos',
           icon: PiggyBank,
           path: '/admin/update-pos',
+        },
+        {
+          title: 'Agent Transfer',
+          url: '/admin/agent-transfer',
+          icon: PiggyBank,
+          path: '/admin/agent-transfer',
         }
       ]
     },

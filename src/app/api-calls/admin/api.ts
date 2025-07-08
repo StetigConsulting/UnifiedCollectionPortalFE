@@ -470,6 +470,15 @@ export const cancelTransactionWithId = async (data: any) => {
     }
 }
 
+export const agentTransferAPI = async (data: any) => {
+    try {
+        const response = await api.post(`/v1/agents/agent-transfer`, data);
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+}
+
 export {
     createReceiptForPostpaid, getListOfReceiptForPostpaid, deleteBusinessRule, getReceiptForPostpaidById,
     editReceiptForPostpaid, createColorCodingLogic, getColorCodingBillBasis, createColorCodingBillBasis, getColorCodingLogic,

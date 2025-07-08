@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { DualListTransfer, Agent } from "@/components/DualListTransfer";
 import { Button } from "@/components/ui/button";
 import AuthUserReusableCode from "@/components/AuthUserReusableCode";
@@ -9,9 +9,14 @@ import CustomizedSelectInputWithLabel from "@/components/CustomizedSelectInputWi
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AgentTransferFormData, agentTransferSchema } from "@/lib/zod";
-import { getAllAgentByAgencyId } from '@/app/api-calls/agency/api';
+import { getAllAgentByAgencyId } from "@/app/api-calls/agency/api";
+import { toast } from "sonner";
+import AlertPopupWithState from "@/components/Agency/ViewAgency/AlertPopupWithState";
+import { Loader2 } from "lucide-react";
+import { getErrorMessage } from "@/lib/utils";
+import { agentTransferAPI } from "@/app/api-calls/admin/api";
+import SuccessErrorModal from "@/components/SuccessErrorModal";
 
-// Types
 interface AgencyOption {
   id: number;
   agency_name: string;
@@ -20,14 +25,13 @@ interface AgencyOption {
 const AgentTransfer: React.FC = () => {
   const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [agencies, setAgencies] = useState<AgencyOption[]>([]);
-  const [fromAgencyId, setFromAgencyId] = useState<number | null>(null);
-  const [toAgencyId, setToAgencyId] = useState<number | null>(null);
   const [leftAgents, setLeftAgents] = useState<Agent[]>([]);
   const [rightAgents, setRightAgents] = useState<Agent[]>([]);
   const [selectedLeft, setSelectedLeft] = useState<number[]>([]);
   const [selectedRight, setSelectedRight] = useState<number[]>([]);
-  const [retainStructure, setRetainStructure] = useState(true);
+  const [retainStructure, setRetainStructure] = useState(false);
 
   const {
     register,
@@ -35,7 +39,7 @@ const AgentTransfer: React.FC = () => {
     setValue,
     watch,
     formState: { errors },
-    clearErrors,
+    reset,
   } = useForm<AgentTransferFormData>({
     resolver: zodResolver(agentTransferSchema),
     defaultValues: {
@@ -45,7 +49,23 @@ const AgentTransfer: React.FC = () => {
     },
   });
 
-  // Fetch agencies on mount
+  const formData = watch();
+
+  const fromAgencyId = watch("fromAgencyId");
+  const toAgencyId = watch("toAgencyId");
+
+  const fetchAgencies = async () => {
+    setIsLoading(true);
+    try {
+      const data = await getAgenciesWithDiscom(session?.user?.discomId);
+      setAgencies(data?.data || []);
+    } catch (e) {
+      setAgencies([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchAgencies();
   }, []);
@@ -59,6 +79,7 @@ const AgentTransfer: React.FC = () => {
         setRightAgents([]);
         setSelectedLeft([]);
         setSelectedRight([]);
+        setValue("agents", []);
       } catch (e) {
         setLeftAgents([]);
         setRightAgents([]);
@@ -71,96 +92,95 @@ const AgentTransfer: React.FC = () => {
     }
   };
 
-  // Fetch agents when fromAgencyId changes
   useEffect(() => {
     fetchAgents();
   }, [fromAgencyId]);
 
-  // Sync form state with local state
   useEffect(() => {
-    setValue("fromAgencyId", fromAgencyId ?? undefined);
-    setValue("toAgencyId", toAgencyId ?? undefined);
     setValue(
       "agents",
       rightAgents.map((a) => a.id)
     );
-  }, [fromAgencyId, toAgencyId, rightAgents, setValue]);
+  }, [rightAgents, setValue]);
 
-  const fetchAgencies = async () => {
-    setIsLoading(true);
-    try {
-      const data = await getAgenciesWithDiscom(session.user.discomId);
-      setAgencies(data?.data || []);
-    } catch (e) {
-      setAgencies([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Selection handlers
-  const handleSelectLeft = (id: number) => {
-    setSelectedLeft((selectedLeft) =>
-      selectedLeft.includes(id)
-        ? selectedLeft.filter((i) => i !== id)
-        : [...selectedLeft, id]
-    );
-  };
-
-  const handleSelectRight = (id: number) => {
-    setSelectedRight((selectedRight) =>
-      selectedRight.includes(id)
-        ? selectedRight.filter((i) => i !== id)
-        : [...selectedRight, id]
-    );
-  };
-
-  // Move agents between lists
-  const moveRight = () => {
-    const toMove = leftAgents.filter((a) => selectedLeft.includes(a.id));
-    setRightAgents((rightAgents) => [...rightAgents, ...toMove]);
-    setLeftAgents((leftAgents) =>
-      leftAgents.filter((a) => !selectedLeft.includes(a.id))
-    );
-    setSelectedLeft([]);
-  };
-
-  const moveAllRight = () => {
-    setRightAgents((rightAgents) => [...rightAgents, ...leftAgents]);
-    setLeftAgents([]);
-    setSelectedLeft([]);
-  };
-
-  const moveLeft = () => {
-    const toMove = rightAgents.filter((a) => selectedRight.includes(a.id));
-    setLeftAgents((leftAgents) => [...leftAgents, ...toMove]);
-    setRightAgents((rightAgents) =>
-      rightAgents.filter((a) => !selectedRight.includes(a.id))
-    );
-    setSelectedRight([]);
-  };
-
-  const moveAllLeft = () => {
-    setLeftAgents((leftAgents) => [...leftAgents, ...rightAgents]);
-    setRightAgents([]);
-    setSelectedRight([]);
-  };
-
-  // Form submit handler
-  const onSubmit = (data: AgentTransferFormData) => {
-    alert(
-      `Transferring ${data.agents.length} agents from agency ${data.fromAgencyId} to agency ${data.toAgencyId}.`
-    );
-  };
-
-  // Prepare agency picklist options
   const agencyOptions = agencies.map((a) => ({
     id: a.id,
     value: a.id,
     label: a.agency_name,
   }));
 
-  const formData = watch();
+  // Selection handlers
+  const handleSelectLeft = useCallback((id: number) => {
+    setSelectedLeft((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+  }, []);
+
+  const handleSelectRight = useCallback((id: number) => {
+    setSelectedRight((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+  }, []);
+
+  // Move agents between lists
+  const moveRight = useCallback(() => {
+    const toMove = leftAgents.filter((a) => selectedLeft.includes(a.id));
+    setRightAgents((prev) => [...prev, ...toMove]);
+    setLeftAgents((prev) => prev.filter((a) => !selectedLeft.includes(a.id)));
+    setSelectedLeft([]);
+  }, [leftAgents, selectedLeft]);
+
+  const moveAllRight = useCallback(() => {
+    setRightAgents((prev) => [...prev, ...leftAgents]);
+    setLeftAgents([]);
+    setSelectedLeft([]);
+  }, [leftAgents]);
+
+  const moveLeft = useCallback(() => {
+    const toMove = rightAgents.filter((a) => selectedRight.includes(a.id));
+    setLeftAgents((prev) => [...prev, ...toMove]);
+    setRightAgents((prev) => prev.filter((a) => !selectedRight.includes(a.id)));
+    setSelectedRight([]);
+  }, [rightAgents, selectedRight]);
+
+  const moveAllLeft = useCallback(() => {
+    setLeftAgents((prev) => [...prev, ...rightAgents]);
+    setRightAgents([]);
+    setSelectedRight([]);
+  }, [rightAgents]);
+
+  // Form submit handler
+  const onSubmit = async (data: AgentTransferFormData) => {
+    setIsLoading(true);
+    try {
+      // TODO: Replace with actual API call
+      let payload = {
+        source_agency_id: fromAgencyId,
+        destination_agency_id: toAgencyId,
+        agent_ids: formData?.agents,
+        is_office_structure_to_be_copied: retainStructure,
+      };
+
+      const response = await agentTransferAPI(payload);
+      setMessage(`Successfully transferred ${rightAgents.length} agents from ${agencies.find(a => a.id === fromAgencyId)?.agency_name || "-"} to ${agencies.find(a => a.id === toAgencyId)?.agency_name || "-"}`);
+      setMessageType("success");
+      setIsModalOpen(true);
+      reset();
+    } catch (e: any) {
+      setMessage("Error: " + getErrorMessage(e));
+      setMessageType("error");
+      setIsModalOpen(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const [stateForConfirmationPopup, setStateForConfirmationPopup] =
+    useState(false);
+
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
 
   return (
     <AuthUserReusableCode
@@ -168,45 +188,30 @@ const AgentTransfer: React.FC = () => {
       isLoading={isLoading}
     >
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex gap-4 mb-6">
+        <div className="flex gap-4 mb-4">
           <div className="flex-1">
             <CustomizedSelectInputWithLabel
               label="From Agency"
               list={agencyOptions.filter((a) => a.value !== toAgencyId)}
-              value={fromAgencyId ?? ""}
               required
               placeholder="Select Agency"
               errors={errors.fromAgencyId}
-              {...register("fromAgencyId", {
-                onChange: (e) => {
-                  const val = Number(e.target.value);
-                  setFromAgencyId(val);
-                  if (val === toAgencyId) setToAgencyId(undefined);
-                },
-              })}
+              {...register("fromAgencyId", { valueAsNumber: true })}
             />
           </div>
           <div className="flex-1">
             <CustomizedSelectInputWithLabel
               label="To Agency"
               list={agencyOptions.filter((a) => a.value !== fromAgencyId)}
-              value={toAgencyId ?? ""}
               required
               placeholder="Select Agency"
               errors={errors.toAgencyId}
-              {...register("toAgencyId", {
-                onChange: (e) => {
-                  const val = Number(e.target.value);
-                  setToAgencyId(val);
-                  if (val === fromAgencyId) setFromAgencyId(undefined);
-                },
-              })}
+              {...register("toAgencyId", { valueAsNumber: true })}
             />
           </div>
         </div>
-        {formData?.fromAgencyId && formData?.toAgencyId && (
+        {!isNaN(fromAgencyId) && !isNaN(toAgencyId) && (
           <>
-            {" "}
             <DualListTransfer
               leftTitle={
                 agencies.find((a) => a.id === fromAgencyId)?.agency_name ||
@@ -232,24 +237,58 @@ const AgentTransfer: React.FC = () => {
                 {errors.agents.message}
               </p>
             )}
-            <div className="flex items-center mt-6">
-              <input
-                type="checkbox"
-                checked={retainStructure}
-                onChange={(e) => setRetainStructure(e.target.checked)}
-                className="mr-2"
-                id="retain-structure"
-              />
-              <label htmlFor="retain-structure" className="text-sm">
-                Retain office structure of the agents after their transfer.
-              </label>
-            </div>
-            <div className="flex justify-end mt-6">
-              <Button type="submit">Submit</Button>
+            <div className="grid grid-col-6">
+              <div className="flex items-center mt-6">
+                <input
+                  type="checkbox"
+                  checked={retainStructure}
+                  onChange={(e) => setRetainStructure(e.target.checked)}
+                  className="mr-2"
+                  id="retain-structure"
+                />
+                <label htmlFor="retain-structure" className="text-sm">
+                  Retain office structure of the agents after their transfer.
+                </label>
+              </div>
+              <div className="flex justify-end mt-6">
+                <AlertPopupWithState
+                  triggerCode={
+                    <Button
+                      variant="default"
+                      disabled={isSubmitting}
+                      onClick={handleSubmit((e) => {
+                        setStateForConfirmationPopup(true);
+                      })}
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
+                          Submitting...
+                        </>
+                      ) : (
+                        "Submit"
+                      )}
+                    </Button>
+                  }
+                  handleContinue={handleSubmit(onSubmit)}
+                  title="Confirm Agent Transfer"
+                  description={`Are you sure you want to transfer ${rightAgents.length} agents from ${agencies.find(a => a.id === fromAgencyId)?.agency_name || "-"} to ${agencies.find(a => a.id === toAgencyId)?.agency_name || "-"}? This action is irreversible.`}
+                  continueButtonText="Yes"
+                  isOpen={stateForConfirmationPopup}
+                  setIsOpen={setStateForConfirmationPopup}
+                />
+              </div>
             </div>
           </>
         )}
       </form>
+
+      <SuccessErrorModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        message={message}
+        type={messageType}
+      />
     </AuthUserReusableCode>
   );
 };

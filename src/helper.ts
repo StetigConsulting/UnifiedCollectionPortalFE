@@ -347,6 +347,10 @@ export const listOfUrlForScopes = [
     url: "/department/agency-security-deposit",
     backendScopeName: "TPCollectionWebPortal:agency_security_deposit:READ",
   },
+  {
+    url: "/admin/agent-transfer",
+    backendScopeName: "TPCollectionWebPortal:agent:TRANSFER",
+  },
   { url: "/", backendScopeName: "" },
 ];
 
