@@ -67,7 +67,7 @@ const SupervisorBankDepositReport = () => {
             page_size: formData?.pageSize,
             filter: {
                 ...(formData.dateFrom && formData.dateTo) && {
-                    deposit_date_range: {
+                    created_on_date_range: {
                         from_date: formData.dateFrom,
                         to_date: formData.dateTo,
                     },
@@ -115,7 +115,7 @@ const SupervisorBankDepositReport = () => {
     const handleSearch = () => {
         let payload = {
             ...(formData.dateFrom && formData.dateTo) && {
-                deposit_date_range: {
+                created_on_date_range: {
                     from_date: formData.dateFrom,
                     to_date: formData.dateTo,
                 },

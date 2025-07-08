@@ -130,7 +130,7 @@ const AgentLoginReport = () => {
     const [exportType, setExportType] = useState('')
 
     const getPayload = (data) => {
-        let agencyDetails = agencyList.filter((item: any) => item.id === formData?.agency)
+        let agencyDetails = agencyList.filter((item: any) => item.id === Number(formData?.agency))
 
         let payload = {
             date_range: {
