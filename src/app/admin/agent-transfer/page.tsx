@@ -58,7 +58,7 @@ const AgentTransfer: React.FC = () => {
     setIsLoading(true);
     try {
       const data = await getAgenciesWithDiscom(session?.user?.discomId);
-      setAgencies(data?.data || []);
+      setAgencies(data?.data.filter(item => item.is_active === true) || []);
     } catch (e) {
       setAgencies([]);
     } finally {
@@ -75,7 +75,7 @@ const AgentTransfer: React.FC = () => {
       setIsLoading(true);
       try {
         const response = await getAllAgentByAgencyId(fromAgencyId);
-        setLeftAgents(response?.data || []);
+        setLeftAgents(response?.data.filter(item => item.is_active === true) || []);
         setRightAgents([]);
         setSelectedLeft([]);
         setSelectedRight([]);
@@ -149,11 +149,10 @@ const AgentTransfer: React.FC = () => {
     setSelectedRight([]);
   }, [rightAgents]);
 
-  // Form submit handler
   const onSubmit = async (data: AgentTransferFormData) => {
     setIsLoading(true);
     try {
-      // TODO: Replace with actual API call
+
       let payload = {
         source_agency_id: fromAgencyId,
         destination_agency_id: toAgencyId,
