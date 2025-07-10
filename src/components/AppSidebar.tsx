@@ -464,6 +464,12 @@ const navData = {
           icon: reportIcon,
           path: '/report/transaction-details',
         },
+        {
+          title: 'Agency Mid Night Balance',
+          url: '/report/agency-mid-night-balance',
+          icon: reportIcon,
+          path: '/report/agency-mid-night-balance',
+        },
       ]
     },
     // {

@@ -2584,3 +2584,13 @@ export const agentTransferSchema = z.object({
 });
 
 export type AgentTransferFormData = z.infer<typeof agentTransferSchema>;
+
+export const agencyMidNightSchema = z.object({
+  fromDate: z.string().min(1, 'From Date is Required'),
+  toDate: z.string().min(1, 'To Date is Required'),
+  agency: z.string().optional(),
+  pageSize: z
+  .number({ invalid_type_error: "Page size is required" })
+  .min(1, "Page size is required"),
+});
+export type AgencyMidNightFormData = z.infer<typeof agencyMidNightSchema>;

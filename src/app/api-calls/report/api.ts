@@ -683,3 +683,33 @@ export const downloadTransactionDetailsReport = async (
     throw error?.response?.data;
   }
 };
+
+export const getAgencyMidNightBalance = async (data: any) => {
+  try {
+    const response = await api.post(
+      "/v1/common-reports/agency-midnight-balance-report/fetch",
+      data
+    );
+    return response.data;
+  } catch (error: any) {
+    throw error?.response?.data;
+  }
+};
+
+export const downloadAgencyMidNightBalance = async (data: any, type: any) => {
+  try {
+    const response = await api.post(
+      `/v1/common-reports/agency-midnight-balance-report/download/${type}`,
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        responseType: "blob",
+      }
+    );
+    return response;
+  } catch (error: any) {
+    throw error?.response?.data;
+  }
+};
