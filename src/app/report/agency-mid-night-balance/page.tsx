@@ -79,7 +79,9 @@ const AgencyMidNightReport = () => {
 
   const getPayload = (data) => {
 
-    let agencySelected = agencyList.filter(item => item.id === Number(data?.agency)) || []
+    let agencySelected = data?.agency && agencyList.filter(item => item.id === Number(data?.agency)) || []
+
+    console.log(data,agencySelected,agencyList)
 
     return {
       filter: {
