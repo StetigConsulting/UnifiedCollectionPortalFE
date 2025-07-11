@@ -84,13 +84,11 @@ const AgencyMidNightReport = () => {
     console.log(data,agencySelected,agencyList)
 
     return {
-      filter: {
         date_range: {
           from_date: data.fromDate,
           to_date: data.toDate,
         },
         ...(agencySelected.length > 0 && { agency_name: agencySelected?.[0]?.name }),
-      },
     };
   };
 
@@ -101,7 +99,7 @@ const AgencyMidNightReport = () => {
       let payload = {
         page: currentPage,
         page_size: formData?.pageSize,
-        ...getPayload(formData)
+        filter: getPayload(formData)
       };
       const response = await getAgencyMidNightBalance(payload);
       setDataList(response.data.data);
