@@ -470,6 +470,12 @@ const navData = {
           icon: reportIcon,
           path: '/report/agency-mid-night-balance',
         },
+        {
+          title: 'Digital Collection',
+          url: '/report/digital-payment-collection',
+          icon: reportIcon,
+          path: '/report/digital-payment-collection',
+        },
       ]
     },
     // {
