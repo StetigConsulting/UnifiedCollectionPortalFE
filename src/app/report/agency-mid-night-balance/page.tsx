@@ -97,16 +97,16 @@ const AgencyMidNightReport = () => {
       setIsLoading(true);
        
       let payload = {
-        page: currentPage,
+        page: page,
         page_size: formData?.pageSize,
         filter: getPayload(formData)
       };
       const response = await getAgencyMidNightBalance(payload);
       setDataList(response.data.data);
-      setCurrentPage(page);
+      setCurrentPage(response.data.currentPage);
       setTotalPages(response.data.totalPages);
       setShowTable(true);
-      setPageSize(formData.pageSize);
+      setPageSize(response.data.pageSize);
     } catch (error) {
       toast.error("Error: " + getErrorMessage(error));
     } finally {
