@@ -2594,3 +2594,12 @@ export const agencyMidNightSchema = z.object({
   .min(1, "Page size is required"),
 });
 export type AgencyMidNightFormData = z.infer<typeof agencyMidNightSchema>;
+
+export const digitalPaymentCollectionSchema = z.object({
+  fromDate: z.string().nonempty({ message: 'From Date is required' }),
+  toDate: z.string().nonempty({ message: 'To Date is required' }),
+  agency: z.string().optional(),
+  pageSize: z.number().min(1, { message: 'Page size must be at least 1' }),
+});
+
+export type DigitalPaymentCollectionFormData = z.infer<typeof digitalPaymentCollectionSchema>;
