@@ -205,7 +205,7 @@ export const rechargeSchema = z.object({
     .refine((val) => !isNaN(val), {
       message: "Agency must be a valid number",
     }),
-
+  balanceAvailableForRecharge: z.any(),
   maxRecharge: z.any(),
   agencyName: z.string().optional(),
   agencyId: z.any().optional(),
@@ -469,7 +469,7 @@ export const extendValidityFilterSchema = z
         ctx.addIssue({
           path: ["toDate"],
           code: z.ZodIssueCode.custom,
-          message: "To Date cannot be before From Date",
+          message: "From Date must not be after To Date",
         });
       }
     }
@@ -1544,95 +1544,107 @@ export const dailyCollectionEnergySheet = z.object({
     .number({ invalid_type_error: "Page size is required" })
     .min(1, "Page size is required"),
 })
-.superRefine((data, ctx) => {
-  const { workingLevel, levelMapWithId } = data;
+  .superRefine((data, ctx) => {
+    const { workingLevel, levelMapWithId } = data;
 
-  // Circle level
-  if (workingLevel === levelMapWithId?.CIRCLE) {
-    if (!data.circle || data.circle.length === 0) {
-      ctx.addIssue({
-        path: ["circle"],
-        code: z.ZodIssueCode.custom,
-        message: "Circle is required",
-      });
+    if (data.fromDate && data.toDate) {
+      const from = new Date(data.fromDate);
+      const to = new Date(data.toDate);
+      if (from > to) {
+        ctx.addIssue({
+          path: ["toDate"],
+          code: z.ZodIssueCode.custom,
+          message: "From Date must not be after To Date",
+        });
+      }
     }
-  }
 
-  // Division level
-  if (workingLevel === levelMapWithId?.DIVISION) {
-    if (!data.circle || data.circle.length === 0) {
-      ctx.addIssue({
-        path: ["circle"],
-        code: z.ZodIssueCode.custom,
-        message: "Circle is required",
-      });
+    // Circle level
+    if (workingLevel === levelMapWithId?.CIRCLE) {
+      if (!data.circle || data.circle.length === 0) {
+        ctx.addIssue({
+          path: ["circle"],
+          code: z.ZodIssueCode.custom,
+          message: "Circle is required",
+        });
+      }
     }
-    if (!data.division || data.division.length === 0) {
-      ctx.addIssue({
-        path: ["division"],
-        code: z.ZodIssueCode.custom,
-        message: "Division is required",
-      });
-    }
-  }
 
-  // SubDivision level
-  if (workingLevel === levelMapWithId?.SUB_DIVISION) {
-    if (!data.circle || data.circle.length === 0) {
-      ctx.addIssue({
-        path: ["circle"],
-        code: z.ZodIssueCode.custom,
-        message: "Circle is required",
-      });
+    // Division level
+    if (workingLevel === levelMapWithId?.DIVISION) {
+      if (!data.circle || data.circle.length === 0) {
+        ctx.addIssue({
+          path: ["circle"],
+          code: z.ZodIssueCode.custom,
+          message: "Circle is required",
+        });
+      }
+      if (!data.division || data.division.length === 0) {
+        ctx.addIssue({
+          path: ["division"],
+          code: z.ZodIssueCode.custom,
+          message: "Division is required",
+        });
+      }
     }
-    if (!data.division || data.division.length === 0) {
-      ctx.addIssue({
-        path: ["division"],
-        code: z.ZodIssueCode.custom,
-        message: "Division is required",
-      });
-    }
-    if (!data.subDivision || data.subDivision.length === 0) {
-      ctx.addIssue({
-        path: ["subDivision"],
-        code: z.ZodIssueCode.custom,
-        message: "Sub Division is required",
-      });
-    }
-  }
 
-  // Section level
-  if (workingLevel === levelMapWithId?.SECTION) {
-    if (!data.circle || data.circle.length === 0) {
-      ctx.addIssue({
-        path: ["circle"],
-        code: z.ZodIssueCode.custom,
-        message: "Circle is required",
-      });
+    // SubDivision level
+    if (workingLevel === levelMapWithId?.SUB_DIVISION) {
+      if (!data.circle || data.circle.length === 0) {
+        ctx.addIssue({
+          path: ["circle"],
+          code: z.ZodIssueCode.custom,
+          message: "Circle is required",
+        });
+      }
+      if (!data.division || data.division.length === 0) {
+        ctx.addIssue({
+          path: ["division"],
+          code: z.ZodIssueCode.custom,
+          message: "Division is required",
+        });
+      }
+      if (!data.subDivision || data.subDivision.length === 0) {
+        ctx.addIssue({
+          path: ["subDivision"],
+          code: z.ZodIssueCode.custom,
+          message: "Sub Division is required",
+        });
+      }
     }
-    if (!data.division || data.division.length === 0) {
-      ctx.addIssue({
-        path: ["division"],
-        code: z.ZodIssueCode.custom,
-        message: "Division is required",
-      });
+
+    // Section level
+    if (workingLevel === levelMapWithId?.SECTION) {
+      if (!data.circle || data.circle.length === 0) {
+        ctx.addIssue({
+          path: ["circle"],
+          code: z.ZodIssueCode.custom,
+          message: "Circle is required",
+        });
+      }
+      if (!data.division || data.division.length === 0) {
+        ctx.addIssue({
+          path: ["division"],
+          code: z.ZodIssueCode.custom,
+          message: "Division is required",
+        });
+      }
+      if (!data.subDivision || data.subDivision.length === 0) {
+        ctx.addIssue({
+          path: ["subDivision"],
+          code: z.ZodIssueCode.custom,
+          message: "Sub Division is required",
+        });
+      }
+      if (!data.section || data.section.length === 0) {
+        ctx.addIssue({
+          path: ["section"],
+          code: z.ZodIssueCode.custom,
+          message: "Section is required",
+        });
+      }
     }
-    if (!data.subDivision || data.subDivision.length === 0) {
-      ctx.addIssue({
-        path: ["subDivision"],
-        code: z.ZodIssueCode.custom,
-        message: "Sub Division is required",
-      });
-    }
-    if (!data.section || data.section.length === 0) {
-      ctx.addIssue({
-        path: ["section"],
-        code: z.ZodIssueCode.custom,
-        message: "Section is required",
-      });
-    }
-  }
-})
+  })
 
 export type DailyCollectionEnergyFormData = z.infer<
   typeof dailyCollectionEnergySheet
@@ -1649,6 +1661,16 @@ export const dailyCollectionNonEnergySheet = z.object({
   subDivision: z.array(z.number()).optional(),
   section: z.array(z.number()).optional(),
   agencyName: z.string().optional(),
+}).superRefine((data, ctx) => {
+  const from = new Date(data.fromDate);
+  const to = new Date(data.toDate);
+  if (from > to) {
+    ctx.addIssue({
+      path: ["toDate"],
+      code: z.ZodIssueCode.custom,
+      message: "From Date must not be after To Date",
+    });
+  }
 });
 
 export type DailyCollectionNonEnergyFormData = z.infer<
@@ -1750,7 +1772,7 @@ export const viewHistorySchema = z
     toDate: z.string().min(1, "To date is required"),
   })
   .refine((data) => new Date(data.fromDate) <= new Date(data.toDate), {
-    message: "From date must be before or equal to To date",
+    message: "From Date must not be after To Date",
     path: ["toDate"],
   });
 
@@ -1766,7 +1788,7 @@ export const agentDepositReportSchema = z
       .min(1, "Page size is required"),
   })
   .refine((data) => new Date(data.dateFrom) <= new Date(data.dateTo), {
-    message: "From date must be before or equal to To date",
+    message: "From Date must not be after To Date",
     path: ["dateTo"],
   });
 
@@ -1788,7 +1810,7 @@ export const agentWalletSchema = z
       .min(1, "Page size is required"),
   })
   .refine((data) => new Date(data.fromDate) <= new Date(data.toDate), {
-    message: "From date must not be after To date",
+    message: "From Date must not be after To Date",
     path: ["toDate"],
   });
 
@@ -1807,7 +1829,7 @@ export const agencyWalletSchema = z
       .min(1, "Page size is required"),
   })
   .refine((data) => new Date(data.fromDate) <= new Date(data.toDate), {
-    message: "From date must be before or equal to To date",
+    message: "From Date must not be after To Date",
     path: ["toDate"],
   });
 
@@ -1825,7 +1847,7 @@ export const agentBankDepositTableSchema = z
       .min(1, "Page size is required"),
   })
   .refine((data) => new Date(data.dateFrom) <= new Date(data.dateTo), {
-    message: "From date must be before or equal to To date",
+    message: "From Date must not be after To Date",
     path: ["dateTo"],
   });
 
@@ -2115,6 +2137,7 @@ export const agentWiseSummaryReportSchema = z
     pageSize: z
       .number({ invalid_type_error: "Page size is required" })
       .min(1, "Page size is required"),
+    levelWithIdMap: z.any().optional(),
   })
   .superRefine((data, ctx) => {
     if (data.fromDate && data.toDate) {
@@ -2124,8 +2147,45 @@ export const agentWiseSummaryReportSchema = z
         ctx.addIssue({
           path: ["toDate"],
           code: z.ZodIssueCode.custom,
-          message: "To Date cannot be before From Date",
+          message: "From Date must not be after To Date",
         });
+      }
+    }
+    const level = data.workingLevel;
+    const map = data.levelWithIdMap;
+    if (level === map?.SECTION) {
+      if (!data.circle?.length) {
+        ctx.addIssue({ path: ["circle"], code: z.ZodIssueCode.custom, message: "Circle is required" });
+      }
+      if (!data.division?.length) {
+        ctx.addIssue({ path: ["division"], code: z.ZodIssueCode.custom, message: "Division is required" });
+      }
+      if (!data.subDivision?.length) {
+        ctx.addIssue({ path: ["subDivision"], code: z.ZodIssueCode.custom, message: "Sub Division is required" });
+      }
+      if (!data.section?.length) {
+        ctx.addIssue({ path: ["section"], code: z.ZodIssueCode.custom, message: "Section is required" });
+      }
+    } else if (level === map?.SUB_DIVISION) {
+      if (!data.circle?.length) {
+        ctx.addIssue({ path: ["circle"], code: z.ZodIssueCode.custom, message: "Circle is required" });
+      }
+      if (!data.division?.length) {
+        ctx.addIssue({ path: ["division"], code: z.ZodIssueCode.custom, message: "Division is required" });
+      }
+      if (!data.subDivision?.length) {
+        ctx.addIssue({ path: ["subDivision"], code: z.ZodIssueCode.custom, message: "Sub Division is required" });
+      }
+    } else if (level === map?.DIVISION) {
+      if (!data.circle?.length) {
+        ctx.addIssue({ path: ["circle"], code: z.ZodIssueCode.custom, message: "Circle is required" });
+      }
+      if (!data.division?.length) {
+        ctx.addIssue({ path: ["division"], code: z.ZodIssueCode.custom, message: "Division is required" });
+      }
+    } else if (level === map?.CIRCLE) {
+      if (!data.circle?.length) {
+        ctx.addIssue({ path: ["circle"], code: z.ZodIssueCode.custom, message: "Circle is required" });
       }
     }
   });
@@ -2170,59 +2230,111 @@ export const agentAttendanceReport = z
       }
     }
 
-    // if (level === map?.SECTION) {
-    //   if (!data.circle.length) {
-    //     ctx.addIssue({ path: ["circle"], code: z.ZodIssueCode.custom, message: "Circle is required" });
-    //   }
-    //   if (!data.division.length) {
-    //     ctx.addIssue({ path: ["division"], code: z.ZodIssueCode.custom, message: "Division is required" });
-    //   }
-    //   if (!data.subDivision.length) {
-    //     ctx.addIssue({ path: ["subDivision"], code: z.ZodIssueCode.custom, message: "Sub Division is required" });
-    //   }
-    //   if (!data.section.length) {
-    //     ctx.addIssue({ path: ["section"], code: z.ZodIssueCode.custom, message: "Section is required" });
-    //   }
-    // } else if (level === map?.SUB_DIVISION) {
-    //   if (!data.circle.length) {
-    //     ctx.addIssue({ path: ["circle"], code: z.ZodIssueCode.custom, message: "Circle is required" });
-    //   }
-    //   if (!data.division.length) {
-    //     ctx.addIssue({ path: ["division"], code: z.ZodIssueCode.custom, message: "Division is required" });
-    //   }
-    //   if (!data.subDivision.length) {
-    //     ctx.addIssue({ path: ["subDivision"], code: z.ZodIssueCode.custom, message: "Sub Division is required" });
-    //   }
-    // } else if (level === map?.DIVISION) {
-    //   if (!data.circle.length) {
-    //     ctx.addIssue({ path: ["circle"], code: z.ZodIssueCode.custom, message: "Circle is required" });
-    //   }
-    //   if (!data.division.length) {
-    //     ctx.addIssue({ path: ["division"], code: z.ZodIssueCode.custom, message: "Division is required" });
-    //   }
-    // } else if (level === map?.CIRCLE) {
-    //   if (!data.circle.length) {
-    //     ctx.addIssue({ path: ["circle"], code: z.ZodIssueCode.custom, message: "Circle is required" });
-    //   }
-    // }
+    if (level === map?.SECTION) {
+      if (!data.circle?.length) {
+        ctx.addIssue({ path: ["circle"], code: z.ZodIssueCode.custom, message: "Circle is required" });
+      }
+      if (!data.division?.length) {
+        ctx.addIssue({ path: ["division"], code: z.ZodIssueCode.custom, message: "Division is required" });
+      }
+      if (!data.subDivision?.length) {
+        ctx.addIssue({ path: ["subDivision"], code: z.ZodIssueCode.custom, message: "Sub Division is required" });
+      }
+      if (!data.section?.length) {
+        ctx.addIssue({ path: ["section"], code: z.ZodIssueCode.custom, message: "Section is required" });
+      }
+    } else if (level === map?.SUB_DIVISION) {
+      if (!data.circle?.length) {
+        ctx.addIssue({ path: ["circle"], code: z.ZodIssueCode.custom, message: "Circle is required" });
+      }
+      if (!data.division?.length) {
+        ctx.addIssue({ path: ["division"], code: z.ZodIssueCode.custom, message: "Division is required" });
+      }
+      if (!data.subDivision?.length) {
+        ctx.addIssue({ path: ["subDivision"], code: z.ZodIssueCode.custom, message: "Sub Division is required" });
+      }
+    } else if (level === map?.DIVISION) {
+      if (!data.circle?.length) {
+        ctx.addIssue({ path: ["circle"], code: z.ZodIssueCode.custom, message: "Circle is required" });
+      }
+      if (!data.division?.length) {
+        ctx.addIssue({ path: ["division"], code: z.ZodIssueCode.custom, message: "Division is required" });
+      }
+    } else if (level === map?.CIRCLE) {
+      if (!data.circle?.length) {
+        ctx.addIssue({ path: ["circle"], code: z.ZodIssueCode.custom, message: "Circle is required" });
+      }
+    }
   });
 
 export type AgentAttendanceReportFormData = z.infer<
   typeof agentAttendanceReport
 >;
 
-export const cancelledTransactionReport = z.object({
-  fromDate: z.string().min(1, "From Date is required"),
-  toDate: z.string().min(1, "To Date is required"),
-  workingLevel: z.any().optional(),
-  circle: z.array(z.number()).optional(),
-  division: z.array(z.number()).optional(),
-  subDivision: z.array(z.number()).optional(),
-  section: z.array(z.number()).optional(),
-  pageSize: z
-    .number({ invalid_type_error: "Page size is required" })
-    .min(1, "Page size is required"),
-});
+export const cancelledTransactionReport = z
+  .object({
+    fromDate: z.string().min(1, "From Date is required"),
+    toDate: z.string().min(1, "To Date is required"),
+    workingLevel: z.any().optional(),
+    circle: z.array(z.number()).optional(),
+    division: z.array(z.number()).optional(),
+    subDivision: z.array(z.number()).optional(),
+    section: z.array(z.number()).optional(),
+    pageSize: z
+      .number({ invalid_type_error: "Page size is required" })
+      .min(1, "Page size is required"),
+    levelWithIdMap: z.any().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.fromDate && data.toDate) {
+      const from = new Date(data.fromDate);
+      const to = new Date(data.toDate);
+      if (from > to) {
+        ctx.addIssue({
+          path: ["toDate"],
+          code: z.ZodIssueCode.custom,
+          message: "From Date must not be after To Date",
+        });
+      }
+    }
+    const level = data.workingLevel;
+    const map = data.levelWithIdMap;
+    if (level === map?.SECTION) {
+      if (!data.circle?.length) {
+        ctx.addIssue({ path: ["circle"], code: z.ZodIssueCode.custom, message: "Circle is required" });
+      }
+      if (!data.division?.length) {
+        ctx.addIssue({ path: ["division"], code: z.ZodIssueCode.custom, message: "Division is required" });
+      }
+      if (!data.subDivision?.length) {
+        ctx.addIssue({ path: ["subDivision"], code: z.ZodIssueCode.custom, message: "Sub Division is required" });
+      }
+      if (!data.section?.length) {
+        ctx.addIssue({ path: ["section"], code: z.ZodIssueCode.custom, message: "Section is required" });
+      }
+    } else if (level === map?.SUB_DIVISION) {
+      if (!data.circle?.length) {
+        ctx.addIssue({ path: ["circle"], code: z.ZodIssueCode.custom, message: "Circle is required" });
+      }
+      if (!data.division?.length) {
+        ctx.addIssue({ path: ["division"], code: z.ZodIssueCode.custom, message: "Division is required" });
+      }
+      if (!data.subDivision?.length) {
+        ctx.addIssue({ path: ["subDivision"], code: z.ZodIssueCode.custom, message: "Sub Division is required" });
+      }
+    } else if (level === map?.DIVISION) {
+      if (!data.circle?.length) {
+        ctx.addIssue({ path: ["circle"], code: z.ZodIssueCode.custom, message: "Circle is required" });
+      }
+      if (!data.division?.length) {
+        ctx.addIssue({ path: ["division"], code: z.ZodIssueCode.custom, message: "Division is required" });
+      }
+    } else if (level === map?.CIRCLE) {
+      if (!data.circle?.length) {
+        ctx.addIssue({ path: ["circle"], code: z.ZodIssueCode.custom, message: "Circle is required" });
+      }
+    }
+  });
 
 export type CancelledTransactionReportFormData = z.infer<
   typeof cancelledTransactionReport
@@ -2249,7 +2361,7 @@ export const billingReportSchema = z
         ctx.addIssue({
           path: ["toDate"],
           code: z.ZodIssueCode.custom,
-          message: "To Date cannot be before From Date",
+          message: "From Date must not be after To Date",
         });
       }
     }
@@ -2280,13 +2392,27 @@ export type AgentDetailsReportFormData = z.infer<
   typeof agentDetailsReportSchema
 >;
 
-export const agentLoginReportSchema = z.object({
-  fromDate: z.string().min(1, "From Date is required"),
-  toDate: z.string().min(1, "To Date is required"),
-  agent: z.string().optional(),
-  agency: z.string().optional(),
-  agencyName: z.any().optional(),
-});
+export const agentLoginReportSchema = z
+  .object({
+    fromDate: z.string().min(1, "From Date is required"),
+    toDate: z.string().min(1, "To Date is required"),
+    agent: z.string().optional(),
+    agency: z.string().optional(),
+    agencyName: z.any().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.fromDate && data.toDate) {
+      const from = new Date(data.fromDate);
+      const to = new Date(data.toDate);
+      if (from > to) {
+        ctx.addIssue({
+          path: ["toDate"],
+          code: z.ZodIssueCode.custom,
+          message: "From Date must not be after To Date",
+        });
+      }
+    }
+  });
 
 export type AgentLoginReportFormData = z.infer<typeof agentLoginReportSchema>;
 
@@ -2315,7 +2441,7 @@ export const totalCollectionReportSchema = z
         ctx.addIssue({
           path: ["toDate"],
           code: z.ZodIssueCode.custom,
-          message: "To Date cannot be before From Date",
+          message: "From Date must not be after To Date",
         });
       }
     }
@@ -2431,7 +2557,7 @@ export const collectionPostingReportSchema = z
         ctx.addIssue({
           path: ["toDate"],
           code: z.ZodIssueCode.custom,
-          message: "To Date cannot be before From Date",
+          message: "From Date must not be after To Date",
         });
       }
     }
@@ -2460,7 +2586,7 @@ export const reconciliationReportSchema = z
         ctx.addIssue({
           path: ["toDate"],
           code: z.ZodIssueCode.custom,
-          message: "To Date cannot be before From Date",
+          message: "From Date must not be after To Date",
         });
       }
     }
@@ -2483,7 +2609,7 @@ export const supervisorBankDepositTableSchema = z
       .min(1, "Page size is required"),
   })
   .refine((data) => new Date(data.dateFrom) <= new Date(data.dateTo), {
-    message: "From date must be before or equal to To date",
+    message: "From Date must not be after To Date",
     path: ["dateTo"],
   });
 
@@ -2491,21 +2617,73 @@ export type SupervisorBankDepositTableSchemaData = z.infer<
   typeof supervisorBankDepositTableSchema
 >;
 
-export const transactionDetailsReportSchema = z.object({
-  fromDate: z.string().min(1, "From Date is required"),
-  toDate: z.string().min(1, "To Date is required"),
-  workingLevel: z.any().optional(),
-  circle: z.array(z.number()).optional(),
-  division: z.array(z.number()).optional(),
-  subDivision: z.array(z.number()).optional(),
-  section: z.array(z.number()).optional(),
-  agent: z.string().optional(),
-  agency: z.string().optional(),
-  agencyName: z.any().optional(),
-  pageSize: z
-    .number({ invalid_type_error: "Page size is required" })
-    .min(1, "Page size is required"),
-});
+export const transactionDetailsReportSchema = z
+  .object({
+    fromDate: z.string().min(1, "From Date is required"),
+    toDate: z.string().min(1, "To Date is required"),
+    workingLevel: z.any().optional(),
+    circle: z.array(z.number()).optional(),
+    division: z.array(z.number()).optional(),
+    subDivision: z.array(z.number()).optional(),
+    section: z.array(z.number()).optional(),
+    agent: z.string().optional(),
+    agency: z.string().optional(),
+    agencyName: z.any().optional(),
+    pageSize: z
+      .number({ invalid_type_error: "Page size is required" })
+      .min(1, "Page size is required"),
+    levelWithIdMap: z.any().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.fromDate && data.toDate) {
+      const from = new Date(data.fromDate);
+      const to = new Date(data.toDate);
+      if (from > to) {
+        ctx.addIssue({
+          path: ["toDate"],
+          code: z.ZodIssueCode.custom,
+          message: "From Date must not be after To Date",
+        });
+      }
+    }
+    const level = data.workingLevel;
+    const map = data.levelWithIdMap;
+    if (level === map?.SECTION) {
+      if (!data.circle?.length) {
+        ctx.addIssue({ path: ["circle"], code: z.ZodIssueCode.custom, message: "Circle is required" });
+      }
+      if (!data.division?.length) {
+        ctx.addIssue({ path: ["division"], code: z.ZodIssueCode.custom, message: "Division is required" });
+      }
+      if (!data.subDivision?.length) {
+        ctx.addIssue({ path: ["subDivision"], code: z.ZodIssueCode.custom, message: "Sub Division is required" });
+      }
+      if (!data.section?.length) {
+        ctx.addIssue({ path: ["section"], code: z.ZodIssueCode.custom, message: "Section is required" });
+      }
+    } else if (level === map?.SUB_DIVISION) {
+      if (!data.circle?.length) {
+        ctx.addIssue({ path: ["circle"], code: z.ZodIssueCode.custom, message: "Circle is required" });
+      }
+      if (!data.division?.length) {
+        ctx.addIssue({ path: ["division"], code: z.ZodIssueCode.custom, message: "Division is required" });
+      }
+      if (!data.subDivision?.length) {
+        ctx.addIssue({ path: ["subDivision"], code: z.ZodIssueCode.custom, message: "Sub Division is required" });
+      }
+    } else if (level === map?.DIVISION) {
+      if (!data.circle?.length) {
+        ctx.addIssue({ path: ["circle"], code: z.ZodIssueCode.custom, message: "Circle is required" });
+      }
+      if (!data.division?.length) {
+        ctx.addIssue({ path: ["division"], code: z.ZodIssueCode.custom, message: "Division is required" });
+      }
+    } else if (level === map?.CIRCLE) {
+      if (!data.circle?.length) {
+        ctx.addIssue({ path: ["circle"], code: z.ZodIssueCode.custom, message: "Circle is required" });
+      }
+    }
+  });
 
 export type TransactionDetailsReportFormData = z.infer<
   typeof transactionDetailsReportSchema
@@ -2585,21 +2763,50 @@ export const agentTransferSchema = z.object({
 
 export type AgentTransferFormData = z.infer<typeof agentTransferSchema>;
 
-export const agencyMidNightSchema = z.object({
-  fromDate: z.string().min(1, 'From Date is Required'),
-  toDate: z.string().min(1, 'To Date is Required'),
-  agency: z.string().optional(),
-  pageSize: z
-  .number({ invalid_type_error: "Page size is required" })
-  .min(1, "Page size is required"),
-});
+export const agencyMidNightSchema = z
+  .object({
+    fromDate: z.string().min(1, 'From Date is Required'),
+    toDate: z.string().min(1, 'To Date is Required'),
+    agency: z.string().optional(),
+    pageSize: z
+      .number({ invalid_type_error: "Page size is required" })
+      .min(1, "Page size is required"),
+  })
+  .superRefine((data, ctx) => {
+    if (data.fromDate && data.toDate) {
+      const from = new Date(data.fromDate);
+      const to = new Date(data.toDate);
+      if (from > to) {
+        ctx.addIssue({
+          path: ["toDate"],
+          code: z.ZodIssueCode.custom,
+          message: "From Date must not be after To Date",
+        });
+      }
+    }
+  });
+
 export type AgencyMidNightFormData = z.infer<typeof agencyMidNightSchema>;
 
-export const digitalPaymentCollectionSchema = z.object({
-  fromDate: z.string().nonempty({ message: 'From Date is required' }),
-  toDate: z.string().nonempty({ message: 'To Date is required' }),
-  agency: z.string().optional(),
-  pageSize: z.number().min(1, { message: 'Page size must be at least 1' }),
-});
+export const digitalPaymentCollectionSchema = z
+  .object({
+    fromDate: z.string().nonempty({ message: 'From Date is required' }),
+    toDate: z.string().nonempty({ message: 'To Date is required' }),
+    agency: z.string().optional(),
+    pageSize: z.number().min(1, { message: 'Page size must be at least 1' }),
+  })
+  .superRefine((data, ctx) => {
+    if (data.fromDate && data.toDate) {
+      const from = new Date(data.fromDate);
+      const to = new Date(data.toDate);
+      if (from > to) {
+        ctx.addIssue({
+          path: ["toDate"],
+          code: z.ZodIssueCode.custom,
+          message: "From Date must not be after To Date",
+        });
+      }
+    }
+  });
 
 export type DigitalPaymentCollectionFormData = z.infer<typeof digitalPaymentCollectionSchema>;

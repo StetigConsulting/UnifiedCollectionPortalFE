@@ -67,6 +67,7 @@ const TransactionDetailsReport = () => {
                     acc[levelName] = item.id;
                     return acc;
                 }, {});
+            setValue('levelWithIdMap', levelIdMap)
             setWorkingLevelList(data?.data
                 ?.filter((item) => item.levelType === "MAIN")
                 ?.map((item) => ({

@@ -6,7 +6,7 @@ import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWi
 import { Button } from '@/components/ui/button';
 import { useForm } from 'react-hook-form';
 import React, { useEffect, useState } from 'react';
-import { getAgenciesWithDiscom, getAgencyById, rechargeAgency, reverseRechargeAgency } from '@/app/api-calls/department/api';
+import { getAgenciesWithDiscom, getAgenciesWithDiscomWithBalance, getAgencyById, rechargeAgency, reverseRechargeAgency } from '@/app/api-calls/department/api';
 import { getErrorMessage, numberToWords } from '@/lib/utils';
 import { rechargeSchema } from '@/lib/zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -74,7 +74,7 @@ const Recharge = () => {
     const getAgencyList = async () => {
         setIsLoading(true);
         try {
-            const response = await getAgenciesWithDiscom(session?.user?.discomId);
+            const response = await getAgenciesWithDiscomWithBalance(session?.user?.discomId);
             setAgencyList(
                 response?.data?.map((item) => ({
                     ...item,
@@ -104,6 +104,7 @@ const Recharge = () => {
                 setValue('maxRecharge', agency.maximum_limit || null);
                 setValue('phoneNumber', agency.phone || '');
                 setValue('currentBalance', agency.current_balance || 0);
+                setValue('balanceAvailableForRecharge', agency.balance_available_for_recharge || 0);
             }
         } else {
             if (!selectedAgency && formData?.agencyName)
@@ -193,7 +194,6 @@ const Recharge = () => {
                     <CustomizedInputWithLabel
                         label="Transaction Type"
                         errors={errors.transactionType}
-                        containerClass="col-span-2"
                         placeholder="Recharge"
                         {...register("transactionType")}
                         disabled
@@ -201,6 +201,7 @@ const Recharge = () => {
                     <CustomizedInputWithLabel
                         label="Amount"
                         errors={errors.amount}
+                        containerClass="col-span-2"
                         type='number'
                         required
                         placeholder="Enter Amount"
@@ -214,6 +215,15 @@ const Recharge = () => {
                         {...register("currentBalance")}
                         disabled
                     />
+                    <CustomizedInputWithLabel
+                        label="Agency Balance Available For Recharge"
+                        errors={errors.balanceAvailableForRecharge}
+                        containerClass=""
+                        placeholder="Agency Balance Available For Recharge"
+                        {...register("balanceAvailableForRecharge")}
+                        disabled
+                    />
+
                     <CustomizedInputWithLabel
                         label="Remark"
                         errors={errors.remark}
