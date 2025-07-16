@@ -287,6 +287,15 @@ export const fetchDeniedToPayData = async (id: number) => {
     }
 };
 
+export const getDeniedToPayReason = async (id: number) => {
+    try {
+        const response = await api.get(`/v1/discom-denied-to-pay-reasons`);
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data
+    }
+};
+
 export const updatePaymentMode = async (data: any) => {
     try {
         const response = await api.post(`/v1/payment-modes/`, data);

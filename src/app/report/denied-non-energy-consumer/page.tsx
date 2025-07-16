@@ -16,7 +16,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { DeniedEnergyConsumerReportFormData, deniedEnergyConsumerReport } from '@/lib/zod';
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
-import { fetchDeniedToPayData } from '@/app/api-calls/admin/api';
+import { getDeniedToPayReason } from '@/app/api-calls/admin/api';
 
 const DeniedEnergyConsumer = () => {
     const { data: session } = useSession()
@@ -49,8 +49,8 @@ const DeniedEnergyConsumer = () => {
 
     const getPicklistOfDeniedToPayReason = async () => {
         setIsLoading(true)
-        await fetchDeniedToPayData(session?.user?.discomId).then((data) => {
-            setDeniedToPayReason(data?.data?.[0]?.json_rule?.denied_to_pay_reasons?.map((item) => ({
+        await getDeniedToPayReason(session?.user?.discomId).then((data) => {
+            setDeniedToPayReason(data?.data?.map((item) => ({
                 label: item,
                 value: item,
             })));
