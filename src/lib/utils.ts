@@ -232,7 +232,7 @@ export const urlsListWithTitle = {
   },
   binderMapping: {
     url: '/agency/binder-mapping',
-    title: 'MRU Mapping'
+    title: 'Area/Binder Mapping'
   },
   agencyNews: {
     url: '/new-notices',

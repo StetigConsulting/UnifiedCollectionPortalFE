@@ -153,7 +153,7 @@ const BinderMapping = () => {
     };
 
     return (
-        <AuthUserReusableCode pageTitle="Pseudo Level Mapping" isLoading={isLoading}>
+        <AuthUserReusableCode pageTitle="Area/Binder Mapping" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                     <div className='space-y-2 col-span-2'>
