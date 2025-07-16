@@ -62,7 +62,7 @@ const OfficeStructurePage = () => {
                     additionalDataBetweenTableAndAction={<div className='px-4 py-2 mb-4 rounded-md bg-lightThemeColor' style={{
                         background: 'rgba(197, 211, 233, 0.2)'
                     }}>
-                        At least one pseudo level must be defined
+                        At least one Area/Binder level must be defined
                     </div>}
                     customActionButton={<div className="flex space-x-4">
                         <CreateNewLevelPopup fetchData={fetchOfficeStructureData} currentLevel={maxLevel} session={session} />

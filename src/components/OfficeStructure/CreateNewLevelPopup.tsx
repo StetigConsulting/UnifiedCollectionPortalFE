@@ -103,7 +103,7 @@ const CreateNewLevelPopup: React.FC<CreateNewLevelPopupProps> = ({ fetchData, cu
                             errors={errors.levelType}
                             list={[
                                 { value: 'MAIN', label: 'MAIN' },
-                                { value: 'PSEUDO', label: 'PSEUDO' },
+                                { value: 'PSEUDO', label: 'Area/Binder' },
                             ]}
                             {...register('levelType')}
                         />

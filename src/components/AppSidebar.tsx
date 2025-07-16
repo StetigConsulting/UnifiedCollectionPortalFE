@@ -105,7 +105,7 @@ const navData = {
           path: '/admin/receipt-for-postpaid',
         },
         {
-          title: "Pseudo Level Mapping",
+          title: "Area/Binder Mapping",
           icon: UserPlus2,
           url: "/agency/binder-mapping",
         },
