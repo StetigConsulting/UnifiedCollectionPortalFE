@@ -469,7 +469,7 @@ export const extendValidityFilterSchema = z
         ctx.addIssue({
           path: ["toDate"],
           code: z.ZodIssueCode.custom,
-          message: "From Date must not be after To Date",
+          message: "\'From Date\' should be before or the same as \'To Date\'",
         });
       }
     }
@@ -1554,7 +1554,7 @@ export const dailyCollectionEnergySheet = z.object({
         ctx.addIssue({
           path: ["toDate"],
           code: z.ZodIssueCode.custom,
-          message: "From Date must not be after To Date",
+          message: "\'From Date\' should be before or the same as \'To Date\'",
         });
       }
     }
@@ -1668,7 +1668,7 @@ export const dailyCollectionNonEnergySheet = z.object({
     ctx.addIssue({
       path: ["toDate"],
       code: z.ZodIssueCode.custom,
-      message: "From Date must not be after To Date",
+      message: "\'From Date\' should be before or the same as \'To Date\'",
     });
   }
 });
@@ -1705,7 +1705,7 @@ export const deniedEnergyConsumerReport = z
         ctx.addIssue({
           path: ["toDate"],
           code: z.ZodIssueCode.custom,
-          message: "From Date must not be after To Date",
+          message: "\'From Date\' should be before or the same as \'To Date\'",
         });
       }
     }
@@ -1772,7 +1772,7 @@ export const viewHistorySchema = z
     toDate: z.string().min(1, "To date is required"),
   })
   .refine((data) => new Date(data.fromDate) <= new Date(data.toDate), {
-    message: "From Date must not be after To Date",
+    message: "\'From Date\' should be before or the same as \'To Date\'",
     path: ["toDate"],
   });
 
@@ -1788,7 +1788,7 @@ export const agentDepositReportSchema = z
       .min(1, "Page size is required"),
   })
   .refine((data) => new Date(data.dateFrom) <= new Date(data.dateTo), {
-    message: "From Date must not be after To Date",
+    message: "\'From Date\' should be before or the same as \'To Date\'",
     path: ["dateTo"],
   });
 
@@ -1810,7 +1810,7 @@ export const agentWalletSchema = z
       .min(1, "Page size is required"),
   })
   .refine((data) => new Date(data.fromDate) <= new Date(data.toDate), {
-    message: "From Date must not be after To Date",
+    message: "\'From Date\' should be before or the same as \'To Date\'",
     path: ["toDate"],
   });
 
@@ -1829,7 +1829,7 @@ export const agencyWalletSchema = z
       .min(1, "Page size is required"),
   })
   .refine((data) => new Date(data.fromDate) <= new Date(data.toDate), {
-    message: "From Date must not be after To Date",
+    message: "\'From Date\' should be before or the same as \'To Date\'",
     path: ["toDate"],
   });
 
@@ -1847,7 +1847,7 @@ export const agentBankDepositTableSchema = z
       .min(1, "Page size is required"),
   })
   .refine((data) => new Date(data.dateFrom) <= new Date(data.dateTo), {
-    message: "From Date must not be after To Date",
+    message: "\'From Date\' should be before or the same as \'To Date\'",
     path: ["dateTo"],
   });
 
@@ -1870,6 +1870,19 @@ export const mmiReportSchema = z
   })
   .superRefine((data, ctx) => {
     const { workingLevel, levelMapWithId } = data;
+
+    // Add fromDate/toDate validation
+    if (data.fromDate && data.toDate) {
+      const from = new Date(data.fromDate);
+      const to = new Date(data.toDate);
+      if (from > to) {
+        ctx.addIssue({
+          path: ["toDate"],
+          code: z.ZodIssueCode.custom,
+          message: "'From Date' should be before or the same as 'To Date'",
+        });
+      }
+    }
 
     // Circle level
     if (workingLevel === levelMapWithId?.CIRCLE) {
@@ -1979,6 +1992,19 @@ export const viewCollectionSummarySchema = z
   })
   .superRefine((data, ctx) => {
     const { workingLevel, levelMapWithId } = data;
+
+    // Add fromDate/toDate validation
+    if (data.fromDate && data.toDate) {
+      const from = new Date(data.fromDate);
+      const to = new Date(data.toDate);
+      if (from > to) {
+        ctx.addIssue({
+          path: ["toDate"],
+          code: z.ZodIssueCode.custom,
+          message: "'From Date' should be before or the same as 'To Date'",
+        });
+      }
+    }
 
     // Circle level
     if (workingLevel === levelMapWithId?.CIRCLE) {
@@ -2147,7 +2173,7 @@ export const agentWiseSummaryReportSchema = z
         ctx.addIssue({
           path: ["toDate"],
           code: z.ZodIssueCode.custom,
-          message: "From Date must not be after To Date",
+          message: "\'From Date\' should be before or the same as \'To Date\'",
         });
       }
     }
@@ -2225,7 +2251,7 @@ export const agentAttendanceReport = z
         ctx.addIssue({
           path: ["toDate"],
           code: z.ZodIssueCode.custom,
-          message: "From Date must not be after To Date",
+          message: "\'From Date\' should be before or the same as \'To Date\'",
         });
       }
     }
@@ -2293,7 +2319,7 @@ export const cancelledTransactionReport = z
         ctx.addIssue({
           path: ["toDate"],
           code: z.ZodIssueCode.custom,
-          message: "From Date must not be after To Date",
+          message: "\'From Date\' should be before or the same as \'To Date\'",
         });
       }
     }
@@ -2361,7 +2387,7 @@ export const billingReportSchema = z
         ctx.addIssue({
           path: ["toDate"],
           code: z.ZodIssueCode.custom,
-          message: "From Date must not be after To Date",
+          message: "\'From Date\' should be before or the same as \'To Date\'",
         });
       }
     }
@@ -2408,7 +2434,7 @@ export const agentLoginReportSchema = z
         ctx.addIssue({
           path: ["toDate"],
           code: z.ZodIssueCode.custom,
-          message: "From Date must not be after To Date",
+          message: "\'From Date\' should be before or the same as \'To Date\'",
         });
       }
     }
@@ -2441,7 +2467,7 @@ export const totalCollectionReportSchema = z
         ctx.addIssue({
           path: ["toDate"],
           code: z.ZodIssueCode.custom,
-          message: "From Date must not be after To Date",
+          message: "\'From Date\' should be before or the same as \'To Date\'",
         });
       }
     }
@@ -2557,7 +2583,7 @@ export const collectionPostingReportSchema = z
         ctx.addIssue({
           path: ["toDate"],
           code: z.ZodIssueCode.custom,
-          message: "From Date must not be after To Date",
+          message: "\'From Date\' should be before or the same as \'To Date\'",
         });
       }
     }
@@ -2586,7 +2612,7 @@ export const reconciliationReportSchema = z
         ctx.addIssue({
           path: ["toDate"],
           code: z.ZodIssueCode.custom,
-          message: "From Date must not be after To Date",
+          message: "\'From Date\' should be before or the same as \'To Date\'",
         });
       }
     }
@@ -2609,7 +2635,7 @@ export const supervisorBankDepositTableSchema = z
       .min(1, "Page size is required"),
   })
   .refine((data) => new Date(data.dateFrom) <= new Date(data.dateTo), {
-    message: "From Date must not be after To Date",
+    message: "\'From Date\' should be before or the same as \'To Date\'",
     path: ["dateTo"],
   });
 
@@ -2642,7 +2668,7 @@ export const transactionDetailsReportSchema = z
         ctx.addIssue({
           path: ["toDate"],
           code: z.ZodIssueCode.custom,
-          message: "From Date must not be after To Date",
+          message: "\'From Date\' should be before or the same as \'To Date\'",
         });
       }
     }
@@ -2780,7 +2806,7 @@ export const agencyMidNightSchema = z
         ctx.addIssue({
           path: ["toDate"],
           code: z.ZodIssueCode.custom,
-          message: "From Date must not be after To Date",
+          message: "\'From Date\' should be before or the same as \'To Date\'",
         });
       }
     }
@@ -2803,7 +2829,7 @@ export const digitalPaymentCollectionSchema = z
         ctx.addIssue({
           path: ["toDate"],
           code: z.ZodIssueCode.custom,
-          message: "From Date must not be after To Date",
+          message: "\'From Date\' should be before or the same as \'To Date\'",
         });
       }
     }

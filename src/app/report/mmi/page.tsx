@@ -374,7 +374,7 @@ const MMI = () => {
                         </>
                     }
 
-                    <div className={`self-end ${Object.keys(errors).length > 0 ? 'mb-5' : ''}`}>
+                    <div className={'mt-6'}>
                         <Button variant='default' type='submit'>Search</Button>
                     </div>
                 </div>
