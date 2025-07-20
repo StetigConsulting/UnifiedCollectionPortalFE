@@ -10,10 +10,13 @@ import { exportPicklist, getErrorMessage, tableDataPerPage } from '@/lib/utils';
 import { downloadAgentWalletReport, downloadBillingReport, getAgentWalletHistory, getBillingReport } from '@/app/api-calls/report/api';
 import { useSession } from 'next-auth/react';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
+import CustomizedSelectInputWithSearch from '@/components/CustomizedSelectInputWithSearch';
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { agentWalletSchema, AgentWalletSchemaData } from '@/lib/zod';
+import { getAgenciesWithDiscom } from '@/app/api-calls/department/api';
+import { getAllAgentByAgencyId } from '@/app/api-calls/agency/api';
 
 const AgentWalletHistory = () => {
 
@@ -27,6 +30,9 @@ const AgentWalletHistory = () => {
     const [dataList, setDataList] = useState([])
 
     const [showTable, setShowTable] = useState(false)
+
+    const [agencyOptions, setAgencyOptions] = useState<{ label: string; value: string,id:number }[]>([]);
+    const [agentOptions, setAgentOptions] = useState<{ label: string; value: string }[]>([]);
 
 
     const {
@@ -43,7 +49,6 @@ const AgentWalletHistory = () => {
             toDate: "",
             agencyName: "",
             agentName: "",
-            agentMobile: "",
             transactionType: "",
             transactionId: "",
             pageSize: tableDataPerPage,
@@ -75,6 +80,38 @@ const AgentWalletHistory = () => {
         getReportData()
     }
 
+    useEffect(() => {
+        fetchAgencies();
+    }, []);
+
+    const fetchAgencies = async () => {
+        try {
+            const agencies = await getAgenciesWithDiscom(session?.user?.discomId);
+            setAgencyOptions(
+                agencies?.data?.map((a: any) => ({ label: a.agency_name + ' - ' + a.phone, value: a.agency_name,id: a.id }))
+            );
+        } catch (e) {
+            console.error(e)
+        }
+    };
+
+    const fetchAgents = async (agencyName: string) => {
+        const agencyId = agencyOptions.find(a => a.value === agencyName)?.id;
+        try {
+            const agents = await getAllAgentByAgencyId(agencyId);
+            setAgentOptions(
+                agents?.data?.map((a: any) => ({
+                    label: a.agent_name + ' - ' + a.primary_phone,
+                    value: a.agent_name
+                }))
+            );
+        } catch (e) {
+            setAgentOptions([]);
+            setValue("agentName", "");
+            console.error(e);
+        }
+    };
+
     const getReportData = async (applyFilter = {}, page = 1) => {
         let payload = {
             page: currentPage,
@@ -85,7 +122,7 @@ const AgentWalletHistory = () => {
                     to_date: formData?.toDate,
                 },
                 ...formData?.agentName && { agent_name: formData?.agentName },
-                ...formData?.agentMobile && { agent_mobile: formData?.agentMobile },
+                // ...formData?.agentMobile && { agent_mobile: formData?.agentMobile },
                 ...formData?.transactionId && { transaction_id: formData?.transactionId },
                 ...formData?.transactionType && { transaction_type: formData?.transactionType },
                 ...formData?.agencyName && { agency_name: formData?.agencyName },
@@ -139,7 +176,7 @@ const AgentWalletHistory = () => {
                     to_date: formData?.toDate,
                 },
                 ...formData?.agentName && { agent_name: formData?.agentName },
-                ...formData?.agentMobile && { agent_mobile: formData?.agentMobile },
+                // ...formData?.agentMobile && { agent_mobile: formData?.agentMobile },
                 ...formData?.transactionId && { transaction_id: formData?.transactionId },
                 ...formData?.transactionType && { transaction_type: formData?.transactionType },
                 ...formData?.agencyName && { agency_name: formData?.agencyName },
@@ -199,22 +236,29 @@ const AgentWalletHistory = () => {
                     errors={errors.toDate}
                 />
 
-                <CustomizedInputWithLabel
+                <CustomizedSelectInputWithSearch
                     label="Agency Name"
-                    {...register("agencyName")}
+                    placeholder="Search Agency"
+                    list={agencyOptions}
+                    value={formData.agencyName}
+                    onChange={(value: string) => {
+                        setValue("agencyName", value)
+                        setValue("agentName", "")
+                        setAgentOptions([])
+                        if(value){
+                            fetchAgents(value)
+                        }
+                    }}
                     errors={errors.agencyName}
                 />
 
-                <CustomizedInputWithLabel
+                <CustomizedSelectInputWithSearch
                     label="Agent Name"
-                    {...register("agentName")}
+                    placeholder="Search Agent"
+                    list={agentOptions}
+                    value={formData.agentName}
+                    onChange={(value:string) => setValue("agentName", value)}
                     errors={errors.agentName}
-                />
-                <CustomizedInputWithLabel
-                    label="Agent Mobile no"
-                    type="number"
-                    {...register("agentMobile")}
-                    errors={errors.agentMobile}
                 />
 
                 <CustomizedInputWithLabel

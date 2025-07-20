@@ -548,10 +548,11 @@ export const fileUploadSchema = z.object({
 });
 
 export const editCollectorSchema = z.object({
+  tempAgencyId: z.string().optional(),
   agencyId: z.number().optional(),
   agencyName: z.string().optional(),
   collectorMobile: z
-    .number()
+    .string()
     .min(10, "Mobile number must be at least 10 digits"),
   name: z.string().min(1, "Name is required"),
   agentId: z.number(),
@@ -654,8 +655,9 @@ export type AddCounterCollectorFormData = z.infer<
 >;
 
 export const binderMappingSchema = z.object({
+  tempAgencyId: z.string().optional(),
   collectorMobile: z
-    .number()
+    .string()
     .min(10, "Mobile number must be at least 10 digits"),
   agentId: z.number(),
   agentMobileNumber: z
@@ -1262,9 +1264,10 @@ export const editReceiptsSchema = z
   });
 
 export const editAgentAreaSchema = z.object({
+  agencyId: z.string().optional(),
   agentId: z.number(),
   agentMobileNumber: z
-    .number()
+    .string()
     .min(10, "Mobile number must be at least 10 digits"),
   agentName: z.string().optional(),
   agencyName: z.string().optional(),
@@ -1281,7 +1284,7 @@ export type editAgentAreaFormData = z.infer<typeof editAgentAreaSchema>;
 export const editAgentAreaViaAgencySchema = z.object({
   agentId: z.number(),
   agentMobileNumber: z
-    .number()
+    .string()
     .min(10, "Mobile number must be at least 10 digits"),
   agentName: z.string().optional(),
   agencyName: z.string().optional(),
@@ -1802,7 +1805,7 @@ export const agentWalletSchema = z
     toDate: z.string().min(1, "To date is required"),
     agencyName: z.string().optional(),
     agentName: z.string().optional(),
-    agentMobile: z.string().optional(),
+    // agentMobile: z.string().optional(),
     transactionType: z.string().optional(),
     transactionId: z.string().optional(),
     pageSize: z
@@ -1821,7 +1824,7 @@ export const agencyWalletSchema = z
     fromDate: z.string().min(1, "From date is required"),
     toDate: z.string().min(1, "To date is required"),
     agencyName: z.string().optional(),
-    agencyMobile: z.any().optional(),
+    // agencyMobile: z.any().optional(),
     transactionType: z.string().optional(),
     transactionId: z.any().optional(),
     pageSize: z

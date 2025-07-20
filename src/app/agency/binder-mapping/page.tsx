@@ -9,11 +9,12 @@ import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWi
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import AuthUserReusableCode from '@/components/AuthUserReusableCode';
-import { getAgentByPhoneNumber, getLevels, getPseudoLevel } from '@/app/api-calls/department/api';
+import { getAgenciesWithDiscom, getAgentByPhoneNumber, getLevels, getPseudoLevel } from '@/app/api-calls/department/api';
 import { getErrorMessage } from '@/lib/utils';
 import { useSession } from 'next-auth/react';
-import { getListOfAvailableBindersByAgentId, updateListOfBinder } from '@/app/api-calls/agency/api';
+import { getAllAgentByAgencyId, getListOfAvailableBindersByAgentId, updateListOfBinder } from '@/app/api-calls/agency/api';
 import { Loader2 } from 'lucide-react';
+import CustomizedSelectInputWithSearch from '@/components/CustomizedSelectInputWithSearch';
 
 const BinderMapping = () => {
     const { data: session } = useSession()
@@ -152,33 +153,101 @@ const BinderMapping = () => {
         setValue('binder', updatedSelection, { shouldValidate: true });
     };
 
+    const [agencyOptions, setAgencyOptions] = useState<{ label: string; value: string; id: number }[]>([]);
+    const [agentOptions, setAgentOptions] = useState<{ label: string; value: string }[]>([]);
+
+    const fetchAgencies = async () => {
+        try {
+            const agencies = await getAgenciesWithDiscom(session?.user?.discomId);
+            setAgencyOptions(
+                agencies?.data?.map((a: any) => ({
+                    label: a.agency_name + ' - ' + a.phone,
+                    value: a.id,
+                })) || []
+            );
+        } catch (e) {
+            setAgencyOptions([]);
+        }
+    };
+
+    useEffect(() => {
+        fetchAgencies();
+    }, []);
+
+    const fetchAgents = async (agencyId: string) => {
+        if (!agencyId) {
+            setAgentOptions([]);
+            setValue("tempAgencyId", "");
+            return;
+        }
+        setIsLoading(true)
+        try {
+            const agents = await getAllAgentByAgencyId(Number(agencyId));
+            setAgentOptions(
+                agents?.data?.map((a: any) => ({
+                    label: a.agent_name + ' - ' + a.primary_phone,
+                    value: a.primary_phone
+                })) || []
+            );
+        } catch (e) {
+            setAgentOptions([]);
+            setValue("tempAgencyId", "");
+        } finally {
+            setIsLoading(false)
+        }
+    };
+
+
+    const resetForm = () => {
+        clearErrors("collectorMobile")
+        setValue('binder', [])
+        setValue('allocatedBinder', [])
+        setValue('agencyName', '')
+        setValue('agentId', undefined)
+        setValue('agentMobileNumber', '')
+        setValue('division', null)
+        setListOfAvailableBinders([])
+        setListOfOtherBinders([])
+        setShowRestFields(false)
+    }
+
+    const formData = watch();
+
     return (
         <AuthUserReusableCode pageTitle="Area/Binder Mapping" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
-                    <div className='space-y-2 col-span-2'>
-                        <div className="col-span-2">
-                            <CustomizedInputWithLabel
-                                label="Agent Mobile"
-                                type="number"
-                                {...register('collectorMobile', { valueAsNumber: true })}
-                                onChange={() => {
-                                    clearErrors("collectorMobile")
-                                    setValue('agencyName', '')
-                                    setValue('agentId', null)
-                                    setValue('agentMobileNumber', '')
-                                    setValue('division', null)
-                                    setListOfAvailableBinders([])
-                                    setShowRestFields(false)
-                                }}
-                                errors={errors.collectorMobile}
-                            />
-                        </div>
-                        <div className='text-end'>
-                            <Button type="button" onClick={handleGetAgentData} disabled={isLoading}>
-                                {isLoading ? 'Loading...' : 'Search'}
-                            </Button>
-                        </div>
+                    <CustomizedSelectInputWithSearch
+                        label="Agency Name"
+                        placeholder="Search Agency"
+                        list={agencyOptions}
+                        value={formData.tempAgencyId}
+                        onChange={(value: string) => {
+                            setValue("tempAgencyId", value)
+                            setValue("collectorMobile", undefined)
+                            setAgentOptions([])
+                            setValue('agencyName', '')
+                            resetForm()
+                            fetchAgents(value)
+                        }}
+                        errors={errors.agencyName}
+                    />
+                    <CustomizedSelectInputWithSearch
+                        label="Agent Mobile Number"
+                        placeholder="Search Agent"
+                        list={agentOptions}
+                        value={formData.collectorMobile}
+                        onChange={(value: string) => {
+                            console.log(value)
+                            setValue("collectorMobile", value)
+                            resetForm()
+                        }}
+                        errors={errors.collectorMobile}
+                    />
+                    <div className='col-span-2 text-end'>
+                        <Button type="button" onClick={handleGetAgentData} disabled={isLoading}>
+                            {isLoading ? 'Loading...' : 'Search'}
+                        </Button>
                     </div>
                     <CustomizedInputWithLabel
                         label="Agent ID"

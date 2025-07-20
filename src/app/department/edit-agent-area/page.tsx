@@ -17,6 +17,9 @@ import AlertPopupWithState from '@/components/Agency/ViewAgency/AlertPopupWithSt
 import { Loader2 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import SuccessErrorModal from '@/components/SuccessErrorModal';
+import CustomizedSelectInputWithSearch from '@/components/CustomizedSelectInputWithSearch';
+import { getAllAgentByAgencyId } from '@/app/api-calls/agency/api';
+import { getAgenciesWithDiscom } from '@/app/api-calls/department/api';
 
 const EditAgentAreaRoleForm = () => {
     const { data: session } = useSession()
@@ -152,6 +155,7 @@ const EditAgentAreaRoleForm = () => {
     };
 
     const handleGetAgentData = async () => {
+        console.log(formData.agentMobileNumber)
         const mobileNumber = Number(formData.agentMobileNumber);
         if (!isNaN(mobileNumber) && mobileNumber.toString().length === 10) {
             try {
@@ -318,25 +322,90 @@ const EditAgentAreaRoleForm = () => {
     const [isErrorModalOpen, setIsErrorModalOpen] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState('')
 
+    const [agencyOptions, setAgencyOptions] = useState<{ label: string; value: string; id: number }[]>([]);
+    const [agentOptions, setAgentOptions] = useState<{ label: string; value: string }[]>([]);
+
+    const fetchAgencies = async () => {
+        try {
+            const agencies = await getAgenciesWithDiscom(session?.user?.discomId);
+            setAgencyOptions(
+                agencies?.data?.map((a: any) => ({
+                    label: a.agency_name + ' - ' + a.phone,
+                    value: a.id,
+                })) || []
+            );
+        } catch (e) {
+            setAgencyOptions([]);
+        }
+    };
+
+    useEffect(() => {
+        fetchAgencies();
+    }, []);
+
+    const fetchAgents = async (agencyId: string) => {
+        if (!agencyId) {
+            setAgentOptions([]);
+            setValue("agentName", "");
+            return;
+        }
+        setIsLoading(true)
+        try {
+            const agents = await getAllAgentByAgencyId(Number(agencyId));
+            setAgentOptions(
+                agents?.data?.map((a: any) => ({
+                    label: a.agent_name + ' - ' + a.primary_phone,
+                    value: a.primary_phone
+                })) || []
+            );
+        } catch (e) {
+            setAgentOptions([]);
+            setValue("agentName", "");
+        } finally {
+            setIsLoading(false)
+        }
+    };
+
     return (
         <AuthUserReusableCode pageTitle="Edit Agent Area & Role" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div className='space-y-2'>
-                    <div className="col-span-2">
-                        <CustomizedInputWithLabel
-                            label="Agent Mobile Number"
-                            type="number"
-                            onChange={() => {
-                                clearErrors("agentMobileNumber")
-                                setValue('agentName', '')
-                                setValue('workingLevel', null)
-                                setValue('agentRole', '')
-                                setShowRestFields(false)
-                            }}
-                            {...register('agentMobileNumber', { valueAsNumber: true })}
-                            errors={errors.agentMobileNumber}
-                        />
-                    </div>
+                    <CustomizedSelectInputWithSearch
+                        label="Agency Name"
+                        placeholder="Search Agency"
+                        list={agencyOptions}
+                        value={formData.agencyId}
+                        onChange={(value: string) => {
+                            setValue("agencyId", value)
+                            setValue("agentMobileNumber", '')
+                            setAgentOptions([])
+                            clearErrors("agentMobileNumber")
+                            setValue('agentName', '')
+                            setValue('agencyName', '')
+                            setValue('workingLevel', null)
+                            setValue('agentRole', '')
+                            setShowRestFields(false)
+                            fetchAgents(value)
+                        }}
+                        errors={errors.agencyName}
+                    />
+                    <CustomizedSelectInputWithSearch
+                        label="Agent Mobile Number"
+                        placeholder="Search Agent"
+                        list={agentOptions}
+                        value={formData.agentMobileNumber}
+                        onChange={(value: string) => {
+                            console.log(value)
+                            setValue("agentMobileNumber", value)
+                            clearErrors("agentMobileNumber")
+                            setValue('agentName', '')
+                            setValue('agencyName', '')
+                            setValue('workingLevel', null)
+                            setValue('agentRole', '')
+                            setShowRestFields(false)
+                        }}
+                        errors={errors.agentMobileNumber}
+                    />
                     <div className='text-end'>
                         <Button type="button" onClick={handleGetAgentData} disabled={isLoading}>
                             {isLoading ? 'Loading...' : 'Search'}

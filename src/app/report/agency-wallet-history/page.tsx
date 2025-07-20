@@ -13,6 +13,8 @@ import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWi
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { agencyWalletSchema, AgencyWalletSchemaData } from '@/lib/zod';
+import CustomizedSelectInputWithSearch from '@/components/CustomizedSelectInputWithSearch';
+import { getAgenciesWithDiscom } from '@/app/api-calls/department/api';
 
 const AgencyWalletHistory = () => {
 
@@ -26,6 +28,7 @@ const AgencyWalletHistory = () => {
     const [dataList, setDataList] = useState([])
 
     const [showTable, setShowTable] = useState(false);
+    const [agencyOptions, setAgencyOptions] = useState<{ label: string; value: string }[]>([]);
 
 
     const {
@@ -34,13 +37,14 @@ const AgencyWalletHistory = () => {
         getValues,
         watch,
         formState: { errors },
+        setValue,
     } = useForm<AgencyWalletSchemaData>({
         resolver: zodResolver(agencyWalletSchema),
         defaultValues: {
             fromDate: "",
             toDate: "",
             agencyName: "",
-            agencyMobile: "",
+            // agencyMobile: "",
             transactionType: "",
             transactionId: "",
             pageSize: tableDataPerPage,
@@ -66,6 +70,21 @@ const AgencyWalletHistory = () => {
         // });
     }, []);
 
+    useEffect(() => {
+        fetchAgencies();
+    }, []);
+
+    const fetchAgencies = async () => {
+        try {
+            const agencies = await getAgenciesWithDiscom(session?.user?.discomId);
+            setAgencyOptions(
+                agencies?.data?.map((a: any) => ({ label: a.agency_name + ' - ' + a.phone, value: a.phone }))
+            );
+        } catch (e) {
+            console.error(e)
+        }
+    };
+
     const formData = watch()
 
     const getReportData = async (applyFilter = {}, page = 1) => {
@@ -78,7 +97,7 @@ const AgencyWalletHistory = () => {
                     to_date: formData?.toDate,
                 },
                 ...formData?.agencyName && { agency_name: formData?.agencyName },
-                ...formData?.agencyMobile && { agency_mobile: formData?.agencyMobile },
+                // ...formData?.agencyMobile && { agency_mobile: formData?.agencyMobile },
                 ...formData?.transactionId && { transaction_id: formData?.transactionId },
                 ...formData?.transactionType && { transaction_type: formData?.transactionType },
             }
@@ -129,7 +148,7 @@ const AgencyWalletHistory = () => {
                     to_date: formData?.toDate,
                 },
                 ...formData?.agencyName && { agency_name: formData?.agencyName },
-                ...formData?.agencyMobile && { agency_mobile: formData?.agencyMobile },
+                // ...formData?.agencyMobile && { agency_mobile: formData?.agencyMobile },
                 ...formData?.transactionId && { transaction_id: formData?.transactionId },
                 ...formData?.transactionType && { transaction_type: formData?.transactionType },
             }
@@ -191,17 +210,15 @@ const AgencyWalletHistory = () => {
                     errors={errors.toDate}
                 />
 
-                <CustomizedInputWithLabel
-                    label="Agency Name"
-                    {...register("agencyName")}
+                <CustomizedSelectInputWithSearch
+                    label="Agency"
+                    list={agencyOptions}
+                    value={getValues("agencyName")}
+                    onChange={(val) => {
+                        setValue("agencyName", val as string);
+                    }}
+                    placeholder="Select Agency"
                     errors={errors.agencyName}
-                />
-
-                <CustomizedInputWithLabel
-                    label="Agency Mobile No."
-                    type="number"
-                    {...register("agencyMobile")}
-                    errors={errors.agencyMobile}
                 />
 
                 <CustomizedInputWithLabel
