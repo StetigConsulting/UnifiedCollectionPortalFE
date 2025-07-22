@@ -476,6 +476,7 @@ export const extendValidityFilterSchema = z
   });
 
 export const resetDeviceSchema = z.object({
+  agency: z.string().min(1, "Agency is required"),
   mobileNumber: z
     .number({
       invalid_type_error: "Mobile number required",
@@ -676,6 +677,7 @@ export const binderMappingSchema = z.object({
 export type BinderMappingFormData = z.infer<typeof binderMappingSchema>;
 
 export const rechargeSchemaCollector = z.object({
+  tempAgencyId: z.string().optional(),
   collectorMobile: z
     .number()
     .min(10, "Mobile number must be at least 10 digits"),

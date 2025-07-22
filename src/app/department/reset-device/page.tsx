@@ -9,28 +9,17 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { number, z } from "zod";
 import { useSession } from "next-auth/react";
-import { getRegisteredDevices, getResetHistoryByAgencyId, resetDeviceById } from "@/app/api-calls/agency/api";
-import { getAgentByPhoneNumber } from "@/app/api-calls/department/api";
+import { getAllAgentByAgencyId, getRegisteredDevices, getResetHistoryByAgencyId, resetDeviceById } from "@/app/api-calls/agency/api";
+import { getAgenciesWithDiscom, getAgentByPhoneNumber } from "@/app/api-calls/department/api";
 import CustomizedSelectInputWithLabel from "@/components/CustomizedSelectInputWithLabel";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { formatDate, getErrorMessage } from "@/lib/utils";
 import ReactTable from "@/components/ReactTable";
 import moment from "moment";
+import CustomizedSelectInputWithSearch from "@/components/CustomizedSelectInputWithSearch";
 
 type FormData = z.infer<typeof resetDeviceSchema>;
-
-
-const mockPreviousHistoryData = [
-    {
-        userName: "Satyam Pattnaik",
-        collectorName: "Satyam Aryaan Kumar",
-        mobileNumber: "7738414900",
-        deviceInfo: "iPhone 16 Pro Max",
-        reason: "Active",
-        date: "06-01-2024",
-    },
-];
 
 const ResetDeviceCollector = () => {
 
@@ -43,6 +32,7 @@ const ResetDeviceCollector = () => {
             collectorName: "",
             agencyName: "",
             collectorType: null,
+            agency: null,
         },
     });
 
@@ -92,7 +82,7 @@ const ResetDeviceCollector = () => {
 
     const handleSearch = async () => {
         const mobileNumber = Number(watch('mobileNumber'));
-        if (!isNaN(mobileNumber) && mobileNumber.toString().length === 10) {
+        if (mobileNumber.toString().length === 10) {
             setIsLoading(true)
             try {
                 const response = await getAgentByPhoneNumber(mobileNumber)
@@ -146,24 +136,69 @@ const ResetDeviceCollector = () => {
         }
     }
 
+    const [agencyList, setAgencyList] = useState([])
+    const getAgencyList = async () => {
+        setIsLoading(true)
+        const response = await getAgenciesWithDiscom(session?.user?.discomId)
+        setAgencyList(response?.data?.map(item => ({
+            value: item?.id,
+            label: item?.agency_name + ' - ' + item?.phone
+        })))
+        setIsLoading(false)
+    }
+
+    useEffect(() => {
+        getAgencyList()
+    }, [])
+
+    const [agentList, setAgentList] = useState([])
+    const getAgentList = async (id: number) => {
+        setIsLoading(true)
+        const response = await getAllAgentByAgencyId(id)
+        setAgentList(response?.data?.map(item => ({
+            value: item?.primary_phone,
+            label: item?.agent_name
+        })))
+        setIsLoading(false)
+    }
+
     return (
         <AuthUserReusableCode pageTitle="Reset Device (Agent)" isLoading={isLoading}>
             <form className="space-y-4 p-4" onSubmit={handleSubmit(onSubmit)}>
                 <div className="grid grid-cols-2 gap-4">
-                    <CustomizedInputWithLabel
-                        label="Agent Mobile"
-                        type="number"
+                    <CustomizedSelectInputWithSearch
+                        label="Agency"
                         required
-                        {...register('mobileNumber', { valueAsNumber: true })}
-                        onChange={() => {
+                        list={agencyList}
+                        value={formData?.agency}
+                        onChange={(val: string) => {
+                            setValue("agency", val);
+                            setValue("mobileNumber", null);
+                            if (val) {
+                                getAgentList(Number(val))
+                            }
+                        }}
+                        placeholder="Select Agency"
+                        errors={errors.agency}
+                    />
+                    <CustomizedSelectInputWithSearch
+                        label="Agent"
+                        required
+                        list={agentList}
+                        value={formData?.mobileNumber}
+                        onChange={(val: number) => {
+                            setValue("mobileNumber", val);
                             clearErrors("mobileNumber")
                         }}
+                        placeholder="Select Agency"
                         errors={errors.mobileNumber}
                     />
-                    <Button type="button" variant="default"
-                        className={`self-end ${errors?.mobileNumber && 'mb-5'}`} onClick={handleSearch}>
-                        Search
-                    </Button>
+                    <div className="text-end col-span-2">
+                        <Button type="button" variant="default"
+                            className={`self-end ${errors?.mobileNumber && 'mb-5'}`} onClick={handleSearch}>
+                            Search
+                        </Button>
+                    </div>
                     <CustomizedInputWithLabel
                         label="Agent Name"
                         placeholder="Agent Name"

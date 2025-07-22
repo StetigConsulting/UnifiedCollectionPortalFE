@@ -7,12 +7,13 @@ import { toast } from "sonner";
 import { rechargeSchemaCollector, RechargeCollectorFormData } from "@/lib/zod";
 import CustomizedInputWithLabel from "@/components/CustomizedInputWithLabel";
 import CustomizedSelectInputWithLabel from "@/components/CustomizedSelectInputWithLabel";
+import CustomizedSelectInputWithSearch from "@/components/CustomizedSelectInputWithSearch";
 import { Button } from "@/components/ui/button";
 import AuthUserReusableCode from "@/components/AuthUserReusableCode";
 import { Loader2 } from "lucide-react";
 import { getAllAgentByAgencyId, getRechargeableBalance, rechargeAgentById } from "@/app/api-calls/agency/api";
 import { getErrorMessage, numberToWords } from "@/lib/utils";
-import { getAgencyById, getAgencyRechargeableBalance, getAgentByPhoneNumber } from "@/app/api-calls/department/api";
+import { getAgencyById, getAgencyRechargeableBalance, getAgentByPhoneNumber, getAgenciesWithDiscom } from "@/app/api-calls/department/api";
 import { useSession } from "next-auth/react";
 
 const RechargeEntry = () => {
@@ -41,15 +42,32 @@ const RechargeEntry = () => {
 
     const [showBalance, setShowBalance] = useState(false);
 
-    const getAgentList = async () => {
+    const [agencyList, setAgencyList] = useState([]);
+    const [agentList, setAgentList] = useState([]);
+
+    useEffect(() => {
+        getAgencyList()
+    }, []);
+
+    const getAgencyList = async () => {
+        setIsLoading(true);
+        const response = await getAgenciesWithDiscom(session?.user?.discomId)
+        setAgencyList(response?.data?.map(item => ({
+            value: item?.id,
+            label: item?.agency_name + ' - ' + item?.phone
+        })))
+        setIsLoading(false)
+    }
+
+    const getAgentList = async (id: number) => {
         setIsLoading(true);
         try {
-            const response = await getAllAgentByAgencyId(currentUserId);
-            setAgencies(
+            const response = await getAllAgentByAgencyId(id);
+            setAgentList(
                 response?.data?.map((item) => ({
                     ...item,
-                    label: item.agent_name,
-                    value: item.id,
+                    label: item.agent_name + ' - ' + item.primary_phone,
+                    value: item.primary_phone,
                 }))
             );
 
@@ -59,10 +77,6 @@ const RechargeEntry = () => {
             setIsLoading(false);
         }
     }
-
-    useEffect(() => {
-        getAgentList()
-    }, []);
 
     const getAgencyBalance = async (id: number) => {
         setIsLoading(true);
@@ -120,8 +134,8 @@ const RechargeEntry = () => {
     const [showRestFields, setShowRestFields] = useState(false);
 
     const handleGetAgentData = async () => {
-        const mobileNumber = Number(watch('collectorMobile'));
-        if (!isNaN(mobileNumber) && mobileNumber.toString().length === 10) {
+        const mobileNumber = watch('collectorMobile');
+        if (mobileNumber.toString().length === 10) {
             try {
                 setIsLoading(true);
                 const response = await getAgentByPhoneNumber(mobileNumber);
@@ -159,27 +173,38 @@ const RechargeEntry = () => {
                 </span>
             </div>}
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                <div className='space-y-2'>
-                    <div className="col-span-2">
-                        <CustomizedInputWithLabel
-                            label="Agent Mobile"
-                            type="number"
-                            {...register('collectorMobile', { valueAsNumber: true })}
-                            onChange={() => {
-                                clearErrors("collectorMobile")
-                                setValue('agencyId', null)
-                                setValue('agencyName', '')
-                                setValue('phoneNumber', null)
-                                setValue('transactionType', null)
-                                setValue('currentBalance', null)
-                                setShowRestFields(false)
-                            }}
-                            errors={errors.collectorMobile}
-                        />
-                    </div>
-                    <div className='text-end'>
-                        <Button type="button" onClick={handleGetAgentData} disabled={isLoading}>
-                            {isLoading ? 'Loading...' : 'Search'}
+                <div className='grid grid-cols-2 gap-4'>
+                    <CustomizedSelectInputWithSearch
+                        label="Agency"
+                        required
+                        list={agencyList}
+                        value={formData?.tempAgencyId}
+                        onChange={(val: string) => {
+                            setValue("tempAgencyId", val);
+                            setValue("collectorMobile", null);
+                            if (val) {
+                                getAgentList(Number(val))
+                            }
+                        }}
+                        placeholder="Select Agency"
+                        errors={errors.tempAgencyId}
+                    />
+                    <CustomizedSelectInputWithSearch
+                        label="Agent"
+                        required
+                        list={agentList}
+                        value={formData?.collectorMobile}
+                        onChange={(val: number) => {
+                            setValue("collectorMobile", val);
+                        }}
+                        placeholder="Select Agent"
+                        errors={errors.collectorMobile}
+                        disabled={!formData?.tempAgencyId}
+                    />
+
+                    <div className="text-end col-span-2">
+                        <Button type="button" variant="default" onClick={handleGetAgentData}>
+                            Search
                         </Button>
                     </div>
                 </div>
