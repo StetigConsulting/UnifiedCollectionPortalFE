@@ -383,7 +383,8 @@ const EditCollector = () => {
                         />
                     )}
 
-                    <CustomizedInputWithLabel label='Maximum Limit' {...register("maximumLimit", { valueAsNumber: true })} errors={errors.maximumLimit} />
+                    <CustomizedInputWithLabel label='Maximum Limit' type='number'
+                        {...register("maximumLimit", { valueAsNumber: true })} errors={errors.maximumLimit} />
 
                     <CustomizedMultipleSelectInputWithLabelNumber
                         label="Select Supervisor"
