@@ -74,9 +74,10 @@ const EditCollector = () => {
                 "non_energy_types": data.collectionType.includes("Non Energy") ? data.nonEnergy : [],
                 "collector_type": data.collectorType,
                 "work_type": data.workingType,
-                "supervisor_id": data?.supervisor?.[0],
+                "supervisor_id": data?.supervisor?.[0] || null,
                 "aadhar_no": data.aadhaarNumber || null,
                 "vendor_id": data.vendorId || null,
+                "maximum_limit": data.maximumLimit || null,
             }
             await editCollectorData(payload, currentUserId);
             toast.success('Agent edited successfully!');
