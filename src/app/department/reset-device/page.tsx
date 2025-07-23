@@ -157,14 +157,14 @@ const ResetDeviceCollector = () => {
         const response = await getAllAgentByAgencyId(id)
         setAgentList(response?.data?.map(item => ({
             value: item?.primary_phone,
-            label: item?.agent_name
+            label: item?.agent_name + ' - ' + item?.primary_phone
         })))
         setIsLoading(false)
     }
 
     return (
         <AuthUserReusableCode pageTitle="Reset Device (Agent)" isLoading={isLoading}>
-            <form className="space-y-4 p-4" onSubmit={handleSubmit(onSubmit)}>
+            <form className="space-y-4 p-2" onSubmit={handleSubmit(onSubmit)}>
                 <div className="grid grid-cols-2 gap-4">
                     <CustomizedSelectInputWithSearch
                         label="Agency"
@@ -186,7 +186,8 @@ const ResetDeviceCollector = () => {
                         required
                         list={agentList}
                         value={formData?.mobileNumber}
-                        onChange={(val: number) => {
+                        disabled={!formData?.agency}
+                        onChange={(val: string) => {
                             setValue("mobileNumber", val);
                             clearErrors("mobileNumber")
                         }}

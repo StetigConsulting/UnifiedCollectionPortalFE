@@ -118,7 +118,7 @@ const CustomizedSelectInputWithSearch: React.FC<CustomizedSelectInputWithSearchP
                 {search && !disabled && (
                     <button
                         type="button"
-                        className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500 focus:outline-none"
+                        className="absolute right-1 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500 focus:outline-none"
                         onClick={handleClear}
                         aria-label="Clear selection"
                         tabIndex={-1}

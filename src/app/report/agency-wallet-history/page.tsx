@@ -78,7 +78,7 @@ const AgencyWalletHistory = () => {
         try {
             const agencies = await getAgenciesWithDiscom(session?.user?.discomId);
             setAgencyOptions(
-                agencies?.data?.map((a: any) => ({ label: a.agency_name + ' - ' + a.phone, value: a.phone }))
+                agencies?.data?.map((a: any) => ({ label: a.agency_name + ' - ' + a.phone, value: a.agency_name }))
             );
         } catch (e) {
             console.error(e)

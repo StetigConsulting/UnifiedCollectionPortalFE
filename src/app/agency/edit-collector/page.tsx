@@ -298,6 +298,7 @@ const EditCollector = () => {
                         placeholder="Search Agent"
                         list={agentOptions}
                         value={formData.collectorMobile}
+                        disabled={!formData.tempAgencyId}
                         onChange={(value: string) => {
                             console.log(value)
                             setValue("collectorMobile", value)

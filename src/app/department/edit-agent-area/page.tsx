@@ -369,7 +369,7 @@ const EditAgentAreaRoleForm = () => {
     return (
         <AuthUserReusableCode pageTitle="Edit Agent Area & Role" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                <div className='space-y-2'>
+                <div className='grid grid-cols-2 gap-4'>
                     <CustomizedSelectInputWithSearch
                         label="Agency Name"
                         placeholder="Search Agency"
@@ -387,13 +387,14 @@ const EditAgentAreaRoleForm = () => {
                             setShowRestFields(false)
                             fetchAgents(value)
                         }}
-                        errors={errors.agencyName}
+                        errors={errors.agencyId}
                     />
                     <CustomizedSelectInputWithSearch
                         label="Agent Mobile Number"
                         placeholder="Search Agent"
                         list={agentOptions}
                         value={formData.agentMobileNumber}
+                        disabled={!formData.agencyId}
                         onChange={(value: string) => {
                             console.log(value)
                             setValue("agentMobileNumber", value)
@@ -406,7 +407,7 @@ const EditAgentAreaRoleForm = () => {
                         }}
                         errors={errors.agentMobileNumber}
                     />
-                    <div className='text-end'>
+                    <div className='text-end col-span-2'>
                         <Button type="button" onClick={handleGetAgentData} disabled={isLoading}>
                             {isLoading ? 'Loading...' : 'Search'}
                         </Button>

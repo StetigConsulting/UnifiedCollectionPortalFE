@@ -476,12 +476,11 @@ export const extendValidityFilterSchema = z
   });
 
 export const resetDeviceSchema = z.object({
-  agency: z.string().min(1, "Agency is required"),
+  agency: z.any().optional(),
   mobileNumber: z
-    .number({
-      invalid_type_error: "Mobile number required",
-    })
-    .min(10, "Mobile number must be at least 10 digits"),
+    .string()
+    .min(10, "Mobile number must be at least 10 digits")
+    .optional(),
   collectorName: z.string().optional(),
   agencyName: z.string().optional(),
   collectorType: z.any().optional(),
@@ -657,7 +656,7 @@ export type AddCounterCollectorFormData = z.infer<
 >;
 
 export const binderMappingSchema = z.object({
-  tempAgencyId: z.string().optional(),
+  tempAgencyId: z.any().optional(),
   collectorMobile: z
     .string()
     .min(10, "Mobile number must be at least 10 digits"),
@@ -1267,7 +1266,7 @@ export const editReceiptsSchema = z
   });
 
 export const editAgentAreaSchema = z.object({
-  agencyId: z.string().optional(),
+  agencyId: z.any().optional(),
   agentId: z.number(),
   agentMobileNumber: z
     .string()

@@ -256,6 +256,7 @@ const AgentWalletHistory = () => {
                     label="Agent Name"
                     placeholder="Search Agent"
                     list={agentOptions}
+                    disabled={!formData.agencyName}
                     value={formData.agentName}
                     onChange={(value:string) => setValue("agentName", value)}
                     errors={errors.agentName}

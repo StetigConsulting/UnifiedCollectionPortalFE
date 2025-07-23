@@ -47,34 +47,36 @@ const ViewAgency = () => {
             let data = [{ label: 'All', value: 'all' }, ...levelOptions];
             setWorkingLevelList(data)
             setAgencyList(
-                response?.data?.map((item) => {
-                    let data = [];
-                    if (item.collection_type_energy) {
-                        data.push('Enengy')
-                    }
-                    if (item.collection_type_non_energy) {
-                        data.push('Non-Enengy')
-                    }
+                response?.data
+                    ?.sort((a, b) => new Date(b.created_on).getTime() - new Date(a.created_on).getTime())
+                    ?.map((item) => {
+                        let data = [];
+                        if (item.collection_type_energy) {
+                            data.push('Enengy')
+                        }
+                        if (item.collection_type_non_energy) {
+                            data.push('Non-Enengy')
+                        }
 
-                    item.non_energy_types.map((mode) => data.push(mode.type_name))
+                        item.non_energy_types.map((mode) => data.push(mode.type_name))
 
-                    return ({
-                        ...item,
-                        id: item.id,
-                        agencyName: item.agency_name,
-                        agencyAddress: item.agency_address,
-                        contactPerson: item.contact_person,
-                        phone: item.phone,
-                        maxLimit: item.maximum_limit,
-                        woNumber: item.wo_number,
-                        validity: item.validity_end_date,
-                        workingOffice: listOfLevel[item.working_level] || 'N/A',
-                        workingLevelOffice: item.working_level_offices.map((mode) => mode.office_description).join(', ') || 'N/A',
-                        permissions: item.collection_payment_modes.map((mode) => mode.mode_name).join(", ") || 'N/A',
-                        collectionModes: data.join(', ') || 'N/A',
-                        isActive: item.is_active,
+                        return ({
+                            ...item,
+                            id: item.id,
+                            agencyName: item.agency_name,
+                            agencyAddress: item.agency_address,
+                            contactPerson: item.contact_person,
+                            phone: item.phone,
+                            maxLimit: item.maximum_limit,
+                            woNumber: item.wo_number,
+                            validity: item.validity_end_date,
+                            workingOffice: listOfLevel[item.working_level] || 'N/A',
+                            workingLevelOffice: item.working_level_offices.map((mode) => mode.office_description).join(', ') || 'N/A',
+                            permissions: item.collection_payment_modes.map((mode) => mode.mode_name).join(", ") || 'N/A',
+                            collectionModes: data.join(', ') || 'N/A',
+                            isActive: item.is_active,
+                        })
                     })
-                })
             );
         } catch (error) {
             console.error('Failed to get agency:', error);

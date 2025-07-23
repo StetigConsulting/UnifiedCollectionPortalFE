@@ -230,13 +230,14 @@ const BinderMapping = () => {
                             resetForm()
                             fetchAgents(value)
                         }}
-                        errors={errors.agencyName}
+                        errors={errors.tempAgencyId}
                     />
                     <CustomizedSelectInputWithSearch
                         label="Agent Mobile Number"
                         placeholder="Search Agent"
                         list={agentOptions}
                         value={formData.collectorMobile}
+                        disabled={!formData.tempAgencyId}
                         onChange={(value: string) => {
                             console.log(value)
                             setValue("collectorMobile", value)
