@@ -224,6 +224,7 @@ const BinderMapping = () => {
                         value={formData.tempAgencyId}
                         onChange={(value: string) => {
                             setValue("tempAgencyId", value)
+                            clearErrors('tempAgencyId')
                             setValue("collectorMobile", undefined)
                             setAgentOptions([])
                             setValue('agencyName', '')
@@ -239,8 +240,8 @@ const BinderMapping = () => {
                         value={formData.collectorMobile}
                         disabled={!formData.tempAgencyId}
                         onChange={(value: string) => {
-                            console.log(value)
                             setValue("collectorMobile", value)
+                            clearErrors('collectorMobile')
                             resetForm()
                         }}
                         errors={errors.collectorMobile}

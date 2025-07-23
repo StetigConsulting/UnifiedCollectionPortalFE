@@ -42,6 +42,7 @@ const AgentWalletHistory = () => {
         setValue,
         watch,
         formState: { errors },
+        clearErrors
     } = useForm<AgentWalletSchemaData>({
         resolver: zodResolver(agentWalletSchema),
         defaultValues: {
@@ -244,6 +245,7 @@ const AgentWalletHistory = () => {
                     onChange={(value: string) => {
                         setValue("agencyName", value)
                         setValue("agentName", "")
+                        clearErrors('agentName')
                         setAgentOptions([])
                         if(value){
                             fetchAgents(value)
@@ -258,7 +260,10 @@ const AgentWalletHistory = () => {
                     list={agentOptions}
                     disabled={!formData.agencyName}
                     value={formData.agentName}
-                    onChange={(value:string) => setValue("agentName", value)}
+                    onChange={(value:string) => {
+                        setValue("agentName", value)
+                        clearErrors('agentName')
+                    }}
                     errors={errors.agentName}
                 />
 

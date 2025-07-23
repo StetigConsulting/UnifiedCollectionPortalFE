@@ -677,10 +677,8 @@ export const binderMappingSchema = z.object({
 export type BinderMappingFormData = z.infer<typeof binderMappingSchema>;
 
 export const rechargeSchemaCollector = z.object({
-  tempAgencyId: z.string().optional(),
-  collectorMobile: z
-    .number()
-    .min(10, "Mobile number must be at least 10 digits"),
+  tempAgencyId: z.any().optional(),
+  collectorMobile: z.string().optional(),
   agencyId: z.number(),
   agencyName: z.string().min(1, "Agency Name is required"),
   agentId: z.number(),

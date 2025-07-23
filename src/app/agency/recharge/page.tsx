@@ -135,10 +135,10 @@ const RechargeEntry = () => {
 
     const handleGetAgentData = async () => {
         const mobileNumber = watch('collectorMobile');
-        if (mobileNumber.toString().length === 10) {
+        if (mobileNumber?.toString().length === 10) {
             try {
                 setIsLoading(true);
-                const response = await getAgentByPhoneNumber(mobileNumber);
+                const response = await getAgentByPhoneNumber(Number(mobileNumber));
                 setValue('agentName', response.data.agent_name)
                 setValue('agencyName', response.data.agency?.agency_name)
                 setValue('agentId', response.data.id)
@@ -157,10 +157,17 @@ const RechargeEntry = () => {
                 setIsLoading(false);
             }
         } else {
-            setError("collectorMobile", {
-                type: "manual",
-                message: "Please enter a valid 10-digit mobile number.",
-            });
+            if (formData?.tempAgencyId) {
+                setError("collectorMobile", {
+                    type: "manual",
+                    message: "Please select an agent.",
+                });
+            } else {
+                setError("tempAgencyId", {
+                    type: "manual",
+                    message: "Please select an agency.",
+                });
+            }
             return;
         }
     }
@@ -181,6 +188,7 @@ const RechargeEntry = () => {
                         value={formData?.tempAgencyId}
                         onChange={(val: string) => {
                             setValue("tempAgencyId", val);
+                            clearErrors('tempAgencyId')
                             setValue("collectorMobile", null);
                             if (val) {
                                 getAgentList(Number(val))
@@ -194,8 +202,8 @@ const RechargeEntry = () => {
                         required
                         list={agentList}
                         value={formData?.collectorMobile}
-                        onChange={(val: number) => {
-                            setValue("collectorMobile", val);
+                        onChange={(val: string) => {
+                            setValue("collectorMobile", val, { shouldValidate: true });
                         }}
                         placeholder="Select Agent"
                         errors={errors.collectorMobile}

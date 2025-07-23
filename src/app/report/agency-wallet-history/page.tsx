@@ -38,6 +38,7 @@ const AgencyWalletHistory = () => {
         watch,
         formState: { errors },
         setValue,
+        clearErrors
     } = useForm<AgencyWalletSchemaData>({
         resolver: zodResolver(agencyWalletSchema),
         defaultValues: {
@@ -216,6 +217,7 @@ const AgencyWalletHistory = () => {
                     value={getValues("agencyName")}
                     onChange={(val) => {
                         setValue("agencyName", val as string);
+                        clearErrors('agencyName')
                     }}
                     placeholder="Select Agency"
                     errors={errors.agencyName}

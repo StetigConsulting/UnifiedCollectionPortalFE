@@ -179,10 +179,17 @@ const EditAgentAreaRoleForm = () => {
                 setIsLoading(false);
             }
         } else {
+            if (formData?.agencyId) {
             setError("agentMobileNumber", {
-                type: "manual",
-                message: "Please enter a valid 10-digit mobile number.",
-            });
+                    type: "manual",
+                    message: "Please select an agent",
+                });
+            } else {
+                setError("agencyId", {
+                    type: "manual",
+                    message: "Please select an agency",
+                });
+            }
             return;
         }
     }
@@ -379,7 +386,7 @@ const EditAgentAreaRoleForm = () => {
                             setValue("agencyId", value)
                             setValue("agentMobileNumber", '')
                             setAgentOptions([])
-                            clearErrors("agentMobileNumber")
+                            clearErrors("agencyId")
                             setValue('agentName', '')
                             setValue('agencyName', '')
                             setValue('workingLevel', null)

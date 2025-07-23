@@ -111,10 +111,17 @@ const ResetDeviceCollector = () => {
                 setIsLoading(false)
             }
         } else {
+            if (formData?.agency) {
             setError("mobileNumber", {
-                type: "manual",
-                message: "Please enter a valid 10-digit mobile number.",
-            });
+                    type: "manual",
+                    message: "Please select an agent.",
+                });
+            } else {
+                setError("agency", {
+                    type: "manual",
+                    message: "Please select an agency.",
+                });
+            }
             return;
         }
     };
@@ -174,6 +181,7 @@ const ResetDeviceCollector = () => {
                         onChange={(val: string) => {
                             setValue("agency", val);
                             setValue("mobileNumber", null);
+                            clearErrors('agency')
                             if (val) {
                                 getAgentList(Number(val))
                             }

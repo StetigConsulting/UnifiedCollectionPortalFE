@@ -22,7 +22,7 @@ import { checkIfUserHasActionAccess } from "@/helper";
 import CustomizedSelectInputWithSearch from "@/components/CustomizedSelectInputWithSearch";
 
 const EditCollector = () => {
-    const { register, handleSubmit, formState: { errors }, setValue, watch, setError, reset } = useForm<EditCollectorFormData>({
+    const { register, handleSubmit, formState: { errors }, setValue, watch, setError, reset, clearErrors } = useForm<EditCollectorFormData>({
         resolver: zodResolver(editCollectorSchema),
     });
 
@@ -130,10 +130,17 @@ const EditCollector = () => {
                 setIsLoading(false);
             }
         } else {
+            if (formData?.tempAgencyId) {
             setError("collectorMobile", {
-                type: "manual",
-                message: "Please enter a valid 10-digit mobile number.",
-            });
+                    type: "manual",
+                    message: "Please select an agent.",
+                });
+            } else {
+                setError("tempAgencyId", {
+                    type: "manual",
+                    message: "Please select an agency.",
+                });
+            }
             return;
         }
     }
@@ -288,6 +295,7 @@ const EditCollector = () => {
                             setValue("collectorMobile", undefined)
                             setAgentOptions([])
                             setValue('agencyName', '')
+                            clearErrors('tempAgencyId')
                             resetForm()
                             fetchAgents(value)
                         }}
@@ -302,6 +310,7 @@ const EditCollector = () => {
                         onChange={(value: string) => {
                             console.log(value)
                             setValue("collectorMobile", value)
+                            clearErrors('collectorMobile')
                             resetForm()
                         }}
                         errors={errors.collectorMobile}
