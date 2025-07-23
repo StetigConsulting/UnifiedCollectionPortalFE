@@ -549,7 +549,7 @@ export const fileUploadSchema = z.object({
 });
 
 export const editCollectorSchema = z.object({
-  tempAgencyId: z.string().optional(),
+  tempAgencyId: z.any().optional(),
   agencyId: z.number().optional(),
   agencyName: z.string().optional(),
   collectorMobile: z
@@ -567,6 +567,7 @@ export const editCollectorSchema = z.object({
     .array(z.string())
     .min(1, "At least one collection type is required"),
   nonEnergy: z.array(z.number()).optional(),
+  maximumLimit: z.number().min(1, { message: "Maximum limit is required" }),
   supervisor: z.array(z.number()).optional(),
   aadhaarNumber: z
     .any()

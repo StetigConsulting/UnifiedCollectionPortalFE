@@ -109,6 +109,7 @@ const EditCollector = () => {
                 setValue('supervisor', supervisorData)
                 setValue('aadhaarNumber', response.data.aadharNo || null)
                 setValue('vendorId', response.data.vendor_id || null)
+                setValue('maximumLimit', response.data.maximum_limit || null)
                 await getAgencyData(response.data.agency.id)
                 setValue('permission', response.data.collection_payment_modes.map((ite) => ite.id))
                 let collectionType = []
@@ -270,6 +271,8 @@ const EditCollector = () => {
         setShowRestFields(false)
     }
 
+    console.log(errors)
+
     return (
         <AuthUserReusableCode pageTitle="Edit Agent" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -377,6 +380,8 @@ const EditCollector = () => {
                             onChange={(selectedValues) => setValue('nonEnergy', selectedValues)}
                         />
                     )}
+
+                    <CustomizedInputWithLabel label='Maximum Limit' {...register("maximumLimit", { valueAsNumber: true })} errors={errors.maximumLimit} />
 
                     <CustomizedMultipleSelectInputWithLabelNumber
                         label="Select Supervisor"
