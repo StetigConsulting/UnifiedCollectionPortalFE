@@ -131,7 +131,7 @@ const EditCollector = () => {
             }
         } else {
             if (formData?.tempAgencyId) {
-            setError("collectorMobile", {
+                setError("collectorMobile", {
                     type: "manual",
                     message: "Please select an agent.",
                 });
