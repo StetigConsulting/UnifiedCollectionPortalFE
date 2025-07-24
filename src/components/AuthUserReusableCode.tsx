@@ -49,11 +49,11 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
             setLogoLink(logoValue);
         })
 
-        // if (session?.user?.userScopes.includes('TPCollectionWebPortal:agency_balance:READ')) {
-        //     await getAgencyRechargeableBalance(session?.user?.userId).then((res) => {
-        //         setAgencyBalanceDetail(res.data)
-        //     })
-        // }
+        if (session?.user?.userScopes.includes('TPCollectionWebPortal:agency_balance:READ')) {
+            await getAgencyRechargeableBalance(session?.user?.userId).then((res) => {
+                setAgencyBalanceDetail(res.data)
+            })
+        }
         setIsFetchingResource(false)
     }
 

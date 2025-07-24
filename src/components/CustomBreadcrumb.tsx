@@ -9,6 +9,7 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import { getTitleByUrl, urlsListWithTitle } from '@/lib/utils';
 import moment from 'moment';
 import { checkIfUserHasAccessToPage } from '@/helper';
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 
 interface CustomBreadcrumbProps {
     pageTitle: string;
@@ -84,43 +85,74 @@ const CustomBreadcrumb: React.FC<CustomBreadcrumbProps> = ({
                 >
                     <House size={16} className='cursor-pointer' />
                 </Button>
-                <Button
-                    data-sidebar="trigger"
-                    variant="ghost"
-                    size="icon"
-                    className="h-7 w-7 group relative"
-                    onClick={onSignOut}
-                >
-                    <LogOut size={16} className='cursor-pointer' />
-                    <span className="absolute left-full ml-2 opacity-0 transition-opacity bg-gray-800 text-white text-xs px-2 py-1 rounded group-hover:opacity-100">
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Button
+                            data-sidebar="trigger"
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7 group relative"
+                            onClick={onSignOut}
+                        >
+                            <LogOut size={16} className='cursor-pointer' />
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
                         Log Out
-                    </span>
-                </Button>
+                    </TooltipContent>
+                </Tooltip>
+
 
                 <Separator orientation="vertical" className="mr-2 h-4" />
                 {agencyBalanceDetail?.agencyBalance &&
                     <>
-                        <div className='flex gap-4'>
-                            <div className='flex gap-4'>
-                                <Wallet />
-                                <p className="text-lg font-bold text-red-500">
-                                    {agencyBalanceDetail?.agencyBalance}
-                                </p>
-                            </div>
-                            <div className='flex gap-4'>
-                                <Wallet />
-                                <p className="text-lg font-bold text-red-500">
-                                    {agencyBalanceDetail?.agentWalletBalance}
-                                </p>
-                            </div>
-                            <div className='flex gap-4'>
-                                <Wallet />
-                                <p className="text-lg font-bold text-green-500">
-                                    {agencyBalanceDetail?.rechargeableAgentWalletBalance}
-                                </p>
-                            </div>
-                        </div>
-                        <Separator orientation="vertical" className="mr-2 h-4" />
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <div className='flex gap-4 cursor-pointer'>
+                                    <Wallet />
+                                    <p className="text-lg font-bold text-red-500">
+                                        {agencyBalanceDetail?.agencyBalance}
+                                    </p>
+                                </div>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                Total Agency Balance: {agencyBalanceDetail?.agencyBalance}
+                            </TooltipContent>
+                        </Tooltip>
+                        {agencyBalanceDetail?.agentWalletBalance && (
+                            <>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <div className='flex gap-4 cursor-pointer'>
+                                            <Wallet />
+                                            <p className="text-lg font-bold text-red-500">
+                                                {agencyBalanceDetail?.agentWalletBalance}
+                                            </p>
+                                        </div>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        Total Agent Wallet Balance: {agencyBalanceDetail?.agentWalletBalance}
+                                    </TooltipContent>
+                                </Tooltip>
+                            </>
+                        )}
+                        {agencyBalanceDetail?.rechargeableAgentWalletBalance && (
+                            <>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <div className='flex gap-4 cursor-pointer'>
+                                            <Wallet />
+                                            <p className="text-lg font-bold text-green-500">
+                                                {agencyBalanceDetail?.rechargeableAgentWalletBalance}
+                                            </p>
+                                        </div>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        Total Rechargeable Agent Wallet Balance: {agencyBalanceDetail?.rechargeableAgentWalletBalance}
+                                    </TooltipContent>
+                                </Tooltip>
+                            </>
+                        )}
                     </>
                 }
                 <div className='bg-lightThemeColor px-4 py-2 rounded-lg flex gap-2 text-sm ml-auto'>
