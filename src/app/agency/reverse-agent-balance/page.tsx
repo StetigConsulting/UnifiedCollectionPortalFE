@@ -90,7 +90,7 @@ const RechargeEntry = () => {
             const response = await reverseAgentBalance(payload);
             toast.success("Agent Balance Reversed Successfully");
             getAgencyBalance()
-            reset();
+            window.location.reload();
         } catch (error) {
             let errorMessage = getErrorMessage(error);
             toast.error('Error: ' + errorMessage)
