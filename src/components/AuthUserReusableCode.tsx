@@ -44,13 +44,13 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
 
     const getHeaderDetails = async () => {
         setIsFetchingResource(true)
-        await getRosourceByDiscomId(session?.user?.discomId).then((res) => {
+        getRosourceByDiscomId(session?.user?.discomId).then((res) => {
             const logoValue = res.data.find(item => item.name === "Logo")?.value;
             setLogoLink(logoValue);
         })
 
         if (session?.user?.userScopes.includes('TPCollectionWebPortal:agency_balance:READ')) {
-            await getAgencyRechargeableBalance(session?.user?.userId).then((res) => {
+            getAgencyRechargeableBalance(session?.user?.userId).then((res) => {
                 setAgencyBalanceDetail(res.data)
             })
         }
