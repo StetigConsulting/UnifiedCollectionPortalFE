@@ -57,6 +57,8 @@ const Recharge = () => {
                 amount: null,
                 currentBalance: null,
                 remark: "",
+                balanceAvailableForRecharge: null,
+                maxRecharge: null,
             });
             getAgencyList()
         } catch (error) {
