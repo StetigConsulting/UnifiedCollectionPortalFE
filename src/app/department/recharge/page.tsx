@@ -129,18 +129,22 @@ const Recharge = () => {
     const fetchAgencyById = async (id: string) => {
         setIsLoading(true);
         try {
-            const response = await getAgencyById(id);
-            const agency = response.data;
-            setValue('agency', agency.id);
-            setValue('agencyId', agency.id || null);
-            setValue('agencyName', agency.agency_name || '');
-            setValue('phoneNumber', agency.phone || '');
+            const response = await getAgenciesWithDiscomWithBalance(session?.user?.discomId);
+            const agency = response.data.find((item) => item.id === Number(id));
+            console.log(agency)
             setAgencyList([{
                 ...response.data,
                 label: response.data.agency_name,
                 value: response.data.id,
             }]);
-            setValue('agency', response.data.id)
+            setValue('maxRecharge', agency.maximum_limit || null);
+            setValue('currentBalance', agency.current_balance || 0);
+            setValue('balanceAvailableForRecharge', agency.balance_available_for_recharge || 0);
+            setValue('agency', agency.id);
+            setValue('agencyId', agency.id || null);
+            setValue('agencyName', agency.agency_name || '');
+            setValue('phoneNumber', agency.phone || '');
+            setValue('agency', agency.id)
         } catch (error) {
             console.error("Failed to fetch agency by ID:", error);
         } finally {
