@@ -275,6 +275,7 @@ const EditCollector = () => {
         setValue('agencyId', undefined)
         setValue('agencyName', '')
         setValue('vendorId', undefined)
+        setValue('maximumLimit', undefined)
         setAgencyData({ is_inherited_vendor_id: false, vendor_id: '' })
         setShowRestFields(false)
     }
@@ -393,7 +394,9 @@ const EditCollector = () => {
                     )}
 
                     <CustomizedInputWithLabel label='Maximum Limit' type='number'
-                        {...register("maximumLimit", { valueAsNumber: true })} errors={errors.maximumLimit} />
+                        {...register("maximumLimit", { valueAsNumber: true })} errors={errors.maximumLimit}
+                        placeholder="Enter Maximum Limit"
+                    />
 
                     <CustomizedMultipleSelectInputWithLabelNumber
                         label="Select Supervisor"

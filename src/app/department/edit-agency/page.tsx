@@ -204,6 +204,20 @@ const EditAgency = () => {
                 setValue('nonEnergy', nonEnergy || []);
             }
         }
+        else{
+            setValue('agencyId', null);
+            setValue('agencyName', '');
+            setValue('phoneNumber', '');
+            setValue('address', '');
+            setValue('maximumAmount', null);
+            setValue('maximumAgent', null);
+            setValue('woNumber', '');
+            setValue('contactPerson', '');
+            setValue('vendorCode', '');
+            setValue('permission', []);
+            setValue('collectionType', []);
+            setValue('nonEnergy', []);
+        }
     }, [selectedAgency, agencyList, setValue]);
 
     useEffect(() => {
@@ -353,7 +367,7 @@ const EditAgency = () => {
                 </div>
                 <div className="flex justify-end mt-4">
                     <AlertPopupWithState isOpen={openConfirmationPopup} setIsOpen={setOpenConfirmationPopup}
-                        triggerCode={<Button variant="default" disabled={isSubmitting}>
+                        triggerCode={<Button variant="default" disabled={isSubmitting || !formData?.agencyId}>
                             {isSubmitting ? <>
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
                             </> : "Submit"}

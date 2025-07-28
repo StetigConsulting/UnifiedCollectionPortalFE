@@ -73,6 +73,7 @@ export const addAgencySchema = z
     validityToDate: z.string().nonempty("Validity To Date is required"),
     workingLevel: z.number({
       required_error: "Working Level is required",
+      invalid_type_error: "Working Level must be a number",
     }),
     circle: z.array(z.number()).optional(),
     division: z.array(z.number()).optional(),
@@ -234,13 +235,13 @@ export const editAgencySchema = z.object({
       }
       return num;
     })
-    .refine((val) => val > 0, {
-      message: "Agency is required and must be greater than 0",
+    .refine((val) => val !== null && val !== undefined, {
+      message: "Agency is required",
     }),
   agencyName: z.string().nonempty("Agency name is required"),
   agencyId: z.number({
     required_error: "Agency ID is required",
-    invalid_type_error: "Agency ID must be a number",
+    invalid_type_error: "Agency ID is required",
   }),
   maximumAmount: z
     .number({
@@ -280,8 +281,14 @@ export const editAgencyAreaSchema = z
   .object({
     agency: z.string().min(1, { message: "Agency is required" }),
     agencyName: z.string().min(1, { message: "Agency Name is required" }),
-    agencyId: z.number(),
-    workingLevel: z.number({ required_error: "Working Level is required" }),
+    agencyId: z.number({
+      required_error: "Agency ID is required",
+      invalid_type_error: "Agency ID is required",
+    }),
+    workingLevel: z.number({
+      required_error: "Working Level is required",
+      invalid_type_error: "Working Level is required",
+    }),
     circle: z.array(z.number()).optional(),
     division: z.array(z.number()).optional(),
     subDivision: z.array(z.number()).optional(),
@@ -388,11 +395,11 @@ export const extendValiditySchema = z
         return num;
       })
       .refine((val) => val > 0, {
-        message: "Agency is required and must be greater than 0",
+        message: "Agency is required",
       }),
     agencyId: z.number({
       required_error: "Agency Id is required",
-      invalid_type_error: "Agency Id must be a number",
+      invalid_type_error: "Agency Id is required",
     }),
     currentFromValidity: z
       .string()
@@ -581,7 +588,10 @@ export type EditCollectorFormData = z.infer<typeof editCollectorSchema>;
 
 export const addCounterCollectorSchema = z
   .object({
-    agencyId: z.number().optional(),
+    agencyId: z.number({
+      invalid_type_error: "Agency ID is required",
+      required_error: "Agency ID is required",
+    }).optional(),
     name: z.string().min(1, { message: "Name is required" }),
     isPersonalNumberSameAsOffice: z.boolean().optional(),
     officePhoneNumber: z

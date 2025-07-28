@@ -32,6 +32,7 @@ const AddCounterCollector = () => {
             initialBalance: 0,
             isPersonalNumberSameAsOffice: false,
             workingLevel: null,
+            maximumLimit: undefined,
         },
     });
 
@@ -428,7 +429,7 @@ const AddCounterCollector = () => {
                         />
                     )}
                     {
-                        agencyId && <>
+                        !isNaN(agencyId) && <>
 
                             <CustomizedInputWithLabel
                                 containerClass='col-span-2'
@@ -651,7 +652,7 @@ const AddCounterCollector = () => {
                     }
                 </div>
                 <div className="flex justify-end mt-4">
-                    {agencyId &&
+                    {!isNaN(agencyId) &&
                         <AlertPopupWithState
                             triggerCode={
                                 <Button

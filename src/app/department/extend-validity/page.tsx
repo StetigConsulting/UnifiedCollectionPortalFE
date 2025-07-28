@@ -23,7 +23,7 @@ type FormData = z.infer<typeof extendValiditySchema>;
 
 const ExtendValidity = () => {
     const { data: session } = useSession()
-    const { register, handleSubmit, watch, reset, setValue, formState: { errors } } = useForm<FormData>({
+    const { register, handleSubmit, watch, reset, setValue,clearErrors, formState: { errors } } = useForm<FormData>({
         resolver: zodResolver(extendValiditySchema),
     });
 
@@ -138,7 +138,19 @@ const ExtendValidity = () => {
                 setValue('currentToValidity', agency.validity_end_date || '');
                 setValue('newFromValidity', agency.validity_start_date || '');
                 setValue('newToValidity', '');
+                setValue('amendmentDocumentNumber', '');
+                setValue('amendmentDocumentDate', '');
             }
+        }
+        else{
+            setValue('agencyId', null);
+            setValue('agencyName', undefined);
+            setValue('currentFromValidity', '');
+            setValue('currentToValidity', '');
+            setValue('newFromValidity', '');
+            setValue('newToValidity', '');
+            setValue('amendmentDocumentNumber', '');
+            setValue('amendmentDocumentDate', '');
         }
     }, [selectedAgency, agencyList]);
 
@@ -310,7 +322,11 @@ const ExtendValidity = () => {
                         placeholder="Select Agency Name"
                         list={agencyList}
                         required
-                        {...register('agencyName')}
+                        {...register('agencyName',{
+                            onChange: () => {
+                                clearErrors();
+                            }
+                        })}
                     />
                     <CustomizedInputWithLabel
                         label="Agency ID"
