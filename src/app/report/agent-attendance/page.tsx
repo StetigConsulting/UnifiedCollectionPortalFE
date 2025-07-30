@@ -102,8 +102,8 @@ const AgentAttendanceReport = () => {
             setDataList(response.data.data);
             setShowTable(true)
             setOverflowDataMessage(response.overflowDataMessage)
-            // setCurrentPage(page);
-            // setTotalPages(response.data.totalPages)
+            setCurrentPage(1);
+            setTotalPages(Math.ceil(response.data.data.length / tableDataPerPage))
         } catch (error) {
             toast.error(getErrorMessage(error))
         } finally {
@@ -309,9 +309,7 @@ const AgentAttendanceReport = () => {
     }
 
     const handlePageChange = (page) => {
-        // setCurrentPage(page)
-        let payload = getPayload(formData)
-        getReportData(payload, page)
+        setCurrentPage(page)
     }
 
     const formatData = dataList.map((item) => ({
@@ -320,6 +318,8 @@ const AgentAttendanceReport = () => {
         attendance_date: item?.attendance_date ? formatDate(item?.attendance_date) : null,
     }))
 
+    const [currentPage, setCurrentPage] = useState(1)
+    const [totalPages, setTotalPages] = useState(1)
 
     return (
         <AuthUserReusableCode pageTitle="Agent Attendance Report" isLoading={isLoading}>
@@ -421,9 +421,13 @@ const AgentAttendanceReport = () => {
 
             <div className="overflow-x-auto mb-4 mt-4">
                 {showTable && <ReactTable
-                    data={formatData}
+                    data={formatData.slice((currentPage - 1) * tableDataPerPage, currentPage * tableDataPerPage)}
                     columns={columns}
                     hideSearchAndOtherButtons
+                    dynamicPagination={true}
+                    pageNumber={currentPage}
+                    totalPageNumber={totalPages}
+                    onPageChange={handlePageChange}
                 // handleExportFile={handleExportFile}
                 />}
             </div>
