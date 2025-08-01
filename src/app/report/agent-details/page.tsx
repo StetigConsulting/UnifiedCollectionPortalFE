@@ -191,7 +191,7 @@ const AgentDetails = () => {
                 <div className="grid grid-cols-5 gap-4 flex-grow">
                     <CustomizedSelectInputWithLabel
                         label='Agency' list={agencyList} {...register('agency')} errors={errors.agency} />
-                    <CustomizedSelectInputWithLabel label='Agency Status' list={agencyStatusType}
+                    <CustomizedSelectInputWithLabel label='Agent Status' list={agencyStatusType}
                         {...register('agencyStatus')} />
                     <CustomizedInputWithLabel label='Page Size'
                         {...register('pageSize', { valueAsNumber: true })} errors={errors?.pageSize} />
