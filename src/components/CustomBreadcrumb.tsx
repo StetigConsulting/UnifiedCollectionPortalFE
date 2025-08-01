@@ -119,40 +119,34 @@ const CustomBreadcrumb: React.FC<CustomBreadcrumbProps> = ({
                                 Total Agency Balance: {agencyBalanceDetail?.agencyBalance}
                             </TooltipContent>
                         </Tooltip>
-                        {agencyBalanceDetail?.agentWalletBalance && (
-                            <>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <div className='flex gap-4 cursor-pointer'>
-                                            <Wallet />
-                                            <p className="text-lg font-bold text-red-500">
-                                                {agencyBalanceDetail?.agentWalletBalance}
-                                            </p>
-                                        </div>
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                        Total Agent Wallet Balance: {agencyBalanceDetail?.agentWalletBalance}
-                                    </TooltipContent>
-                                </Tooltip>
-                            </>
-                        )}
-                        {agencyBalanceDetail?.rechargeableAgentWalletBalance && (
-                            <>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <div className='flex gap-4 cursor-pointer'>
-                                            <Wallet />
-                                            <p className="text-lg font-bold text-green-500">
-                                                {agencyBalanceDetail?.rechargeableAgentWalletBalance}
-                                            </p>
-                                        </div>
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                        Total Rechargeable Agent Wallet Balance: {agencyBalanceDetail?.rechargeableAgentWalletBalance}
-                                    </TooltipContent>
-                                </Tooltip>
-                            </>
-                        )}
+
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <div className='flex gap-4 cursor-pointer'>
+                                    <Wallet />
+                                    <p className="text-lg font-bold text-red-500">
+                                        {agencyBalanceDetail?.agentWalletBalance}
+                                    </p>
+                                </div>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                Total Agent Wallet Balance: {agencyBalanceDetail?.agentWalletBalance}
+                            </TooltipContent>
+                        </Tooltip>
+
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <div className='flex gap-4 cursor-pointer'>
+                                    <Wallet />
+                                    <p className="text-lg font-bold text-green-500">
+                                        {agencyBalanceDetail?.rechargeableAgentWalletBalance}
+                                    </p>
+                                </div>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                Total Rechargeable Agent Wallet Balance: {agencyBalanceDetail?.rechargeableAgentWalletBalance}
+                            </TooltipContent>
+                        </Tooltip>
                     </>
                 }
                 <div className='bg-lightThemeColor px-4 py-2 rounded-lg flex gap-2 text-sm ml-auto'>
