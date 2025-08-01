@@ -30,7 +30,7 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
 
     const [logoLink, setLogoLink] = React.useState('')
 
-    const [agencyBalanceDetail, setAgencyBalanceDetail] = React.useState({})
+    const [agencyBalanceDetail, setAgencyBalanceDetail] = React.useState(null)
 
     const [isFetchingResource, setIsFetchingResource] = useState(false)
 

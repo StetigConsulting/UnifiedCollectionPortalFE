@@ -24,7 +24,7 @@ interface CustomBreadcrumbProps {
 }
 
 const CustomBreadcrumb: React.FC<CustomBreadcrumbProps> = ({
-    pageTitle, children, onSignOut, agencyBalanceDetail,
+    pageTitle, children, onSignOut, agencyBalanceDetail = null,
     userName, lastLoginAt, scopes,
     blacklist = ["agency", 'admin', 'department', 'report'],
     routingFunction
@@ -104,7 +104,7 @@ const CustomBreadcrumb: React.FC<CustomBreadcrumbProps> = ({
 
 
                 <Separator orientation="vertical" className="mr-2 h-4" />
-                {agencyBalanceDetail?.agencyBalance &&
+                {scopes.includes('TPCollectionWebPortal:agency_balance:READ') && agencyBalanceDetail !== null &&
                     <>
                         <Tooltip>
                             <TooltipTrigger asChild>
