@@ -58,7 +58,7 @@ const RechargeEntry = () => {
                 label: item?.agency_name + ' - ' + item?.phone
             })))
         } catch (error) {
-            toast.error("Failed to get agency list: " + getErrorMessage(error));
+            toast.error("Error: " + getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }
