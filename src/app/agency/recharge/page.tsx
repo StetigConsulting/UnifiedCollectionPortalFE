@@ -51,12 +51,17 @@ const RechargeEntry = () => {
 
     const getAgencyList = async () => {
         setIsLoading(true);
-        const response = await getAgenciesWithDiscom(session?.user?.discomId)
-        setAgencyList(response?.data?.map(item => ({
-            value: item?.id,
-            label: item?.agency_name + ' - ' + item?.phone
-        })))
-        setIsLoading(false)
+        try {
+            const response = await getAgenciesWithDiscom(session?.user?.discomId)
+            setAgencyList(response?.data?.map(item => ({
+                value: item?.id,
+                label: item?.agency_name + ' - ' + item?.phone
+            })))
+        } catch (error) {
+            toast.error("Failed to get agency list: " + getErrorMessage(error));
+        } finally {
+            setIsLoading(false);
+        }
     }
 
     const getAgentList = async (id: number) => {
