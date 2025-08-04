@@ -104,7 +104,7 @@ const CustomBreadcrumb: React.FC<CustomBreadcrumbProps> = ({
 
 
                 <Separator orientation="vertical" className="mr-2 h-4" />
-                {scopes?.includes('TPCollectionWebPortal:agency_balance:READ') && agencyBalanceDetail !== null &&
+                {(agencyBalanceDetail !== null && scopes?.includes('TPCollectionWebPortal:agency_balance:READ')) &&
                     <>
                         <Tooltip>
                             <TooltipTrigger asChild>
