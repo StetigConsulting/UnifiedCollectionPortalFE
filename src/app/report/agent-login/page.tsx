@@ -6,7 +6,7 @@ import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
-import { agencyStatusType, exportPicklist, exportPicklistWithPdf, formatDate, getErrorMessage, tableDataPerPage } from '@/lib/utils';
+import { agencyStatusType, exportPicklist, exportPicklistWithPdf, formatDate, getDataToDisplayInTable, getErrorMessage, tableDataPerPage } from '@/lib/utils';
 import { downloadAgentDetailsReport, downloadAgentLoginReport, downloadBillingReport, getAgentDetailsReport, getAgentLoginReport, getBillingReport } from '@/app/api-calls/report/api';
 import { useSession } from 'next-auth/react';
 import { AgentLoginReportFormData, agentLoginReportSchema } from '@/lib/zod';
@@ -76,6 +76,9 @@ const AgentLoginReport = () => {
             getAgentList(agencyId);
     }
 
+    const [currentPage, setCurrentPage] = useState(1)
+    const [totalPages, setTotalPages] = useState(1)
+
     useEffect(() => {
         getAgencyList();
     }, []);
@@ -105,6 +108,8 @@ const AgentLoginReport = () => {
             setOverflowDataMessage(response?.data?.overflowDataMessage)
             setShowTable(true)
             setIsLoading(false);
+            setCurrentPage(1);
+            setTotalPages(Math.ceil(response.data.data.length / tableDataPerPage))
         } catch (error) {
             toast.error('Error: ' + getErrorMessage(error))
         } finally {
@@ -186,7 +191,7 @@ const AgentLoginReport = () => {
     }
 
     const handlePageChange = (page: number) => {
-        getReportData({}, page)
+        setCurrentPage(page)
     };
 
     const onSubmit = (data) => {
@@ -233,9 +238,13 @@ const AgentLoginReport = () => {
             </form>
             {showTable && <div className="overflow-x-auto mt-4">
                 <ReactTable
-                    data={formatData}
+                    data={getDataToDisplayInTable(formatData, currentPage, tableDataPerPage)}
                     columns={columns}
                     hideSearchAndOtherButtons
+                    dynamicPagination={true}
+                    pageNumber={currentPage}
+                    totalPageNumber={totalPages}
+                    onPageChange={handlePageChange}
                 />
             </div>}
         </AuthUserReusableCode>

@@ -82,7 +82,7 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
                         src='/images/loader.gif' />
                 </div>
             }
-            <SidebarInset className='flex-1' style={{ WebkitBoxFlex: 1 }}>
+            <SidebarInset className='flex-1' style={{ WebkitBoxFlex: 1, overflow: 'hidden' }}>
                 <CustomBreadcrumb pageTitle={pageTitle} onSignOut={onSignOut}
                     userName={session?.user?.userName} lastLoginAt={session?.user?.lastLoginAt}
                     agencyBalanceDetail={agencyBalanceDetail} scopes={session?.user?.userScopes} routingFunction={router}>

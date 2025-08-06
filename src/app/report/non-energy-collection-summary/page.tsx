@@ -7,7 +7,7 @@ import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
 import { agentRolePicklist, dateTypePicklist, exportPicklist, getErrorMessage, tableDataPerPage, viewTypePicklist } from '@/lib/utils';
-import { downloadDailyNonEnergyCollectionReport, downloadEnergyCollectionSummaryReport, energyCollectionSummaryReport, getDailyNonEnergyCollectionReport, nonEnergyCollectionSummaryReport } from '@/app/api-calls/report/api';
+import { downloadDailyNonEnergyCollectionReport, downloadEnergyCollectionSummaryReport, downloadNonEnergyCollectionSummaryReport, energyCollectionSummaryReport, getDailyNonEnergyCollectionReport, nonEnergyCollectionSummaryReport } from '@/app/api-calls/report/api';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
 import { getAgenciesWithDiscom, getLevels, getLevelsDiscomId } from '@/app/api-calls/department/api';
 import { useSession } from 'next-auth/react';
@@ -274,7 +274,7 @@ const NonEnergyCollectionSummary = () => {
         try {
             setIsLoading(true);
             let payload = getPayload(formData)
-            const response = await downloadDailyNonEnergyCollectionReport(payload, type)
+            const response = await downloadNonEnergyCollectionSummaryReport(payload, type)
 
             const contentDisposition = response.headers["content-disposition"];
             let filename = "NonEnergyCollectionSummaryReport";

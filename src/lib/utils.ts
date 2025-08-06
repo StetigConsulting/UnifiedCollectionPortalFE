@@ -389,3 +389,7 @@ export const agencyStatusType = [
   { label: 'Active', value: 'Active' },
   { label: 'Inactive', value: 'Inactive' }
 ]
+
+export const getDataToDisplayInTable = (data, currentPage, tableDataPerPage) => {
+  return data.slice((currentPage - 1) * tableDataPerPage, currentPage * tableDataPerPage)
+}

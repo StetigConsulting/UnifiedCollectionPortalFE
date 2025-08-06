@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
 import { Button } from '@/components/ui/button';
 import { useSession } from 'next-auth/react';
-import { exportPicklist, formatDate, getErrorMessage, urlsListWithTitle } from '@/lib/utils';
+import { exportPicklist, formatDate, getDataToDisplayInTable, getErrorMessage, tableDataPerPage, urlsListWithTitle } from '@/lib/utils';
 import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import * as XLSX from 'xlsx';
 
@@ -78,6 +78,8 @@ const ViewAgency = () => {
                         })
                     })
             );
+            setCurrentPage(1);
+            setTotalPages(Math.ceil(response.data.length / tableDataPerPage))
         } catch (error) {
             console.error('Failed to get agency:', error);
         } finally {
@@ -309,6 +311,12 @@ const ViewAgency = () => {
     }
 
     const [exportTo, setExportTo] = useState('');
+    const [currentPage, setCurrentPage] = useState(1)
+    const [totalPages, setTotalPages] = useState(1)
+
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page)
+    }
 
     return (
         <AuthUserReusableCode pageTitle="View Agency" isLoading={isLoading}>
@@ -336,7 +344,7 @@ const ViewAgency = () => {
                     <CustomizedSelectInputWithLabel label='Export to' value={exportTo} list={exportPicklist}
                         onChange={handleExport} placeholder='Select' />
                 </div>}
-                data={tableData}
+                data={getDataToDisplayInTable(tableData, currentPage, tableDataPerPage)}
                 isSelectable={true}
                 onRowSelect={handleRowSelection}
                 onRowSelectButtons={
@@ -346,6 +354,10 @@ const ViewAgency = () => {
                 columns={columns}
                 hideSearchButton
                 hideExports
+                dynamicPagination={true}
+                pageNumber={currentPage}
+                totalPageNumber={totalPages}
+                onPageChange={handlePageChange}
             />
 
         </AuthUserReusableCode >

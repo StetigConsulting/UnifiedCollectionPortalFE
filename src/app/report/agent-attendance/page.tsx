@@ -6,7 +6,7 @@ import AuthUserReusableCode from '@/components/AuthUserReusableCode';
 import CustomizedInputWithLabel from '@/components/CustomizedInputWithLabel';
 import ReactTable from '@/components/ReactTable';
 import { Button } from '@/components/ui/button';
-import { exportPicklist, formatDate, getErrorMessage, tableDataPerPage } from '@/lib/utils';
+import { exportPicklist, formatDate, getDataToDisplayInTable, getErrorMessage, tableDataPerPage } from '@/lib/utils';
 import { downloadAgentAttendance, downloadDeniedEnergyConsumerReport, getAgentAttendance } from '@/app/api-calls/report/api';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
 import { getLevels, getLevelsDiscomId } from '@/app/api-calls/department/api';
@@ -421,7 +421,7 @@ const AgentAttendanceReport = () => {
 
             <div className="overflow-x-auto mb-4 mt-4">
                 {showTable && <ReactTable
-                    data={formatData.slice((currentPage - 1) * tableDataPerPage, currentPage * tableDataPerPage)}
+                    data={getDataToDisplayInTable(formatData, currentPage, tableDataPerPage)}
                     columns={columns}
                     hideSearchAndOtherButtons
                     dynamicPagination={true}
