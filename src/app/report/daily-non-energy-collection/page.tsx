@@ -25,6 +25,7 @@ const DailyAgentCollection = () => {
     const [totalPages, setTotalPages] = useState(1)
     const [dataList, setDataList] = useState([]);
     const [showTable, setShowTable] = useState(false)
+    const [exportValue, setExportValue] = useState('')
 
     const { register, control, handleSubmit, formState: { errors }, watch, setValue } = useForm<DailyCollectionEnergyFormData>({
         resolver: zodResolver(dailyCollectionEnergySheet),
@@ -337,6 +338,7 @@ const DailyAgentCollection = () => {
             toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
+            setExportValue(''); // Reset export value after export is completed
         }
     }
 
@@ -437,10 +439,11 @@ const DailyAgentCollection = () => {
                     <CustomizedSelectInputWithLabel
                         label="Export"
                         list={exportPicklist}
-                        // value={transactionId}
+                        value={exportValue}
                         onChange={(e) => {
                             const exportType = e.target.value;
-                            handleSubmit((data) => handleExportFile(data, exportType))();
+                            setExportValue(exportType);
+                            exportType && handleSubmit((data) => handleExportFile(data, exportType))();
                         }}
                     />
                 </div>

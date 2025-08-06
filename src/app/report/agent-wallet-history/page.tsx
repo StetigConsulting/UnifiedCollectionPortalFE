@@ -33,6 +33,7 @@ const AgentWalletHistory = () => {
 
     const [agencyOptions, setAgencyOptions] = useState<{ label: string; value: string,id:number }[]>([]);
     const [agentOptions, setAgentOptions] = useState<{ label: string; value: string }[]>([]);
+    const [exportValue, setExportValue] = useState('')
 
 
     const {
@@ -213,6 +214,7 @@ const AgentWalletHistory = () => {
             toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
+            setExportValue(''); // Reset export value after export is completed
         }
     }
 
@@ -290,10 +292,11 @@ const AgentWalletHistory = () => {
                     label="Export"
                     placeholder='Export To'
                     list={exportPicklist}
-                    // value={transactionId}
+                    value={exportValue}
                     onChange={(e) => {
                         const exportType = e.target.value;
-                        handleSubmit((data) => handleExportFile(data, exportType))();
+                        setExportValue(exportType);
+                        exportType && handleSubmit((data) => handleExportFile(data, exportType))();
                     }}
                 />
             </div>

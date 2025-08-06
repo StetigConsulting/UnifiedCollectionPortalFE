@@ -225,7 +225,7 @@ const DigitalPaymentCollectionReport = () => {
             value={exportType}
             onChange={(e) => {
               const exportType = e.target.value;
-              handleExportFile(exportType);
+              exportType && handleSubmit((data) => handleExportFile(exportType))();
             }}
           />
         </div>
