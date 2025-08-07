@@ -174,7 +174,7 @@ const BillingReport = () => {
                         value={exportType}
                         onChange={(e) => {
                             const exportType = e.target.value;
-                            handleSubmit((data) => handleExportFile(data, exportType))();
+                            exportType && handleSubmit((data) => handleExportFile(data, exportType))();
                         }}
                     />
                 </div>

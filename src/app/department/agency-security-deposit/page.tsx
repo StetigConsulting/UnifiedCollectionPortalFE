@@ -555,7 +555,10 @@ const AgencySecurityDeposit = () => {
               placeholder="Export to"
               list={exportPicklist}
               value={exportType}
-              onChange={(e) => handleExportFile(e.target.value)}
+              onChange={(e) => {
+                const exportType = e.target.value;
+                exportType && handleExportFile(exportType);
+              }}
               containerClass=""
               disabled={exportLoading}
               hideLabel

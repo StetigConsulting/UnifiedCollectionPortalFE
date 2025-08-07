@@ -27,6 +27,7 @@ const DailyEnergyCollectionSummary = () => {
     const [totalPages, setTotalPages] = useState(1)
     const [dataList, setDataList] = useState([]);
     const [showTable, setShowTable] = useState(false)
+    const [exportValue, setExportValue] = useState('')
 
     const { register, control, handleSubmit, formState: { errors }, watch, setValue } = useForm<ViewCollectionSummarySchemaData>({
         resolver: zodResolver(viewCollectionSummarySchema),
@@ -304,6 +305,7 @@ const DailyEnergyCollectionSummary = () => {
             toast.error('Error: ' + getErrorMessage(error));
         } finally {
             setIsLoading(false);
+            setExportValue('');
         }
     }
 
@@ -439,10 +441,11 @@ const DailyEnergyCollectionSummary = () => {
                     <CustomizedSelectInputWithLabel
                         label="Export"
                         list={exportPicklist}
-                        // value={transactionId}
+                        value={exportValue}
                         onChange={(e) => {
                             const exportType = e.target.value;
-                            handleSubmit((data) => handleExportFile(data, exportType))();
+                            setExportValue(exportType);
+                            exportType && handleSubmit((data) => handleExportFile(data, exportType))();
                         }}
                     />
                 </div>
