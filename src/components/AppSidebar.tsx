@@ -476,6 +476,12 @@ const navData = {
           icon: reportIcon,
           path: '/report/digital-payment-collection',
         },
+        {
+          title: 'Agency Payment Modewise Summary',
+          url: '/report/agency-payment-modewise-summary',
+          icon: reportIcon,
+          path: '/report/agency-payment-modewise-summary',
+        },
       ]
     },
     // {
