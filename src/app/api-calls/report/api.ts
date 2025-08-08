@@ -743,3 +743,33 @@ export const downloadDigitalPaymentCollectionReport = async (data: any, type: st
     throw error?.response?.data;
   }
 };
+
+export const getAgencyPaymentModewiseSummaryReport = async (data: any) => {
+  try {
+    const response = await api.post(
+      "/v1/common-reports/agency-pay-mode-wise-report/fetch",
+      data
+    );
+    return response.data;
+  } catch (error) {
+    throw error?.response?.data;
+  }
+};
+
+export const downloadAgencyPaymentModewiseSummaryReport = async (data: any, type: string) => {
+  try {
+    const response = await api.post(
+      `/v1/common-reports/agency-pay-mode-wise-report/download/${type}`,
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        responseType: "blob",
+      }
+    );
+    return response;
+  } catch (error) {
+    throw error?.response?.data;
+  }
+};

@@ -2849,3 +2849,26 @@ export const digitalPaymentCollectionSchema = z
   });
 
 export type DigitalPaymentCollectionFormData = z.infer<typeof digitalPaymentCollectionSchema>;
+
+export const agencyPaymentModewiseSummarySchema = z
+  .object({
+    fromDate: z.string().nonempty({ message: 'From Date is required' }),
+    toDate: z.string().nonempty({ message: 'To Date is required' }),
+    agency: z.string().optional(),
+    pageSize: z.number().min(1, { message: 'Page size must be at least 1' }),
+  })
+  .superRefine((data, ctx) => {
+    if (data.fromDate && data.toDate) {
+      const from = new Date(data.fromDate);
+      const to = new Date(data.toDate);
+      if (from > to) {
+        ctx.addIssue({
+          path: ["toDate"],
+          code: z.ZodIssueCode.custom,
+          message: "\'From Date\' should be before or the same as \'To Date\'",
+        });
+      }
+    }
+  });
+
+export type AgencyPaymentModewiseSummaryFormData = z.infer<typeof agencyPaymentModewiseSummarySchema>;

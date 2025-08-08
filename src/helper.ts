@@ -359,6 +359,10 @@ export const listOfUrlForScopes = [
     url: '/report/digital-payment-collection',
     backendScopeName: "TPCollectionWebPortal:digital_collection_report:READ",
   },
+  {
+    url: '/report/agency-payment-modewise-summary',
+    backendScopeName: "TPCollectionWebPortal:agency_pay_mode_wise_report:READ",
+  },
   { url: "/", backendScopeName: "" },
 ];
 
