@@ -52,10 +52,10 @@ const ViewAgency = () => {
                     ?.map((item) => {
                         let data = [];
                         if (item.collection_type_energy) {
-                            data.push('Enengy')
+                            data.push('Energy')
                         }
                         if (item.collection_type_non_energy) {
-                            data.push('Non-Enengy')
+                            data.push('Non-Energy')
                         }
 
                         item.non_energy_types.map((mode) => data.push(mode.type_name))
