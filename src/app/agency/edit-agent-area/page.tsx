@@ -331,7 +331,7 @@ const EditAgentAreaRoleForm = () => {
                                 setValue('agentRole', '')
                                 setShowRestFields(false)
                             }}
-                            {...register('agentMobileNumber', { valueAsNumber: true })}
+                            {...register('agentMobileNumber')}
                             errors={errors.agentMobileNumber}
                         />
                     </div>

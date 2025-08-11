@@ -2855,7 +2855,7 @@ export const agencyPaymentModewiseSummarySchema = z
     fromDate: z.string().nonempty({ message: 'From Date is required' }),
     toDate: z.string().nonempty({ message: 'To Date is required' }),
     agency: z.string().optional(),
-    pageSize: z.number().min(1, { message: 'Page size must be at least 1' }),
+    pageSize: z.number({ invalid_type_error: "Page size is required" }).min(1, { message: 'Page size must be at least 1' }),
   })
   .superRefine((data, ctx) => {
     if (data.fromDate && data.toDate) {
