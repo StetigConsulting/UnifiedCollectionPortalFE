@@ -63,7 +63,7 @@ const CreateNewLevelPopup: React.FC<CreateNewLevelPopupProps> = ({ fetchData, cu
             setIsDialogOpen(false);
             fetchData();
         } catch (error) {
-            toast.error('Error: ', getErrorMessage(error));
+            toast.error('Error: '+ getErrorMessage(error));
         } finally {
             setIsSaving(false);
         }

@@ -112,7 +112,7 @@ const AddNewSupervisor = () => {
             toast.success('Supervisor activated successfully');
             await getAllListOfSupervisor();
         } catch (error) {
-            toast.error('Error ', getErrorMessage(error));
+            toast.error('Error: '+ getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }
@@ -128,7 +128,7 @@ const AddNewSupervisor = () => {
             toast.success('Supervisor deactivated successfully');
             await getAllListOfSupervisor();
         } catch (error) {
-            toast.error('Error ', getErrorMessage(error));
+            toast.error('Error: '+ getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }

@@ -56,7 +56,7 @@ const CreateUserForm = () => {
                 };
             }));
         } catch (error) {
-            console.error('Error fetching user roles:', getErrorMessage(error));
+            console.error('Error fetching user roles: '+ getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }

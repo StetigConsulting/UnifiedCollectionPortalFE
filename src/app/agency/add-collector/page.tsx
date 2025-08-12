@@ -331,7 +331,7 @@ const AddCounterCollector = () => {
             );
 
         } catch (error) {
-            console.error("Failed to get agency:", getErrorMessage(error));
+            console.error("Failed to get agency: "+ getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }
