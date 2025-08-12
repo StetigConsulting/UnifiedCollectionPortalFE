@@ -259,7 +259,7 @@ const TransactionDetailsReport = () => {
             setCurrentPage(page);
             setTotalPages(response.data.totalPages || 1);
         } catch (error) {
-            toast.error('Error:', getErrorMessage(error));
+            toast.error('Error: ' + getErrorMessage(error));
             setShowTable(false);
         } finally {
             setIsLoading(false);
