@@ -122,7 +122,7 @@ const ViewAgency = () => {
             { label: 'Agency Name', key: 'agencyName', sortable: true },
             { label: 'Current Balance', key: 'current_balance', sortable: true, align: 'center' },
             { label: 'Balance allocated to agents', key: 'agents_allocated_balance', sortable: true, align: 'center' },
-            { label: 'Balance available for recharge', key: 'balance_available_for_recharge', sortable: true, align: 'center' },
+            { label: 'Balance available for Agent Recharge', key: 'balance_available_for_recharge', sortable: true, align: 'center' },
             { label: 'Address', key: 'agencyAddress', sortable: true },
             { label: 'Contact Person', key: 'contactPerson', sortable: true },
             { label: 'Phone', key: 'phone', sortable: true },

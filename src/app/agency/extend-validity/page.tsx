@@ -104,14 +104,14 @@ const ExtendValidity = () => {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                     <CustomizedSelectInputWithLabel
-                        label="Collector Name"
+                        label="Agent Name"
                         list={agencies}
                         required={true}
                         errors={errors.collectorName}
                         {...register("collectorName")}
                     />
                     <CustomizedInputWithLabel
-                        label="Collector ID"
+                        label="Agent ID"
                         required={true}
                         errors={errors.collectorId}
                         disabled

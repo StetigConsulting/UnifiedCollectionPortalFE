@@ -1992,6 +1992,7 @@ export const viewCollectionSummarySchema = z
     toDate: z.string().min(1, "To Date is required"),
     dateType: z.string().min(1, "Date Type is required"),
     viewType: z.string().min(1, "View Type is required"),
+    collectionMode: z.array(z.string()).optional().default([]),
     workingLevel: z.any().optional(),
     circle: z.array(z.number()).optional(),
     division: z.array(z.number()).optional(),

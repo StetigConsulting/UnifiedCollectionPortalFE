@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { agentRolePicklist, dateTypePicklist, exportPicklist, getErrorMessage, tableDataPerPage, viewTypePicklist } from '@/lib/utils';
 import { downloadDailyNonEnergyCollectionReport, downloadEnergyCollectionSummaryReport, energyCollectionSummaryReport, getDailyNonEnergyCollectionReport } from '@/app/api-calls/report/api';
 import CustomizedSelectInputWithLabel from '@/components/CustomizedSelectInputWithLabel';
-import { getAgenciesWithDiscom, getLevels, getLevelsDiscomId } from '@/app/api-calls/department/api';
+import { getAgenciesWithDiscom, getAllPaymentModes, getLevels, getLevelsDiscomId } from '@/app/api-calls/department/api';
 import { useSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -18,6 +18,7 @@ import { ViewCollectionSummarySchemaData, viewCollectionSummarySchema } from '@/
 import CustomizedMultipleSelectInputWithLabelNumber from '@/components/CustomizedMultipleSelectInputWithLabelNumber';
 import ReactTableGroup from '@/components/ReactTableGroup';
 import ReactGroupTable from '@/components/ReactTableGroup';
+import CustomizedMultipleSelectInputWithLabelString from '@/components/CustomizedMultipleSelectInputWithLabelString';
 
 const DailyEnergyCollectionSummary = () => {
     const { data: session } = useSession()
@@ -41,11 +42,26 @@ const DailyEnergyCollectionSummary = () => {
         }
     });
 
+    const [permissions, setPermissions] = useState([])
+
     useEffect(() => {
         getWorkingLevel()
         getAgencyList()
         // getReportData();
         getCircles(session?.user?.discomId)
+
+        getAllPaymentModes().then((data) => {
+            setPermissions(
+                data?.data
+                    ?.filter((ite) => ite.mode_type == "Collection")
+                    ?.map((ite) => {
+                        return {
+                            label: ite.mode_name,
+                            value: ite.mode_name,
+                        };
+                    })
+            );
+        }).catch((err) => { })
     }, []);
 
     const [levelNameMappedWithId, setLevelNameMappedWithId] = useState<Record<string, number>>({})
@@ -141,6 +157,7 @@ const DailyEnergyCollectionSummary = () => {
             },
             ...data?.agencyName && { agency_name: data?.agencyName },
             ...data?.viewType && { summary_type: data?.viewType },
+            ...data?.collectionMode && { pay_mode: data?.collectionMode },
             office_structure_id: data.workingLevel === levelNameMappedWithId.CIRCLE
                 ? data?.circle?.map(Number)?.[0]
                 : data.workingLevel === levelNameMappedWithId.DIVISION
@@ -375,6 +392,7 @@ const DailyEnergyCollectionSummary = () => {
                         {...register('dateType')} errors={errors?.dateType} />
                     <CustomizedSelectInputWithLabel label='View type' list={viewTypePicklist}
                         {...register('viewType')} errors={errors?.viewType} />
+
                     <CustomizedSelectInputWithLabel label='Applicable Level' list={workingLevelList}
                         {...register('workingLevel', { valueAsNumber: true })}
                         onChange={(e) => handleWorkingLevelChange(e)} errors={errors?.workingLevel} />
@@ -434,6 +452,12 @@ const DailyEnergyCollectionSummary = () => {
 
                     <CustomizedSelectInputWithLabel label='Agency Name' list={agencyList}
                         {...register('agencyName')} errors={errors?.agencyName} />
+                    <CustomizedMultipleSelectInputWithLabelString label='Collection Mode' list={permissions}
+                        errors={errors?.collectionMode}
+                        value={watch('collectionMode') || []}
+                        multi={true}
+                        onChange={(selectedValues) => setValue('collectionMode', selectedValues)}
+                    />
                     <CustomizedInputWithLabel label='Page size' {...register('pageSize', { valueAsNumber: true })} errors={errors?.pageSize} />
                     <div className='mt-6'>
                         <Button variant='default' type='submit'>Search</Button>

@@ -78,7 +78,9 @@ const Recharge = () => {
         try {
             const response = await getAgenciesWithDiscomWithBalance(session?.user?.discomId);
             setAgencyList(
-                response?.data?.map((item) => ({
+                response?.data
+                ?.sort((a,b) => new Date(b.created_on).getTime() - new Date(a.created_on).getTime())
+                ?.map((item) => ({
                     ...item,
                     label: item.agency_name,
                     value: item.id,
@@ -225,7 +227,7 @@ const Recharge = () => {
                         label="Agency Balance Available For Recharge"
                         errors={errors.balanceAvailableForRecharge}
                         containerClass=""
-                        placeholder="Agency Balance Available For Recharge"
+                        placeholder="Agency Balance Available For Agent Recharge"
                         {...register("balanceAvailableForRecharge")}
                         disabled
                     />
