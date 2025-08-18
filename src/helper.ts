@@ -126,6 +126,10 @@ export const listOfUrlForScopes = [
     backendScopeName: "TPCollectionWebPortal:business_rules:ALL",
   },
   {
+    url: "/admin/color-coding/digital-payment-mode",
+    backendScopeName: "TPCollectionWebPortal:business_rules:ALL",
+  },
+  {
     url: "/admin/mode-of-payment",
     backendScopeName: "TPCollectionWebPortal:business_rules:ALL",
   },

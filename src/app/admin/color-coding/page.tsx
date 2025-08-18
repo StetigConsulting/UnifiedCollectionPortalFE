@@ -26,6 +26,9 @@ const ColorCodingLogicTable = () => {
                     <Button variant="default" className="w-full py-8 text-lg" onClick={() => router.push('/admin/color-coding/ecl-flag-customer')}>
                         <FileUser className="h-5 w-5" /> Bill Background Color Coding based on ECL Flagged Customers
                     </Button>
+                    <Button variant="default" className="w-full py-8 text-lg" onClick={() => router.push('/admin/color-coding/digital-payment-mode')}>
+                        <FileUser className="h-5 w-5" /> Bill Background Color Coding Based on Last Payment Mode (Digital)
+                    </Button>
                 </div>
             </div>
             {/* </div> */}
