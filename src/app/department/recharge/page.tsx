@@ -224,7 +224,7 @@ const Recharge = () => {
                         disabled
                     />
                     <CustomizedInputWithLabel
-                        label="Agency Balance Available For Recharge"
+                        label="Agency Balance Available For Agent Recharge"
                         errors={errors.balanceAvailableForRecharge}
                         containerClass=""
                         placeholder="Agency Balance Available For Agent Recharge"
