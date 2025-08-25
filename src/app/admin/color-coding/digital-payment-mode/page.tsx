@@ -10,7 +10,7 @@ import { colorCodingEclSchema } from '@/lib/zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
-import { createColorCodingEcl, deleteBusinessRule, getColorCodingEclFlag, updateColorCodingEcl } from '@/app/api-calls/admin/api';
+import { createColorCodingEcl, deleteBusinessRule, getColorCodingDigitalPaymentMode, updateColorCodingEcl } from '@/app/api-calls/admin/api';
 import { useSession } from 'next-auth/react';
 import { getErrorMessage } from '@/lib/utils';
 
@@ -45,7 +45,7 @@ const ECLFlaggedCustomer = () => {
                 discom_id: session?.user?.discomId,
                 office_structure_id: session?.user?.discomId,
                 rule_level: "Discomwise",
-                rule_name: "ECL_FLAGGED_CUSTOMER_COLOR_CODING",
+                rule_name: "DIGITAL_LAST_PAYMENT_MODE_CUSTOMER_COLOR_CODING",
                 json_rule: {
                     bg_color_code: data.backgroundColor
                 }
@@ -57,7 +57,7 @@ const ECLFlaggedCustomer = () => {
             } else {
                 response = await createColorCodingEcl(payload);
             }
-            toast.success("ECL Flagged Customer's Bill Background Updated Successfully");
+            toast.success("Digital Payment Mode Background Updated Successfully");
             router.push('/admin/color-coding');
         } catch (error) {
             toast.error('Error: ' + error?.error);
@@ -73,13 +73,13 @@ const ECLFlaggedCustomer = () => {
     };
 
     useEffect(() => {
-        getEclFlagCustomer()
+        getDigitalPaymentMode()
     }, [])
 
-    const getEclFlagCustomer = async () => {
+    const getDigitalPaymentMode = async () => {
         setIsLoading(true);
         try {
-            const response = await getColorCodingEclFlag(session?.user?.discomId);
+            const response = await getColorCodingDigitalPaymentMode(session?.user?.discomId);
             setValue('backgroundColor', response?.data?.[0]?.json_rule?.bg_color_code || '');
             setValue('id', response?.data?.[0]?.id || null)
         } catch (error) {
@@ -95,8 +95,8 @@ const ECLFlaggedCustomer = () => {
         setIsLoading(true);
         try {
             await deleteBusinessRule(formData?.id);
-            toast.success('ECL flag deleted successfully');
-            getEclFlagCustomer()
+            toast.success('Digital Payment Mode deleted successfully');
+            getDigitalPaymentMode()
         } catch (error) {
             toast.error('Error: ' + getErrorMessage(error));
         } finally {

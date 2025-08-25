@@ -135,6 +135,16 @@ const getColorCodingEclFlag = async (id: number) => {
     }
 };
 
+export const getColorCodingDigitalPaymentMode = async (id: number) => {
+    try {
+        const response = await api.get(`/v1/business-rules/discom/${id}/rule-name/DIGITAL_LAST_PAYMENT_MODE_CUSTOMER_COLOR_CODING`);
+        return response.data;
+    } catch (error: any) {
+
+        throw error?.response?.data
+    }
+};
+
 
 const createColorCodingBillBasis = async (data: CreateColorCodingBillBasis) => {
     try {
