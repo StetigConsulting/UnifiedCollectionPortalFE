@@ -21,6 +21,21 @@ export const encryptParamsForMMI = (params) => {
   return encryptedBase64
 }
 
+export const decryptParamsForMMI = (params) => {
+  const key = CryptoJS.enc.Utf8.parse("o0cy08efybyno4vb6frq96dej0k2d2f4");
+  const iv = CryptoJS.enc.Utf8.parse("e2iznwh2dpr6yjhg");
+
+  const decrypted = CryptoJS.AES.decrypt(params, key, {
+    iv: iv,
+    mode: CryptoJS.mode.CBC,
+    padding: CryptoJS.pad.Pkcs7
+  });
+
+  const decryptedString = decrypted.toString(CryptoJS.enc.Utf8);
+
+  return decryptedString
+}
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }

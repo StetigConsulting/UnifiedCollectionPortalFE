@@ -13,7 +13,7 @@ export async function middleware(request: any) {
   const isAuthenticated = !!session?.user;
   let landingPage = getLandingPageUrl(session?.user?.userScopes);
 
-  if (nextUrl.pathname === "/debug-env") {
+  if (nextUrl.pathname === "/debug-env" || nextUrl.pathname==='/decrypt-params') {
     return NextResponse.next();
   }
 
