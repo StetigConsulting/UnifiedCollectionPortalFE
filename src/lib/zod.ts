@@ -2238,10 +2238,11 @@ export const agentAttendanceReport = z
   .object({
     fromDate: z.string().min(1, "From Date is required"),
     toDate: z.string().min(1, "To Date is required"),
-    agentType: z.number({
-      invalid_type_error: "Agent type is required",
-      required_error: "Agent type is required",
-    }),
+    agentType: z.any().optional(),
+    // agentType: z.number({
+    //   invalid_type_error: "Agent type is required",
+    //   required_error: "Agent type is required",
+    // }),
     workingLevel: z.any().nullable(),
     circle: z.array(z.number()).optional(),
     division: z.array(z.number()).optional(),

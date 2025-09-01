@@ -119,6 +119,7 @@ const AgentAttendanceReport = () => {
         { label: 'Agent Type', key: 'agent_type', sortable: true },
         { label: 'Login', key: 'login', sortable: true },
         { label: 'Logout', key: 'logout', sortable: true },
+        { label: 'Working Hours', key: 'working_hours', sortable: true },
         { label: 'Last Denial Remark Time', key: 'last_denial_remark', sortable: true },
         { label: 'Total MR', key: 'total_MR', sortable: true },
         { label: 'Total Amt', key: 'total_collection', sortable: true },
