@@ -366,6 +366,7 @@ const EditAgentAreaRoleForm = () => {
                             placeholder="Select Working level"
                             list={workingLevel}
                             {...register("workingLevel", { valueAsNumber: true, onChange: handleWorkingLevelChange })}
+                            value={formData?.workingLevel || ''}
                         />
                         {formData.workingLevel != null && !Number.isNaN(formData.workingLevel) && (
                             (agencyData.working_level == levelIdMapWithLevelName?.CIRCLE)) &&
