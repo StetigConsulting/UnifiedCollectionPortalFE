@@ -773,3 +773,33 @@ export const downloadAgencyPaymentModewiseSummaryReport = async (data: any, type
     throw error?.response?.data;
   }
 };
+
+export const getSummaryReport = async (data: any) => {
+  try {
+    const response = await api.post(
+      "/v1/common-reports/summary-report/fetch",
+      data
+    );
+    return response.data;
+  } catch (error) {
+    throw error?.response?.data;
+  }
+};
+
+export const downloadSummaryReport = async (data: any, type: string) => {
+  try {
+    const response = await api.post(
+      `/v1/common-reports/summary-report/download/${type}`,
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        responseType: "blob",
+      }
+    );
+    return response;
+  } catch (error) {
+    throw error?.response?.data;
+  }
+};

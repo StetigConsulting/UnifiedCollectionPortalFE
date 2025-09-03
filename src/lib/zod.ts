@@ -2874,3 +2874,48 @@ export const agencyPaymentModewiseSummarySchema = z
   });
 
 export type AgencyPaymentModewiseSummaryFormData = z.infer<typeof agencyPaymentModewiseSummarySchema>;
+
+export const summaryReportSchema = z
+  .object({
+    fromDate: z.string().min(1, "From Date is required"),
+    toDate: z.string().min(1, "To Date is required"),
+    applicableLevel: z.any().optional(),
+    circle: z.array(z.number()).optional(),
+    division: z.array(z.number()).optional(),
+    subDivision: z.array(z.number()).optional(),
+    section: z.array(z.number()).optional(),
+    reportType: z.string().nonempty("Report Type is required"),
+    collectorType: z.number().optional(),
+    pageSize: z.number({ invalid_type_error: "Page size is required" }).min(1, { message: 'Page size must be at least 1' }),
+    levelWithIdMap: z.any().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.fromDate && data.toDate) {
+      const from = new Date(data.fromDate);
+      const to = new Date(data.toDate);
+      if (from > to) {
+        ctx.addIssue({
+          path: ["toDate"],
+          code: z.ZodIssueCode.custom,
+          message: "To Date must be after From Date",
+        });
+      }
+    }
+    
+    if (data.applicableLevel && data.applicableLevel !== null) {
+      if (data.applicableLevel === data.levelWithIdMap?.CIRCLE && (!data.circle || data.circle.length === 0)) {
+        ctx.addIssue({ path: ["circle"], code: z.ZodIssueCode.custom, message: "Circle is required" });
+      }
+      if (data.applicableLevel === data.levelWithIdMap?.DIVISION && (!data.division || data.division.length === 0)) {
+        ctx.addIssue({ path: ["division"], code: z.ZodIssueCode.custom, message: "Division is required" });
+      }
+      if (data.applicableLevel === data.levelWithIdMap?.SUB_DIVISION && (!data.subDivision || data.subDivision.length === 0)) {
+        ctx.addIssue({ path: ["subDivision"], code: z.ZodIssueCode.custom, message: "Sub Division is required" });
+      }
+      if (data.applicableLevel === data.levelWithIdMap?.SECTION && (!data.section || data.section.length === 0)) {
+        ctx.addIssue({ path: ["section"], code: z.ZodIssueCode.custom, message: "Section is required" });
+      }
+    }
+  });
+
+export type SummaryReportData = z.infer<typeof summaryReportSchema>;

@@ -405,6 +405,13 @@ export const agencyStatusType = [
   { label: 'Inactive', value: 'Inactive' }
 ]
 
+export const summaryReportTypePicklist = [
+  { label: 'Collector Summary', value: 'collector_summary' },
+  { label: 'Agency Summary', value: 'agency_summary' },
+  { label: 'Division Summary', value: 'division_summary' },
+  { label: 'Circle Summary', value: 'circle_summary' },
+]
+
 export const getDataToDisplayInTable = (data, currentPage, tableDataPerPage) => {
   return data.slice((currentPage - 1) * tableDataPerPage, currentPage * tableDataPerPage)
 }
