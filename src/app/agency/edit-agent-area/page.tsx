@@ -162,6 +162,7 @@ const EditAgentAreaRoleForm = () => {
                 setValue('workingLevel', (response.data.working_level))
                 await handleSetAllLevelData(response.data)
                 await getAgencyData(response?.data?.agency?.id, response?.data?.collector_role)
+                setValue('workingLevel', (response.data.working_level))
                 setValue('agentRole', response.data.collector_role)
                 setShowRestFields(true)
             } catch (error) {
