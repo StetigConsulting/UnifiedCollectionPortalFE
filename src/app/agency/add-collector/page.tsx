@@ -165,7 +165,7 @@ const AddCounterCollector = () => {
                 "collection_type_energy": data.collectionType.includes('Energy'),
                 "collection_type_non_energy": data.collectionType.includes('Non Energy'),
                 "is_active": true,
-                "non_energy_types": data.collectionType.includes('Non Energy') && data.nonEnergy,
+                ...(data.collectionType.includes('Non Energy') && { 'non_energy_types': data.nonEnergy }),
                 "working_level_office": data.workingLevel === levelNameMappedWithId.CIRCLE
                     ? data?.circle?.[0]
                     : data.workingLevel === levelNameMappedWithId.DIVISION
