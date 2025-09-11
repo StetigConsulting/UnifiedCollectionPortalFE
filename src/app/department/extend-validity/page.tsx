@@ -366,7 +366,6 @@ const ExtendValidity = () => {
                     <CustomizedInputWithLabel
                         label="Validity To Date"
                         errors={errors.newToValidity}
-                        containerClass=""
                         placeholder="Choose Validity Date"
                         type="date"
                         required

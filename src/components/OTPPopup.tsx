@@ -71,11 +71,13 @@ const OTPPopup: React.FC<OTPPopupProps> = ({ sendOTP, setResendTimer, isOpen, se
             const result = await response.json();
             if (response.ok) {
                 let userDetails = result?.data?.data
-                const userSignIn = await handleCredentialsSignin({
+                
+                await handleCredentialsSignin({
                     access_token: userDetails?.access_token,
                     expires_in: userDetails?.expires_in,
                     refresh_token: userDetails?.refresh_token
                 })
+                
                 const session = await getSession();
                 let landingPage = getLandingPageUrl(session?.user?.userScopes)
                 router.push(landingPage)
@@ -85,7 +87,6 @@ const OTPPopup: React.FC<OTPPopupProps> = ({ sendOTP, setResendTimer, isOpen, se
 
         } catch (error) {
             console.error("Error: ", error)
-        } finally {
             setIsValidating(false);
         }
     };
