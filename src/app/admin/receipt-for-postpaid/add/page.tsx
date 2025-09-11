@@ -321,8 +321,7 @@ const AddReceiptsForPostpaid = () => {
                                 />
                                 <div className="col-span-2 flex items-center space-x-2">
                                     <input type="checkbox"
-                                        {...register(`receipts.${index}.allowSecondReceipt`)}
-                                        disabled={watch(`receipts.${index}.receiptsPerDay`) != 1} />
+                                        {...register(`receipts.${index}.allowSecondReceipt`)} />
                                     <label>Second receipt is allowed with different payment mode</label>
                                 </div>
                             </div>
@@ -349,8 +348,7 @@ const AddReceiptsForPostpaid = () => {
                                 />
                                 <div className="flex items-center space-x-2 col-span-2">
                                     <input type="checkbox"
-                                        {...register(`receipts.${index}.allowSecondReceipt`)}
-                                        disabled={watch(`receipts.${index}.receiptsPerDay`) != 1} />
+                                        {...register(`receipts.${index}.allowSecondReceipt`)} />
                                     <label>Second receipt is allowed with different payment mode</label>
                                 </div>
                             </div>
