@@ -2,6 +2,8 @@ import { handleCredentialsSignin } from "@/app/actions/authActions";
 import axios from "axios";
 import { getSession, signOut } from "next-auth/react";
 import { toast } from "sonner";
+import { getAccessToken, getRefreshToken, clearCache, setTokens } from "./token-manager";
+import { clientLogout } from "./logout-utils";
 
 const api = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_BASE_URL_FRONTEND,
@@ -29,10 +31,11 @@ const refreshAccessToken = async (refreshToken: string) => {
             expires_in: refreshedTokens.expires_in,
         });
 
+
         return {
             accessToken: refreshedTokens.access_token,
             refreshToken: refreshedTokens.refresh_token ?? refreshToken,
-            tokenExpiry: refreshedTokens.expires_in,
+            tokenExpiry: Date.now() + refreshedTokens.expires_in,
         };
     } catch (error) {
         if (error.response?.status === 401) {
@@ -54,9 +57,22 @@ const refreshAccessToken = async (refreshToken: string) => {
 
 api.interceptors.request.use(
     async (config) => {
-        const session = await getSession();
-        if (session && session.user.accessToken) {
-            config.headers["Authorization"] = `Bearer ${session.user.accessToken}`;
+        // Use cached token instead of calling getSession()
+        const accessToken = getAccessToken();
+        if (accessToken) {
+            config.headers["Authorization"] = `Bearer ${accessToken}`;
+        } else {
+            // Only call getSession() if cache is empty (fallback)
+            const session = await getSession();
+            if (session && session.user.accessToken) {
+                config.headers["Authorization"] = `Bearer ${session.user.accessToken}`;
+                // Update cache with session data
+                setTokens(
+                    session.user.accessToken,
+                    session.user.refreshToken,
+                    session.user.tokenExpiry || (Date.now() + 60 * 60 * 1000)
+                );
+            }
         }
         return config;
     },
@@ -72,16 +88,32 @@ api.interceptors.response.use(
             originalRequest._retry = true;
 
             try {
-                const session = await getSession();
-
-                const newTokens = await refreshAccessToken(session?.user?.refreshToken);
-
-                originalRequest.headers.Authorization = `Bearer ${newTokens.accessToken}`;
-                return api(originalRequest);
+                // Use cached refresh token instead of calling getSession()
+                const refreshToken = getRefreshToken();
+                
+                if (!refreshToken) {
+                    // Fallback to session if cache is empty
+                    const session = await getSession();
+                    if (!session?.user?.refreshToken) {
+                        throw new Error("No refresh token available");
+                    }
+                    const newTokens = await refreshAccessToken(session.user.refreshToken);
+                    if (newTokens) {
+                        originalRequest.headers.Authorization = `Bearer ${newTokens.accessToken}`;
+                        return api(originalRequest);
+                    }
+                } else {
+                    const newTokens = await refreshAccessToken(refreshToken);
+                    if (newTokens) {
+                        originalRequest.headers.Authorization = `Bearer ${newTokens.accessToken}`;
+                        return api(originalRequest);
+                    }
+                }
+                
+                throw new Error("Failed to refresh token");
             } catch (refreshError) {
                 toast.error("Your session has expired. Please log in again.");
-                await signOut();
-                window.location.href = '/';
+                await clientLogout(false);
                 return Promise.reject(refreshError);
             }
         }
