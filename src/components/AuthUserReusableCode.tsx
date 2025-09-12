@@ -9,6 +9,7 @@ import { getAgencyRechargeableBalance } from '@/app/api-calls/department/api'
 import { handleSignOut } from '@/app/actions/authActions'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
+import { clearCache } from '@/lib/token-manager'
 
 interface AuthUserReusableCodeProps {
     children: React.ReactNode;
@@ -59,6 +60,8 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
 
     const onSignOut = async (event: React.MouseEvent) => {
         event.preventDefault();
+        // Clear token cache from localStorage before signout
+        clearCache();
         await handleSignOut();
     };
 

@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { useRouter } from 'next/navigation';
 import { handleSignOut } from '@/app/actions/authActions';
+import { clearCache } from '@/lib/token-manager';
 
 interface UserClientProps {
     session: Session | null;
@@ -17,6 +18,7 @@ const UserClient: React.FC<UserClientProps> = ({ session }) => {
     const router = useRouter();
 
     const onSignOut = async () => {
+        clearCache(); // Clear token cache before signout
         await handleSignOut();
     };
     if (session?.user) {

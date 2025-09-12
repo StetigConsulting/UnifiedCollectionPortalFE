@@ -25,17 +25,25 @@ const refreshAccessToken = async (refreshToken: string) => {
         if (!response.data || !refreshedTokens?.access_token) {
             throw new Error("Failed to refresh token");
         }
+        // Update tokens in cache immediately
+        const tokenExpiry = Date.now() + refreshedTokens.expires_in;
+        setTokens(
+            refreshedTokens.access_token,
+            refreshedTokens.refresh_token ?? refreshToken,
+            tokenExpiry
+        );
+
+        // Also update NextAuth session
         await handleCredentialsSignin({
             access_token: refreshedTokens.access_token,
             refresh_token: refreshedTokens.refresh_token ?? refreshToken,
             expires_in: refreshedTokens.expires_in,
         });
 
-
         return {
             accessToken: refreshedTokens.access_token,
             refreshToken: refreshedTokens.refresh_token ?? refreshToken,
-            tokenExpiry: Date.now() + refreshedTokens.expires_in,
+            tokenExpiry: tokenExpiry,
         };
     } catch (error) {
         if (error.response?.status === 401) {
@@ -57,23 +65,13 @@ const refreshAccessToken = async (refreshToken: string) => {
 
 api.interceptors.request.use(
     async (config) => {
-        // Use cached token instead of calling getSession()
+        // Use cached token - no need to call getSession()
         const accessToken = getAccessToken();
         if (accessToken) {
             config.headers["Authorization"] = `Bearer ${accessToken}`;
-        } else {
-            // Only call getSession() if cache is empty (fallback)
-            const session = await getSession();
-            if (session && session.user.accessToken) {
-                config.headers["Authorization"] = `Bearer ${session.user.accessToken}`;
-                // Update cache with session data
-                setTokens(
-                    session.user.accessToken,
-                    session.user.refreshToken,
-                    session.user.tokenExpiry || (Date.now() + 60 * 60 * 1000)
-                );
-            }
         }
+        // If no cached token, let the request fail with 401
+        // This will trigger the refresh logic or redirect to login
         return config;
     },
     (error) => Promise.reject(error)
@@ -88,26 +86,17 @@ api.interceptors.response.use(
             originalRequest._retry = true;
 
             try {
-                // Use cached refresh token instead of calling getSession()
+                // Use cached refresh token
                 const refreshToken = getRefreshToken();
                 
                 if (!refreshToken) {
-                    // Fallback to session if cache is empty
-                    const session = await getSession();
-                    if (!session?.user?.refreshToken) {
-                        throw new Error("No refresh token available");
-                    }
-                    const newTokens = await refreshAccessToken(session.user.refreshToken);
-                    if (newTokens) {
-                        originalRequest.headers.Authorization = `Bearer ${newTokens.accessToken}`;
-                        return api(originalRequest);
-                    }
-                } else {
-                    const newTokens = await refreshAccessToken(refreshToken);
-                    if (newTokens) {
-                        originalRequest.headers.Authorization = `Bearer ${newTokens.accessToken}`;
-                        return api(originalRequest);
-                    }
+                    throw new Error("No refresh token available");
+                }
+                
+                const newTokens = await refreshAccessToken(refreshToken);
+                if (newTokens) {
+                    originalRequest.headers.Authorization = `Bearer ${newTokens.accessToken}`;
+                    return api(originalRequest);
                 }
                 
                 throw new Error("Failed to refresh token");

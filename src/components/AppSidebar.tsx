@@ -40,6 +40,7 @@ import { handleSignOut } from "@/app/actions/authActions";
 import { getRosourceByDiscomId } from "@/app/api-calls/other/api";
 import { getAgencyRechargeableBalance } from "@/app/api-calls/department/api";
 import { reportIcon } from "@/lib/utils";
+import { clearCache } from "@/lib/token-manager";
 import { toast } from "sonner";
 
 const navData = {
@@ -525,6 +526,7 @@ export function AppSidebar({ logoLink, onSignOut }) {
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => {
       toast.error("You have been logged out due to inactivity.");
+      clearCache(); // Clear token cache before signout
       handleSignOut();
     }, INACTIVITY_TIMEOUT);
   };
