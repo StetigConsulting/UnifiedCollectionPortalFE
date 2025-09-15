@@ -14,12 +14,14 @@ function Loading() {
                     color="#18181b"
                 // ariaLabel="infinity-spin-loading"
                 /> */}
-                <Image alt=""
+                <Image 
+                    alt="Loading..."
                     width={150}
-                    height={1000}
-                    unoptimized
+                    height={150}
                     className="mx-auto object-contain"
-                    src='/images/loader.gif' />
+                    src='/images/loader.gif'
+                    priority
+                />
             </div>
         </div>
     )

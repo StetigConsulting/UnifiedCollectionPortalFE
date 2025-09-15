@@ -547,11 +547,10 @@ export function AppSidebar({ logoLink, onSignOut }) {
       <SidebarHeader className="bg-lightThemeColor min-h-[135px]">
         {logoLink &&
           <Image
-            alt=""
+            alt="Company Logo"
             width={150}
-            height={1000}
+            height={100}
             priority
-            unoptimized
             src={logoLink}
             className="m-auto object-contain align-center"
           />}

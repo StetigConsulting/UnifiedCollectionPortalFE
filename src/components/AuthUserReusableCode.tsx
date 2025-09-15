@@ -77,12 +77,14 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
                     style={{
                         backdropFilter: 'blur(1px)'
                     }}>
-                    <Image alt=""
+                    <Image 
+                        alt="Loading..."
                         width={150}
-                        height={1000}
-                        unoptimized
+                        height={150}
                         className="mx-auto object-contain"
-                        src='/images/loader.gif' />
+                        src='/images/loader.gif'
+                        priority
+                    />
                 </div>
             }
             <SidebarInset className='flex-1' style={{ WebkitBoxFlex: 1, overflow: 'hidden' }}>
