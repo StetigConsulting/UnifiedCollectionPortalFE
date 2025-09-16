@@ -84,6 +84,7 @@ const CollectionPosting = () => {
         { label: 'Collection Type', key: 'collection_type', sortable: true },
         { label: 'Consumer No', key: 'consumer_no', sortable: true },
         { label: 'Reference No', key: 'reference_no', sortable: true },
+        { label: 'Src Notification No', key: 'src_notification_no', sortable: true },
         { label: 'Installment No', key: 'installment_no', sortable: true },
         { label: 'Consumer Name', key: 'consumer_name', sortable: true },
         { label: 'Transaction Date Time', key: 'txn_date_time', sortable: true },
@@ -101,7 +102,6 @@ const CollectionPosting = () => {
         { label: 'Posting Status', key: 'posting_status', sortable: true },
         { label: 'Billing Server Message', key: 'billing_server_msg', sortable: true },
         { label: 'No Of Retries', key: 'no_of_posting_retries', sortable: true },
-        { label: 'Src Notification No', key: 'src_notification_no', sortable: true },
     ], []);
 
     const [exportType, setExportType] = useState('')
