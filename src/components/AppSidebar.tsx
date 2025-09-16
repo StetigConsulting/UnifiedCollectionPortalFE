@@ -553,6 +553,7 @@ export function AppSidebar({ logoLink, onSignOut }) {
             priority
             src={logoLink}
             className="m-auto object-contain align-center"
+            unoptimized
           />}
       </SidebarHeader>
       <SidebarContent className="overflow-x-hidden">

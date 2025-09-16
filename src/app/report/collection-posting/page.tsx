@@ -101,6 +101,7 @@ const CollectionPosting = () => {
         { label: 'Posting Status', key: 'posting_status', sortable: true },
         { label: 'Billing Server Message', key: 'billing_server_msg', sortable: true },
         { label: 'No Of Retries', key: 'no_of_posting_retries', sortable: true },
+        { label: 'Src Notification No', key: 'src_notification_no', sortable: true },
     ], []);
 
     const [exportType, setExportType] = useState('')

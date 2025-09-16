@@ -84,6 +84,7 @@ function AuthUserReusableCode({ children, pageTitle, isLoading = false }: AuthUs
                         className="mx-auto object-contain"
                         src='/images/loader.gif'
                         priority
+                        unoptimized
                     />
                 </div>
             }

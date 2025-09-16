@@ -152,6 +152,7 @@ const DailyAgentCollection = () => {
         { label: 'Remarks', key: 'remarks', sortable: true },
         { label: 'Upload Date', key: 'upload_date', sortable: true },
         { label: 'Billing Server Response Msg', key: 'billing_server_response_message', sortable: true },
+        { label: 'Src Notification No', key: 'src_notification_no', sortable: true },
     ], []);
 
     const formatData = dataList?.map((item) => ({
