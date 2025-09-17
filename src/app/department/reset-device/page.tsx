@@ -165,10 +165,13 @@ const ResetDeviceCollector = () => {
     const getAgentList = async (id: number) => {
         setIsLoading(true)
         const response = await getAllAgentByAgencyId(id)
-        setAgentList(response?.data?.map(item => ({
-            value: item?.primary_phone,
-            label: item?.agent_name + ' - ' + item?.primary_phone
-        })))
+        setAgentList(
+            response?.data
+                ?.filter((item) => item.is_active === true)
+                ?.map(item => ({
+                    value: item?.primary_phone,
+                    label: item?.agent_name + ' - ' + item?.primary_phone
+                })))
         setIsLoading(false)
     }
 
