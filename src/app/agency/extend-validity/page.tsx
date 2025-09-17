@@ -64,7 +64,9 @@ const ExtendValidity = () => {
         try {
             const response = await getAllAgentByAgencyId(currentUserId);
             setAgencies(
-                response?.data?.map((item) => ({
+                response?.data
+                ?.filter((item) => item.is_active === true)
+                ?.map((item) => ({
                     ...item,
                     label: item.agent_name,
                     value: item.id,
