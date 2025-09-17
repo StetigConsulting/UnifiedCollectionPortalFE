@@ -69,7 +69,9 @@ const RechargeEntry = () => {
         try {
             const response = await getAllAgentByAgencyId(id);
             setAgentList(
-                response?.data?.map((item) => ({
+                response?.data
+                ?.filter((item) => item.is_active === true)
+                ?.map((item) => ({
                     ...item,
                     label: item.agent_name + ' - ' + item.primary_phone,
                     value: item.primary_phone,

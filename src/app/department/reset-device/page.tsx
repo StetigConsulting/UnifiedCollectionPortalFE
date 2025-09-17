@@ -112,7 +112,7 @@ const ResetDeviceCollector = () => {
             }
         } else {
             if (formData?.agency) {
-            setError("mobileNumber", {
+                setError("mobileNumber", {
                     type: "manual",
                     message: "Please select an agent.",
                 });
@@ -147,10 +147,13 @@ const ResetDeviceCollector = () => {
     const getAgencyList = async () => {
         setIsLoading(true)
         const response = await getAgenciesWithDiscom(session?.user?.discomId)
-        setAgencyList(response?.data?.map(item => ({
-            value: item?.id,
-            label: item?.agency_name + ' - ' + item?.phone
-        })))
+        setAgencyList(
+            response?.data
+                ?.filter((item) => item.is_active === true)
+                ?.map(item => ({
+                    value: item?.id,
+                    label: item?.agency_name + ' - ' + item?.phone
+                })))
         setIsLoading(false)
     }
 

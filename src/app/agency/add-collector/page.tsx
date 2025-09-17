@@ -323,7 +323,9 @@ const AddCounterCollector = () => {
         try {
             const response = await getAgenciesWithDiscom(session?.user?.discomId);
             setAgencyList(
-                response?.data?.map((item) => ({
+                response?.data
+                ?.filter((item) => item.is_active === true)
+                ?.map((item) => ({
                     ...item,
                     label: item.agency_name,
                     value: item.id,

@@ -336,7 +336,9 @@ const EditAgentAreaRoleForm = () => {
         try {
             const agencies = await getAgenciesWithDiscom(session?.user?.discomId);
             setAgencyOptions(
-                agencies?.data?.map((a: any) => ({
+                agencies?.data
+                ?.filter((item) => item.is_active === true)
+                ?.map((a: any) => ({
                     label: a.agency_name + ' - ' + a.phone,
                     value: a.id,
                 })) || []
