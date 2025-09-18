@@ -362,7 +362,9 @@ const EditAgentAreaRoleForm = () => {
         try {
             const agents = await getAllAgentByAgencyId(Number(agencyId));
             setAgentOptions(
-                agents?.data?.map((a: any) => ({
+                agents?.data
+                ?.filter((item) => item.is_active === true)
+                ?.map((a: any) => ({
                     label: a.agent_name + ' - ' + a.primary_phone,
                     value: a.primary_phone
                 })) || []
