@@ -111,8 +111,7 @@ const RechargeEntry = () => {
             setIsSubmitting(true);
             const response = await rechargeAgentById(payload, currentUserId);
             toast.success("Agent recharged successfully");
-            location.reload()
-            window.location.reload();
+            reset()
         } catch (error) {
             let errorMessage = getErrorMessage(error);
             toast.error('Error: ' + errorMessage)

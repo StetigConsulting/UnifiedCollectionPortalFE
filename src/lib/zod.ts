@@ -697,7 +697,10 @@ export const rechargeSchemaCollector = z.object({
   maximumRecharge: z
     .number()
     .positive("Maximum recharge must be greater than 0"),
-  amount: z.number().positive("Amount must be greater than 0"),
+  amount: z.number({
+    invalid_type_error: 'Amount is Required',
+    required_error: 'Amount is Required'
+  }).positive("Amount must be greater than 0"),
   transactionType: z.string(),
   currentBalance: z.number(),
   remark: z.string().optional(),

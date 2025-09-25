@@ -183,7 +183,6 @@ const AddCounterCollector = () => {
             await createCounterCollector(payload, currentUserId);
             toast.success('Agent added successfully!');
             reset()
-            window.location.reload();
         } catch (error) {
             setErrorMessage('Error: ' + getErrorMessage(error));
             setIsErrorModalOpen(true)

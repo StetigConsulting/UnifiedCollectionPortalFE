@@ -82,7 +82,6 @@ const EditCollector = () => {
             await editCollectorData(payload, currentUserId);
             toast.success('Agent edited successfully!');
             reset()
-            window.location.reload()
         } catch (error) {
             let errorMessage = getErrorMessage(error);
             toast.error('Error: ' + errorMessage);
