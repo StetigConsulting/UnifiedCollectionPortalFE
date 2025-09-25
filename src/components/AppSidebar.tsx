@@ -40,6 +40,7 @@ import { handleSignOut } from "@/app/actions/authActions";
 import { getRosourceByDiscomId } from "@/app/api-calls/other/api";
 import { getAgencyRechargeableBalance } from "@/app/api-calls/department/api";
 import { reportIcon } from "@/lib/utils";
+import { clearCache } from "@/lib/token-manager";
 import { toast } from "sonner";
 
 const navData = {
@@ -525,6 +526,7 @@ export function AppSidebar({ logoLink, onSignOut }) {
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => {
       toast.error("You have been logged out due to inactivity.");
+      clearCache(); // Clear token cache before signout
       handleSignOut();
     }, INACTIVITY_TIMEOUT);
   };
@@ -545,13 +547,13 @@ export function AppSidebar({ logoLink, onSignOut }) {
       <SidebarHeader className="bg-lightThemeColor min-h-[135px]">
         {logoLink &&
           <Image
-            alt=""
+            alt="Company Logo"
             width={150}
-            height={1000}
+            height={100}
             priority
-            unoptimized
             src={logoLink}
             className="m-auto object-contain align-center"
+            unoptimized
           />}
       </SidebarHeader>
       <SidebarContent className="overflow-x-hidden">

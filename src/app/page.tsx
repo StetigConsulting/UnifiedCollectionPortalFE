@@ -32,7 +32,14 @@ const AdminNewsNotices = () => {
     <AuthUserReusableCode pageTitle='Home'>
       <div className='h-full content-center'>
         <div className='p-4'>
-          <img alt="" src="/images/logo.png" width={200} className='m-auto mb-4' />
+          <Image 
+            src="/images/logo.png" 
+            width={200} 
+            height={100}
+            alt="Tata Power Logo"
+            className='m-auto mb-4'
+            priority
+          />
         </div>
         <div className="text-center text-2xl font-semibold mb-6">
           Welcome, {session?.user?.userName}

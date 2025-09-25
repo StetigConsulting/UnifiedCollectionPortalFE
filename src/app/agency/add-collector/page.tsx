@@ -183,7 +183,6 @@ const AddCounterCollector = () => {
             await createCounterCollector(payload, currentUserId);
             toast.success('Agent added successfully!');
             reset()
-            window.location.reload();
         } catch (error) {
             setErrorMessage('Error: ' + getErrorMessage(error));
             setIsErrorModalOpen(true)
@@ -323,7 +322,9 @@ const AddCounterCollector = () => {
         try {
             const response = await getAgenciesWithDiscom(session?.user?.discomId);
             setAgencyList(
-                response?.data?.map((item) => ({
+                response?.data
+                ?.filter((item) => item.is_active === true)
+                ?.map((item) => ({
                     ...item,
                     label: item.agency_name,
                     value: item.id,

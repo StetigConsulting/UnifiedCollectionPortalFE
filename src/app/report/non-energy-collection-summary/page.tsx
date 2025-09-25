@@ -351,7 +351,7 @@ const NonEnergyCollectionSummary = () => {
                 data.push(...subdata)
             }
             data.push({
-                index: 'TOTAL',
+                index: item.collection_summary ? 'TOTAL' : index++,
                 agency_id: item.agency_id,
                 agency_name: item.agency_name,
                 total_amount: item.total_amount,

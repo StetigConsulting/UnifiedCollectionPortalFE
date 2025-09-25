@@ -1,5 +1,6 @@
 import NextAuth, { User } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import { clearCache } from "@/lib/token-manager";
 
 interface ExtendedUser extends User {
     id: string;
@@ -80,10 +81,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 token.roleId = user.roleId;
                 token.lastLoginAt = user.lastLoginAt;
                 token.userScopes = user.userScopes;
-                token.tokenExpiry = user.tokenExpiry
+                token.tokenExpiry = user.tokenExpiry;
+                
             }
 
             if (token.error === "RefreshAccessTokenError") {
+                clearCache();
                 return null;
             }
 

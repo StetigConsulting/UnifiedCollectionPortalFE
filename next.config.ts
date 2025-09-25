@@ -2,6 +2,23 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+    images: {
+      remotePatterns: [
+        {
+          protocol: 'https',
+          hostname: '*.amazonaws.com',
+          pathname: '/**',
+        },
+      ],
+      
+      dangerouslyAllowSVG: true,
+      contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+      minimumCacheTTL: 60,
+      // Disable optimization for problematic images
+      unoptimized: false,
+      // Add retry configuration
+      formats: ['image/webp', 'image/avif'],
+    },
   async headers() {
     return [
       {

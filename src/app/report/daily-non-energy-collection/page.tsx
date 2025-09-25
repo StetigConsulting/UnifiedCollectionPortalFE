@@ -145,6 +145,7 @@ const DailyAgentCollection = () => {
         { label: 'DD Cheque No', key: 'dd_cheque_no', sortable: true },
         { label: 'Module Name', key: 'module_name', sortable: true },
         { label: 'Reference No', key: 'reference_no', sortable: true },
+        { label: 'Src Notification No', key: 'src_notification_no', sortable: true },
         { label: 'Agent Type', key: 'collector_type', sortable: true },
         { label: 'Consumer Mobile No', key: 'consumer_mobile_no', sortable: true },
         { label: 'Consumer Email Id', key: 'consumer_email', sortable: true },

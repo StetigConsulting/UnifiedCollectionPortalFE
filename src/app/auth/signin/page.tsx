@@ -89,13 +89,27 @@ const SignUpForm = () => {
 		<>
 			<div className="grid grid-cols-2 gap-4 min-h-[100vh]">
 				<div>
-					<Image alt="" width={1000} height={1000} src="/images/power.jpg" className='w-full h-full object-cover' />
+					<Image 
+						alt="Tata Power Background" 
+						width={1000} 
+						height={1000} 
+						src="/images/power.jpg" 
+						className='w-full h-full object-cover'
+						priority
+					/>
 				</div>
 				<div className="ps-16 p-4 flex flex-col justify-center min-h-[80vh]">
 
 					<form onSubmit={handleSubmit(onSubmit)} className="w-[400px] max-w-md relative min-h-[250px] m-auto">
 						{/* Mobile Number Field */}
-						<img alt="" src="/images/logo.png" width={200} className='m-auto mb-4' />
+						<Image 
+							alt="Tata Power Logo" 
+							src="/images/logo.png" 
+							width={200} 
+							height={100}
+							className='m-auto mb-4'
+							priority
+						/>
 						<h3 className="title mb-8">Login</h3>
 						<div className="mb-4">
 							<label htmlFor="mobileNumber" className="block text-sm font-medium text-gray-700">Mobile Number</label>

@@ -2,7 +2,6 @@
 
 import Image from 'next/image'
 import React from 'react'
-import { InfinitySpin } from 'react-loader-spinner'
 
 function Loading() {
     return (
@@ -14,12 +13,15 @@ function Loading() {
                     color="#18181b"
                 // ariaLabel="infinity-spin-loading"
                 /> */}
-                <Image alt=""
+                <Image
+                    alt="Loading..."
                     width={150}
-                    height={1000}
-                    unoptimized
+                    height={150}
                     className="mx-auto object-contain"
-                    src='/images/loader.gif' />
+                    src='/images/loader.gif'
+                    priority
+                    unoptimized
+                />
             </div>
         </div>
     )

@@ -2,6 +2,8 @@ import { handleCredentialsSignin } from "@/app/actions/authActions";
 import axios from "axios";
 import { getSession, signOut } from "next-auth/react";
 import { toast } from "sonner";
+import { getAccessToken, getRefreshToken, clearCache, setTokens } from "./token-manager";
+import { clientLogout } from "./logout-utils";
 
 const api = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_BASE_URL_FRONTEND,
@@ -23,6 +25,15 @@ const refreshAccessToken = async (refreshToken: string) => {
         if (!response.data || !refreshedTokens?.access_token) {
             throw new Error("Failed to refresh token");
         }
+        // Update tokens in cache immediately
+        const tokenExpiry = Date.now() + refreshedTokens.expires_in;
+        setTokens(
+            refreshedTokens.access_token,
+            refreshedTokens.refresh_token ?? refreshToken,
+            tokenExpiry
+        );
+
+        // Also update NextAuth session
         await handleCredentialsSignin({
             access_token: refreshedTokens.access_token,
             refresh_token: refreshedTokens.refresh_token ?? refreshToken,
@@ -32,7 +43,7 @@ const refreshAccessToken = async (refreshToken: string) => {
         return {
             accessToken: refreshedTokens.access_token,
             refreshToken: refreshedTokens.refresh_token ?? refreshToken,
-            tokenExpiry: refreshedTokens.expires_in,
+            tokenExpiry: tokenExpiry,
         };
     } catch (error) {
         if (error.response?.status === 401) {
@@ -54,10 +65,13 @@ const refreshAccessToken = async (refreshToken: string) => {
 
 api.interceptors.request.use(
     async (config) => {
-        const session = await getSession();
-        if (session && session.user.accessToken) {
-            config.headers["Authorization"] = `Bearer ${session.user.accessToken}`;
+        // Use cached token - no need to call getSession()
+        const accessToken = getAccessToken();
+        if (accessToken) {
+            config.headers["Authorization"] = `Bearer ${accessToken}`;
         }
+        // If no cached token, let the request fail with 401
+        // This will trigger the refresh logic or redirect to login
         return config;
     },
     (error) => Promise.reject(error)
@@ -72,16 +86,23 @@ api.interceptors.response.use(
             originalRequest._retry = true;
 
             try {
-                const session = await getSession();
-
-                const newTokens = await refreshAccessToken(session?.user?.refreshToken);
-
-                originalRequest.headers.Authorization = `Bearer ${newTokens.accessToken}`;
-                return api(originalRequest);
+                // Use cached refresh token
+                const refreshToken = getRefreshToken();
+                
+                if (!refreshToken) {
+                    throw new Error("No refresh token available");
+                }
+                
+                const newTokens = await refreshAccessToken(refreshToken);
+                if (newTokens) {
+                    originalRequest.headers.Authorization = `Bearer ${newTokens.accessToken}`;
+                    return api(originalRequest);
+                }
+                
+                throw new Error("Failed to refresh token");
             } catch (refreshError) {
                 toast.error("Your session has expired. Please log in again.");
-                await signOut();
-                window.location.href = '/';
+                await clientLogout(false);
                 return Promise.reject(refreshError);
             }
         }

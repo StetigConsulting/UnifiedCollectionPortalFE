@@ -11,6 +11,7 @@ import { getSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { urlsListWithTitle } from '@/lib/utils';
 import { checkIfUserHasAccessToPage, getLandingPageUrl } from '@/helper';
+import { setTokens } from '@/lib/token-manager';
 
 interface OTPPopupProps {
     isOpen: boolean;
@@ -69,15 +70,25 @@ const OTPPopup: React.FC<OTPPopupProps> = ({ sendOTP, setResendTimer, isOpen, se
                 body: JSON.stringify({ mobileNumber: formData, otp }),
             });
             const result = await response.json();
+
             if (response.ok) {
                 let userDetails = result?.data?.data
                 
+                // Set tokens directly in cache for immediate API access
+                const tokenExpiry = Date.now() + (userDetails?.expires_in * 1000);
+                setTokens(
+                    userDetails?.access_token,
+                    userDetails?.refresh_token,
+                    tokenExpiry
+                );
+                
+                // Also set in NextAuth for session management
                 await handleCredentialsSignin({
                     access_token: userDetails?.access_token,
                     expires_in: userDetails?.expires_in,
                     refresh_token: userDetails?.refresh_token
                 })
-                
+
                 const session = await getSession();
                 let landingPage = getLandingPageUrl(session?.user?.userScopes)
                 router.push(landingPage)
