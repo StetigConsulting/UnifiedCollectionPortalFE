@@ -10,8 +10,7 @@ import { clearCache } from './token-manager';
 export const clientLogout = async (redirect: boolean = true) => {
   clearCache();
   await signOut({ 
-    redirectTo: redirect ? '/auth/signin' : undefined,
-    redirect 
+    redirectTo: redirect ? '/auth/signin' : undefined, 
   });
 };
 
