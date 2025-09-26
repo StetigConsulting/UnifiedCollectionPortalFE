@@ -97,8 +97,7 @@ const AddAgency = () => {
       setIsSubmitting(true);
       const response = await createAgency(agencyData);
       toast.success("Agency created successfully");
-      // reset();
-      window.location.reload();
+      reset();
     } catch (error) {
       let errorData = error?.data;
       let messages = [];
