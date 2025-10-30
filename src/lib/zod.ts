@@ -2888,7 +2888,7 @@ export const summaryReportSchema = z
     subDivision: z.array(z.number()).optional(),
     section: z.array(z.number()).optional(),
     reportType: z.string().nonempty("Report Type is required"),
-    collectorType: z.number().optional(),
+    collectorType: z.any().optional(),
     pageSize: z.number({ invalid_type_error: "Page size is required" }).min(1, { message: 'Page size must be at least 1' }),
     levelWithIdMap: z.any().optional(),
   })

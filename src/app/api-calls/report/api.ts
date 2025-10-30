@@ -777,7 +777,7 @@ export const downloadAgencyPaymentModewiseSummaryReport = async (data: any, type
 export const getSummaryReport = async (data: any) => {
   try {
     const response = await api.post(
-      "/v1/common-reports/summary-report/fetch",
+      "/v1/energy-reports/summary-report-collector-wise/fetch",
       data
     );
     return response.data;
@@ -789,7 +789,7 @@ export const getSummaryReport = async (data: any) => {
 export const downloadSummaryReport = async (data: any, type: string) => {
   try {
     const response = await api.post(
-      `/v1/common-reports/summary-report/download/${type}`,
+      `/v1/common-reports/summary-report-collector-wise/download/${type}`,
       data,
       {
         headers: {

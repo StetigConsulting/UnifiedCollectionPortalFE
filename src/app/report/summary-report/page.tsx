@@ -36,7 +36,8 @@ const SummaryReport = () => {
             division: [],
             subDivision: [],
             section: [],
-            pageSize: tableDataPerPage
+            pageSize: tableDataPerPage,
+            collectorType: null
         }
     });
 
@@ -116,23 +117,64 @@ const SummaryReport = () => {
 
 
     const columns = useMemo(() => [
-        { label: 'CIRCLE', key: 'circle', sortable: true },
-        { label: 'DIVISION', key: 'division', sortable: true },
-        { label: 'SUBDIVISION', key: 'subdivision', sortable: true },
-        { label: 'SECTION', key: 'section', sortable: true },
-        { label: 'AGENCY NAME', key: 'agency_name', sortable: true },
-        { label: 'COL TYPE', key: 'col_type', sortable: true },
-        { label: 'USERID', key: 'userid', sortable: true },
-        { label: 'COLLECTOR NAME', key: 'collector_name', sortable: true },
-    ], []);
+        { label: 'Circle', key: 'circle', sortable: true },
+        { label: 'Division', key: 'division', sortable: true },
+        { label: 'Sub Division', key: 'subdivision', sortable: true },
+        { label: 'Section', key: 'section', sortable: true },
+        { label: 'Agency Name', key: 'agency_name', sortable: true },
+        { label: 'Collector Type', key: 'col_type', sortable: true },
+        { label: 'User ID', key: 'userid', sortable: true },
+        { label: 'Collector Name', key: 'collector_name', sortable: true },
+        // Time Slot (MR/Denied)
+        {
+            label: '<10AM',
+            key: 'before_10am_combined',
+            align: 'center'
+        },
+        {
+            label: '10-12PM',
+            key: 'between_10am_12pm_combined',
+            align: 'center'
+        },
+        {
+            label: '12-03PM',
+            key: 'between_12pm_3pm_combined',
+            align: 'center'
+        },
+        {
+            label: '03-06PM',
+            key: 'between_3pm_6pm_combined',
+            align: 'center'
+        },
+        {
+            label: '>06PM',
+            key: 'after_6pm_combined',
+            align: 'center'
+        },
+        // Summary Columns
+        { label: 'Total MR', key: 'total_mr', sortable: true },
+        { label: 'Total Denial', key: 'total_denial', sortable: true },
+        { label: 'Total Amount', key: 'total_collection', sortable: true }
+    ], [levelNameMappedWithId]);
+
+    // Prepare data for table to support cell formatting
+    const processedDataList = useMemo(() => {
+        return dataList.map(row => ({
+            ...row,
+            before_10am_combined: `${row.before_10am_collections ?? 0} / ${row.before_10am_denials ?? 0}`,
+            between_10am_12pm_combined: `${row.between_10am_12pm_collections ?? 0} / ${row.between_10am_12pm_denials ?? 0}`,
+            between_12pm_3pm_combined: `${row.between_12pm_3pm_collections ?? 0} / ${row.between_12pm_3pm_denials ?? 0}`,
+            between_3pm_6pm_combined: `${row.between_3pm_6pm_collections ?? 0} / ${row.between_3pm_6pm_denials ?? 0}`,
+            after_6pm_combined: `${row.after_6pm_collections ?? 0} / ${row.after_6pm_denials ?? 0}`
+        }));
+    }, [dataList]);
 
     const getPayload = (data) => {
         let filter = {
-            date_range: {
+            transaction_date_range: {
                 from_date: data.fromDate,
                 to_date: data.toDate
             },
-            report_type: data.reportType,
             ...data.collectorType && {
                 collector_type_id: data.collectorType
             },
@@ -152,8 +194,8 @@ const SummaryReport = () => {
     };
 
     const onSubmit = (data) => {
-        let payload = getPayload(data);
-        getReportData(payload, 1);
+        const filter = getPayload(data);
+        getReportData(filter, 1);
     };
 
     const formData = watch();
@@ -314,18 +356,29 @@ const SummaryReport = () => {
         getReportData(payload, page);
     };
 
+    // find time slot keys in columns array
+    const groupedHeaders = [
+        {
+            label: 'Time Slot (MR/Denied)',
+            from: 'before_10am_combined',
+            to: 'after_6pm_combined',
+        }
+    ];
+
     return (
         <AuthUserReusableCode pageTitle="Summary Report" isLoading={isLoading}>
             <form onSubmit={handleSubmit(onSubmit)} className="flex items-center gap-4">
                 <div className="grid grid-cols-6 gap-4 flex-grow">
                     <CustomizedInputWithLabel
-                        label="From Date *"
+                        label="From Date"
                         type="date"
+                        required
                         {...register('fromDate')}
                         errors={errors.fromDate}
                     />
                     <CustomizedInputWithLabel
-                        label="To Date *"
+                        label="To Date"
+                        required
                         type="date"
                         {...register('toDate')}
                         errors={errors.toDate}
@@ -391,8 +444,9 @@ const SummaryReport = () => {
                         </>
                     }
                     <CustomizedSelectInputWithLabel 
-                        label='Report Type *' 
-                        list={summaryReportTypePicklist}
+                        label='Report Type' 
+                        required
+                        list={[{ label: 'Collector Wise', value: 'collector_wise' }]}
                         {...register('reportType', { onChange: () => setShowTable(false) })} 
                         errors={errors?.reportType} 
                     />
@@ -414,6 +468,7 @@ const SummaryReport = () => {
                     />
                     <CustomizedInputWithLabel 
                         label='Page Size'
+                        required
                         {...register('pageSize', { valueAsNumber: true })} 
                         errors={errors?.pageSize} 
                     />
@@ -426,8 +481,9 @@ const SummaryReport = () => {
 
             <div className="overflow-x-auto mb-4 mt-4">
                 {showTable && <ReactTable
-                    data={dataList}
+                    data={processedDataList} // <--- use processed data
                     columns={columns}
+                    groupedHeaders={groupedHeaders} // <-- add this line
                     hideSearchAndOtherButtons
                     dynamicPagination
                     itemsPerPage={tableDataPerPage}

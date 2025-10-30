@@ -43,6 +43,7 @@ interface TableProps<T> {
     handleExportFile?: (type: string) => void;
     hideSearchButton?: boolean;
     hideExports?: boolean;
+    groupedHeaders?: { label: string, from: string, to: string }[];
 }
 
 const ReactTable = <T extends Record<string, any>>({
@@ -74,6 +75,7 @@ const ReactTable = <T extends Record<string, any>>({
     handleExportFile,
     hideSearchButton = false,
     hideExports = false,
+    groupedHeaders = [],
 }: TableProps<T>) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [sortField, setSortField] = useState<keyof T | null>(defaultSortField || null);
@@ -285,6 +287,48 @@ const ReactTable = <T extends Record<string, any>>({
             <div className='overflow-x-auto w-full'>
                 <table border={1} width="100%" cellPadding={5} className='w-full caption-bottom text-sm min-w-full border border-gray-200 divide-y divide-gray-200'>
                     <thead className='[&_tr]:border-b bg-lightThemeColor sticky top-0 z-10'>
+                        {groupedHeaders.length > 0 && (
+                            <tr>
+                                {isSelectable && <th className='h-10 px-2 align-middle font-medium text-muted-foreground whitespace-nowrap capitalize border border-gray-200 bg-lightThemeColor' style={{ verticalAlign: 'middle' }}></th>}
+                                {!avoidSrNo && <th className='h-10 px-2 align-middle font-medium text-muted-foreground whitespace-nowrap capitalize border border-gray-200 bg-lightThemeColor' style={{ verticalAlign: 'middle' }}></th>}
+                                {(() => {
+                                    const headers = [];
+                                    let colIdx = 0;
+                                    while (colIdx < columns.length) {
+                                        // Check if this is the start of a group
+                                        const group = groupedHeaders.find(
+                                            g => columns.findIndex(col => col.key === g.from) === colIdx
+                                        );
+                                        if (group) {
+                                            const startIdx = columns.findIndex(col => col.key === group.from);
+                                            const endIdx = columns.findIndex(col => col.key === group.to);
+                                            const span = endIdx - startIdx + 1;
+                                            headers.push(
+                                                <th
+                                                    key={group.label}
+                                                    colSpan={span}
+                                                    className='h-10 px-2 align-middle font-medium text-muted-foreground whitespace-nowrap capitalize text-center border border-gray-200 bg-lightThemeColor'
+                                                    style={{ verticalAlign: 'middle' }}
+                                                >
+                                                    {group.label}
+                                                </th>
+                                            );
+                                            colIdx += span;
+                                        } else {
+                                            headers.push(
+                                                <th
+                                                    key={columns[colIdx].key as string}
+                                                    className='h-10 px-2 align-middle font-medium text-muted-foreground whitespace-nowrap capitalize border border-gray-200 bg-lightThemeColor'
+                                                    style={{ verticalAlign: 'middle' }}
+                                                />
+                                            );
+                                            colIdx++;
+                                        }
+                                    }
+                                    return headers;
+                                })()}
+                            </tr>
+                        )}
                         <tr className='border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted'>
                             {isSelectable && <th></th>}
                             {!avoidSrNo && <th className='h-10 px-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] whitespace-nowrap'>Sr.No</th>}
