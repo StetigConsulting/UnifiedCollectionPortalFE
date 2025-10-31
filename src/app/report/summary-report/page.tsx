@@ -117,14 +117,14 @@ const SummaryReport = () => {
 
 
     const columns = useMemo(() => [
-        { label: 'Circle', key: 'circle', sortable: true },
-        { label: 'Division', key: 'division', sortable: true },
-        { label: 'Sub Division', key: 'subdivision', sortable: true },
-        { label: 'Section', key: 'section', sortable: true },
+        { label: 'Circle', key: 'level_1_name', sortable: true },
+        { label: 'Division', key: 'level_2_name', sortable: true },
+        { label: 'Sub Division', key: 'level_3_name', sortable: true },
+        { label: 'Section', key: 'level_4_name', sortable: true },
         { label: 'Agency Name', key: 'agency_name', sortable: true },
-        { label: 'Collector Type', key: 'col_type', sortable: true },
-        { label: 'User ID', key: 'userid', sortable: true },
-        { label: 'Collector Name', key: 'collector_name', sortable: true },
+        { label: 'Collector Type', key: 'agent_type', sortable: true },
+        { label: 'User ID', key: 'agent_id', sortable: true },
+        { label: 'Collector Name', key: 'agent_name', sortable: true },
         // Time Slot (MR/Denied)
         {
             label: '<10AM',
@@ -154,7 +154,7 @@ const SummaryReport = () => {
         // Summary Columns
         { label: 'Total MR', key: 'total_mr', sortable: true },
         { label: 'Total Denial', key: 'total_denial', sortable: true },
-        { label: 'Total Amount', key: 'total_collection', sortable: true }
+        { label: 'Total Collection', key: 'total_collection', sortable: true }
     ], [levelNameMappedWithId]);
 
     // Prepare data for table to support cell formatting
