@@ -152,9 +152,9 @@ const SummaryReport = () => {
             align: 'center'
         },
         // Summary Columns
-        { label: 'Total MR', key: 'total_mr', sortable: true },
-        { label: 'Total Denial', key: 'total_denial', sortable: true },
-        { label: 'Total Collection', key: 'total_collection', sortable: true }
+        { label: 'Total MR', key: 'total_mr',align: 'center', sortable: true },
+        { label: 'Total Denial', key: 'total_denial', align: 'center', sortable: true },
+        { label: 'Total Collection', key: 'total_collection', align: 'center', sortable: true }
     ], [levelNameMappedWithId]);
 
     // Prepare data for table to support cell formatting
