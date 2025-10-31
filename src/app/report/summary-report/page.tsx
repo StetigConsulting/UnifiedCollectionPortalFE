@@ -165,7 +165,10 @@ const SummaryReport = () => {
             between_10am_12pm_combined: `${row.between_10am_12pm_collections ?? 0} / ${row.between_10am_12pm_denials ?? 0}`,
             between_12pm_3pm_combined: `${row.between_12pm_3pm_collections ?? 0} / ${row.between_12pm_3pm_denials ?? 0}`,
             between_3pm_6pm_combined: `${row.between_3pm_6pm_collections ?? 0} / ${row.between_3pm_6pm_denials ?? 0}`,
-            after_6pm_combined: `${row.after_6pm_collections ?? 0} / ${row.after_6pm_denials ?? 0}`
+            after_6pm_combined: `${row.after_6pm_collections ?? 0} / ${row.after_6pm_denials ?? 0}`,
+            total_mr: row.total_mr ?? 0,
+            total_denial: row.total_denial ?? 0,
+            total_collection: row.total_collection ?? 0
         }));
     }, [dataList]);
 
